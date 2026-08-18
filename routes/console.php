@@ -2,9 +2,18 @@
 
 declare(strict_types=1);
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+/*
+ * Scheduled tasks (ADR-011).
+ *
+ * The scheduler being optional in development is a trap: without it nothing
+ * looks broken, maintenance simply stops being generated. It runs in the
+ * docker compose stack for that reason, and a missed heartbeat alerts in
+ * production (ADR-061).
+ */
+Schedule::command(GenerateMaintenanceSchedules::class)
+    ->hourly()
+    ->withoutOverlapping()
+    ->runInBackground();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,6 +41,7 @@ class ModuleServiceProvider extends ServiceProvider
             $this->loadModuleViews($module, $path);
             $this->loadModuleTranslations($module, $path);
             $this->loadModuleRoutes($module, $path);
+            $this->loadModuleCommands($module, $path);
         }
     }
 
@@ -73,6 +75,34 @@ class ModuleServiceProvider extends ServiceProvider
         ksort($found);
 
         return $ordered + $found;
+    }
+
+    /**
+     * Console commands live in the module that owns them. Laravel only
+     * auto-discovers app/Console/Commands, so without this a module command
+     * exists but cannot be run, and its scheduled task silently never fires.
+     */
+    private function loadModuleCommands(string $module, string $path): void
+    {
+        $dir = $path.'/Console';
+
+        if (! is_dir($dir)) {
+            return;
+        }
+
+        $commands = [];
+
+        foreach ((array) glob($dir.'/*.php') as $file) {
+            $class = "App\\Modules\\{$module}\\Console\\".basename($file, '.php');
+
+            if (class_exists($class) && is_subclass_of($class, Command::class)) {
+                $commands[] = $class;
+            }
+        }
+
+        if ($commands !== []) {
+            $this->commands($commands);
+        }
     }
 
     private function loadModuleMigrations(string $path): void

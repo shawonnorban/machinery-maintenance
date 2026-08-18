@@ -63,6 +63,10 @@ class RoleSeeder extends Seeder
             'maintenance.template.view_any', 'maintenance.template.create',
             'maintenance.template.update', 'maintenance.template.publish',
             'maintenance.schedule.reschedule',
+            // A skip is a compliance exception, but deciding one is squarely a
+            // maintenance decision: without this the role could not run its
+            // own schedule.
+            'maintenance.schedule.skip',
             'meter.meter.manage',
             'work_order.work_order.create', 'work_order.work_order.update',
             'work_order.work_order.assign', 'work_order.work_order.verify',
