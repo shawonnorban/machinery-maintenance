@@ -197,6 +197,29 @@
                 </div>
             @endcan
 
+
+            <div class="card mb-4">
+                <div class="card-header">{{ __('scan.qr_token') }}</div>
+                <div class="card-body text-center">
+                    {!! $qrSvg !!}
+                    <div class="mt-2"><code>{{ $asset->qr_code }}</code></div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{{ route('app.assets.labels', ['ids' => [$asset->id]]) }}"
+                           class="btn btn-sm btn-outline-secondary">{{ __('scan.labels') }}</a>
+
+                        @can('regenerateQr', $asset)
+                            <form method="POST" action="{{ route('app.assets.qr.regenerate', $asset) }}"
+                                  data-confirm="{{ __('scan.regenerate_qr_confirm') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                    {{ __('scan.regenerate_qr') }}
+                                </button>
+                            </form>
+                        @endcan
+                    </div>
+                </div>
+            </div>
             @can('viewFinancial', $asset)
                 <div class="card mb-4">
                     <div class="card-header">{{ __('asset.financial') }}</div>

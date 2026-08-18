@@ -32,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
 
         Model::unguard(false);
 
-        View::composer(['layouts.app', 'components.layout.*'], AppShellComposer::class);
+        View::composer(
+            ['layouts.app', 'layouts.mobile', 'components.layout.*'],
+            AppShellComposer::class,
+        );
     }
 }

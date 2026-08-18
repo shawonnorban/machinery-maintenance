@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Asset\Http\Controllers\Web\AssetController;
+use App\Modules\Asset\Http\Controllers\Web\AssetLabelController;
 use App\Modules\Asset\Http\Controllers\Web\AssetStatusController;
 use App\Modules\Asset\Http\Controllers\Web\AssetTransferController;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/transfers/{transfer}/approve', [AssetTransferController::class, 'approve'])->name('transfers.approve');
     Route::post('/transfers/{transfer}/receive', [AssetTransferController::class, 'receive'])->name('transfers.receive');
     Route::post('/transfers/{transfer}/reject', [AssetTransferController::class, 'reject'])->name('transfers.reject');
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/assets-labels', [AssetLabelController::class, 'index'])->name('assets.labels');
+    Route::post('/assets/{asset}/qr/regenerate', [AssetLabelController::class, 'regenerate'])
+        ->name('assets.qr.regenerate');
 });

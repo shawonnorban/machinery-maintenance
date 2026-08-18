@@ -13,6 +13,7 @@ use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetType;
 use App\Modules\Asset\Models\Manufacturer;
+use App\Modules\Asset\Services\QrCodeRenderer;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
@@ -71,7 +72,7 @@ class AssetController extends Controller
         ]);
     }
 
-    public function show(Asset $asset): View
+    public function show(Asset $asset, QrCodeRenderer $qr): View
     {
         $this->authorize('view', $asset);
 
@@ -87,6 +88,7 @@ class AssetController extends Controller
             'statusHistory' => $asset->statusHistories()->limit(20)->get(),
             'transfers' => $asset->transfers()->with(['fromFactory:id,name', 'toFactory:id,name', 'toLocation:id,name'])->limit(20)->get(),
             'allowedTransitions' => Asset::TRANSITIONS[$asset->status] ?? [],
+            'qrSvg' => $qr->inlineSvg(route('scan.asset', $asset->qr_code), 150),
         ]);
     }
 
