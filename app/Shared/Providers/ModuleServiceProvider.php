@@ -7,6 +7,7 @@ namespace App\Shared\Providers;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 /**
  * Auto-discovers modules under app/Modules and wires up their migrations,
@@ -119,7 +120,7 @@ class ModuleServiceProvider extends ServiceProvider
         $views = $path.'/Resources/views';
 
         if (is_dir($views)) {
-            $this->loadViewsFrom($views, strtolower($module));
+            $this->loadViewsFrom($views, $this->namespaceFor($module));
         }
     }
 
@@ -128,8 +129,22 @@ class ModuleServiceProvider extends ServiceProvider
         $lang = $path.'/Resources/lang';
 
         if (is_dir($lang)) {
-            $this->loadTranslationsFrom($lang, strtolower($module));
+            $this->loadTranslationsFrom($lang, $this->namespaceFor($module));
         }
+    }
+
+    /**
+     * WorkOrder becomes work_order, not workorder.
+     *
+     * Snake case, so a two-word module reads the same in a view name as it does
+     * in its translation file: work_order::work-orders.index alongside
+     * lang/en/work_order.php. strtolower() would give "workorder" in one place
+     * and "work_order" in the other, and the mismatch is only discovered when a
+     * screen 500s.
+     */
+    private function namespaceFor(string $module): string
+    {
+        return Str::snake($module);
     }
 
     /**

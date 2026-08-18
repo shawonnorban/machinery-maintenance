@@ -29,6 +29,15 @@ class TransitionWorkOrder
         private readonly CompleteSchedule $completeSchedule,
     ) {}
 
+    /**
+     * Commits a draft to the queue. Kept a deliberate second step: a draft is a
+     * half-written idea, and a queue full of those is a queue nobody trusts.
+     */
+    public function schedule(WorkOrder $workOrder, string $userId): WorkOrder
+    {
+        return $this->move($workOrder, 'SCHEDULED', $userId);
+    }
+
     public function assign(WorkOrder $workOrder, string $userId): WorkOrder
     {
         if ($workOrder->activeAssignments()->count() === 0) {

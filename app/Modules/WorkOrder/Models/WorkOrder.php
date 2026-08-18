@@ -138,7 +138,11 @@ class WorkOrder extends BaseModel
 
     public function statusHistories(): HasMany
     {
-        return $this->hasMany(WorkOrderStatusHistory::class)->orderByDesc('changed_at');
+        // The id is a tiebreak, not decoration: ULIDs sort by creation time, so
+        // the ordering stays deterministic even if two rows share a millisecond.
+        return $this->hasMany(WorkOrderStatusHistory::class)
+            ->orderByDesc('changed_at')
+            ->orderByDesc('id');
     }
 
     public function checklistResults(): HasMany

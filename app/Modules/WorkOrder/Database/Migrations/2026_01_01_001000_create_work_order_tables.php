@@ -166,7 +166,12 @@ return new class extends Migration
             $table->string('from_status', 32)->nullable();
             $table->string('to_status', 32);
             $table->foreignUlid('changed_by')->nullable();
-            $table->timestamp('changed_at');
+            // Millisecond precision, because several transitions legitimately
+            // land in the same second: starting a job and immediately holding it
+            // for a missing part is one action to the technician. At second
+            // precision the timeline sorts arbitrarily and reads as though the
+            // hold preceded the start.
+            $table->dateTime('changed_at', 3);
             $table->string('reason')->nullable();
 
             $table->index(['company_id', 'work_order_id', 'changed_at'], 'wo_status_hist_idx');

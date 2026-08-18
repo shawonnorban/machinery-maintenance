@@ -16,6 +16,12 @@ class WorkOrderStatusHistory extends BaseModel
 
     protected $table = 'work_order_status_histories';
 
+    /**
+     * Milliseconds are kept, so two transitions in the same second stay
+     * distinguishable and the timeline reads in the order things happened.
+     */
+    protected $dateFormat = 'Y-m-d H:i:s.v';
+
     protected $fillable = [
         'company_id', 'work_order_id', 'from_status', 'to_status',
         'changed_by', 'changed_at', 'reason',

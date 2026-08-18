@@ -20,6 +20,14 @@
         </div>
 
         <div class="mobile-body">
+            {{-- Present here too, not only on the desktop layout. A refused
+                 answer that produces no visible message is worse than an error:
+                 the technician taps Record, the screen comes back unchanged, and
+                 they walk away believing a failed safety check was logged. --}}
+            <div class="px-3 pt-3">
+                <x-layout.flash />
+            </div>
+
             @yield('content')
         </div>
 

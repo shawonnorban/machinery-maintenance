@@ -48,4 +48,13 @@ return [
     'actions' => 'Action',
     'row_number' => '#',
     'all' => 'All',
+    'delete' => 'Delete',
+    'confirm_delete' => 'Remove this entry? This cannot be undone.',
+    'cancel' => 'Cancel',
+    'confirm' => 'Confirm',
+    'save' => 'Save',
+    'back' => 'Back',
+    'none' => 'None',
+    'yes' => 'Yes',
+    'no' => 'No',
 ];
