@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
 use App\Modules\Settings\Database\Seeders\SettingDefinitionSeeder;
@@ -24,6 +25,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RoleSeeder::class,
             SettingDefinitionSeeder::class,
+            AssetTaxonomySeeder::class,
         ]);
     }
 }

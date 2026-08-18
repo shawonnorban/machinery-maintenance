@@ -39,9 +39,15 @@ return new class extends Migration
             $table->string('default_locale', 8)->default('en');
             $table->string('status', 32)->default('ACTIVE');
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletesDatetime(precision: 3);
 
-            $table->unique(['code', 'deleted_at']);
+            // See the note in the assets migration: deleted_at cannot appear
+            // directly in a unique index, because MySQL treats NULLs as
+            // distinct and the constraint would enforce nothing.
+            $table->dateTime('deleted_marker', 3)
+                ->storedAs("IFNULL(deleted_at, '1970-01-01 00:00:00.000')");
+
+            $table->unique(['code', 'deleted_marker']);
             $table->index('status');
         });
 
