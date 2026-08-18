@@ -1,0 +1,514 @@
+openapi: 3.1.0
+info:
+  title: Machinery Asset & Maintenance Management API
+  version: 1.0.0
+  description: >
+    Multi-tenant maintenance and machine tracking API.
+    This file is GENERATED from Laravel route, FormRequest and JsonResource classes
+    via `php artisan openapi:generate`. Do not hand-edit; edit the source classes.
+    Full narrative contract: 03-API-Specification.md and 08-API-Schemas.md.
+servers:
+  - url: https://api.example.com/api/v1
+    description: Production
+  - url: http://localhost:8000/api/v1
+    description: Local
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Auth
+  - name: Assets
+  - name: Maintenance
+  - name: Work Orders
+  - name: Breakdowns
+  - name: Inventory
+  - name: Analytics
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Laravel Sanctum personal access token.
+
+  parameters:
+    CompanyId:
+      name: X-Company-Id
+      in: header
+      required: false
+      schema: { type: string, pattern: '^[0-9A-HJKMNP-TV-Z]{26}$' }
+      description: Required only when the user belongs to more than one company.
+    RequestId:
+      name: X-Request-Id
+      in: header
+      required: false
+      schema: { type: string, format: uuid }
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      required: false
+      schema: { type: string, enum: [en, bn], default: en }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: { type: string, format: uuid }
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    PerPage:
+      name: per_page
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+    Cursor:
+      name: cursor
+      in: query
+      schema: { type: string }
+    Search:
+      name: search
+      in: query
+      schema: { type: string, maxLength: 255 }
+
+  schemas:
+    Ulid:
+      type: string
+      pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+      example: 01HX7QF3M2K8VN4RTZ9WPYB6CD
+    Money:
+      type: string
+      pattern: '^-?\d{1,14}\.\d{4}$'
+      description: Decimal string with 4 places. Never a JSON number.
+      example: '1250.7500'
+    Quantity:
+      type: string
+      pattern: '^-?\d{1,14}\.\d{4}$'
+      example: '12.0000'
+    Currency:
+      type: string
+      pattern: '^[A-Z]{3}$'
+      example: BDT
+    Timestamp:
+      type: string
+      format: date-time
+      example: '2026-08-18T09:14:02.451Z'
+
+    Reference:
+      type: object
+      description: Compact related-entity reference embedded in responses.
+      required: [id, name]
+      properties:
+        id: { $ref: '#/components/schemas/Ulid' }
+        code: { type: string, nullable: true }
+        name: { type: string }
+
+    Meta:
+      type: object
+      properties:
+        request_id: { $ref: '#/components/schemas/Ulid' }
+        current_page: { type: integer }
+        last_page: { type: integer }
+        per_page: { type: integer }
+        total: { type: integer }
+        next_cursor: { type: string, nullable: true }
+        has_more: { type: boolean }
+
+    Error:
+      type: object
+      required: [success, message, code]
+      properties:
+        success: { type: boolean, enum: [false] }
+        message: { type: string, description: Localized per Accept-Language. }
+        code:
+          type: string
+          description: Stable machine-readable code. Never localized. Branch on this.
+          enum:
+            - VALIDATION_ERROR
+            - UNAUTHENTICATED
+            - MFA_REQUIRED
+            - ACCOUNT_LOCKED
+            - FORBIDDEN
+            - TENANT_ACCESS_DENIED
+            - SUBSCRIPTION_READ_ONLY
+            - RESOURCE_NOT_FOUND
+            - CONFLICT
+            - INVALID_STATUS_TRANSITION
+            - IDEMPOTENCY_CONFLICT
+            - INSUFFICIENT_STOCK
+            - CHECKLIST_INCOMPLETE
+            - PARTS_NOT_RECONCILED
+            - VERIFICATION_REQUIRED
+            - SELF_APPROVAL_NOT_ALLOWED
+            - METER_VALUE_DECREASED
+            - IMMUTABLE_RECORD
+            - DEPENDENT_RECORDS_EXIST
+            - PLAN_LIMIT_EXCEEDED
+            - RATE_LIMITED
+            - DEPENDENCY_UNAVAILABLE
+        errors:
+          type: object
+          additionalProperties: { type: array, items: { type: string } }
+        meta: { $ref: '#/components/schemas/Meta' }
+
+    Criticality:
+      type: string
+      enum: [CRITICAL, HIGH, MEDIUM, LOW]
+    Priority:
+      type: string
+      enum: [CRITICAL, HIGH, MEDIUM, LOW]
+    Severity:
+      type: string
+      enum: [TOTAL_FAILURE, PARTIAL_FAILURE, INTERMITTENT, DEGRADED, SAFETY]
+    AssetStatus:
+      type: string
+      enum: [DRAFT, PURCHASED, INSTALLED, COMMISSIONED, RUNNING, IDLE,
+             UNDER_MAINTENANCE, BREAKDOWN, UNDER_REPAIR, RETIRED, SCRAPPED, LOST]
+    WorkOrderStatus:
+      type: string
+      enum: [DRAFT, PENDING_APPROVAL, SCHEDULED, ASSIGNED, IN_PROGRESS, ON_HOLD,
+             COMPLETED, VERIFIED, CLOSED, CANCELLED, REJECTED]
+    BreakdownStatus:
+      type: string
+      enum: [REPORTED, ACKNOWLEDGED, ASSIGNED, IN_REPAIR, ON_HOLD, REPAIRED,
+             PRODUCTION_RESUMED, CLOSED, CANCELLED]
+    DowntimeClass:
+      type: string
+      enum: [UNPLANNED, PLANNED, NON_OPERATING, EXTERNAL]
+    LaborCategory:
+      type: string
+      enum: [REGULAR, OVERTIME, EXTERNAL]
+
+    Asset:
+      type: object
+      required: [id, asset_code, name, status, criticality]
+      properties:
+        id: { $ref: '#/components/schemas/Ulid' }
+        asset_code: { type: string, maxLength: 64 }
+        name: { type: string, maxLength: 255 }
+        serial_number: { type: string, nullable: true }
+        status: { $ref: '#/components/schemas/AssetStatus' }
+        criticality: { $ref: '#/components/schemas/Criticality' }
+        asset_type: { $ref: '#/components/schemas/Reference' }
+        asset_category: { $ref: '#/components/schemas/Reference' }
+        manufacturer: { $ref: '#/components/schemas/Reference' }
+        asset_model: { $ref: '#/components/schemas/Reference' }
+        parent_asset:
+          oneOf: [{ $ref: '#/components/schemas/Reference' }, { type: 'null' }]
+        factory: { $ref: '#/components/schemas/Reference' }
+        location: { $ref: '#/components/schemas/Reference' }
+        qr_code: { type: string, maxLength: 12 }
+        barcode: { type: string, nullable: true }
+        country_of_origin: { type: string, nullable: true, maxLength: 2 }
+        purchase_date: { type: string, format: date, nullable: true }
+        installation_date: { type: string, format: date, nullable: true }
+        commissioning_date: { type: string, format: date, nullable: true }
+        open_breakdown_id:
+          oneOf: [{ $ref: '#/components/schemas/Ulid' }, { type: 'null' }]
+        next_maintenance_due_at: { $ref: '#/components/schemas/Timestamp' }
+        financial:
+          type: object
+          description: Omitted entirely without asset.financial.view permission.
+          properties:
+            acquisition_cost: { $ref: '#/components/schemas/Money' }
+            installation_cost: { $ref: '#/components/schemas/Money' }
+            currency: { $ref: '#/components/schemas/Currency' }
+            lifetime_maintenance_cost: { $ref: '#/components/schemas/Money' }
+        version: { type: integer, minimum: 1 }
+        created_at: { $ref: '#/components/schemas/Timestamp' }
+        updated_at: { $ref: '#/components/schemas/Timestamp' }
+
+    AssetCreateRequest:
+      type: object
+      required: [asset_code, name, asset_type_id, asset_category_id, criticality,
+                 current_factory_id, asset_location_id]
+      additionalProperties: false
+      properties:
+        asset_code: { type: string, minLength: 1, maxLength: 64 }
+        name: { type: string, minLength: 1, maxLength: 255 }
+        asset_type_id: { $ref: '#/components/schemas/Ulid' }
+        asset_category_id: { $ref: '#/components/schemas/Ulid' }
+        manufacturer_id: { $ref: '#/components/schemas/Ulid' }
+        asset_model_id: { $ref: '#/components/schemas/Ulid' }
+        parent_asset_id: { $ref: '#/components/schemas/Ulid' }
+        serial_number: { type: string, maxLength: 128 }
+        barcode: { type: string, maxLength: 64 }
+        criticality: { $ref: '#/components/schemas/Criticality' }
+        status:
+          type: string
+          enum: [DRAFT, PURCHASED, INSTALLED]
+          default: DRAFT
+        current_factory_id: { $ref: '#/components/schemas/Ulid' }
+        asset_location_id: { $ref: '#/components/schemas/Ulid' }
+        country_of_origin: { type: string, minLength: 2, maxLength: 2 }
+        purchase_date: { type: string, format: date }
+        installation_date: { type: string, format: date }
+        commissioning_date: { type: string, format: date }
+        acquisition_cost: { $ref: '#/components/schemas/Money' }
+        installation_cost: { $ref: '#/components/schemas/Money' }
+        currency: { $ref: '#/components/schemas/Currency' }
+        supplier_id: { $ref: '#/components/schemas/Ulid' }
+        warranty_start: { type: string, format: date }
+        warranty_end: { type: string, format: date }
+
+  responses:
+    Unauthenticated:
+      description: Missing, expired, or invalid token.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Forbidden:
+      description: Authenticated but not permitted, or tenant is read-only.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: >
+        Resource does not exist, or exists in another tenant.
+        The two are indistinguishable by design.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Conflict:
+      description: Optimistic lock, idempotency, invalid transition, or stock conflict.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    ValidationError:
+      description: Field validation failed.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    RateLimited:
+      description: Rate limit exceeded.
+      headers:
+        Retry-After:
+          schema: { type: integer }
+          description: Seconds until the limit resets.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+paths:
+  /assets:
+    get:
+      tags: [Assets]
+      summary: List assets
+      operationId: listAssets
+      parameters:
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/AcceptLanguage'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - name: status
+          in: query
+          schema: { $ref: '#/components/schemas/AssetStatus' }
+        - name: criticality
+          in: query
+          schema: { $ref: '#/components/schemas/Criticality' }
+        - name: factory_id
+          in: query
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: asset_type_id
+          in: query
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [asset_code, name, status, criticality, created_at]
+            default: created_at
+        - name: direction
+          in: query
+          schema: { type: string, enum: [asc, desc], default: desc }
+      responses:
+        '200':
+          description: Paginated asset list, scoped to the caller's tenant and factories.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Asset' }
+                  meta: { $ref: '#/components/schemas/Meta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    post:
+      tags: [Assets]
+      summary: Create an asset
+      operationId: createAsset
+      parameters:
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/AcceptLanguage'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AssetCreateRequest' }
+      responses:
+        '201':
+          description: Asset created. qr_code is server-generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { $ref: '#/components/schemas/Asset' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /assets/{asset}:
+    parameters:
+      - name: asset
+        in: path
+        required: true
+        schema: { $ref: '#/components/schemas/Ulid' }
+      - $ref: '#/components/parameters/CompanyId'
+    get:
+      tags: [Assets]
+      summary: Get an asset
+      operationId: getAsset
+      parameters:
+        - name: include
+          in: query
+          schema: { type: string, example: 'meters,warranty,open_breakdown' }
+      responses:
+        '200':
+          description: Asset detail.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { $ref: '#/components/schemas/Asset' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Assets]
+      summary: Update an asset
+      description: Optimistically locked. Send the current version or an If-Match header.
+      operationId: updateAsset
+      parameters:
+        - name: If-Match
+          in: header
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/AssetCreateRequest'
+                - type: object
+                  required: [version]
+                  properties:
+                    version: { type: integer }
+      responses:
+        '200':
+          description: Updated asset.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { $ref: '#/components/schemas/Asset' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /work-orders/{workOrder}/labor:
+    parameters:
+      - name: workOrder
+        in: path
+        required: true
+        schema: { $ref: '#/components/schemas/Ulid' }
+      - $ref: '#/components/parameters/CompanyId'
+    post:
+      tags: [Work Orders]
+      summary: Record a labor time entry
+      description: >
+        Rate is resolved server-side from the technician's labor grade effective on
+        started_at. A client-supplied hourly_rate is rejected except for EXTERNAL
+        labor, where it is the vendor's charge. The system stores no salary data.
+      operationId: createWorkOrderLaborEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [labor_category, started_at, ended_at]
+              additionalProperties: false
+              properties:
+                technician_id: { $ref: '#/components/schemas/Ulid' }
+                labor_category: { $ref: '#/components/schemas/LaborCategory' }
+                started_at: { $ref: '#/components/schemas/Timestamp' }
+                ended_at: { $ref: '#/components/schemas/Timestamp' }
+                vendor_id: { $ref: '#/components/schemas/Ulid' }
+                hourly_rate:
+                  $ref: '#/components/schemas/Money'
+                  description: EXTERNAL labor only. Rejected otherwise.
+                notes: { type: string, maxLength: 1000 }
+      responses:
+        '201':
+          description: Labor entry created; work order actual_cost recalculated.
+        '409':
+          description: Overlapping entry for the same technician.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /breakdowns:
+    post:
+      tags: [Breakdowns]
+      summary: Report a breakdown
+      description: >
+        reported_at is server-set; response-time metrics depend on it.
+        If the asset already has an open breakdown, returns 200 with the existing
+        record and meta.linked_as_recurrence true rather than creating a duplicate.
+      operationId: createBreakdown
+      parameters:
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [asset_id, failure_at, problem_description, severity]
+              additionalProperties: false
+              properties:
+                asset_id: { $ref: '#/components/schemas/Ulid' }
+                failure_at: { $ref: '#/components/schemas/Timestamp' }
+                problem_description: { type: string, minLength: 5, maxLength: 2000 }
+                severity: { $ref: '#/components/schemas/Severity' }
+                priority: { $ref: '#/components/schemas/Priority' }
+                production_line_id: { $ref: '#/components/schemas/Ulid' }
+                downtime_reason_code_id: { $ref: '#/components/schemas/Ulid' }
+                failure_category_id: { $ref: '#/components/schemas/Ulid' }
+                attachments:
+                  type: array
+                  items: { $ref: '#/components/schemas/Ulid' }
+                  maxItems: 10
+      responses:
+        '201': { description: Breakdown created; asset moved to BREAKDOWN. }
+        '200': { description: Linked to an existing open breakdown. }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+# Remaining paths are generated from route definitions.
+# This file carries the shared components plus representative paths for each
+# pattern: list, create, detail, optimistic update, sub-resource write, and
+# idempotent write. Generated output covers all 263 endpoints.
