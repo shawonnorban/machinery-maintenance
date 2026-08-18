@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Shared\Tenancy\TenantContext;
 use App\Shared\View\Composers\AppShellComposer;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
         Model::preventSilentlyDiscardingAttributes(! app()->isProduction());
 
         Model::unguard(false);
+
+        // Bootstrap 5 pagination markup, matching the compact CoreUI listing.
+        Paginator::useBootstrapFive();
 
         View::composer(
             ['layouts.app', 'layouts.mobile', 'components.layout.*'],

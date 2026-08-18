@@ -7,15 +7,9 @@
     <title>@yield('title') — {{ config('app.name') }}</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
-<body class="bg-body-tertiary">
-    <div class="min-vh-100 d-flex flex-row align-items-center">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6 col-xl-5">
-                    @yield('content')
-                </div>
-            </div>
-        </div>
+<body>
+    <div class="login-shell">
+        @yield('content')
     </div>
 </body>
 </html>

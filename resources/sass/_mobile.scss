@@ -1,7 +1,13 @@
 // Technician screens (Frontend 6). Used one-handed, standing next to a running
 // machine, often with gloves.
+//
+// These deliberately opt OUT of the desktop density in app.scss. Where the two
+// conflict the technician wins on their own screens: the manager has a desk
+// and a keyboard, the technician has one hand and an oily glove
+// (Frontend 2, Frontend 3.3).
 
 .mobile-shell {
+  font-size: 1rem;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;

@@ -38,7 +38,7 @@ class DemoTenantSeeder extends Seeder
 
     public function run(): void
     {
-        $delta = $this->company('Delta Apparels Ltd', 'ডেল্টা অ্যাপারেলস লিমিটেড', 'DAL', 'bn');
+        $delta = $this->company('Delta Apparels Ltd', 'ডেল্টা অ্যাপারেলস লিমিটেড', 'DAL', 'en');
         $omega = $this->company('Omega Textiles Ltd', 'ওমেগা টেক্সটাইলস লিমিটেড', 'OTL', 'en');
 
         app(TenantContext::class)->set($delta->id);
@@ -185,7 +185,7 @@ class DemoTenantSeeder extends Seeder
     {
         $set = app(SetSetting::class);
 
-        $set->handle('locale.default', 'bn');
+        $set->handle('locale.default', 'en');
         $set->handle('metrics.downtime_uses_shift_calendar', true);
         $set->handle('work_order.approval_cost_threshold', '50000');
         // Gazipur runs continuously; Dhaka keeps the shift calendar. A factory

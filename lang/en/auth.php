@@ -13,4 +13,6 @@ return [
     'tenant_context_required' => 'No company context was established for this request.',
     'company_switched' => 'Switched to :company.',
     'logged_out' => 'You have been signed out.',
+    'reset_link_sent' => 'If that address belongs to an account, a reset link is on its way.',
+    'password_reset' => 'Your password has been reset. Sign in with the new one.',
 ];

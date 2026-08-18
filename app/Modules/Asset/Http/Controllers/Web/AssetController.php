@@ -59,7 +59,9 @@ class AssetController extends Controller
                 });
             })
             ->orderBy($sort, $direction)
-            ->paginate(25)
+            // Capped at 100 (API 35.3 rule 4): an unbounded per_page is a
+            // denial-of-service handed to the client.
+            ->paginate(min(max((int) $request->query('per_page', 25), 10), 100))
             ->withQueryString();
 
         return view('asset::assets.index', [

@@ -41,6 +41,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
+                                <th class="col-index">{{ __('common.row_number') }}</th>
                                 <th>{{ __('maintenance.due_at') }}</th>
                                 <th>{{ __('asset.asset') }}</th>
                                 <th>{{ __('maintenance.plan') }}</th>
@@ -50,9 +51,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($schedules as $schedule)
+                            @foreach ($schedules as $index => $schedule)
                                 <tr>
-                                    <td class="small">
+                                    <td class="col-index">{{ $schedules->firstItem() + $index }}</td>
+                                    <td>
                                         {{ $schedule->due_at->toDateString() }}
                                         @if ($schedule->isOverdue())
                                             <div class="small text-danger">
@@ -60,13 +62,13 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="small">
+                                    <td >
                                         <a href="{{ route('app.assets.show', $schedule->asset_id) }}">
                                             {{ $schedule->asset?->asset_code }}
                                         </a>
                                         <div class="text-body-secondary">{{ $schedule->asset?->name }}</div>
                                     </td>
-                                    <td class="small">
+                                    <td >
                                         <a href="{{ route('app.maintenance.plans.show', $schedule->maintenance_plan_id) }}">
                                             {{ $schedule->plan?->name }}
                                         </a>
@@ -97,7 +99,7 @@
 
                                 @can('maintenance.schedule.skip')
                                     @if ($schedule->isOpen())
-                                        <tr class="d-none"><td colspan="6">
+                                        <tr class="d-none"><td colspan="7">
                                             <div class="modal fade" id="skip-{{ $schedule->id }}" tabindex="-1">
                                                 <div class="modal-dialog">
                                                     <form class="modal-content" method="POST"
@@ -137,7 +139,10 @@
         </div>
 
         @if ($schedules->hasPages())
-            <div class="card-footer">{{ $schedules->links() }}</div>
+            <div class="table-footer">
+                <div>{{ __('common.showing_entries', ['from' => $schedules->firstItem(), 'to' => $schedules->lastItem(), 'total' => number_format($schedules->total())]) }}</div>
+                <div class="ms-auto">{{ $schedules->onEachSide(1)->links() }}</div>
+            </div>
         @endif
     </div>
 @endsection
