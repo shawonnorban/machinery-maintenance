@@ -31,13 +31,13 @@ class TenantScope implements Scope
             }
 
             throw new TenantContextMissingException(
-                sprintf('Query on %s ran without tenant context.', $model::class)
+                sprintf('Query on %s ran without tenant context.', $model::class),
             );
         }
 
         $builder->where(
             $model->qualifyColumn('company_id'),
-            $context->companyId()
+            $context->companyId(),
         );
     }
 }

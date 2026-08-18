@@ -12,6 +12,4 @@ use RuntimeException;
  * This is deliberately fatal rather than falling back to an unscoped query.
  * A silent unscoped query is a cross-tenant data leak (ADR-042 rule 1).
  */
-class TenantContextMissingException extends RuntimeException
-{
-}
+class TenantContextMissingException extends RuntimeException {}

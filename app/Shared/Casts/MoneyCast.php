@@ -19,9 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class MoneyCast implements CastsAttributes
 {
-    public function __construct(private readonly int $scale = 4)
-    {
-    }
+    public function __construct(private readonly int $scale = 4) {}
 
     public function get(Model $model, string $key, mixed $value, array $attributes): ?string
     {

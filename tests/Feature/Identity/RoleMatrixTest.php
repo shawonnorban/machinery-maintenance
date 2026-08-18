@@ -8,6 +8,7 @@ use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
 use App\Modules\Identity\Models\Permission;
 use App\Modules\Identity\Models\Role;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,7 +24,7 @@ class RoleMatrixTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
     }
 
     public function test_every_permission_is_granted_to_at_least_one_role(): void
@@ -39,7 +40,7 @@ class RoleMatrixTest extends TestCase
             [],
             array_values($orphans),
             'These permissions are granted to no seeded role, so no user can ever hold them: '
-            .implode(', ', $orphans)
+            .implode(', ', $orphans),
         );
     }
 
@@ -61,7 +62,7 @@ class RoleMatrixTest extends TestCase
             $this->assertSame(
                 [],
                 $writes,
-                "{$code} is a read-only role but holds write permissions: ".implode(', ', $writes)
+                "{$code} is a read-only role but holds write permissions: ".implode(', ', $writes),
             );
         }
     }
@@ -76,7 +77,7 @@ class RoleMatrixTest extends TestCase
             $this->assertSame(
                 [],
                 array_values($unknown),
-                "Role {$code} references permissions that do not exist: ".implode(', ', $unknown)
+                "Role {$code} references permissions that do not exist: ".implode(', ', $unknown),
             );
         }
     }
@@ -100,7 +101,7 @@ class RoleMatrixTest extends TestCase
         $this->assertCount(
             0,
             $role->permissions,
-            'Platform staff must reach tenant data only through an audited support grant (SRS 5.4).'
+            'Platform staff must reach tenant data only through an audited support grant (SRS 5.4).',
         );
     }
 }

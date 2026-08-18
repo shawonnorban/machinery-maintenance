@@ -18,7 +18,7 @@ class PermissionSeeder extends Seeder
 {
     /**
      * @return array<string, array<string, array{0: string, 1?: bool}>>
-     *         module => [code => [label, isElevated]]
+     *                                                                  module => [code => [label, isElevated]]
      */
     public static function catalog(): array
     {
@@ -169,7 +169,7 @@ class PermissionSeeder extends Seeder
                         'module' => $module,
                         'name' => $definition[0],
                         'is_elevated' => $definition[1] ?? false,
-                    ]
+                    ],
                 );
             }
         }

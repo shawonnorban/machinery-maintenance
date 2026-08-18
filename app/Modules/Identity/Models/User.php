@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 
 /**
  * A user is not tenant-owned. They may belong to several companies through
@@ -70,7 +71,7 @@ class User extends Authenticatable
      * Companies this user may actually select. A membership row that is not
      * ACTIVE grants nothing.
      *
-     * @return \Illuminate\Support\Collection<int, Company>
+     * @return Collection<int, Company>
      */
     public function accessibleCompanies()
     {

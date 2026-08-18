@@ -39,7 +39,7 @@ class RoleSeeder extends Seeder
 
         $readOnly = array_values(array_filter(
             $all,
-            fn (string $c) => str_ends_with($c, '.view') || str_ends_with($c, '.view_any')
+            fn (string $c) => str_ends_with($c, '.view') || str_ends_with($c, '.view_any'),
         ));
 
         $technician = [
@@ -198,7 +198,7 @@ class RoleSeeder extends Seeder
                 'name' => 'Auditor',
                 'scope' => 'COMPANY',
                 'permissions' => array_values(array_unique(
-                    array_merge($readOnly, ['audit.log.view'])
+                    array_merge($readOnly, ['audit.log.view']),
                 )),
             ],
         ];
@@ -215,7 +215,7 @@ class RoleSeeder extends Seeder
                     'name' => $definition['name'],
                     'scope' => $definition['scope'],
                     'is_system' => true,
-                ]
+                ],
             );
 
             $ids = [];

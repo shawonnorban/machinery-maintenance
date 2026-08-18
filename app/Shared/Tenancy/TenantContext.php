@@ -39,7 +39,7 @@ class TenantContext
         if (! $this->resolved || $this->companyId === null) {
             throw new TenantContextMissingException(
                 'Tenant context was not resolved. A tenant-scoped query ran outside a request '
-                .'with a company, or a queued job did not restore its context.'
+                .'with a company, or a queued job did not restore its context.',
             );
         }
 

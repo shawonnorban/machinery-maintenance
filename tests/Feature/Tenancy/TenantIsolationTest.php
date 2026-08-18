@@ -60,7 +60,7 @@ class TenantIsolationTest extends TestCase
         $this->assertSame(2, Factory::count());
         $this->assertEqualsCanonicalizing(
             ['ADHK', 'AGAZ'],
-            Factory::pluck('code')->all()
+            Factory::pluck('code')->all(),
         );
 
         $this->asCompany($this->beta);
