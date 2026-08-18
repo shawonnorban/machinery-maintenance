@@ -7,6 +7,8 @@ namespace Database\Seeders;
 use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
+use App\Modules\Maintenance\Database\Seeders\ChecklistTemplateSeeder;
+use App\Modules\Maintenance\Database\Seeders\MaintenanceTypeSeeder;
 use App\Modules\Settings\Database\Seeders\SettingDefinitionSeeder;
 use Illuminate\Database\Seeder;
 
@@ -26,6 +28,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             SettingDefinitionSeeder::class,
             AssetTaxonomySeeder::class,
+            MaintenanceTypeSeeder::class,
+            ChecklistTemplateSeeder::class,
         ]);
     }
 }
