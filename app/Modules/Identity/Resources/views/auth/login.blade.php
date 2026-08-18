@@ -1,40 +1,39 @@
-{{-- Placeholder markup. Replaced by the CoreUI login layout in build order
-     step 2 (Frontend 5.1). Kept minimal so the auth flow is testable now. --}}
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ __('Sign in') }} — {{ config('app.name') }}</title>
-</head>
-<body>
-    <main>
-        <h1>{{ config('app.name') }}</h1>
+@extends('layouts.auth')
+@section('title', __('common.sign_in'))
 
-        @if (session('status'))
-            <p role="status">{{ session('status') }}</p>
-        @endif
+@section('content')
+    <div class="card p-4 shadow-sm">
+        <div class="card-body">
+            <h1 class="h4 mb-1">{{ config('app.name') }}</h1>
+            <p class="text-body-secondary mb-4">{{ __('common.sign_in') }}</p>
 
-        @if ($errors->any())
-            <ul role="alert">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        @endif
+            <x-layout.flash />
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-            <label for="email">{{ __('Email') }}</label>
-            <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus>
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
 
-            <label for="password">{{ __('Password') }}</label>
-            <input id="password" name="password" type="password" required>
+                <div class="mb-3">
+                    <label for="email" class="form-label">{{ __('common.email') }}</label>
+                    <input id="email" name="email" type="email" autocomplete="username"
+                           class="form-control @error('email') is-invalid @enderror"
+                           value="{{ old('email') }}" required autofocus>
+                </div>
 
-            <label><input type="checkbox" name="remember" value="1"> {{ __('Remember me') }}</label>
+                <div class="mb-3">
+                    <label for="password" class="form-label">{{ __('common.password') }}</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password"
+                           class="form-control @error('password') is-invalid @enderror" required>
+                </div>
 
-            <button type="submit">{{ __('Sign in') }}</button>
-        </form>
-    </main>
-</body>
-</html>
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" name="remember" id="remember" value="1">
+                    <label class="form-check-label" for="remember">{{ __('common.remember_me') }}</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    {{ __('common.sign_in') }}
+                </button>
+            </form>
+        </div>
+    </div>
+@endsection

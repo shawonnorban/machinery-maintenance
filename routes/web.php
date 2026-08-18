@@ -15,8 +15,3 @@ Route::middleware('guest')->group(function (): void {
 Route::post('/logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
-
-// Placeholder until the dashboard module lands (build order step 26).
-Route::get('/app/dashboard', fn () => view('identity::auth.dashboard-placeholder'))
-    ->middleware(['auth'])
-    ->name('app.dashboard');

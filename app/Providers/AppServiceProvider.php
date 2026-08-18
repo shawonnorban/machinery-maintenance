@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Shared\Tenancy\TenantContext;
+use App\Shared\View\Composers\AppShellComposer;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,5 +31,7 @@ class AppServiceProvider extends ServiceProvider
         Model::preventSilentlyDiscardingAttributes(! app()->isProduction());
 
         Model::unguard(false);
+
+        View::composer(['layouts.app', 'components.layout.*'], AppShellComposer::class);
     }
 }

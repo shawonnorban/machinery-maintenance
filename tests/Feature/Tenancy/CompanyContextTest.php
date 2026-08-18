@@ -42,6 +42,12 @@ class CompanyContextTest extends TestCase
         TenantFixture::factory($this->rival, 'Rival Plant', 'RVP');
     }
 
+    /** The active company, as opposed to one merely listed in the switcher. */
+    private function activeCompany(Company $company): string
+    {
+        return 'data-company-id="'.$company->id.'"';
+    }
+
     public function test_context_defaults_to_the_users_default_membership(): void
     {
         $user = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
@@ -49,7 +55,7 @@ class CompanyContextTest extends TestCase
         $this->actingAs($user)
             ->get('/app/dashboard')
             ->assertOk()
-            ->assertSee($this->delta->id);
+            ->assertSee($this->activeCompany($this->delta), false);
     }
 
     public function test_a_multi_company_user_can_switch(): void
@@ -64,8 +70,8 @@ class CompanyContextTest extends TestCase
         $this->actingAs($user)
             ->get('/app/dashboard')
             ->assertOk()
-            ->assertSee($this->omega->id)
-            ->assertDontSee($this->delta->id);
+            ->assertSee($this->activeCompany($this->omega), false)
+            ->assertDontSee($this->activeCompany($this->delta), false);
     }
 
     public function test_switching_to_a_company_the_user_does_not_belong_to_is_refused(): void
@@ -80,8 +86,8 @@ class CompanyContextTest extends TestCase
         $this->actingAs($user)
             ->get('/app/dashboard')
             ->assertOk()
-            ->assertSee($this->delta->id)
-            ->assertDontSee($this->rival->id);
+            ->assertSee($this->activeCompany($this->delta), false)
+            ->assertDontSee($this->activeCompany($this->rival), false);
     }
 
     public function test_a_company_id_header_naming_a_non_membership_is_forbidden(): void
@@ -105,7 +111,7 @@ class CompanyContextTest extends TestCase
             ->withHeader('X-Company-Id', $this->omega->id)
             ->get('/app/dashboard')
             ->assertOk()
-            ->assertSee($this->omega->id);
+            ->assertSee($this->activeCompany($this->omega), false);
     }
 
     public function test_a_user_with_no_active_membership_is_refused(): void

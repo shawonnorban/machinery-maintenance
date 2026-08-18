@@ -149,16 +149,17 @@ class AuthenticationTest extends TestCase
 
     public function test_the_session_id_is_regenerated_on_login(): void
     {
-        $this->get('/login');
-        $before = session()->getId();
+        $this->get('/login')->assertOk();
+        $before = $this->app['session']->getId();
+        $this->assertNotEmpty($before);
 
         $this->post('/login', [
             'email' => 'manager@delta.test',
             'password' => 'correct-horse-battery',
-        ]);
+        ])->assertRedirect(route('app.dashboard'));
 
         // Session fixation: the pre-login id must not remain valid.
-        $this->assertNotSame($before, session()->getId());
+        $this->assertNotSame($before, $this->app['session']->getId());
     }
 
     public function test_signing_out_invalidates_the_session(): void

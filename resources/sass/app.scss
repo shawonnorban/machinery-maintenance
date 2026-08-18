@@ -1,0 +1,105 @@
+// Bootstrap 5 + CoreUI 5 Free (MIT). No commercial component is used;
+// the requirement is the CoreUI design, not its PRO widgets (ADR-066).
+
+// ---------------------------------------------------------------------------
+// Theme variables. Set before the imports so Bootstrap picks them up.
+// ---------------------------------------------------------------------------
+$font-family-sans-serif:
+  'Noto Sans', 'Noto Sans Bengali', -apple-system, BlinkMacSystemFont,
+  'Segoe UI', Roboto, sans-serif;
+
+// Frontend 3.3: minimum 16px body text. Factory lighting is poor and the
+// screens technicians use are often scratched.
+$font-size-base: 1rem;
+
+// Minimum 44x44px touch targets. A gloved thumb is not a mouse pointer.
+$input-btn-padding-y: 0.5rem;
+$input-btn-padding-x: 1rem;
+$btn-padding-y-lg: 0.75rem;
+$btn-padding-x-lg: 1.5rem;
+
+$border-radius: 0.375rem;
+
+@import 'bootstrap/scss/bootstrap';
+@import '@coreui/coreui/scss/coreui';
+@import 'mobile';
+
+// ---------------------------------------------------------------------------
+// Bengali typography
+// ---------------------------------------------------------------------------
+// Bengali strings run 20-40% longer than English, so anything that constrains
+// width has to tolerate wrapping rather than clipping (Frontend 7 rule 5).
+:lang(bn) {
+  line-height: 1.75;
+
+  .btn,
+  .nav-link,
+  .sidebar-nav .nav-link {
+    white-space: normal;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Status pills
+// ---------------------------------------------------------------------------
+// Status is never conveyed by colour alone: every pill carries text. A red dot
+// means nothing to a colour-blind technician (Frontend 3.3 rule 4).
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: currentcolor;
+    flex: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// KPI tiles
+// ---------------------------------------------------------------------------
+.kpi-tile {
+  .kpi-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  // A figure with no period is not a figure; the caption always carries one.
+  .kpi-caption {
+    font-size: 0.8125rem;
+    opacity: 0.75;
+  }
+
+  // Rendered when a KPI has a null denominator. Never shown as 0, which would
+  // read as "fails constantly" (SRS 31.2 rule 2).
+  .kpi-na {
+    font-size: 1.5rem;
+    font-weight: 500;
+    opacity: 0.6;
+  }
+}
+
+.table-sticky-head thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+// Connection state in the header. A technician must know their screen is stale.
+.connection-indicator {
+  font-size: 0.75rem;
+
+  &[data-state='offline'] { color: var(--cui-danger); }
+  &[data-state='reconnecting'] { color: var(--cui-warning); }
+  &[data-state='live'] { color: var(--cui-success); }
+}

@@ -1,1 +1,37 @@
-//
+import 'bootstrap';
+import '@coreui/coreui';
+import http from './http';
+
+window.http = http;
+
+/**
+ * Shared behaviour for every authenticated page.
+ * Kept small on purpose: this bundle loads on the technician's phone too.
+ */
+
+// Sidebar collapse, persisted so a user's choice survives navigation.
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.querySelector('.sidebar');
+    const toggler = document.querySelector('[data-sidebar-toggle]');
+
+    if (sidebar && toggler) {
+        if (localStorage.getItem('sidebar:narrow') === '1') {
+            sidebar.classList.add('sidebar-narrow');
+        }
+
+        toggler.addEventListener('click', () => {
+            const narrow = sidebar.classList.toggle('sidebar-narrow');
+            localStorage.setItem('sidebar:narrow', narrow ? '1' : '0');
+        });
+    }
+
+    // Confirmation naming the record, not a bare "Are you sure?"
+    // (Frontend 3.3 rule 6).
+    document.querySelectorAll('[data-confirm]').forEach((el) => {
+        el.addEventListener('submit', (event) => {
+            if (!window.confirm(el.dataset.confirm)) {
+                event.preventDefault();
+            }
+        });
+    });
+});
