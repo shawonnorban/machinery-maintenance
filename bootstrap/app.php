@@ -6,10 +6,20 @@ use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
 use App\Shared\Exceptions\TenantContextMissingException;
 use App\Shared\Http\Middleware\AssignRequestId;
 use App\Shared\Http\Middleware\SetLocale;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\AuthenticateSession;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -40,6 +50,28 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'company' => ResolveTenantContext::class,
+        ]);
+
+        // Route model binding MUST run after the tenant is resolved.
+        //
+        // Otherwise the binding query runs unscoped and resolves another
+        // company's record, which the policy then rejects with 403. That
+        // leaks existence: a 403 tells an attacker the id is real, while a
+        // 404 does not (API 2). Authentication has to come first in turn,
+        // because tenant context derives from membership.
+        $middleware->priority([
+            HandlePrecognitiveRequests::class,
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            ValidateCsrfToken::class,
+            Authenticate::class,
+            AuthenticateSession::class,
+            SetLocale::class,
+            ResolveTenantContext::class,
+            SubstituteBindings::class,
+            Authorize::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

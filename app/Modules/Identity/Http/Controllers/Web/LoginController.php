@@ -6,9 +6,9 @@ namespace App\Modules\Identity\Http\Controllers\Web;
 
 use App\Modules\Identity\Actions\AttemptLogin;
 use App\Modules\Identity\Http\Requests\LoginRequest;
+use App\Shared\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 

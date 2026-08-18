@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\Tenancy\Http\Controllers\Web;
 
 use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
+use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 
 /**
  * The two global scope controls in the header (Frontend 4.2).

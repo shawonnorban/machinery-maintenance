@@ -6,8 +6,8 @@ namespace App\Modules\Identity\Http\Controllers\Web;
 
 use App\Modules\Identity\Actions\SwitchCompany;
 use App\Modules\Identity\Http\Requests\SwitchCompanyRequest;
+use App\Shared\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Controller;
 
 class CompanySwitchController extends Controller
 {

@@ -7,8 +7,8 @@ namespace App\Modules\Tenancy\Http\Controllers\Web;
 use App\Modules\Identity\Services\PermissionResolver;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
+use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
-use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 
 /**
