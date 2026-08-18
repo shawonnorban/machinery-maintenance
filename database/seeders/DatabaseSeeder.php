@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
+use App\Modules\Settings\Database\Seeders\SettingDefinitionSeeder;
 use Illuminate\Database\Seeder;
 
 /**
@@ -22,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RoleSeeder::class,
+            SettingDefinitionSeeder::class,
         ]);
     }
 }
