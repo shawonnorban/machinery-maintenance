@@ -457,9 +457,19 @@ class DemoTenantSeeder extends Seeder
             return;
         }
 
+        // Matched to what the machines actually are. Taking the first
+        // published template regardless put "Boiler — weekly inspection" on a
+        // row of sewing machines, which makes the demo read as nonsense and
+        // hides whether the checklist wiring works at all.
+        $assetTypeId = $assets[0]->asset_type_id ?? null;
+
         $template = MaintenanceTemplate::whereNull('company_id')
+            ->where('asset_type_id', $assetTypeId)
             ->get()
-            ->first(fn (MaintenanceTemplate $t) => $t->currentVersion() !== null);
+            ->first(fn (MaintenanceTemplate $t) => $t->currentVersion() !== null)
+            ?? MaintenanceTemplate::whereNull('company_id')
+                ->get()
+                ->first(fn (MaintenanceTemplate $t) => $t->currentVersion() !== null);
 
         $version = $template?->currentVersion();
         $preventive = MaintenanceType::whereNull('company_id')->where('code', 'PREVENTIVE')->firstOrFail();

@@ -91,4 +91,5 @@ return [
             'body' => ':on_hand left, reorder level is :reorder_level.',
         ],
     ],
+    'view_all' => 'View all notifications',
 ];

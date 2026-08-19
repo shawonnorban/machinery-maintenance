@@ -123,7 +123,7 @@ class SidebarMenu
             ],
             [
                 'label' => 'nav.audit_log',
-                'icon' => 'shield',
+                'icon' => 'shield-alt',
                 'route' => 'app.audit-logs',
                 'permission' => 'audit.log.view',
             ],

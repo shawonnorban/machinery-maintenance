@@ -95,6 +95,98 @@ $h6-font-size: 0.875rem;
   }
 }
 
+// ---------------------------------------------------------------------------
+// Notification bell
+//
+// The badge is positioned against the link itself. Positioned off an ancestor
+// it escaped above the topbar and was clipped, which read as a rendering fault
+// rather than as a count.
+// ---------------------------------------------------------------------------
+.notification-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1rem;
+
+  &::after {
+    display: none; // no caret: the bell is the affordance
+  }
+}
+
+.notification-bell-badge {
+  position: absolute;
+  top: 0.05rem;
+  inset-inline-start: 1.05rem;
+  min-width: 1rem;
+  padding: 0 0.2rem;
+  border-radius: 0.5rem;
+  background: var(--cui-danger, #e55353);
+  color: #fff;
+  font-size: 0.625rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.notification-dropdown {
+  width: 20rem;
+  max-height: 24rem;
+  overflow-y: auto;
+  padding-block: 0;
+
+  .dropdown-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--cui-body-bg, #fff);
+    padding-block: 0.5rem;
+    font-size: 0.8125rem;
+  }
+}
+
+.notification-dropdown-item {
+  white-space: normal;
+  padding-block: 0.5rem;
+  font-size: 0.8125rem;
+  border-bottom: 1px solid var(--cui-border-color-translucent, rgba(0, 0, 21, 0.1));
+
+  &.unread {
+    background: var(--cui-tertiary-bg, #f8f9fa);
+  }
+}
+
+.notification-dropdown-body,
+.notification-dropdown-time {
+  font-size: 0.75rem;
+}
+
+.notification-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.35rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// A dot rather than a second icon for child items: eight aligned labels scan
+// faster than eight distinct icons.
+.sidebar-nav .nav-icon-bullet {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-inline-start: 50%;
+    width: 0.25rem;
+    height: 0.25rem;
+    margin: -0.125rem 0 0 -0.125rem;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+  }
+}
+
 .body {
   padding-block: 0.25rem;
 }

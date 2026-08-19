@@ -39,6 +39,7 @@ class AppShellComposer
             'factories' => $this->factories(),
             'scopedFactoryId' => session(ResolveTenantContext::FACTORY_SCOPE_KEY),
             'unreadNotifications' => $this->unreadNotifications(),
+            'recentNotifications' => $this->recentNotifications(),
 
             // Per-request context for window.App. Built here rather than
             // inline in Blade, and never compiled into the Vite bundle: it
@@ -67,6 +68,27 @@ class AppShellComposer
         return Notification::where('user_id', auth()->id())
             ->whereNull('read_at')
             ->count();
+    }
+
+    /**
+     * The handful the bell dropdown shows.
+     *
+     * Five, newest first, unread ones included whether or not they have been
+     * read: a dropdown that empties the moment somebody glances at it is a
+     * dropdown that looks broken. The full history is a page away.
+     *
+     * @return Collection<int, Notification>
+     */
+    private function recentNotifications(): Collection
+    {
+        if (auth()->guest() || $this->context->companyIdOrNull() === null) {
+            return collect();
+        }
+
+        return Notification::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
     }
 
     /**
