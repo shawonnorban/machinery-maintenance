@@ -1,4 +1,4 @@
-@props(['companies', 'factories'])
+@props(['companies', 'factories', 'unreadNotifications' => 0])
 
 <header class="header header-sticky mb-4 border-bottom">
     <div class="container-fluid px-4">
@@ -31,6 +31,20 @@
                 <span class="connection-indicator" data-state="live" id="connection-state">
                     ● {{ __('common.connection_live') }}
                 </span>
+            </li>
+
+            {{-- A count, not a list: the header renders on every screen and
+                 loading rows nobody opened would cost a query everywhere. --}}
+            <li class="nav-item">
+                <a class="nav-link position-relative" href="{{ route('app.notifications') }}"
+                   aria-label="{{ __('notification.notifications') }}">
+                    <i class="cil-bell" aria-hidden="true"></i>
+                    @if ($unreadNotifications > 0)
+                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                            {{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}
+                        </span>
+                    @endif
+                </a>
             </li>
 
             <li class="nav-item dropdown">

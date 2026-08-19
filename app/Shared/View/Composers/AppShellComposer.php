@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\View\Composers;
 
+use App\Modules\Notification\Models\Notification;
 use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
@@ -37,6 +38,7 @@ class AppShellComposer
             'companies' => $user ? $this->companies() : collect(),
             'factories' => $this->factories(),
             'scopedFactoryId' => session(ResolveTenantContext::FACTORY_SCOPE_KEY),
+            'unreadNotifications' => $this->unreadNotifications(),
 
             // Per-request context for window.App. Built here rather than
             // inline in Blade, and never compiled into the Vite bundle: it
@@ -47,6 +49,24 @@ class AppShellComposer
                 'csrf' => csrf_token(),
             ],
         ]);
+    }
+
+    /**
+     * The count for the header bell.
+     *
+     * A single count query rather than the rows: the header renders on every
+     * screen, and loading a list nobody opened would add a query and a hundred
+     * models to every request in the product.
+     */
+    private function unreadNotifications(): int
+    {
+        if (auth()->guest() || $this->context->companyIdOrNull() === null) {
+            return 0;
+        }
+
+        return Notification::where('user_id', auth()->id())
+            ->whereNull('read_at')
+            ->count();
     }
 
     /**

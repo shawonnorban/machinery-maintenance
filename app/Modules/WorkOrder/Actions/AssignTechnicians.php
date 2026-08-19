@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Actions;
 
+use App\Modules\Notification\Services\MaintenanceNotifier;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderAssignment;
@@ -20,7 +21,10 @@ use Illuminate\Validation\ValidationException;
  */
 class AssignTechnicians
 {
-    public function __construct(private readonly TransitionWorkOrder $transition) {}
+    public function __construct(
+        private readonly TransitionWorkOrder $transition,
+        private readonly MaintenanceNotifier $notifier,
+    ) {}
 
     /**
      * @param  list<string>  $technicianIds
@@ -80,6 +84,11 @@ class AssignTechnicians
                     'assigned_by' => $userId,
                     'assigned_at' => $now,
                 ]);
+
+                // The person who has to do the work is the person who needs to
+                // know, so this goes to the technician rather than their
+                // manager.
+                $this->notifier->workOrderAssigned($workOrder, $technician);
             }
 
             $workOrder = $workOrder->fresh();

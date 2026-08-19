@@ -8,6 +8,8 @@ use App\Modules\Inventory\Models\Bin;
 use App\Modules\Inventory\Models\InventoryBalance;
 use App\Modules\Inventory\Models\InventoryTransaction;
 use App\Modules\Inventory\Models\SparePart;
+use App\Modules\Notification\Models\Notification;
+use App\Modules\Notification\Services\MaintenanceNotifier;
 use App\Modules\Settings\Services\SettingsResolver;
 use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -43,6 +45,7 @@ class InventoryLedger
     public function __construct(
         private readonly TenantContext $context,
         private readonly SettingsResolver $settings,
+        private readonly MaintenanceNotifier $notifier,
     ) {}
 
     /**
@@ -79,7 +82,7 @@ class InventoryLedger
             }
         }
 
-        return DB::transaction(function () use (
+        $transaction = DB::transaction(function () use (
             $part, $bin, $type, $quantity, $unitCost, $attributes
         ): InventoryTransaction {
             $balance = $this->lockBalance($part, $bin);
@@ -149,6 +152,49 @@ class InventoryLedger
 
             return $transaction;
         });
+
+        // After the movement is committed. A notification that fails must never
+        // roll back the stock movement it was announcing, and the store is
+        // short of the part either way.
+        $this->notifyIfLow($part, $type);
+
+        return $transaction;
+    }
+
+    /**
+     * Tells the store when an outbound movement takes a part to or below its
+     * reorder level.
+     *
+     * On the crossing, not on every issue afterwards: repeating the warning on
+     * each of the next twenty issues is how people learn to ignore it.
+     */
+    private function notifyIfLow(SparePart $part, string $type): void
+    {
+        if (! in_array($type, InventoryTransaction::OUTBOUND, true)) {
+            return;
+        }
+
+        $part = $part->fresh();
+        $onHand = $part->totalOnHand();
+        $reorder = (string) ($part->reorder_level ?? '0');
+
+        if (bccomp($reorder, '0', self::SCALE) <= 0 || bccomp($onHand, $reorder, self::SCALE) > 0) {
+            return;
+        }
+
+        // Already warned since the last time it was restocked above the level.
+        $alreadyWarned = Notification::query()
+            ->where('event_type', 'LOW_STOCK')
+            ->where('entity_type', 'spare_part')
+            ->where('entity_id', $part->id)
+            ->where('created_at', '>=', now()->subDay())
+            ->exists();
+
+        if ($alreadyWarned) {
+            return;
+        }
+
+        $this->notifier->lowStock($part, $onHand);
     }
 
     /**

@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Approval\Actions;
 
 use App\Modules\Approval\Models\ApprovalRequest;
+use App\Modules\Approval\Models\ApprovalRule;
 use App\Modules\Approval\Models\ApprovalWorkflow;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Identity\Models\User;
+use App\Modules\Identity\Models\UserRole;
+use App\Modules\Notification\Services\MaintenanceNotifier;
 use App\Modules\WorkOrder\Models\WorkOrder;
+use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -25,7 +31,10 @@ use Illuminate\Support\Facades\DB;
  */
 class RequestApproval
 {
-    public function __construct(private readonly TenantContext $context) {}
+    public function __construct(
+        private readonly TenantContext $context,
+        private readonly MaintenanceNotifier $notifier,
+    ) {}
 
     /**
      * Raises approval for a work order, if the configured rules call for any.
@@ -85,6 +94,15 @@ class RequestApproval
                 'approval_request_id' => $request->id,
             ])->save();
 
+            // Told to whoever can actually sign the first step. A request
+            // nobody knows about is a job that stalls for a day and then gets
+            // blamed on the workflow.
+            $this->notifier->approvalRequested(
+                $workOrder,
+                $this->approversForFirstStep($applicable->first(), $workOrder->company_id),
+                $context['cost'],
+            );
+
             return $request;
         });
     }
@@ -118,6 +136,35 @@ class RequestApproval
             'priority' => $workOrder->priority,
             'asset_id' => $workOrder->asset_id,
         ];
+    }
+
+    /**
+     * The people who can act on the first step, so the notification reaches
+     * somebody who can do something rather than everybody who might care.
+     *
+     * @return Collection<int, User>
+     */
+    private function approversForFirstStep(?ApprovalRule $rule, string $companyId): Collection
+    {
+        if ($rule === null) {
+            return collect();
+        }
+
+        if ($rule->user_id !== null) {
+            return User::where('id', $rule->user_id)->get();
+        }
+
+        if ($rule->role_id === null) {
+            return collect();
+        }
+
+        $userIds = UserRole::withoutGlobalScope(TenantScope::class)
+            ->where('company_id', $companyId)
+            ->where('role_id', $rule->role_id)
+            ->pluck('user_id')
+            ->unique();
+
+        return User::whereIn('id', $userIds)->where('status', 'ACTIVE')->get();
     }
 
     private function workflowFor(string $entityType): ?ApprovalWorkflow

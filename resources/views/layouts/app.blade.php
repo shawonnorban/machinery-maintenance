@@ -25,7 +25,8 @@
     <x-layout.sidebar :menu="$menu" />
 
     <div class="wrapper d-flex flex-column min-vh-100">
-        <x-layout.header :companies="$companies" :factories="$factories" />
+        <x-layout.header :companies="$companies" :factories="$factories"
+                         :unread-notifications="$unreadNotifications ?? 0" />
 
         <div class="body flex-grow-1">
             <div class="container-lg px-4">

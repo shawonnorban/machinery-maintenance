@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
+use App\Modules\Notification\Console\EscalateNotifications;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -15,5 +16,15 @@ use Illuminate\Support\Facades\Schedule;
  */
 Schedule::command(GenerateMaintenanceSchedules::class)
     ->hourly()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Escalation runs often, because its whole value is being timely: a rule that
+ * says "tell the manager after thirty minutes" is worthless if it is evaluated
+ * hourly.
+ */
+Schedule::command(EscalateNotifications::class)
+    ->everyFiveMinutes()
     ->withoutOverlapping()
     ->runInBackground();

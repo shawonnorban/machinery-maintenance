@@ -10,6 +10,7 @@ use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\BreakdownStatusHistory;
 use App\Modules\Breakdown\Models\DowntimeReasonCode;
 use App\Modules\Breakdown\Services\DowntimeCalculator;
+use App\Modules\Notification\Services\MaintenanceNotifier;
 use App\Modules\Settings\Services\NumberSequenceGenerator;
 use App\Modules\Tenancy\Models\Factory;
 use Carbon\CarbonImmutable;
@@ -32,6 +33,7 @@ class ReportBreakdown
         private readonly NumberSequenceGenerator $numbers,
         private readonly ChangeAssetStatus $assetStatus,
         private readonly DowntimeCalculator $downtime,
+        private readonly MaintenanceNotifier $notifier,
     ) {}
 
     /**
@@ -133,6 +135,10 @@ class ReportBreakdown
             // Written immediately, so an open stoppage is visible as it accrues
             // rather than appearing as zero until somebody closes it.
             $this->downtime->forBreakdown($breakdown);
+
+            // Last, and unable to fail the report: the machine is down whether
+            // or not anyone could be told about it.
+            $this->notifier->breakdownReported($breakdown);
 
             return $breakdown->fresh();
         });

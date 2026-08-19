@@ -41,6 +41,7 @@ use App\Modules\Maintenance\Models\ChecklistItem;
 use App\Modules\Maintenance\Models\MaintenanceTemplate;
 use App\Modules\Maintenance\Models\MaintenanceTemplateVersion;
 use App\Modules\Maintenance\Models\MaintenanceType;
+use App\Modules\Notification\Models\EscalationRule;
 use App\Modules\Settings\Actions\SetSetting;
 use App\Modules\Tenancy\Models\Building;
 use App\Modules\Tenancy\Models\Company;
@@ -110,6 +111,7 @@ class DemoTenantSeeder extends Seeder
         // Machines and work in every interesting state, so the screens can be
         // judged against real data rather than against empty tables.
         $this->approvalWorkflow($delta);
+        $this->escalationRules($delta);
 
         $assets = $this->assets($delta, $dhaka);
         // Raised by the engineer so the manager can actually sign them: a
@@ -834,6 +836,41 @@ class DemoTenantSeeder extends Seeder
                 'invoice_reference' => $invoice,
                 'occurred_at' => CarbonImmutable::now()->subDays($daysAgo),
             ], $manager->id);
+        }
+    }
+
+    /**
+     * The SRS 28 escalation chain: technician, then maintenance manager after
+     * thirty minutes, then factory manager after sixty.
+     *
+     * Only for critical breakdowns. Escalating every event teaches everyone to
+     * ignore the channel, and the thing worth waking somebody for is a stopped
+     * line rather than a routine service reminder.
+     */
+    private function escalationRules(Company $company): void
+    {
+        if (EscalationRule::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        foreach ([
+            ['BREAKDOWN_CRITICAL', 1, 30, 'MAINTENANCE_MANAGER'],
+            ['BREAKDOWN_CRITICAL', 2, 60, 'FACTORY_MANAGER'],
+            ['MAINTENANCE_OVERDUE', 1, 1440, 'MAINTENANCE_MANAGER'],
+            ['APPROVAL_REQUESTED', 1, 480, 'FACTORY_MANAGER'],
+        ] as [$event, $level, $delay, $roleCode]) {
+            EscalationRule::create([
+                'company_id' => $company->id,
+                'event_type' => $event,
+                // Measured from the original event, so a stalled chain cannot
+                // drift.
+                'delay_minutes' => $delay,
+                'escalation_level' => $level,
+                'escalation_role_id' => Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail()->id,
+                'max_escalations' => 3,
+                'stop_on_acknowledge' => true,
+                'active' => true,
+            ]);
         }
     }
 
