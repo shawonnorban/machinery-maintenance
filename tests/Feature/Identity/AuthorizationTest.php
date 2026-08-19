@@ -58,26 +58,43 @@ class AuthorizationTest extends TestCase
         $this->assertFalse(Gate::forUser($technician)->allows('inventory.adjustment.create'));
     }
 
+    /**
+     * Against controls that do something, not markers placed for the test.
+     *
+     * These assertions used to run against two inert buttons on the placeholder
+     * dashboard. A gate proven only over a button that does nothing proves
+     * nothing: the check has to sit on the real link a user would click.
+     */
     public function test_the_ui_hides_controls_the_user_cannot_use(): void
     {
         $technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
 
-        $response = $this->actingAs($technician)->get('/app/dashboard');
+        // Both screens a technician can legitimately open, each carrying a
+        // control they must not be offered.
+        $this->actingAs($technician)
+            ->get('/app/assets')
+            ->assertOk()
+            ->assertDontSee(route('app.assets.create'), false);
 
-        $response->assertOk();
-        $response->assertDontSee('data-testid="create-asset"', false);
-        $response->assertDontSee('data-testid="manage-billing"', false);
+        $this->actingAs($technician)
+            ->get('/app/inventory/parts')
+            ->assertOk()
+            ->assertDontSee(route('app.inventory.parts.create'), false);
     }
 
     public function test_an_owner_sees_the_controls_a_technician_does_not(): void
     {
         $owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
 
-        $response = $this->actingAs($owner)->get('/app/dashboard');
+        $this->actingAs($owner)
+            ->get('/app/assets')
+            ->assertOk()
+            ->assertSee(route('app.assets.create'), false);
 
-        $response->assertOk();
-        $response->assertSee('data-testid="create-asset"', false);
-        $response->assertSee('data-testid="manage-billing"', false);
+        $this->actingAs($owner)
+            ->get('/app/inventory/parts')
+            ->assertOk()
+            ->assertSee(route('app.inventory.parts.create'), false);
     }
 
     public function test_a_factory_scoped_role_grants_only_that_factory(): void

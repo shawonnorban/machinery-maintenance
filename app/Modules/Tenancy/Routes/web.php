@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Modules\Tenancy\Http\Controllers\Web\DashboardController;
+use App\Modules\Analytics\Http\Controllers\Web\DashboardController;
 use App\Modules\Tenancy\Http\Controllers\Web\PreferenceController;
 use Illuminate\Support\Facades\Route;
 

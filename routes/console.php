@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Analytics\Console\SnapshotKpis;
 use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
 use App\Modules\Notification\Console\EscalateNotifications;
 use Illuminate\Support\Facades\Schedule;
@@ -26,5 +27,15 @@ Schedule::command(GenerateMaintenanceSchedules::class)
  */
 Schedule::command(EscalateNotifications::class)
     ->everyFiveMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * KPI snapshots (ADR-058). Hourly, because today's figure moves all day and a
+ * dashboard showing this morning's availability at six in the evening loses
+ * trust in the whole screen rather than one tile.
+ */
+Schedule::command(SnapshotKpis::class)
+    ->hourly()
     ->withoutOverlapping()
     ->runInBackground();

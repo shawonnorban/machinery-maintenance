@@ -7,7 +7,7 @@ return [
     'approval' => 'অনুমোদন',
     'workflow' => 'অনুমোদন প্রক্রিয়া',
     'step' => 'ধাপ',
-    'of_steps' => ':totalটি ধাপের মধ্যে',
+    'of_steps' => ':total টি ধাপের মধ্যে',
     'requested_by' => 'অনুরোধকারী',
     'requested_at' => 'অনুরোধের সময়',
     'approver' => 'অনুমোদনকারী',
