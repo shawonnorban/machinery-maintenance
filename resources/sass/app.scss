@@ -76,6 +76,9 @@ $shell-header-height: 3.25rem;
 $sidebar-link-padding-x: 0.875rem;
 $sidebar-icon-width: 1.25rem;
 $sidebar-icon-margin: 0.5rem;
+// How far a child steps in past its parent's label. Enough to see at a
+// glance without eating the width a 14rem nav has to spend on labels.
+$sidebar-nesting-step: 0.75rem;
 
 .sidebar {
   --bs-sidebar-width: #{$sidebar-width};
@@ -126,22 +129,28 @@ $sidebar-icon-margin: 0.5rem;
     font-size: 0.8125rem;
   }
 
-  // A child sits one icon-width in from where its parent's label starts, so
-  // the tree reads as a tree. Derived from the same variables as the parent
-  // rather than a hand-tuned number: the previous 2.1rem was less than the
-  // parent's own label offset, which put the children to the LEFT of the
-  // group they belong to.
+  // A child is indented a clear step past where its parent's label starts,
+  // so the group reads as a group. Aligning it exactly with the parent label
+  // was too subtle to see — the two levels looked like one flat list.
   .nav-group-items .nav-link {
     padding-inline-start: calc(
-      #{$sidebar-link-padding-x} + #{$sidebar-icon-width} + #{$sidebar-icon-margin}
+      #{$sidebar-link-padding-x} + #{$sidebar-icon-width} + #{$sidebar-icon-margin} +
+        #{$sidebar-nesting-step}
     );
   }
 
-  .nav-icon {
+  // Scoped away from the bullet on purpose. The bullet carries both classes,
+  // and widening .nav-icon to an icon's width stretched CoreUI's round dot
+  // into a flat dash while its height stayed at the dot size.
+  .nav-link > .nav-icon:not(.nav-icon-bullet) {
     width: #{$sidebar-icon-width};
     margin-inline-end: #{$sidebar-icon-margin};
     font-size: 0.9rem;
     text-align: center;
+  }
+
+  .nav-icon-bullet {
+    margin-inline-end: #{$sidebar-icon-margin};
   }
 }
 
