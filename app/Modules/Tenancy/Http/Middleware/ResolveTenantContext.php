@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Tenancy\Http\Middleware;
 
+use App\Modules\Audit\Services\AuditRecorder;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Services\PermissionResolver;
 use App\Shared\Tenancy\TenantContext;
@@ -111,6 +112,20 @@ class ResolveTenantContext
 
     private function denyTenantAccess(Request $request): Response
     {
+        // A request naming a company the user does not belong to is the single
+        // most important thing this system can log: it is either a bug or an
+        // attempt, and both need to be visible (SRS 34, ADR-061).
+        app(AuditRecorder::class)->event(
+            'SECURITY_EVENT',
+            [
+                'reason' => 'TENANT_ACCESS_DENIED',
+                'requested_company_id' => $this->requestedCompanyId($request),
+                'path' => $request->path(),
+            ],
+            userId: $request->user()?->id,
+            label: 'TENANT_ACCESS_DENIED',
+        );
+
         // 403 rather than 404 here: the caller named a tenant explicitly, so
         // there is nothing left to conceal (API 2).
         if ($request->expectsJson()) {
