@@ -44,6 +44,84 @@ class RoleMatrixTest extends TestCase
         );
     }
 
+    /**
+     * Permissions that are administrative on purpose.
+     *
+     * Each of these belongs to whoever owns the account rather than to anyone
+     * running a factory: billing is the account holder's, and integration
+     * credentials and company-wide numbering are configuration, not daily work.
+     * Regenerating a QR token invalidates a printed label, which is a security
+     * action rather than a reprint.
+     *
+     * The list is explicit so that adding a permission here is a decision
+     * somebody made, not something that happened by omission.
+     *
+     * @var list<string>
+     */
+    private const DELIBERATELY_ADMINISTRATIVE = [
+        'asset.qr.regenerate',
+        'admin.api_client.manage',
+        'settings.company.manage',
+        'settings.numbering.manage',
+        'billing.subscription.manage',
+        'billing.payment.manage',
+        'webhook.endpoint.manage',
+    ];
+
+    /**
+     * The previous test passes as long as SOME role holds a permission, and the
+     * owner holds every one — so a permission reaching nobody who actually does
+     * the job still looks granted. That masked two real gaps already:
+     * maintenance.schedule.skip, which stopped a maintenance manager running
+     * their own schedule, and cost.entry.reverse, which no operational role
+     * could use at all. This checks the roles that do the work.
+     */
+    public function test_every_permission_reaches_a_role_that_is_not_the_owner(): void
+    {
+        $reachable = Role::query()
+            ->whereNull('company_id')
+            ->whereNotIn('code', ['COMPANY_OWNER', 'COMPANY_ADMIN', 'PLATFORM_SUPER_ADMIN'])
+            ->with('permissions')
+            ->get()
+            ->flatMap(fn (Role $role) => $role->permissions->pluck('code'))
+            ->unique()
+            ->all();
+
+        $unreachable = array_values(array_diff(
+            PermissionSeeder::allCodes(),
+            $reachable,
+            self::DELIBERATELY_ADMINISTRATIVE,
+        ));
+
+        $this->assertSame(
+            [],
+            $unreachable,
+            'These permissions reach only the owner or admin, so nobody who does the job can hold them. '
+            .'Either grant one to an operational role, or add it to DELIBERATELY_ADMINISTRATIVE with a reason: '
+            .implode(', ', $unreachable),
+        );
+    }
+
+    public function test_the_administrative_allowlist_holds_no_stale_entries(): void
+    {
+        // An entry that is now granted operationally, or no longer exists, is a
+        // stale exemption quietly weakening the check above.
+        $reachable = Role::query()
+            ->whereNull('company_id')
+            ->whereNotIn('code', ['COMPANY_OWNER', 'COMPANY_ADMIN', 'PLATFORM_SUPER_ADMIN'])
+            ->with('permissions')
+            ->get()
+            ->flatMap(fn (Role $role) => $role->permissions->pluck('code'))
+            ->unique()
+            ->all();
+
+        $stale = array_values(array_intersect(self::DELIBERATELY_ADMINISTRATIVE, $reachable));
+        $missing = array_values(array_diff(self::DELIBERATELY_ADMINISTRATIVE, PermissionSeeder::allCodes()));
+
+        $this->assertSame([], $stale, 'Now granted operationally, so the exemption is stale: '.implode(', ', $stale));
+        $this->assertSame([], $missing, 'No longer a real permission: '.implode(', ', $missing));
+    }
+
     public function test_viewer_and_auditor_hold_no_write_permission(): void
     {
         foreach (['VIEWER', 'AUDITOR'] as $code) {

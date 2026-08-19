@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Actions;
 
+use App\Modules\Approval\Actions\RequestApproval;
 use App\Modules\Asset\Actions\ChangeAssetStatus;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Inventory\Actions\IssuePartsToWorkOrder;
@@ -31,6 +32,7 @@ class TransitionWorkOrder
         private readonly CompleteSchedule $completeSchedule,
         private readonly IssuePartsToWorkOrder $parts,
         private readonly ReserveStock $reservations,
+        private readonly RequestApproval $approvals,
     ) {}
 
     /**
@@ -39,7 +41,16 @@ class TransitionWorkOrder
      */
     public function schedule(WorkOrder $workOrder, string $userId): WorkOrder
     {
-        return $this->move($workOrder, 'SCHEDULED', $userId);
+        return DB::transaction(function () use ($workOrder, $userId): WorkOrder {
+            $workOrder = $this->move($workOrder, 'SCHEDULED', $userId);
+
+            // Approval is asked for when the job is committed, not when it
+            // starts. A technician standing at a machine should never be the
+            // one who discovers a signature was needed.
+            $this->approvals->forWorkOrder($workOrder->fresh(), $userId);
+
+            return $workOrder->fresh();
+        });
     }
 
     public function assign(WorkOrder $workOrder, string $userId): WorkOrder
@@ -60,6 +71,20 @@ class TransitionWorkOrder
 
     public function start(WorkOrder $workOrder, string $userId, ?CarbonImmutable $at = null): WorkOrder
     {
+        if ($workOrder->approval_status === 'PENDING') {
+            // Work that begins before its approval makes the approval a
+            // formality performed after the money is spent.
+            throw ValidationException::withMessages([
+                'approval_status' => __('work_order.approval_pending'),
+            ])->status(409);
+        }
+
+        if ($workOrder->approval_status === 'REJECTED') {
+            throw ValidationException::withMessages([
+                'approval_status' => __('work_order.approval_rejected'),
+            ])->status(409);
+        }
+
         $at ??= CarbonImmutable::now();
 
         return DB::transaction(function () use ($workOrder, $userId, $at): WorkOrder {

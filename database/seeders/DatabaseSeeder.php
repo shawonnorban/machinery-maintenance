@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
 use App\Modules\Breakdown\Database\Seeders\FailureTaxonomySeeder;
+use App\Modules\Costing\Database\Seeders\CostCategorySeeder;
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
 use App\Modules\Inventory\Database\Seeders\SparePartCategorySeeder;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
             ChecklistTemplateSeeder::class,
             FailureTaxonomySeeder::class,
             SparePartCategorySeeder::class,
+            CostCategorySeeder::class,
         ]);
     }
 }

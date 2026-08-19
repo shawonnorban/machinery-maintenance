@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Modules\Approval\Models\ApprovalRule;
+use App\Modules\Approval\Models\ApprovalWorkflow;
 use App\Modules\Asset\Actions\ChangeAssetStatus;
 use App\Modules\Asset\Actions\CreateAsset;
 use App\Modules\Asset\Models\Asset;
@@ -21,6 +23,9 @@ use App\Modules\Calendar\Models\FactoryCalendar;
 use App\Modules\Calendar\Models\FactoryHoliday;
 use App\Modules\Calendar\Models\Shift;
 use App\Modules\Calendar\Models\ShiftBreak;
+use App\Modules\Costing\Models\CostCategory;
+use App\Modules\Costing\Models\CostEntry;
+use App\Modules\Costing\Services\CostPoster;
 use App\Modules\Identity\Models\CompanyUser;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
@@ -93,7 +98,7 @@ class DemoTenantSeeder extends Seeder
         $owner = $this->user($delta, 'COMPANY_OWNER', 'owner@delta.test', 'Rahim Uddin');
         $this->user($delta, 'FACTORY_MANAGER', 'manager@delta.test', 'Nasrin Akter');
         $maintenanceManager = $this->user($delta, 'MAINTENANCE_MANAGER', 'maintenance@delta.test', 'Kamrul Hasan');
-        $this->user($delta, 'MAINTENANCE_ENGINEER', 'engineer@delta.test', 'Sabbir Ahmed');
+        $engineer = $this->user($delta, 'MAINTENANCE_ENGINEER', 'engineer@delta.test', 'Sabbir Ahmed');
         $technicianUser = $this->user($delta, 'TECHNICIAN', 'technician@delta.test', 'Karim Mia');
         $this->user($delta, 'STORE_MANAGER', 'store@delta.test', 'Farhana Islam');
         $storekeeper = $this->user($delta, 'STOREKEEPER', 'storekeeper@delta.test', 'Jashim Uddin');
@@ -104,10 +109,16 @@ class DemoTenantSeeder extends Seeder
 
         // Machines and work in every interesting state, so the screens can be
         // judged against real data rather than against empty tables.
+        $this->approvalWorkflow($delta);
+
         $assets = $this->assets($delta, $dhaka);
-        $this->workOrders($delta, $dhaka, $assets, $maintenanceManager);
+        // Raised by the engineer so the manager can actually sign them: a
+        // requester may never approve their own request, and a demo where the
+        // only approver is also the requester shows an empty queue.
+        $this->workOrders($delta, $dhaka, $assets, $engineer);
         $this->breakdowns($delta, $assets, $maintenanceManager);
         $this->stock($delta, $dhaka, $assets, $storekeeper);
+        $this->costs($delta, $assets, $maintenanceManager);
 
         // A factory-scoped role: this manager reaches Dhaka only, which makes
         // factory scoping visible in the UI.
@@ -461,14 +472,17 @@ class DemoTenantSeeder extends Seeder
         $assign = app(AssignTechnicians::class);
         $record = app(RecordChecklistResult::class);
 
+        // The estimate decides which approval chain a job takes, so one is
+        // deliberately expensive enough to need both signatures and sit in the
+        // approvals queue where it can be judged.
         foreach ([
-            ['DRAFT', 'HIGH', -2],
-            ['SCHEDULED', 'MEDIUM', -1],
-            ['ASSIGNED', 'CRITICAL', 0],
-            ['IN_PROGRESS', 'HIGH', 0],
-            ['ON_HOLD', 'MEDIUM', 1],
-            ['COMPLETED', 'LOW', 2],
-        ] as $index => [$target, $priority, $dayOffset]) {
+            ['DRAFT', 'HIGH', -2, '0'],
+            ['SCHEDULED', 'MEDIUM', -1, '145000'],
+            ['ASSIGNED', 'CRITICAL', 0, '4000'],
+            ['IN_PROGRESS', 'HIGH', 0, '0'],
+            ['ON_HOLD', 'MEDIUM', 1, '0'],
+            ['COMPLETED', 'LOW', 2, '0'],
+        ] as $index => [$target, $priority, $dayOffset, $estimate]) {
             $workOrder = $create->handle([
                 'asset_id' => $assets[$index]->id,
                 'maintenance_type_id' => $preventive->id,
@@ -476,6 +490,7 @@ class DemoTenantSeeder extends Seeder
                 'title' => $template?->name ?? 'Preventive service',
                 'priority' => $priority,
                 'scheduled_start' => CarbonImmutable::now()->addDays($dayOffset)->setTime(9, 0),
+                'estimated_labor_cost' => $estimate,
             ], $raisedBy->id);
 
             if ($target === 'DRAFT') {
@@ -751,6 +766,75 @@ class DemoTenantSeeder extends Seeder
         app(IssuePartsToWorkOrder::class)->consume($line, '1', $storekeeper->id);
 
         app(WorkOrderCostCalculator::class)->recalculate($workOrder->fresh());
+    }
+
+    /**
+     * The SRS 14 example chain: low-cost work needs the maintenance manager,
+     * high-cost work needs the factory manager as well.
+     *
+     * Thresholds rather than a blanket rule, because requiring a signature for
+     * a needle change teaches everybody to approve without reading.
+     */
+    private function approvalWorkflow(Company $company): void
+    {
+        if (ApprovalWorkflow::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $workflow = ApprovalWorkflow::create([
+            'company_id' => $company->id,
+            'name' => 'Work order approval',
+            'entity_type' => 'WORK_ORDER',
+            'active' => true,
+        ]);
+
+        foreach ([
+            [1, 'MAINTENANCE_MANAGER', 'Maintenance manager', ['min_cost' => '20000']],
+            [2, 'FACTORY_MANAGER', 'Factory manager', ['min_cost' => '100000']],
+        ] as [$sequence, $roleCode, $name, $condition]) {
+            ApprovalRule::create([
+                'company_id' => $company->id,
+                'workflow_id' => $workflow->id,
+                'sequence' => $sequence,
+                'role_id' => Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail()->id,
+                'name' => $name,
+                'condition_json' => $condition,
+            ]);
+        }
+    }
+
+    /**
+     * A vendor invoice and a transport charge against the repeat-offender
+     * machine, so its lifetime cost has something in it beyond labour and
+     * parts.
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function costs(Company $company, array $assets, User $manager): void
+    {
+        if ($assets === [] || CostEntry::where('company_id', $company->id)->where('source_type', 'VENDOR')->exists()) {
+            return;
+        }
+
+        $poster = app(CostPoster::class);
+        $categories = CostCategory::whereNull('company_id')->get()->keyBy('code');
+
+        foreach ([
+            ['VENDOR', 'VENDOR', '18500', 'Head overhaul by Juki service centre', 'INV-2026-0412', 21],
+            ['TRANSPORT', 'TRANSPORT', '2400', 'Machine carried to and from the service centre', null, 21],
+            ['EXTERNAL_SERVICE', 'EXTERNAL_SERVICE', '7800', 'Servo driver bench-tested', 'INV-2026-0455', 7],
+        ] as [$categoryCode, $sourceType, $amount, $description, $invoice, $daysAgo]) {
+            $poster->post([
+                'asset_id' => $assets[0]->id,
+                'cost_category_id' => $categories[$categoryCode]->id,
+                'amount' => $amount,
+                'currency' => 'BDT',
+                'source_type' => $sourceType,
+                'description' => $description,
+                'invoice_reference' => $invoice,
+                'occurred_at' => CarbonImmutable::now()->subDays($daysAgo),
+            ], $manager->id);
+        }
     }
 
     private function midTolerance(ChecklistItem $item): string

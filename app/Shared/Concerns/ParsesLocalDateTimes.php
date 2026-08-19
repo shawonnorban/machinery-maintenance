@@ -19,6 +19,9 @@ use Carbon\CarbonImmutable;
  * An input carrying its own offset (an ISO-8601 string from an API client) is
  * left alone: it already names an instant, and reinterpreting it would corrupt
  * a value that was correct.
+ *
+ * For FormRequest classes only — it reads $this->input(). A controller has no
+ * such method and should call TenantTimezone::toUtc() directly.
  */
 trait ParsesLocalDateTimes
 {

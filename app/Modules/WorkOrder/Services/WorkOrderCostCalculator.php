@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Services;
 
+use App\Modules\Costing\Services\CostPoster;
 use App\Modules\Inventory\Services\WorkOrderPartsCost;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
@@ -24,7 +25,10 @@ class WorkOrderCostCalculator
 {
     private const SCALE = 4;
 
-    public function __construct(private readonly WorkOrderPartsCost $partsCost) {}
+    public function __construct(
+        private readonly WorkOrderPartsCost $partsCost,
+        private readonly CostPoster $costs,
+    ) {}
 
     public function recalculate(WorkOrder $workOrder): WorkOrder
     {
@@ -49,6 +53,11 @@ class WorkOrderCostCalculator
             'actual_other_cost' => $other,
             'actual_cost' => bcadd(bcadd($labor, $parts, self::SCALE), $other, self::SCALE),
         ])->save();
+
+        // The same figures, projected into the cost ledger so a machine's
+        // lifetime cost is assembled from posted entries rather than by summing
+        // work orders at report time.
+        $this->costs->syncWorkOrder($workOrder->fresh());
 
         return $workOrder->fresh();
     }
