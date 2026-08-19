@@ -22,7 +22,7 @@
                     @include('work_order::work-orders._status', ['status' => $history->to_status])
 
                     <span class="ms-auto text-body-secondary small">
-                        {{ $history->changed_at->format('Y-m-d H:i') }}
+                        @dt($history->changed_at)
                     </span>
                 </div>
 
@@ -60,8 +60,8 @@
                                     <div class="text-body-secondary small">{{ $hold->notes }}</div>
                                 @endif
                             </td>
-                            <td>{{ $hold->started_at->format('Y-m-d H:i') }}</td>
-                            <td>{{ $hold->ended_at?->format('Y-m-d H:i') ?? '—' }}</td>
+                            <td>@dt($hold->started_at)</td>
+                            <td>@dt($hold->ended_at)</td>
                             <td class="text-end">{{ $hold->minutes !== null ? number_format($hold->minutes) : '—' }}</td>
                         </tr>
                     @endforeach

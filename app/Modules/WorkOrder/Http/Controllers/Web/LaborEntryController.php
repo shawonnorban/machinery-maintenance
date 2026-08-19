@@ -10,7 +10,6 @@ use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
 use App\Shared\Http\Controllers\Controller;
-use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -28,8 +27,11 @@ class LaborEntryController extends Controller
 
         $this->action->handle(
             workOrder: $workOrder,
-            startedAt: CarbonImmutable::parse($validated['started_at']),
-            endedAt: CarbonImmutable::parse($validated['ended_at']),
+            // On the technician's clock. A shift entered as 09:00-11:00 in
+            // Dhaka and stored as UTC would sit six hours away, breaking both
+            // the overlap check and any comparison against the work order.
+            startedAt: $request->localDateTime('started_at'),
+            endedAt: $request->localDateTime('ended_at'),
             category: $validated['labor_category'],
             technician: $technician,
             vendorId: filled($validated['vendor_id'] ?? null) ? $validated['vendor_id'] : null,

@@ -40,8 +40,8 @@
                     <tr>
                         <td>{{ $entry->technician?->name ?? __('work_order.labor_category_external') }}</td>
                         <td>{{ __('work_order.labor_category_'.strtolower($entry->labor_category)) }}</td>
-                        <td>{{ $entry->started_at->format('Y-m-d H:i') }}</td>
-                        <td>{{ $entry->ended_at->format('Y-m-d H:i') }}</td>
+                        <td>@dt($entry->started_at)</td>
+                        <td>@dt($entry->ended_at)</td>
                         <td class="text-end">{{ number_format($entry->minutes) }}</td>
                         @if ($showCosts)
                             <td class="text-end">{{ $entry->amount }}</td>

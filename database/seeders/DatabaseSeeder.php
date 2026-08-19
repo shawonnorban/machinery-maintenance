@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
+use App\Modules\Breakdown\Database\Seeders\FailureTaxonomySeeder;
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
 use App\Modules\Maintenance\Database\Seeders\ChecklistTemplateSeeder;
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
             AssetTaxonomySeeder::class,
             MaintenanceTypeSeeder::class,
             ChecklistTemplateSeeder::class,
+            FailureTaxonomySeeder::class,
         ]);
     }
 }

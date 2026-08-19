@@ -59,13 +59,13 @@
                         @endif
 
                         <dt class="col-sm-4">{{ __('work_order.scheduled_start') }}</dt>
-                        <dd class="col-sm-8">{{ $workOrder->scheduled_start?->format('Y-m-d H:i') ?? '—' }}</dd>
+                        <dd class="col-sm-8">@dt($workOrder->scheduled_start)</dd>
 
                         <dt class="col-sm-4">{{ __('work_order.actual_start') }}</dt>
-                        <dd class="col-sm-8">{{ $workOrder->actual_start?->format('Y-m-d H:i') ?? '—' }}</dd>
+                        <dd class="col-sm-8">@dt($workOrder->actual_start)</dd>
 
                         <dt class="col-sm-4">{{ __('work_order.actual_end') }}</dt>
-                        <dd class="col-sm-8">{{ $workOrder->actual_end?->format('Y-m-d H:i') ?? '—' }}</dd>
+                        <dd class="col-sm-8">@dt($workOrder->actual_end)</dd>
 
                         @if ($workOrder->hold_minutes > 0)
                             <dt class="col-sm-4">{{ __('work_order.hold_time') }}</dt>
@@ -228,7 +228,7 @@
                                target="_blank" rel="noopener">
                                 {{ $attachment->original_name }}
                                 <div class="text-body-secondary small">
-                                    {{ $attachment->humanSize() }} · {{ $attachment->created_at->format('Y-m-d H:i') }}
+                                    {{ $attachment->humanSize() }} · @dt($attachment->created_at)
                                 </div>
                             </a>
                         @endforeach

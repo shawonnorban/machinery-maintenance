@@ -12,6 +12,11 @@ use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetType;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Asset\Services\QrTokenGenerator;
+use App\Modules\Breakdown\Actions\ReportBreakdown;
+use App\Modules\Breakdown\Actions\TransitionBreakdown;
+use App\Modules\Breakdown\Models\Breakdown;
+use App\Modules\Breakdown\Models\FailureCode;
+use App\Modules\Breakdown\Models\RootCause;
 use App\Modules\Calendar\Models\FactoryCalendar;
 use App\Modules\Calendar\Models\FactoryHoliday;
 use App\Modules\Calendar\Models\Shift;
@@ -91,7 +96,9 @@ class DemoTenantSeeder extends Seeder
 
         // Machines and work in every interesting state, so the screens can be
         // judged against real data rather than against empty tables.
-        $this->workOrders($delta, $dhaka, $this->assets($delta, $dhaka), $maintenanceManager);
+        $assets = $this->assets($delta, $dhaka);
+        $this->workOrders($delta, $dhaka, $assets, $maintenanceManager);
+        $this->breakdowns($delta, $assets, $maintenanceManager);
 
         // A factory-scoped role: this manager reaches Dhaka only, which makes
         // factory scoping visible in the UI.
@@ -536,6 +543,91 @@ class DemoTenantSeeder extends Seeder
                 },
             ], $user->id);
         }
+    }
+
+    /**
+     * Breakdowns in a spread of states, plus a machine with a history of
+     * repeated failures.
+     *
+     * The repeat offender matters most: a list of individual breakdowns hides
+     * the machine that has failed four times this month, and that machine is a
+     * replacement decision nobody has made yet (SRS 16).
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function breakdowns(Company $company, array $assets, User $reporter): void
+    {
+        if ($assets === [] || Breakdown::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $report = app(ReportBreakdown::class);
+        $transition = app(TransitionBreakdown::class);
+        $factoryTimezone = Factory::find($assets[0]->current_factory_id)?->timezone ?? 'Asia/Dhaka';
+        $wear = RootCause::whereNull('company_id')->where('code', 'NORMAL_WEAR')->first();
+
+        // One machine, four closed failures over a month, all the same cause.
+        // This is what the repeat-offender report exists to surface.
+        $repeat = $assets[0];
+        $bearing = FailureCode::whereNull('company_id')->where('code', 'BEARING_FAILURE')->first();
+
+        foreach ([28, 21, 14, 7] as $daysAgo) {
+            // Expressed on the factory clock, then stored as the instant it
+            // names. 10:15 in Dhaka is mid-shift; 10:15 UTC would be a quarter
+            // past four in the afternoon there.
+            $at = CarbonImmutable::now($factoryTimezone)
+                ->subDays($daysAgo)
+                ->setTime(10, 15)
+                ->setTimezone('UTC');
+
+            $breakdown = $report->handle([
+                'asset_id' => $repeat->id,
+                'problem_description' => 'Loud grinding from the head, machine seizes under load',
+                'failure_at' => $at,
+                'reported_at' => $at->addMinutes(4),
+            ], $reporter->id);
+
+            $breakdown = $transition->acknowledge($breakdown, $reporter->id, $at->addMinutes(12));
+            $breakdown = $transition->startRepair($breakdown, $reporter->id, $at->addMinutes(25));
+            $breakdown = $transition->completeRepair($breakdown, $reporter->id, $at->addMinutes(95));
+            $breakdown = $transition->resumeProduction($breakdown, $reporter->id, $at->addMinutes(105));
+
+            $transition->close($breakdown, [
+                'failure_code_id' => $bearing?->id,
+                'root_cause_id' => $wear?->id,
+                'corrective_action' => 'Head bearing replaced, shaft realigned',
+                'preventive_action' => 'Add weekly lubrication check to the PM checklist',
+            ], $reporter->id);
+
+            // Back in service, so the next failure counts as its own event
+            // rather than being linked as a recurrence.
+            $machine = Asset::find($repeat->id);
+
+            if ($machine !== null && $machine->status !== 'RUNNING' && $machine->canTransitionTo('RUNNING')) {
+                app(ChangeAssetStatus::class)->handle($machine, 'RUNNING', $reporter->id, 'Back in service', 'BREAKDOWN');
+            }
+        }
+
+        // Two open breakdowns at different points in the chain, so the queue and
+        // the action bar both have something real to show.
+        $open = $report->handle([
+            'asset_id' => $assets[1]->id,
+            'problem_description' => 'Needle bar jammed, thread shredding',
+            'failure_at' => CarbonImmutable::now()->subHours(3),
+            'reported_at' => CarbonImmutable::now()->subHours(3)->addMinutes(6),
+        ], $reporter->id);
+
+        $transition->acknowledge($open, $reporter->id, CarbonImmutable::now()->subHours(2));
+
+        $inRepair = $report->handle([
+            'asset_id' => $assets[2]->id,
+            'problem_description' => 'Motor overheating and cutting out after ten minutes',
+            'failure_at' => CarbonImmutable::now()->subHours(6),
+            'reported_at' => CarbonImmutable::now()->subHours(6)->addMinutes(3),
+        ], $reporter->id);
+
+        $inRepair = $transition->acknowledge($inRepair, $reporter->id, CarbonImmutable::now()->subHours(5));
+        $transition->startRepair($inRepair, $reporter->id, CarbonImmutable::now()->subHours(4));
     }
 
     private function midTolerance(ChecklistItem $item): string

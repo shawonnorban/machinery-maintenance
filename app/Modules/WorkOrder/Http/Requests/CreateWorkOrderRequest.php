@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Http\Requests;
 
+use App\Shared\Concerns\ParsesLocalDateTimes;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class CreateWorkOrderRequest extends FormRequest
 {
+    use ParsesLocalDateTimes;
+
     public function authorize(): bool
     {
         return $this->user()?->can('work_order.work_order.create') ?? false;
@@ -55,8 +58,10 @@ class CreateWorkOrderRequest extends FormRequest
             'requires_shutdown' => $this->boolean('requires_shutdown'),
             'assigned_team_id' => filled($validated['assigned_team_id'] ?? null)
                 ? $validated['assigned_team_id'] : null,
-            'scheduled_start' => $validated['scheduled_start'] ?? null,
-            'scheduled_end' => $validated['scheduled_end'] ?? null,
+            // On the factory's clock: a datetime-local field carries no
+            // timezone, so parsing it as UTC would shift every scheduled job.
+            'scheduled_start' => $this->localDateTime('scheduled_start'),
+            'scheduled_end' => $this->localDateTime('scheduled_end'),
             'estimated_labor_cost' => filled($validated['estimated_labor_cost'] ?? null)
                 ? $validated['estimated_labor_cost'] : null,
             'estimated_parts_cost' => filled($validated['estimated_parts_cost'] ?? null)

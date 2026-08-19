@@ -70,6 +70,13 @@ return [
     'timezone' => 'UTC',
 
     /*
+     * The clock the interface speaks in when nothing more specific is known.
+     * Storage is always UTC; this is only for reading and typing times.
+     * A user, factory or company setting overrides it (SRS 47.2).
+     */
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Dhaka'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------

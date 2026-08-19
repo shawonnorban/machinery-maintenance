@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Shared\Support\TenantTimezone;
 use App\Shared\Tenancy\TenantContext;
 use App\Shared\View\Composers\AppShellComposer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
         // and every model, policy, and service reads that same instance. A new
         // instance per resolution would silently lose the context.
         $this->app->singleton(TenantContext::class);
+
+        // Also a singleton, and for the same reason: it caches the resolved
+        // zone for the request, and a fresh instance per view would re-query
+        // the company on every timestamp rendered in a list.
+        $this->app->singleton(TenantTimezone::class);
     }
 
     public function boot(): void
@@ -40,5 +47,25 @@ class AppServiceProvider extends ServiceProvider
             ['layouts.app', 'layouts.mobile', 'components.layout.*'],
             AppShellComposer::class,
         );
+
+        /*
+         * Timestamps are stored in UTC and read on the factory's clock.
+         *
+         * @dt($value) renders one; @dtinput($value) fills a datetime-local
+         * field. Both go through TenantTimezone, so no view can accidentally
+         * print a UTC instant as though it were local — which, in Dhaka, is a
+         * six-hour lie that looks entirely plausible (SRS 47.2).
+         */
+        Blade::directive('dt', fn (string $expression) => sprintf(
+            "<?php echo e(app(%s::class)->format(%s) ?? '—'); ?>",
+            TenantTimezone::class,
+            $expression,
+        ));
+
+        Blade::directive('dtinput', fn (string $expression) => sprintf(
+            '<?php echo e(app(%s::class)->forInput(%s)); ?>',
+            TenantTimezone::class,
+            $expression,
+        ));
     }
 }

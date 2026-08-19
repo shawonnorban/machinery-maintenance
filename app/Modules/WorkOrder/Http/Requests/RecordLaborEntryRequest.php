@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Modules\WorkOrder\Http\Requests;
 
 use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
+use App\Shared\Concerns\ParsesLocalDateTimes;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class RecordLaborEntryRequest extends FormRequest
 {
+    use ParsesLocalDateTimes;
+
     public function authorize(): bool
     {
         return $this->user()?->can('work_order.labor.manage') ?? false;
