@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Reporting\Providers;
 
+use App\Modules\Reporting\Imports\ImporterRegistry;
 use App\Modules\Reporting\Reports\ReportRegistry;
 use App\Modules\Reporting\Services\ReportPreview;
 use App\Modules\Reporting\Services\ReportRunner;
@@ -18,6 +19,7 @@ class ReportingServiceProvider extends ServiceProvider
         // The registry resolves every report class the first time it is asked;
         // doing that once per request is enough.
         $this->app->singleton(ReportRegistry::class);
+        $this->app->singleton(ImporterRegistry::class);
 
         $this->app->singleton(ReportRunner::class, function ($app): ReportRunner {
             $runner = new ReportRunner(

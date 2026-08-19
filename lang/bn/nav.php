@@ -31,6 +31,7 @@ return [
     'warranties' => 'ওয়ারেন্টি',
     'service_contracts' => 'সার্ভিস চুক্তি',
     'reports' => 'রিপোর্ট',
+    'import_data' => 'ডেটা ইমপোর্ট',
     'settings' => 'সেটিংস',
     'company' => 'কোম্পানি',
     'factories' => 'ফ্যাক্টরি',

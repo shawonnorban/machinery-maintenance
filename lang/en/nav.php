@@ -31,6 +31,7 @@ return [
     'warranties' => 'Warranties',
     'service_contracts' => 'Service Contracts',
     'reports' => 'Reports',
+    'import_data' => 'Import data',
     'settings' => 'Settings',
     'company' => 'Company',
     'factories' => 'Factories',

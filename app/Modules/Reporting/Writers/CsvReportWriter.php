@@ -87,6 +87,19 @@ class CsvReportWriter implements ReportWriter
             return $value ? '1' : '0';
         }
 
-        return (string) $value;
+        return $this->neutralise((string) $value);
+    }
+
+    /**
+     * Stops a spreadsheet from executing a value as a formula.
+     *
+     * A machine named "=cmd|' /c calc'!A1" is a valid name in this system and a
+     * command execution in Excel. The data came from a user, so the export must
+     * assume it is hostile: a leading apostrophe makes the cell text, and the
+     * import reader strips it again so a round trip still works.
+     */
+    private function neutralise(string $value): string
+    {
+        return preg_match('/^[=+\-@\t\r]/', $value) === 1 ? "'".$value : $value;
     }
 }

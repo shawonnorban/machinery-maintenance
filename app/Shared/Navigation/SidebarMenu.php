@@ -108,6 +108,12 @@ class SidebarMenu
                 'permission' => 'report.report.view',
             ],
             [
+                'label' => 'nav.import_data',
+                'icon' => 'cloud-upload',
+                'route' => 'app.imports.index',
+                'permission' => 'import.job.create',
+            ],
+            [
                 'label' => 'nav.settings',
                 'icon' => 'cog',
                 'permission' => 'settings.company.manage',
