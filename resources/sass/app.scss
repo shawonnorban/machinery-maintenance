@@ -58,13 +58,55 @@ $h6-font-size: 0.875rem;
 // ---------------------------------------------------------------------------
 // Shell density
 // ---------------------------------------------------------------------------
+// The sidebar is position:fixed, so the wrapper needs its own offset.
+// CoreUI declares --cui-sidebar-occupy-start but nothing in the free build
+// consumes it, and the content was sitting underneath the sidebar. On a wide
+// screen a centred container hid that; on a narrower one the first table
+// columns were clipped behind the nav.
+$sidebar-width: 14rem;
+$sidebar-narrow-width: 4rem;
+$shell-header-height: 3.25rem;
+
 .sidebar {
-  --cui-sidebar-width: 14rem;
+  --cui-sidebar-width: #{$sidebar-width};
   --cui-sidebar-nav-link-padding-y: 0.5rem;
   --cui-sidebar-nav-link-padding-x: 0.875rem;
   --cui-sidebar-nav-link-font-size: 0.8125rem;
   --cui-sidebar-nav-group-items-padding-y: 0;
-  --cui-sidebar-brand-height: 3rem;
+  --cui-sidebar-brand-height: #{$shell-header-height};
+
+  // The requested shell colour.
+  --cui-sidebar-bg: #0c2b4b;
+  --cui-sidebar-brand-bg: #0c2b4b;
+  --cui-sidebar-footer-bg: #0c2b4b;
+  background: #0c2b4b;
+
+  .sidebar-header,
+  .sidebar-footer {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
+}
+
+.wrapper {
+  min-height: 100vh;
+}
+
+@media (min-width: 992px) {
+  .wrapper {
+    padding-inline-start: #{$sidebar-width};
+    transition: padding-inline-start 0.15s;
+  }
+
+  // Collapsed states, so the content follows the nav rather than being left
+  // with a dead band where the sidebar used to be.
+  .sidebar.hide ~ .wrapper {
+    padding-inline-start: 0;
+  }
+
+  .sidebar.sidebar-narrow ~ .wrapper,
+  .sidebar.sidebar-narrow-unfoldable ~ .wrapper {
+    padding-inline-start: #{$sidebar-narrow-width};
+  }
 }
 
 .sidebar-nav {
@@ -85,9 +127,18 @@ $h6-font-size: 0.875rem;
   }
 }
 
+// Same height as the sidebar brand, so the two line up across the top of the
+// shell instead of the header sitting a few pixels shallower than the block
+// beside it.
 .header {
-  --cui-header-min-height: 3rem;
+  --cui-header-min-height: #{$shell-header-height};
+  min-height: #{$shell-header-height};
   padding-block: 0;
+
+  > .container-fluid {
+    min-height: #{$shell-header-height};
+    align-items: center;
+  }
 
   .header-nav .nav-link {
     padding: 0.35rem 0.6rem;

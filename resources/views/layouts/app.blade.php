@@ -30,7 +30,9 @@
                          :recent-notifications="$recentNotifications ?? null" />
 
         <div class="body flex-grow-1">
-            <div class="container-lg px-4">
+            {{-- Fluid, not container-lg: a capped, centred container left a wide empty
+                 band down the right of every listing on a normal desktop. --}}
+            <div class="container-fluid px-4">
                 @hasSection('breadcrumb')
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb my-3">
