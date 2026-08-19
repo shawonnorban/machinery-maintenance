@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Modules\Analytics\Console\SnapshotKpis;
 use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
 use App\Modules\Notification\Console\EscalateNotifications;
+use App\Modules\Reporting\Console\PruneReportFiles;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -37,5 +38,14 @@ Schedule::command(EscalateNotifications::class)
  */
 Schedule::command(SnapshotKpis::class)
     ->hourly()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Expired report files (SRS 35). Daily is enough: retention is measured in
+ * days, and the row survives to say what was asked for and by whom.
+ */
+Schedule::command(PruneReportFiles::class)
+    ->dailyAt('02:15')
     ->withoutOverlapping()
     ->runInBackground();
