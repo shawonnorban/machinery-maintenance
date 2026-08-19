@@ -19,13 +19,13 @@
        aria-label="{{ __('notification.notifications') }}">
         <i class="cil-bell" aria-hidden="true"></i>
 
-        @if ($unreadNotifications > 0)
-            {{-- Positioned against the link rather than the header: absolute
-                 positioning off an ancestor let it escape above the topbar. --}}
-            <span class="notification-bell-badge">
-                {{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}
-            </span>
-        @endif
+        {{-- Always rendered, hidden when empty: a badge that only exists once
+             there is something to count cannot be incremented by a socket
+             message without rebuilding the header. --}}
+        <span class="notification-bell-badge" data-notification-count
+              @if ($unreadNotifications < 1) hidden @endif>
+            {{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}
+        </span>
     </a>
 
     <div class="dropdown-menu dropdown-menu-end notification-dropdown">

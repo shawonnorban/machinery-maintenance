@@ -23,7 +23,16 @@
         <env name="APP_URL" value="http://localhost"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
+        <!--
+            Null by default so no test reaches for a websocket server. The
+            channel authorization tests switch to the real broadcaster for
+            themselves, because the null one authorizes every channel for
+            everybody and tests against it would pass without proving anything.
+        -->
         <env name="BROADCAST_CONNECTION" value="null"/>
+        <env name="REVERB_APP_ID" value="testing"/>
+        <env name="REVERB_APP_KEY" value="testing-key"/>
+        <env name="REVERB_APP_SECRET" value="testing-secret"/>
         <env name="CACHE_STORE" value="array"/>
         <!-- Tests run against real MySQL: the schema depends on InnoDB, utf8mb4 and DECIMAL semantics that SQLite does not reproduce. -->
         <env name="DB_CONNECTION" value="mysql"/>

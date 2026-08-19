@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Asset\Actions;
 
+use App\Modules\Asset\Events\AssetStatusChanged;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetStatusHistory;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +64,7 @@ class ChangeAssetStatus
             ]);
         }
 
-        return DB::transaction(function () use ($asset, $from, $toStatus, $userId, $reason, $source): Asset {
+        $changed = DB::transaction(function () use ($asset, $from, $toStatus, $userId, $reason, $source): Asset {
             $asset->status = $toStatus;
             $asset->updated_by = $userId;
             $asset->version++;
@@ -90,5 +91,13 @@ class ChangeAssetStatus
 
             return $asset;
         });
+
+        // Outside the transaction, deliberately: a socket message announcing a
+        // state the database never reached is worse than no message at all, and
+        // a broadcast that throws must not undo the status change it was
+        // announcing (SRS 29).
+        AssetStatusChanged::dispatch($changed, $from, $toStatus);
+
+        return $changed;
     }
 }

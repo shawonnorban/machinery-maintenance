@@ -35,3 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Live updates (SRS 29). Every screen works without it: the socket updates what
+// is already rendered and announces what happened elsewhere, and nothing on the
+// page depends on a frame arriving.
+import './echo';

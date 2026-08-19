@@ -11,6 +11,7 @@ use App\Modules\Inventory\Actions\IssuePartsToWorkOrder;
 use App\Modules\Inventory\Actions\ReserveStock;
 use App\Modules\Maintenance\Actions\CompleteSchedule;
 use App\Modules\Maintenance\Models\MaintenanceSchedule;
+use App\Modules\WorkOrder\Events\WorkOrderUpdated;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderHold;
 use App\Modules\WorkOrder\Models\WorkOrderStatusHistory;
@@ -363,6 +364,11 @@ class TransitionWorkOrder
             'changed_at' => CarbonImmutable::now(),
             'reason' => $reason,
         ]);
+
+        // Status moves only. A live list wants to know a job started, finished
+        // or went on hold; it does not want a message every time somebody
+        // corrects a spelling in the description (SRS 29).
+        WorkOrderUpdated::dispatch($workOrder, $from);
 
         return $workOrder;
     }

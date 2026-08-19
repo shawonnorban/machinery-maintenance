@@ -9,6 +9,7 @@ use App\Modules\Breakdown\Actions\ReportBreakdown;
 use App\Modules\Identity\Models\User;
 use App\Modules\Inventory\Services\InventoryLedger;
 use App\Modules\Maintenance\Models\MaintenanceType;
+use App\Modules\Notification\Events\NotificationCreated;
 use App\Modules\Notification\Models\Notification;
 use App\Modules\Notification\Models\NotificationDelivery;
 use App\Modules\Notification\Models\NotificationPreference;
@@ -20,7 +21,9 @@ use App\Modules\WorkOrder\Actions\CreateWorkOrder;
 use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 use Tests\Support\InventoryFixture;
 use Tests\Support\TenantFixture;
 use Tests\Support\WorkOrderFixture;
@@ -87,17 +90,37 @@ class NotificationTest extends TestCase
 
     public function test_a_failed_broadcast_does_not_lose_the_notification(): void
     {
+        // Stands in for a websocket server that is down or unreachable. The
+        // notification is already committed by the time this runs, and the
+        // recipient can see it in the interface either way.
+        Event::listen(NotificationCreated::class, function (): void {
+            throw new RuntimeException('Reverb is unreachable');
+        });
+
         $notification = $this->dispatcher->send($this->manager, 'BREAKDOWN_REPORTED', [
             'asset' => 'SEW-DHK-00412', 'number' => 'BD-1', 'problem' => 'Motor hums',
         ]);
 
-        // The broadcast transport is not configured yet, and the notification
-        // survives that. A delivery row saying SENT when nothing was sent
-        // would be worse than no row at all.
+        $this->assertNotNull(Notification::find($notification->id));
+
+        // And no row claims the message went out. A delivery record saying SENT
+        // when nothing was sent is worse than no record at all.
+        $this->assertSame(0, NotificationDelivery::where('channel', 'BROADCAST')->count());
+    }
+
+    public function test_a_broadcast_is_recorded_as_handed_over_not_as_received(): void
+    {
+        $notification = $this->dispatcher->send($this->manager, 'BREAKDOWN_REPORTED', [
+            'asset' => 'SEW-DHK-00412', 'number' => 'BD-1', 'problem' => 'Motor hums',
+        ]);
+
         $broadcast = NotificationDelivery::where('channel', 'BROADCAST')->firstOrFail();
 
-        $this->assertSame('SKIPPED', $broadcast->status);
-        $this->assertNotNull($broadcast->failure_reason);
+        // SENT means the transport took it. A websocket frame that reaches a
+        // browser nobody is looking at is not a notification anybody received,
+        // and the delivery record must not pretend otherwise.
+        $this->assertSame('SENT', $broadcast->status);
+        $this->assertNotNull($broadcast->sent_at);
         $this->assertNotNull(Notification::find($notification->id));
     }
 

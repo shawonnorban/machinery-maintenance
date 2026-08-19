@@ -454,9 +454,33 @@ $sidebar-nesting-step: 0.75rem;
 
 // Connection state in the header. A technician must know their screen is stale.
 .connection-indicator {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.75rem;
 
-  &[data-state='offline'] { color: var(--cui-danger); }
-  &[data-state='reconnecting'] { color: var(--cui-warning); }
-  &[data-state='live'] { color: var(--cui-success); }
+  // The prefixed variables the SCSS build actually emits are --bs-*; --cui-*
+  // exists only in CoreUI's prebuilt dist CSS, so these were previously inert.
+  &[data-connection-state='offline'] {
+    color: var(--bs-danger-text-emphasis, #58151c);
+    background: var(--bs-danger-bg-subtle, #f8d7da);
+  }
+
+  &[data-connection-state='reconnecting'] {
+    color: var(--bs-warning-text-emphasis, #664d03);
+    background: var(--bs-warning-bg-subtle, #fff3cd);
+  }
+
+  &[data-connection-state='live'] { color: var(--bs-success, #198754); }
+}
+
+// Live events surface here. Fixed to the corner so it never reflows the page
+// under somebody's cursor, and above the header so a critical breakdown is not
+// hidden behind a dropdown.
+.toast-region {
+  position: fixed;
+  inset-inline-end: 1rem;
+  inset-block-end: 1rem;
+  z-index: 1090;
+  width: min(22rem, calc(100vw - 2rem));
 }

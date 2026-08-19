@@ -31,10 +31,19 @@
         @endif
 
         <ul class="header-nav ms-auto align-items-center">
-            {{-- A technician must know their screen is stale (Frontend 8 rule 3). --}}
+            {{-- A technician must know their screen is stale (Frontend 8 rule 3).
+
+                 Hidden while the socket is healthy: a permanent green light is
+                 decoration, and decoration is what people stop seeing. It
+                 appears the moment the connection is not live, which is the
+                 only time it says anything. --}}
             <li class="nav-item d-none d-sm-block">
-                <span class="connection-indicator" data-state="live" id="connection-state">
-                    ● {{ __('common.connection_live') }}
+                <span class="connection-indicator" id="connection-state" hidden
+                      data-connection-state="live"
+                      data-label-live="{{ __('common.connection_live') }}"
+                      data-label-reconnecting="{{ __('common.connection_reconnecting') }}"
+                      data-label-offline="{{ __('common.connection_offline') }}">
+                    {{ __('common.connection_live') }}
                 </span>
             </li>
 

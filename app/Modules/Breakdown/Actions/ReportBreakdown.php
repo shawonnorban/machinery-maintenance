@@ -6,6 +6,7 @@ namespace App\Modules\Breakdown\Actions;
 
 use App\Modules\Asset\Actions\ChangeAssetStatus;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Breakdown\Events\BreakdownReported;
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\BreakdownStatusHistory;
 use App\Modules\Breakdown\Models\DowntimeReasonCode;
@@ -77,7 +78,7 @@ class ReportBreakdown
         $factory = Factory::findOrFail($asset->current_factory_id);
         $recurrenceOf = $this->openBreakdownFor($asset);
 
-        return DB::transaction(function () use (
+        $breakdown = DB::transaction(function () use (
             $data, $asset, $factory, $failureAt, $reportedAt, $recurrenceOf, $userId
         ): Breakdown {
             $breakdown = Breakdown::create([
@@ -142,6 +143,13 @@ class ReportBreakdown
 
             return $breakdown->fresh();
         });
+
+        // Outside the transaction: a line being down is the event that most
+        // justifies having websockets at all, and a broadcast that throws must
+        // not undo the report it was announcing (SRS 29).
+        BreakdownReported::dispatch($breakdown);
+
+        return $breakdown;
     }
 
     /**

@@ -48,6 +48,25 @@ class AppShellComposer
                 'companyId' => $this->context->companyIdOrNull(),
                 'locale' => app()->getLocale(),
                 'csrf' => csrf_token(),
+
+                // Which channels this page may subscribe to (SRS 29). Written
+                // by the server from resolved context, never read from
+                // anything the user can type — though the socket authorizes
+                // every subscription again regardless, because this is
+                // convenience and not security (ADR-018).
+                'userId' => $user?->id,
+                'factoryId' => session(ResolveTenantContext::FACTORY_SCOPE_KEY),
+                'reverbKey' => config('broadcasting.connections.reverb.key'),
+                'reverbHost' => config('broadcasting.connections.reverb.options.host'),
+                'reverbPort' => (int) config('broadcasting.connections.reverb.options.port'),
+                'reverbScheme' => config('broadcasting.connections.reverb.options.scheme'),
+
+                // Strings the socket handlers need, translated server-side:
+                // the bundle is shared by both languages.
+                't' => [
+                    'breakdown' => __('breakdown.breakdown'),
+                    'assignedToYou' => __('notification.event_work_order_assigned'),
+                ],
             ],
         ]);
     }

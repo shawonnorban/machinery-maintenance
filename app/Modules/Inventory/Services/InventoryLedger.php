@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Services;
 
+use App\Modules\Inventory\Events\StockChanged;
 use App\Modules\Inventory\Models\Bin;
 use App\Modules\Inventory\Models\InventoryBalance;
 use App\Modules\Inventory\Models\InventoryTransaction;
@@ -157,6 +158,7 @@ class InventoryLedger
         // roll back the stock movement it was announcing, and the store is
         // short of the part either way.
         $this->notifyIfLow($part, $type);
+        $this->announce($part);
 
         return $transaction;
     }
@@ -168,6 +170,27 @@ class InventoryLedger
      * On the crossing, not on every issue afterwards: repeating the warning on
      * each of the next twenty issues is how people learn to ignore it.
      */
+    /**
+     * Tells every open store screen that a balance moved (SRS 29).
+     *
+     * Every movement, not only the ones that cross the reorder level: a
+     * storekeeper watching a part while an issue is being posted should see the
+     * figure change, and a screen that only updates at the threshold looks
+     * broken until it suddenly is not.
+     */
+    private function announce(SparePart $part): void
+    {
+        $part = $part->fresh();
+        $onHand = $part->totalOnHand();
+        $reorder = (string) ($part->reorder_level ?? '0');
+
+        StockChanged::dispatch(
+            $part,
+            $onHand,
+            bccomp($reorder, '0', self::SCALE) > 0 && bccomp($onHand, $reorder, self::SCALE) <= 0,
+        );
+    }
+
     private function notifyIfLow(SparePart $part, string $type): void
     {
         if (! in_array($type, InventoryTransaction::OUTBOUND, true)) {

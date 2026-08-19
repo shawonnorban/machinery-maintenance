@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Notification\Services;
 
 use App\Modules\Identity\Models\User;
+use App\Modules\Notification\Events\NotificationCreated;
 use App\Modules\Notification\Models\Notification;
 use App\Modules\Notification\Models\NotificationDelivery;
 use App\Modules\Notification\Models\NotificationPreference;
@@ -280,12 +281,18 @@ class NotificationDispatcher
     private function broadcast(Notification $notification): void
     {
         try {
+            NotificationCreated::dispatch($notification);
+
             NotificationDelivery::create([
                 'company_id' => $notification->company_id,
                 'notification_id' => $notification->id,
                 'channel' => 'BROADCAST',
-                'status' => 'SKIPPED',
-                'failure_reason' => 'Real-time transport not yet configured',
+                // Handed to the transport, not proven delivered. A websocket
+                // frame that reaches a browser nobody is looking at is not a
+                // notification anybody received, and claiming otherwise would
+                // make the delivery record a lie.
+                'status' => 'SENT',
+                'sent_at' => CarbonImmutable::now(),
             ]);
         } catch (\Throwable $e) {
             // A failure here must never propagate: the notification is already

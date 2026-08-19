@@ -55,6 +55,11 @@
         </footer>
     </div>
 
+    {{-- Where live events surface. Bottom right and never blocking: somebody
+         typing a reading into a work order must not have a breakdown alert
+         steal their keystrokes (SRS 29, Frontend 8). --}}
+    <div class="toast-region" data-toast-region aria-live="polite" aria-atomic="true"></div>
+
     @stack('scripts')
 </body>
 </html>

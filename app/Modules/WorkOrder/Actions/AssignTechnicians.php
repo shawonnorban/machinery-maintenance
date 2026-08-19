@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\WorkOrder\Actions;
 
 use App\Modules\Notification\Services\MaintenanceNotifier;
+use App\Modules\WorkOrder\Events\WorkOrderAssigned;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderAssignment;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -57,7 +59,7 @@ class AssignTechnicians
             $this->assertAssignable($workOrder, $technician);
         }
 
-        return DB::transaction(function () use ($workOrder, $technicians, $userId): WorkOrder {
+        $assigned = DB::transaction(function () use ($workOrder, $technicians, $userId): WorkOrder {
             $now = CarbonImmutable::now();
             $keep = $technicians->pluck('id')->all();
 
@@ -102,6 +104,12 @@ class AssignTechnicians
 
             return $workOrder->fresh();
         });
+
+        // The technician's phone is the screen where this matters most, and it
+        // is usually not showing the work order list when the job arrives.
+        WorkOrderAssigned::dispatch($assigned, $this->userIdsOf($technicians));
+
+        return $assigned;
     }
 
     public function unassign(WorkOrder $workOrder, string $technicianId, ?string $userId = null): WorkOrder
@@ -174,5 +182,26 @@ class AssignTechnicians
                 ]),
             ])->status(409);
         }
+    }
+
+    /**
+     * The login accounts behind these technicians.
+     *
+     * A technician may exist without one — plenty of floor staff never sign in
+     * — and those simply get no personal socket message. The factory channel
+     * still carries the assignment, so the screen their supervisor is watching
+     * updates either way.
+     *
+     * @param  Collection<int, Technician>  $technicians
+     * @return list<string>
+     */
+    private function userIdsOf($technicians): array
+    {
+        return $technicians
+            ->pluck('user_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
     }
 }
