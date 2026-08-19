@@ -58,32 +58,44 @@ $h6-font-size: 0.875rem;
 // ---------------------------------------------------------------------------
 // Shell density
 // ---------------------------------------------------------------------------
-// The sidebar is position:fixed, so the wrapper needs its own offset.
-// CoreUI declares --cui-sidebar-occupy-start but nothing in the free build
-// consumes it, and the content was sitting underneath the sidebar. On a wide
-// screen a centred container hid that; on a narrower one the first table
-// columns were clipped behind the nav.
+// The sidebar is position:fixed, so the wrapper needs its own offset. CoreUI
+// declares --cui-sidebar-occupy-start for the siblings but nothing in this
+// build consumes it, and the content was sitting underneath the nav.
+//
+// The prefix matters and cost an hour. Compiling @coreui/coreui from SCSS
+// emits --bs-* variables; only the prebuilt dist CSS uses --cui-*. Every
+// --cui-sidebar-* override here was inert, so the sidebar kept its 16rem
+// default while the wrapper was padded to the 14rem it was told to expect —
+// 32px of every page hidden behind the nav, which is why the D of "Dashboard"
+// was missing.
+//
+// One value drives both the nav and the offset so they cannot drift apart.
 $sidebar-width: 14rem;
 $sidebar-narrow-width: 4rem;
 $shell-header-height: 3.25rem;
+$sidebar-link-padding-x: 0.875rem;
+$sidebar-icon-width: 1.25rem;
+$sidebar-icon-margin: 0.5rem;
 
 .sidebar {
-  --cui-sidebar-width: #{$sidebar-width};
-  --cui-sidebar-nav-link-padding-y: 0.5rem;
-  --cui-sidebar-nav-link-padding-x: 0.875rem;
-  --cui-sidebar-nav-link-font-size: 0.8125rem;
-  --cui-sidebar-nav-group-items-padding-y: 0;
-  --cui-sidebar-brand-height: #{$shell-header-height};
+  --bs-sidebar-width: #{$sidebar-width};
+  --bs-sidebar-nav-link-padding-y: 0.45rem;
+  --bs-sidebar-nav-link-padding-x: #{$sidebar-link-padding-x};
+  --bs-sidebar-nav-link-font-size: 0.8125rem;
+  --bs-sidebar-nav-link-icon-width: #{$sidebar-icon-width};
+  --bs-sidebar-nav-link-icon-margin: #{$sidebar-icon-margin};
+  --bs-sidebar-nav-group-items-padding-y: 0;
+  --bs-sidebar-brand-height: #{$shell-header-height};
 
   // The requested shell colour.
-  --cui-sidebar-bg: #0c2b4b;
-  --cui-sidebar-brand-bg: #0c2b4b;
-  --cui-sidebar-footer-bg: #0c2b4b;
+  --bs-sidebar-bg: #0c2b4b;
+  --bs-sidebar-brand-bg: #0c2b4b;
+  --bs-sidebar-footer-bg: #0c2b4b;
   background: #0c2b4b;
 
   .sidebar-header,
   .sidebar-footer {
-    border-color: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.12);
   }
 }
 
@@ -111,17 +123,23 @@ $shell-header-height: 3.25rem;
 
 .sidebar-nav {
   .nav-link {
-    padding: 0.45rem 0.875rem;
     font-size: 0.8125rem;
   }
 
+  // A child sits one icon-width in from where its parent's label starts, so
+  // the tree reads as a tree. Derived from the same variables as the parent
+  // rather than a hand-tuned number: the previous 2.1rem was less than the
+  // parent's own label offset, which put the children to the LEFT of the
+  // group they belong to.
   .nav-group-items .nav-link {
-    padding-left: 2.1rem;
+    padding-inline-start: calc(
+      #{$sidebar-link-padding-x} + #{$sidebar-icon-width} + #{$sidebar-icon-margin}
+    );
   }
 
   .nav-icon {
-    width: 1.25rem;
-    margin-inline-end: 0.5rem;
+    width: #{$sidebar-icon-width};
+    margin-inline-end: #{$sidebar-icon-margin};
     font-size: 0.9rem;
     text-align: center;
   }
@@ -131,7 +149,7 @@ $shell-header-height: 3.25rem;
 // shell instead of the header sitting a few pixels shallower than the block
 // beside it.
 .header {
-  --cui-header-min-height: #{$shell-header-height};
+  --bs-header-min-height: #{$shell-header-height};
   min-height: #{$shell-header-height};
   padding-block: 0;
 
@@ -219,28 +237,6 @@ $shell-header-height: 3.25rem;
   flex-shrink: 0;
 }
 
-// A dot rather than a second icon for child items: eight aligned labels scan
-// faster than eight distinct icons.
-.sidebar-nav .nav-icon-bullet {
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    inset-inline-start: 50%;
-    width: 0.25rem;
-    height: 0.25rem;
-    margin: -0.125rem 0 0 -0.125rem;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.5;
-  }
-}
-
-.body {
-  padding-block: 0.25rem;
-}
 
 .breadcrumb {
   --cui-breadcrumb-font-size: 0.8125rem;
