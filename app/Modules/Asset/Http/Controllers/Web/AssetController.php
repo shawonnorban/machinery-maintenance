@@ -15,6 +15,7 @@ use App\Modules\Asset\Models\AssetType;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Asset\Services\QrCodeRenderer;
 use App\Modules\Tenancy\Models\Factory;
+use App\Modules\Vendor\Services\AssetCoverage;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -87,6 +88,10 @@ class AssetController extends Controller
 
         return view('asset::assets.show', [
             'asset' => $asset,
+            // What a technician standing at this machine most needs to know
+            // before ordering a repair: whether somebody else is paying for it
+            // (SRS 26).
+            'coverage' => app(AssetCoverage::class)->forAsset($asset),
             'statusHistory' => $asset->statusHistories()->limit(20)->get(),
             'transfers' => $asset->transfers()->with(['fromFactory:id,name', 'toFactory:id,name', 'toLocation:id,name'])->limit(20)->get(),
             'allowedTransitions' => Asset::TRANSITIONS[$asset->status] ?? [],

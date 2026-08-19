@@ -50,6 +50,8 @@ return [
     'event_approval_requested' => 'Approval needed',
     'event_approval_decided' => 'Approval decided',
     'event_low_stock' => 'Spare part low on stock',
+    'event_warranty_expiry' => 'Warranty about to expire',
+    'event_amc_expiry' => 'Service contract about to expire',
 
     // --- the messages themselves, rendered at creation in the recipient's
     //     locale and then stored (SRS 48) ---
@@ -89,6 +91,14 @@ return [
         'LOW_STOCK' => [
             'title' => 'Low stock: :part',
             'body' => ':on_hand left, reorder level is :reorder_level.',
+        ],
+        'WARRANTY_EXPIRY' => [
+            'title' => 'Warranty ending: :asset',
+            'body' => 'Cover from :vendor ends on :end_date, in :days days.',
+        ],
+        'AMC_EXPIRY' => [
+            'title' => 'Contract ending: :number',
+            'body' => ':vendor\'s contract ends on :end_date, in :days days.',
         ],
     ],
     'view_all' => 'View all notifications',

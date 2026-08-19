@@ -39,6 +39,7 @@ return [
         'cost' => 'Cost',
         'inventory' => 'Inventory',
         'people' => 'Technicians',
+        'vendor' => 'Vendors and cover',
     ],
 
     'job' => [
@@ -169,6 +170,25 @@ return [
         'jobs_assigned' => 'Jobs assigned',
         'jobs_completed' => 'Jobs completed',
         'labor_hours' => 'Labour hours',
+        'vendor' => 'Vendor',
+        'code' => 'Code',
+        'vendor_type' => 'Type',
+        'contracts' => 'Contracts',
+        'contract_value' => 'Contract value',
+        'claims_filed' => 'Claims filed',
+        'claims_settled' => 'Settled',
+        'claims_rejected' => 'Rejected',
+        'settlement_rate' => 'Settlement rate %',
+        'settled_value' => 'Settled value',
+        'avg_claim_response' => 'Avg response (days)',
+        'parts_spend' => 'Spend',
+        'cover_kind' => 'Cover',
+        'reference' => 'Reference',
+        'scope' => 'Scope',
+        'start_date' => 'Starts',
+        'end_date' => 'Ends',
+        'days_remaining' => 'Days remaining',
+        'value' => 'Value',
     ],
 
     // Titles and one-line descriptions, keyed by report.
@@ -231,5 +251,13 @@ return [
     'technician_performance' => [
         'title' => 'Technician workload',
         'description' => 'Jobs assigned and completed, and labour hours booked.',
+    ],
+    'vendor_performance' => [
+        'title' => 'Vendor performance',
+        'description' => 'Claims filed against each vendor, how many they honoured, and how long they took.',
+    ],
+    'coverage_expiry' => [
+        'title' => 'Warranty and AMC expiry',
+        'description' => 'Cover running out, soonest first, with what it will cost to keep.',
     ],
 ];

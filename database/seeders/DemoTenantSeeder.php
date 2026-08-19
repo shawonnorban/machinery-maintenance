@@ -48,6 +48,9 @@ use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Department;
 use App\Modules\Tenancy\Models\Factory;
 use App\Modules\Tenancy\Models\ProductionLine;
+use App\Modules\Vendor\Actions\ManageServiceContract;
+use App\Modules\Vendor\Actions\RecordWarranty;
+use App\Modules\Vendor\Models\Vendor;
 use App\Modules\WorkOrder\Actions\AssignTechnicians;
 use App\Modules\WorkOrder\Actions\CreateWorkOrder;
 use App\Modules\WorkOrder\Actions\RecordChecklistResult;
@@ -121,6 +124,7 @@ class DemoTenantSeeder extends Seeder
         $this->breakdowns($delta, $assets, $maintenanceManager);
         $this->stock($delta, $dhaka, $assets, $storekeeper);
         $this->costs($delta, $assets, $maintenanceManager);
+        $this->coverage($delta, $dhaka, $assets, $maintenanceManager);
 
         // A factory-scoped role: this manager reaches Dhaka only, which makes
         // factory scoping visible in the UI.
@@ -882,6 +886,78 @@ class DemoTenantSeeder extends Seeder
                 'active' => true,
             ]);
         }
+    }
+
+    /**
+     * A vendor, a live warranty and an AMC over the whole factory (SRS 26).
+     *
+     * Three states worth seeing on the screens: cover in force, cover about to
+     * lapse, and a claim in flight. Without them the coverage banner never
+     * appears and the expiry list looks like a feature that does nothing.
+     *
+     * @param  array<string, Asset>  $assets
+     */
+    private function coverage(Company $company, Factory $factory, array $assets, User $manager): void
+    {
+        if (Vendor::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $juki = Vendor::create([
+            'company_id' => $company->id,
+            'name' => 'Juki Bangladesh Ltd',
+            'code' => 'JUKI-BD',
+            'vendor_type' => 'BOTH',
+            'contact_name' => 'Rafiqul Islam',
+            'phone' => '+8801711000000',
+            'email' => 'service@juki-bd.test',
+            'address' => 'Tejgaon Industrial Area, Dhaka',
+            'status' => 'ACTIVE',
+            'created_by' => $manager->id,
+        ]);
+
+        $first = reset($assets);
+
+        if ($first instanceof Asset) {
+            app(RecordWarranty::class)->handle([
+                'asset_id' => $first->id,
+                'vendor_id' => $juki->id,
+                'warranty_type' => 'MANUFACTURER',
+                'reference' => 'JK-WTY-2025-0412',
+                'start_date' => CarbonImmutable::now()->subMonths(8)->toDateString(),
+                'end_date' => CarbonImmutable::now()->addMonths(16)->toDateString(),
+                'coverage' => 'Parts and labour, on-site',
+                'exclusions' => 'Consumables: needles, belts, oil',
+            ], $manager->id);
+
+            $expiring = next($assets);
+
+            if ($expiring instanceof Asset) {
+                // Twenty days out, so the expiring list and the alert thresholds
+                // have something real to show.
+                app(RecordWarranty::class)->handle([
+                    'asset_id' => $expiring->id,
+                    'vendor_id' => $juki->id,
+                    'warranty_type' => 'EXTENDED',
+                    'start_date' => CarbonImmutable::now()->subYear()->toDateString(),
+                    'end_date' => CarbonImmutable::now()->addDays(20)->toDateString(),
+                    'coverage' => 'Parts only',
+                ], $manager->id);
+            }
+        }
+
+        app(ManageServiceContract::class)->create([
+            'vendor_id' => $juki->id,
+            'factory_id' => $factory->id,
+            'contract_type' => 'AMC',
+            'start_date' => CarbonImmutable::now()->subMonths(4)->toDateString(),
+            'end_date' => CarbonImmutable::now()->addMonths(8)->toDateString(),
+            'value' => '450000',
+            'currency' => 'BDT',
+            'coverage' => 'Quarterly service of all sewing machines, 24-hour response',
+            'visits_per_year' => 4,
+            'response_time_hours' => 24,
+        ], $manager->id);
     }
 
     private function midTolerance(ChecklistItem $item): string

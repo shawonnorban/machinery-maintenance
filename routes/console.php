@@ -6,6 +6,7 @@ use App\Modules\Analytics\Console\SnapshotKpis;
 use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
 use App\Modules\Notification\Console\EscalateNotifications;
 use App\Modules\Reporting\Console\PruneReportFiles;
+use App\Modules\Vendor\Console\AlertExpiringCoverage;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -47,5 +48,15 @@ Schedule::command(SnapshotKpis::class)
  */
 Schedule::command(PruneReportFiles::class)
     ->dailyAt('02:15')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Expiring warranties and AMC contracts (SRS 26, ADR-011). Daily: cover is
+ * measured in months, and the alert thresholds are days apart, so an hourly
+ * sweep would only repeat itself.
+ */
+Schedule::command(AlertExpiringCoverage::class)
+    ->dailyAt('06:30')
     ->withoutOverlapping()
     ->runInBackground();

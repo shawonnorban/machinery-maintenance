@@ -17,6 +17,36 @@
         </x-slot:actions>
     </x-page-header>
 
+    @if ($coverage['covered'])
+        {{-- Before anything else, because it changes what happens next: this
+             repair may already be paid for. A machine repaired at the factory's
+             own cost while under warranty is money thrown away (SRS 26). --}}
+        <div class="alert alert-success d-flex flex-wrap gap-3 align-items-center">
+            <span>
+                @if ($coverage['warranty'])
+                    {{ __('vendor.covered_by_warranty', [
+                        'vendor' => $coverage['warranty']->vendor?->name ?? __('vendor.unnamed_vendor'),
+                        'until' => $coverage['warranty']->end_date->format('Y-m-d'),
+                    ]) }}
+                @else
+                    @php $contract = $coverage['contracts']->first(); @endphp
+                    {{ __('vendor.covered_by_contract', [
+                        'vendor' => $contract->vendor?->name ?? __('vendor.unnamed_vendor'),
+                        'number' => $contract->contract_number,
+                        'until' => $contract->end_date->format('Y-m-d'),
+                    ]) }}
+                @endif
+            </span>
+
+            @if ($coverage['warranty'])
+                <a href="{{ route('app.warranties.show', $coverage['warranty']) }}"
+                   class="btn btn-sm btn-outline-success ms-auto">
+                    {{ __('vendor.warranty') }}
+                </a>
+            @endif
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-lg-8">
             {{-- Above the fold: status, location, next PM, open breakdown and

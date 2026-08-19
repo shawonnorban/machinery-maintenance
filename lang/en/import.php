@@ -108,6 +108,10 @@ return [
             'title' => 'Spare parts',
             'description' => 'The parts catalogue. Opening stock is received separately, through the store.',
         ],
+        'vendors' => [
+            'title' => 'Vendors',
+            'description' => 'Suppliers and service providers, from your purchasing list.',
+        ],
         'maintenance_history' => [
             'title' => 'Maintenance history',
             'description' => 'Work already done, from whatever you were using before.',
@@ -116,6 +120,7 @@ return [
 
     'columns' => [
         'asset_code' => 'Machine code',
+        'code' => 'Code',
         'name' => 'Name',
         'asset_type_code' => 'Asset type code',
         'asset_category_code' => 'Category code',
@@ -157,6 +162,12 @@ return [
         'labor_cost' => 'Labour cost',
         'parts_cost' => 'Parts cost',
         'other_cost' => 'Other cost',
+        'vendor_type' => 'Vendor type',
+        'contact_name' => 'Contact person',
+        'phone' => 'Phone',
+        'email' => 'Email',
+        'address' => 'Address',
+        'tax_reference' => 'Tax reference',
         'external_reference' => 'Your reference',
     ],
 ];

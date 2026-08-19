@@ -59,6 +59,8 @@ return [
     'event_approval_requested' => 'অনুমোদন প্রয়োজন',
     'event_approval_decided' => 'অনুমোদনের সিদ্ধান্ত',
     'event_low_stock' => 'স্পেয়ার পার্টের স্টক কম',
+    'event_warranty_expiry' => 'ওয়ারেন্টির মেয়াদ শেষ হতে চলেছে',
+    'event_amc_expiry' => 'সার্ভিস চুক্তির মেয়াদ শেষ হতে চলেছে',
 
     // --- Notification Messages ---
     // SRS 48: Notification message is generated and stored
@@ -107,6 +109,14 @@ return [
         'LOW_STOCK' => [
             'title' => 'স্পেয়ার পার্টের স্টক কম: :part',
             'body' => ':on_hand টি স্টকে আছে; রিঅর্ডার লেভেল :reorder_level।',
+        ],
+        'WARRANTY_EXPIRY' => [
+            'title' => 'ওয়ারেন্টি শেষ হচ্ছে: :asset',
+            'body' => ':vendor-এর কভার :end_date তারিখে শেষ হচ্ছে, আর :days দিন বাকি।',
+        ],
+        'AMC_EXPIRY' => [
+            'title' => 'চুক্তি শেষ হচ্ছে: :number',
+            'body' => ':vendor-এর চুক্তি :end_date তারিখে শেষ হচ্ছে, আর :days দিন বাকি।',
         ],
     ],
     'view_all' => 'সব বিজ্ঞপ্তি দেখুন',

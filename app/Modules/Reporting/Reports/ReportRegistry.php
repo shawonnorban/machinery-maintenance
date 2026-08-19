@@ -20,6 +20,8 @@ use App\Modules\Reporting\Reports\Maintenance\MaintenanceHistoryReport;
 use App\Modules\Reporting\Reports\Maintenance\OverdueMaintenanceReport;
 use App\Modules\Reporting\Reports\Maintenance\PmComplianceReport;
 use App\Modules\Reporting\Reports\People\TechnicianPerformanceReport;
+use App\Modules\Reporting\Reports\Vendor\CoverageExpiryReport;
+use App\Modules\Reporting\Reports\Vendor\VendorPerformanceReport;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
@@ -30,9 +32,9 @@ use InvalidArgumentException;
  * query and a set of columns — and a row saying a report exists when no class
  * implements it is a broken link on a screen somebody trusted.
  *
- * Two reports from SRS 32 are absent: vendor performance and warranty/AMC
- * expiry. Both read vendor and contract data that does not exist yet, and
- * listing them now would offer an empty file rather than an answer.
+ * All eighteen reports named in SRS 32 are here. Vendor performance and
+ * warranty/AMC expiry arrived last, with the vendor module that holds the data
+ * they read.
  */
 class ReportRegistry
 {
@@ -53,10 +55,12 @@ class ReportRegistry
         PartsConsumptionReport::class,
         InventoryValuationReport::class,
         TechnicianPerformanceReport::class,
+        VendorPerformanceReport::class,
+        CoverageExpiryReport::class,
     ];
 
     /** The order groups appear on the index. */
-    public const GROUPS = ['asset', 'maintenance', 'breakdown', 'cost', 'inventory', 'people'];
+    public const GROUPS = ['asset', 'maintenance', 'breakdown', 'cost', 'inventory', 'people', 'vendor'];
 
     /** @var array<string, Report>|null */
     private ?array $resolved = null;

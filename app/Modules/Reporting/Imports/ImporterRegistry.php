@@ -9,6 +9,7 @@ use App\Modules\Reporting\Imports\Types\AssetImporter;
 use App\Modules\Reporting\Imports\Types\LocationImporter;
 use App\Modules\Reporting\Imports\Types\MaintenanceHistoryImporter;
 use App\Modules\Reporting\Imports\Types\SparePartImporter;
+use App\Modules\Reporting\Imports\Types\VendorImporter;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
@@ -22,9 +23,8 @@ use InvalidArgumentException;
  * one missing prerequisite is the fastest way to lose somebody's confidence in
  * the feature.
  *
- * Vendor import from SRS 33 is absent: the Vendor module does not exist yet
- * (step 28), and offering an import that writes nowhere is worse than not
- * offering it.
+ * All five imports named in SRS 33 are here. Vendors arrived last, with the
+ * module that holds them.
  */
 class ImporterRegistry
 {
@@ -33,6 +33,7 @@ class ImporterRegistry
         LocationImporter::class,
         AssetImporter::class,
         SparePartImporter::class,
+        VendorImporter::class,
         MaintenanceHistoryImporter::class,
     ];
 

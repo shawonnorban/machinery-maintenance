@@ -41,6 +41,8 @@ class Notification extends BaseModel
         'APPROVAL_REQUESTED',
         'APPROVAL_DECIDED',
         'LOW_STOCK',
+        'WARRANTY_EXPIRY',
+        'AMC_EXPIRY',
     ];
 
     protected $table = 'notifications';

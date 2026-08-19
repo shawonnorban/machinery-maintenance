@@ -39,6 +39,7 @@ return [
         'cost' => 'খরচ',
         'inventory' => 'ইনভেন্টরি',
         'people' => 'টেকনিশিয়ান',
+        'vendor' => 'ভেন্ডর ও কভার',
     ],
 
     'job' => [
@@ -169,6 +170,25 @@ return [
         'jobs_assigned' => 'দেওয়া কাজ',
         'jobs_completed' => 'সম্পন্ন কাজ',
         'labor_hours' => 'শ্রম ঘণ্টা',
+        'vendor' => 'ভেন্ডর',
+        'code' => 'কোড',
+        'vendor_type' => 'ধরন',
+        'contracts' => 'চুক্তি',
+        'contract_value' => 'চুক্তির মূল্য',
+        'claims_filed' => 'দাখিলকৃত ক্লেইম',
+        'claims_settled' => 'নিষ্পন্ন',
+        'claims_rejected' => 'প্রত্যাখ্যাত',
+        'settlement_rate' => 'নিষ্পত্তির হার %',
+        'settled_value' => 'নিষ্পন্ন মূল্য',
+        'avg_claim_response' => 'গড় সাড়া (দিন)',
+        'parts_spend' => 'ব্যয়',
+        'cover_kind' => 'কভার',
+        'reference' => 'রেফারেন্স',
+        'scope' => 'পরিসর',
+        'start_date' => 'শুরু',
+        'end_date' => 'শেষ',
+        'days_remaining' => 'বাকি দিন',
+        'value' => 'মূল্য',
     ],
 
     'asset_register' => [
@@ -230,5 +250,13 @@ return [
     'technician_performance' => [
         'title' => 'টেকনিশিয়ানের কাজের চাপ',
         'description' => 'দেওয়া ও সম্পন্ন কাজ, এবং বুক করা শ্রম ঘণ্টা।',
+    ],
+    'vendor_performance' => [
+        'title' => 'ভেন্ডরের কর্মক্ষমতা',
+        'description' => 'প্রতিটি ভেন্ডরের বিপরীতে দাখিল করা ক্লেইম, কতগুলো তারা মেনেছে এবং কত সময় নিয়েছে।',
+    ],
+    'coverage_expiry' => [
+        'title' => 'ওয়ারেন্টি ও এএমসির মেয়াদ',
+        'description' => 'যে কভার শেষ হতে চলেছে — আগে যেটি, সেটি আগে — এবং তা বহাল রাখতে কত লাগবে।',
     ],
 ];
