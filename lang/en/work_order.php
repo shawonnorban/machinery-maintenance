@@ -204,4 +204,5 @@ return [
     'checklist_failed_count' => '{1} :count failed|[2,*] :count failed',
     'checklist_version_hint' => 'The version is frozen onto the work order now, so a template edited later does not change what this technician was asked to check.',
     'shutdown_hint' => 'The machine stops for this job, and its stoppage counts as planned downtime.',
+    'parts_outstanding' => 'This work order still holds parts on :count line(s) that were neither fitted nor returned. Account for them before closing.',
 ];

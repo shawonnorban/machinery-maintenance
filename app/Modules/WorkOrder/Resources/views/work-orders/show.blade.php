@@ -108,6 +108,8 @@
                 @include('work_order::work-orders._checklist')
             @endif
 
+            @include('work_order::work-orders._parts')
+
             @include('work_order::work-orders._labor')
         </div>
 

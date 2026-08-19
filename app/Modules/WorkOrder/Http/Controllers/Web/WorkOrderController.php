@@ -6,6 +6,10 @@ namespace App\Modules\WorkOrder\Http\Controllers\Web;
 
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Identity\Models\Team;
+use App\Modules\Inventory\Models\Bin;
+use App\Modules\Inventory\Models\SparePart;
+use App\Modules\Inventory\Models\SparePartReservation;
+use App\Modules\Inventory\Models\WorkOrderPart;
 use App\Modules\Maintenance\Models\MaintenanceTemplate;
 use App\Modules\Maintenance\Models\MaintenanceType;
 use App\Modules\WorkOrder\Actions\CreateWorkOrder;
@@ -110,6 +114,23 @@ class WorkOrderController extends Controller
                 ->where('status', 'ACTIVE')
                 ->orderBy('name')
                 ->get(['id', 'name', 'employee_id']),
+            'partLines' => WorkOrderPart::where('work_order_id', $workOrder->id)
+                ->with(['sparePart:id,part_number,name,unit', 'substituteFor:id,part_number'])
+                ->orderBy('created_at')
+                ->get(),
+            'reservations' => SparePartReservation::where('work_order_id', $workOrder->id)
+                ->whereIn('status', SparePartReservation::HOLDING_STATUSES)
+                ->with('sparePart:id,part_number,name')
+                ->get(),
+            'spareParts' => SparePart::where('active', true)
+                ->orderBy('part_number')
+                ->get(['id', 'part_number', 'name']),
+            'bins' => Bin::where('is_in_transit', false)
+                ->where('active', true)
+                ->with('store.warehouse')
+                ->get()
+                ->filter(fn (Bin $bin) => $bin->factoryId() === $workOrder->factory_id)
+                ->values(),
         ]);
     }
 

@@ -25,6 +25,13 @@ use App\Modules\Identity\Models\CompanyUser;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserRole;
+use App\Modules\Inventory\Actions\IssuePartsToWorkOrder;
+use App\Modules\Inventory\Actions\ReceiveStock;
+use App\Modules\Inventory\Models\Bin;
+use App\Modules\Inventory\Models\SparePart;
+use App\Modules\Inventory\Models\SparePartCategory;
+use App\Modules\Inventory\Models\Store;
+use App\Modules\Inventory\Models\Warehouse;
 use App\Modules\Maintenance\Models\ChecklistItem;
 use App\Modules\Maintenance\Models\MaintenanceTemplate;
 use App\Modules\Maintenance\Models\MaintenanceTemplateVersion;
@@ -42,6 +49,7 @@ use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
 use App\Modules\WorkOrder\Models\LaborRateGrade;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
+use App\Modules\WorkOrder\Services\WorkOrderCostCalculator;
 use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -88,7 +96,7 @@ class DemoTenantSeeder extends Seeder
         $this->user($delta, 'MAINTENANCE_ENGINEER', 'engineer@delta.test', 'Sabbir Ahmed');
         $technicianUser = $this->user($delta, 'TECHNICIAN', 'technician@delta.test', 'Karim Mia');
         $this->user($delta, 'STORE_MANAGER', 'store@delta.test', 'Farhana Islam');
-        $this->user($delta, 'STOREKEEPER', 'storekeeper@delta.test', 'Jashim Uddin');
+        $storekeeper = $this->user($delta, 'STOREKEEPER', 'storekeeper@delta.test', 'Jashim Uddin');
         $this->user($delta, 'AUDITOR', 'auditor@delta.test', 'Tanvir Rahman');
         $this->user($delta, 'VIEWER', 'viewer@delta.test', 'Shirin Sultana');
 
@@ -99,6 +107,7 @@ class DemoTenantSeeder extends Seeder
         $assets = $this->assets($delta, $dhaka);
         $this->workOrders($delta, $dhaka, $assets, $maintenanceManager);
         $this->breakdowns($delta, $assets, $maintenanceManager);
+        $this->stock($delta, $dhaka, $assets, $storekeeper);
 
         // A factory-scoped role: this manager reaches Dhaka only, which makes
         // factory scoping visible in the UI.
@@ -628,6 +637,120 @@ class DemoTenantSeeder extends Seeder
 
         $inRepair = $transition->acknowledge($inRepair, $reporter->id, CarbonImmutable::now()->subHours(5));
         $transition->startRepair($inRepair, $reporter->id, CarbonImmutable::now()->subHours(4));
+    }
+
+    /**
+     * A store with real stock, and a machine that has already drawn from it.
+     *
+     * Every unit enters through the ledger, so the demo shows movements with
+     * balances behind them rather than quantities that appeared from nowhere.
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function stock(Company $company, Factory $factory, array $assets, User $storekeeper): void
+    {
+        if (SparePart::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $warehouse = Warehouse::create([
+            'company_id' => $company->id,
+            'factory_id' => $factory->id,
+            'name' => $factory->name.' main store',
+            'code' => $factory->code.'-WH',
+        ]);
+
+        $store = Store::create([
+            'company_id' => $company->id,
+            'warehouse_id' => $warehouse->id,
+            'name' => 'Spare parts store',
+            'code' => $factory->code.'-ST',
+        ]);
+
+        $bins = [];
+
+        foreach (['A1', 'A2', 'B1'] as $code) {
+            $bins[$code] = Bin::create([
+                'company_id' => $company->id,
+                'store_id' => $store->id,
+                'name' => 'Rack '.$code,
+                'code' => $factory->code.'-'.$code,
+            ]);
+        }
+
+        $categories = SparePartCategory::whereNull('company_id')->get()->keyBy('code');
+        $receive = app(ReceiveStock::class);
+
+        // Part number, name, category, unit, reorder level, critical, bin, qty, cost.
+        $catalogue = [
+            ['JK-DDL9000-HOOK', 'Rotary hook, Juki DDL-9000C', 'SEWING_PARTS', 'PCS', '5', true, 'A1', '14', '2450'],
+            ['JK-DDL9000-NEEDLE', 'Needle DBx1 #14 (pack of 10)', 'SEWING_PARTS', 'BOX', '20', false, 'A1', '48', '180'],
+            ['JK-BOBBIN-CASE', 'Bobbin case, lockstitch', 'SEWING_PARTS', 'PCS', '10', true, 'A1', '6', '620'],
+            ['BLT-M35-A', 'V-belt A35 motor drive', 'BELTS_CHAINS', 'PCS', '8', false, 'A2', '22', '340'],
+            ['BRG-6203-2RS', 'Ball bearing 6203-2RS', 'BEARINGS', 'PCS', '12', false, 'A2', '30', '210'],
+            ['SRV-750W-JK', 'Servo motor 750W', 'ELECTRICAL', 'PCS', '2', true, 'B1', '3', '9800'],
+            ['OIL-WHITE-5L', 'White sewing machine oil, 5L', 'LUBRICANTS', 'LTR', '15', false, 'B1', '40', '95'],
+            // Deliberately below its reorder level, so the low-stock screen has
+            // something real on it the moment the demo is opened.
+            ['SOL-VALVE-24V', 'Solenoid valve 24V DC', 'PNEUMATIC', 'PCS', '6', true, 'B1', '2', '1450'],
+        ];
+
+        foreach ($catalogue as [$number, $name, $category, $unit, $reorder, $critical, $bin, $quantity, $cost]) {
+            $part = SparePart::create([
+                'company_id' => $company->id,
+                'category_id' => $categories[$category]?->id,
+                'part_number' => $number,
+                'name' => $name,
+                'unit' => $unit,
+                'minimum_stock' => bcdiv($reorder, '2', 4),
+                'reorder_level' => $reorder,
+                'is_critical_spare' => $critical,
+                'currency' => 'BDT',
+                'active' => true,
+            ]);
+
+            // Through the ledger, so the balance has a movement behind it and
+            // the verification on the part screen has something to replay.
+            $receive->handle(
+                $part, $bins[$bin], $quantity, $cost, $storekeeper->id,
+                'Opening stock count', 'OPENING_BALANCE',
+            );
+        }
+
+        $this->issuePartsToOpenWork($company, $bins['A1'], $storekeeper);
+
+        unset($assets);
+    }
+
+    /**
+     * Puts parts against the in-progress work order, one of them left
+     * unaccounted so the "cannot close while stock is out" rule is visible.
+     */
+    private function issuePartsToOpenWork(Company $company, Bin $bin, User $storekeeper): void
+    {
+        $workOrder = WorkOrder::where('company_id', $company->id)
+            ->where('status', 'IN_PROGRESS')
+            ->first();
+
+        if ($workOrder === null) {
+            return;
+        }
+
+        $hook = SparePart::where('company_id', $company->id)
+            ->where('part_number', 'JK-DDL9000-HOOK')
+            ->first();
+
+        if ($hook === null) {
+            return;
+        }
+
+        $line = app(IssuePartsToWorkOrder::class)
+            ->issue($workOrder, $hook, $bin, '2', $storekeeper->id);
+
+        // One fitted, one still in the technician's toolbox.
+        app(IssuePartsToWorkOrder::class)->consume($line, '1', $storekeeper->id);
+
+        app(WorkOrderCostCalculator::class)->recalculate($workOrder->fresh());
     }
 
     private function midTolerance(ChecklistItem $item): string

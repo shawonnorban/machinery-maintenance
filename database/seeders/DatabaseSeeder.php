@@ -8,6 +8,7 @@ use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
 use App\Modules\Breakdown\Database\Seeders\FailureTaxonomySeeder;
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
+use App\Modules\Inventory\Database\Seeders\SparePartCategorySeeder;
 use App\Modules\Maintenance\Database\Seeders\ChecklistTemplateSeeder;
 use App\Modules\Maintenance\Database\Seeders\MaintenanceTypeSeeder;
 use App\Modules\Settings\Database\Seeders\SettingDefinitionSeeder;
@@ -32,6 +33,7 @@ class DatabaseSeeder extends Seeder
             MaintenanceTypeSeeder::class,
             ChecklistTemplateSeeder::class,
             FailureTaxonomySeeder::class,
+            SparePartCategorySeeder::class,
         ]);
     }
 }

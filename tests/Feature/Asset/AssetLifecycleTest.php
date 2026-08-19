@@ -116,16 +116,35 @@ class AssetLifecycleTest extends TestCase
     {
         $tokens = [];
 
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 24; $i++) {
             $tokens[] = $this->create->handle($this->payload(['asset_code' => "SEW-{$i}"]))->qr_code;
         }
 
         // A sequential code would let anyone photograph one label and
         // enumerate the whole fleet (Data Dictionary 5.1).
         $this->assertSame($tokens, array_unique($tokens));
-        $sorted = $tokens;
-        sort($sorted);
-        $this->assertNotSame($sorted, $tokens, 'Tokens appear to be ordered, which suggests they are predictable.');
+
+        // A counter shares a long prefix across the whole batch. Random tokens
+        // over a 25-character alphabet effectively never share three characters
+        // across two dozen samples, so this fails loudly for a counter and
+        // deterministically for a random source.
+        //
+        // Sorted order was the earlier check here, and it was wrong: five
+        // random tokens come out sorted roughly one run in a hundred and
+        // twenty, which is a test that fails for no reason.
+        $prefix = $tokens[0];
+
+        foreach ($tokens as $token) {
+            while ($prefix !== '' && ! str_starts_with($token, $prefix)) {
+                $prefix = substr($prefix, 0, -1);
+            }
+        }
+
+        $this->assertLessThan(
+            3,
+            strlen($prefix),
+            "Tokens share the prefix '{$prefix}', which suggests a counter rather than a random source.",
+        );
     }
 
     public function test_a_duplicate_asset_code_is_rejected_within_a_company(): void

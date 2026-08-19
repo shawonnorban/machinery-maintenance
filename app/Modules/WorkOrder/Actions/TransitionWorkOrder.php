@@ -6,6 +6,8 @@ namespace App\Modules\WorkOrder\Actions;
 
 use App\Modules\Asset\Actions\ChangeAssetStatus;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Inventory\Actions\IssuePartsToWorkOrder;
+use App\Modules\Inventory\Actions\ReserveStock;
 use App\Modules\Maintenance\Actions\CompleteSchedule;
 use App\Modules\Maintenance\Models\MaintenanceSchedule;
 use App\Modules\WorkOrder\Models\WorkOrder;
@@ -27,6 +29,8 @@ class TransitionWorkOrder
     public function __construct(
         private readonly ChangeAssetStatus $assetStatus,
         private readonly CompleteSchedule $completeSchedule,
+        private readonly IssuePartsToWorkOrder $parts,
+        private readonly ReserveStock $reservations,
     ) {}
 
     /**
@@ -228,6 +232,20 @@ class TransitionWorkOrder
             ])->status(422);
         }
 
+        // Stock taken from the store and neither fitted nor returned is stock
+        // nobody can account for. Closing over it writes the loss off silently,
+        // which is how a store's figures drift away from its shelves
+        // (SRS 13.3, ERD Section 13 rule 2).
+        $unsettled = $this->parts->unsettledLines($workOrder);
+
+        if ($unsettled->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'parts' => __('work_order.parts_outstanding', [
+                    'count' => $unsettled->count(),
+                ]),
+            ])->status(422);
+        }
+
         return DB::transaction(function () use ($workOrder, $userId): WorkOrder {
             $workOrder = $this->move($workOrder, 'CLOSED', $userId);
 
@@ -235,6 +253,10 @@ class TransitionWorkOrder
                 'closed_by' => $userId,
                 'closed_at' => CarbonImmutable::now(),
             ])->save();
+
+            // Parts held for work that is over go back on the shelf rather than
+            // staying invisible to the rest of the factory.
+            $this->reservations->releaseForWorkOrder($workOrder, $userId);
 
             return $workOrder->fresh();
         });

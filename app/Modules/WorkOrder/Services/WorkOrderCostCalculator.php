@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Services;
 
+use App\Modules\Inventory\Services\WorkOrderPartsCost;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
 
@@ -13,33 +14,47 @@ use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
  * Never accepted from a client. A total that disagrees with the labour entries
  * and part lines underneath it is worse than having no total, because someone
  * will make a repair-versus-replace decision on it.
+ *
+ * Arithmetic is done with bcmath rather than floats. Adding a few hundred lines
+ * of 0.1 in binary floating point does not give what a storekeeper gets on
+ * paper, and a cost report that is a few paisa out per row is one somebody has
+ * to reconcile by hand (ADR-063).
  */
 class WorkOrderCostCalculator
 {
+    private const SCALE = 4;
+
+    public function __construct(private readonly WorkOrderPartsCost $partsCost) {}
+
     public function recalculate(WorkOrder $workOrder): WorkOrder
     {
         $labor = WorkOrderLaborEntry::where('work_order_id', $workOrder->id)
             ->get()
-            ->reduce(fn (float $carry, WorkOrderLaborEntry $entry) => $carry + (float) $entry->amount, 0.0);
+            ->reduce(
+                fn (string $carry, WorkOrderLaborEntry $entry) => bcadd(
+                    $carry, $this->money($entry->amount), self::SCALE,
+                ),
+                '0.0000',
+            );
 
-        // Parts land with the inventory module (build order 19). Until then the
-        // line is zero rather than absent, so the total is already correct in
-        // shape and only gains a component later.
-        $parts = (float) ($workOrder->actual_parts_cost ?? 0);
-        $other = (float) ($workOrder->actual_other_cost ?? 0);
+        // Consumed and unreturned parts at their issue-time cost. Derived from
+        // the part lines, which are themselves derived from the ledger, so the
+        // number can always be traced back to a movement.
+        $parts = $this->partsCost->forWorkOrder($workOrder);
+        $other = $this->money($workOrder->actual_other_cost);
 
         $workOrder->forceFill([
-            'actual_labor_cost' => $this->money($labor),
-            'actual_parts_cost' => $this->money($parts),
-            'actual_other_cost' => $this->money($other),
-            'actual_cost' => $this->money($labor + $parts + $other),
+            'actual_labor_cost' => $labor,
+            'actual_parts_cost' => $parts,
+            'actual_other_cost' => $other,
+            'actual_cost' => bcadd(bcadd($labor, $parts, self::SCALE), $other, self::SCALE),
         ])->save();
 
         return $workOrder->fresh();
     }
 
-    private function money(float $value): string
+    private function money(mixed $value): string
     {
-        return number_format($value, 4, '.', '');
+        return number_format((float) ($value ?? 0), self::SCALE, '.', '');
     }
 }
