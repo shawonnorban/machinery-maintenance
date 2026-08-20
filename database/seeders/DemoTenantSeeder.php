@@ -14,6 +14,10 @@ use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetType;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Asset\Services\QrTokenGenerator;
+use App\Modules\Billing\Models\SubscriptionContract;
+use App\Modules\Billing\Services\InvoiceBuilder;
+use App\Modules\Billing\Services\PaymentRecorder;
+use App\Modules\Billing\Services\UsageMeter;
 use App\Modules\Breakdown\Actions\ReportBreakdown;
 use App\Modules\Breakdown\Actions\TransitionBreakdown;
 use App\Modules\Breakdown\Models\Breakdown;
@@ -125,6 +129,7 @@ class DemoTenantSeeder extends Seeder
         $this->stock($delta, $dhaka, $assets, $storekeeper);
         $this->costs($delta, $assets, $maintenanceManager);
         $this->coverage($delta, $dhaka, $assets, $maintenanceManager);
+        $this->subscription($delta, $owner);
 
         // A factory-scoped role: this manager reaches Dhaka only, which makes
         // factory scoping visible in the UI.
@@ -958,6 +963,70 @@ class DemoTenantSeeder extends Seeder
             'visits_per_year' => 4,
             'response_time_hours' => 24,
         ], $manager->id);
+    }
+
+    /**
+     * A live contract with one paid invoice and one still open (SRS 40).
+     *
+     * Two invoices rather than one, because a billing screen with everything
+     * settled shows none of the states that matter — a balance, a due date and
+     * a partly paid document are what the screen is for.
+     */
+    private function subscription(Company $company, User $owner): void
+    {
+        if (SubscriptionContract::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $contract = SubscriptionContract::create([
+            'company_id' => $company->id,
+            'contract_number' => 'SUB-'.CarbonImmutable::now()->format('Y').'-0001',
+            'status' => 'ACTIVE',
+            'start_date' => CarbonImmutable::now()->subMonths(8)->toDateString(),
+            'end_date' => CarbonImmutable::now()->addMonths(4)->toDateString(),
+            'billing_cycle' => 'MONTHLY',
+            'amount' => '45000.0000',
+            'currency' => 'BDT',
+            'grace_period_days' => 14,
+            'included_factories' => 3,
+            'included_assets' => 250,
+            'included_users' => 25,
+            'overage_policy' => 'WARN_ONLY',
+        ]);
+
+        $builder = app(InvoiceBuilder::class);
+        $recorder = app(PaymentRecorder::class);
+
+        // Last month: issued and settled.
+        $paid = $builder->issue($builder->draft(
+            $contract,
+            CarbonImmutable::now()->subMonth()->startOfMonth(),
+            CarbonImmutable::now()->subMonth()->endOfMonth(),
+            '15',
+        ));
+
+        $recorder->record($paid, [
+            'amount' => (string) $paid->total,
+            'method' => 'BANK_TRANSFER',
+            'payment_reference' => 'TRF-'.CarbonImmutable::now()->subMonth()->format('Ym'),
+            'paid_at' => CarbonImmutable::now()->subMonth()->endOfMonth(),
+        ], $owner->id);
+
+        // This month: issued, part paid, still open.
+        $open = $builder->issue($builder->draft(
+            $contract,
+            CarbonImmutable::now()->startOfMonth(),
+            CarbonImmutable::now()->endOfMonth(),
+            '15',
+        ));
+
+        $recorder->record($open, [
+            'amount' => '20000',
+            'method' => 'BANK_TRANSFER',
+            'payment_reference' => 'TRF-'.CarbonImmutable::now()->format('Ym'),
+        ], $owner->id);
+
+        app(UsageMeter::class)->measure($company->id);
     }
 
     private function midTolerance(ChecklistItem $item): string

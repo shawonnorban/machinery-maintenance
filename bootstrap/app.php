@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Billing\Http\Middleware\EnforceSubscriptionState;
 use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
 use App\Shared\Exceptions\TenantContextMissingException;
 use App\Shared\Http\Middleware\AssignRequestId;
@@ -39,6 +40,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             ResolveTenantContext::class,
+            // After the tenant is known, because it is the tenant's contract
+            // that decides this. Reads and exports pass through it untouched
+            // (ADR-029).
+            EnforceSubscriptionState::class,
         ]);
 
         $middleware->api(prepend: [
@@ -47,6 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->api(append: [
             ResolveTenantContext::class,
+            EnforceSubscriptionState::class,
         ]);
 
         $middleware->alias([

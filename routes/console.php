@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Analytics\Console\SnapshotKpis;
+use App\Modules\Billing\Console\AdvanceSubscriptions;
 use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
 use App\Modules\Notification\Console\EscalateNotifications;
 use App\Modules\Reporting\Console\PruneReportFiles;
@@ -58,5 +59,15 @@ Schedule::command(PruneReportFiles::class)
  */
 Schedule::command(AlertExpiringCoverage::class)
     ->dailyAt('06:30')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Subscription lifecycle and usage (ADR-029, SRS 40). Daily and early: a
+ * customer moved to read-only should find out at the start of their day, not
+ * halfway through a shift.
+ */
+Schedule::command(AdvanceSubscriptions::class)
+    ->dailyAt('01:30')
     ->withoutOverlapping()
     ->runInBackground();
