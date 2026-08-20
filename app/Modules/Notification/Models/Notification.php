@@ -43,6 +43,7 @@ class Notification extends BaseModel
         'LOW_STOCK',
         'WARRANTY_EXPIRY',
         'AMC_EXPIRY',
+        'WEBHOOK_DISABLED',
     ];
 
     protected $table = 'notifications';

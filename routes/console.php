@@ -8,6 +8,8 @@ use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
 use App\Modules\Notification\Console\EscalateNotifications;
 use App\Modules\Reporting\Console\PruneReportFiles;
 use App\Modules\Vendor\Console\AlertExpiringCoverage;
+use App\Modules\Webhook\Console\PruneWebhookPayloads;
+use App\Modules\Webhook\Console\RetryWebhookDeliveries;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -69,5 +71,23 @@ Schedule::command(AlertExpiringCoverage::class)
  */
 Schedule::command(AdvanceSubscriptions::class)
     ->dailyAt('01:30')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Webhook retries (ERD Section 22). Every five minutes, because the first
+ * backoff step is one minute and anything slower makes it meaningless.
+ */
+Schedule::command(RetryWebhookDeliveries::class)
+    ->everyFiveMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Webhook payloads are dropped after thirty days; the delivery record stays
+ * (SRS 49.1).
+ */
+Schedule::command(PruneWebhookPayloads::class)
+    ->dailyAt('02:45')
     ->withoutOverlapping()
     ->runInBackground();

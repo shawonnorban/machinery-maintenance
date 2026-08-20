@@ -51,6 +51,7 @@ return [
     'event_approval_decided' => 'Approval decided',
     'event_low_stock' => 'Spare part low on stock',
     'event_warranty_expiry' => 'Warranty about to expire',
+    'event_webhook_disabled' => 'Webhook endpoint disabled',
     'event_amc_expiry' => 'Service contract about to expire',
 
     // --- the messages themselves, rendered at creation in the recipient's
@@ -95,6 +96,10 @@ return [
         'WARRANTY_EXPIRY' => [
             'title' => 'Warranty ending: :asset',
             'body' => 'Cover from :vendor ends on :end_date, in :days days.',
+        ],
+        'WEBHOOK_DISABLED' => [
+            'title' => 'Webhook disabled: :url',
+            'body' => 'It failed :count times in a row and has been switched off. Fix the receiver, then enable it again.',
         ],
         'AMC_EXPIRY' => [
             'title' => 'Contract ending: :number',

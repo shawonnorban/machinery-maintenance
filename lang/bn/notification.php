@@ -60,6 +60,7 @@ return [
     'event_approval_decided' => 'অনুমোদনের সিদ্ধান্ত',
     'event_low_stock' => 'স্পেয়ার পার্টের স্টক কম',
     'event_warranty_expiry' => 'ওয়ারেন্টির মেয়াদ শেষ হতে চলেছে',
+    'event_webhook_disabled' => 'ওয়েবহুক এন্ডপয়েন্ট নিষ্ক্রিয় হয়েছে',
     'event_amc_expiry' => 'সার্ভিস চুক্তির মেয়াদ শেষ হতে চলেছে',
 
     // --- Notification Messages ---
@@ -113,6 +114,10 @@ return [
         'WARRANTY_EXPIRY' => [
             'title' => 'ওয়ারেন্টি শেষ হচ্ছে: :asset',
             'body' => ':vendor-এর কভার :end_date তারিখে শেষ হচ্ছে, আর :days দিন বাকি।',
+        ],
+        'WEBHOOK_DISABLED' => [
+            'title' => 'ওয়েবহুক নিষ্ক্রিয়: :url',
+            'body' => 'পরপর :count বার ব্যর্থ হওয়ায় এটি বন্ধ করা হয়েছে। রিসিভার ঠিক করে আবার চালু করুন।',
         ],
         'AMC_EXPIRY' => [
             'title' => 'চুক্তি শেষ হচ্ছে: :number',

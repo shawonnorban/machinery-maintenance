@@ -32,6 +32,7 @@ return [
     'service_contracts' => 'Service Contracts',
     'reports' => 'Reports',
     'import_data' => 'Import data',
+    'webhooks' => 'Webhooks',
     'settings' => 'Settings',
     'company' => 'Company',
     'factories' => 'Factories',
