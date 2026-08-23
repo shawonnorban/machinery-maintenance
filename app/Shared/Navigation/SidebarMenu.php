@@ -80,6 +80,7 @@ class SidebarMenu
                     ['label' => 'nav.issue_return', 'route' => 'app.inventory.issue', 'permission' => 'inventory.stock.issue'],
                     ['label' => 'nav.transfers', 'route' => 'app.inventory.transfers', 'permission' => 'inventory.transfer.create'],
                     ['label' => 'nav.low_stock', 'route' => 'app.inventory.low-stock', 'permission' => 'inventory.stock.view'],
+                    ['label' => 'nav.part_requests', 'route' => 'app.inventory.requests', 'permission' => 'inventory.part.view_any'],
                 ],
             ],
             [
@@ -120,11 +121,11 @@ class SidebarMenu
                 'children' => [
                     ['label' => 'nav.company', 'route' => 'app.settings.company', 'permission' => 'settings.company.manage'],
                     ['label' => 'nav.factories', 'route' => 'app.settings.factories', 'permission' => 'settings.factory.manage'],
+                    ['label' => 'nav.locations', 'route' => 'app.settings.locations', 'permission' => 'masterdata.manage'],
                     ['label' => 'nav.calendar_shifts', 'route' => 'app.settings.calendar', 'permission' => 'settings.calendar.manage'],
                     ['label' => 'nav.master_data', 'route' => 'app.settings.master-data', 'permission' => 'masterdata.manage'],
                     ['label' => 'nav.users', 'route' => 'app.settings.users', 'permission' => 'admin.user.manage'],
                     ['label' => 'nav.roles', 'route' => 'app.settings.roles', 'permission' => 'admin.role.manage'],
-                    ['label' => 'nav.labor_grades', 'route' => 'app.settings.labor-grades', 'permission' => 'technician.grade.manage'],
                     ['label' => 'nav.webhooks', 'route' => 'app.webhooks.index', 'permission' => 'webhook.endpoint.manage'],
                 ],
             ],

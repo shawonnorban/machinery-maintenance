@@ -21,6 +21,7 @@ use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class WorkOrderController extends Controller
@@ -84,7 +85,11 @@ class WorkOrderController extends Controller
         $this->authorize('work_order.work_order.view');
 
         $workOrder->load([
-            'asset:id,asset_code,name,criticality,current_factory_id',
+            'asset:id,asset_code,name,criticality,current_factory_id,asset_location_id',
+            // Eager loaded because the assignment picker asks where the machine
+            // stands; lazy loading is off, so a missing relation is a 500 rather
+            // than a slow page.
+            'asset.location:id,department_id,production_line_id',
             'factory:id,name',
             'maintenanceType:id,name',
             'templateVersion',
@@ -110,10 +115,15 @@ class WorkOrderController extends Controller
             // Costs are a separate permission: a technician records their time
             // without being shown what the job costs (SRS 25.1).
             'showCosts' => request()->user()->can('work_order.cost.view'),
-            'technicians' => Technician::where('factory_id', $workOrder->factory_id)
-                ->where('status', 'ACTIVE')
-                ->orderBy('name')
-                ->get(['id', 'name', 'employee_id']),
+            // Ordered by whose area this machine stands in, not filtered by it.
+            // A dyeing technician comes first for a dye house job; everyone
+            // else is still there, because at two in the morning a manager
+            // sends whoever is awake (ADR-065).
+            'technicians' => $this->technicianChoices($workOrder),
+            // Which of them this machine's part of the floor belongs to, so the
+            // picker can say why the order is what it is. A sorted list whose
+            // reason is invisible reads as an arbitrary one.
+            'responsibleTechnicianIds' => $this->responsibleTechnicianIds($workOrder),
             'partLines' => WorkOrderPart::where('work_order_id', $workOrder->id)
                 ->with(['sparePart:id,part_number,name,unit', 'substituteFor:id,part_number'])
                 ->orderBy('created_at')
@@ -184,5 +194,56 @@ class WorkOrderController extends Controller
                 ->filter(fn (MaintenanceTemplate $t) => $t->currentVersion() !== null)
                 ->values(),
         ];
+    }
+
+    /**
+     * Technicians for the assignment picker, the ones responsible for this
+     * machine's part of the floor first.
+     *
+     * Advisory, never a filter. A factory with nobody assigned to the dye
+     * house must still be able to send somebody, and a system that refuses is
+     * a system that gets worked around until the roster means nothing.
+     *
+     * @return Collection<int, Technician>
+     */
+    private function technicianChoices(WorkOrder $workOrder): Collection
+    {
+        $location = $workOrder->asset?->location;
+
+        return Technician::query()
+            ->where('factory_id', $workOrder->factory_id)
+            ->where('status', 'ACTIVE')
+            ->with(['department:id,name', 'productionLine:id,name'])
+            ->orderBy('name')
+            ->get()
+            ->sortBy([
+                fn (Technician $a, Technician $b) => (int) $b->coversLocation(
+                    $location?->department_id,
+                    $location?->production_line_id,
+                ) <=> (int) $a->coversLocation(
+                    $location?->department_id,
+                    $location?->production_line_id,
+                ),
+                fn (Technician $a, Technician $b) => strcmp((string) $a->name, (string) $b->name),
+            ])
+            ->values();
+    }
+
+    /**
+     * The ids of the technicians this machine's area belongs to.
+     *
+     * @return list<string>
+     */
+    private function responsibleTechnicianIds(WorkOrder $workOrder): array
+    {
+        $location = $workOrder->asset?->location;
+
+        return $this->technicianChoices($workOrder)
+            ->filter(fn (Technician $technician) => $technician->coversLocation(
+                $location?->department_id,
+                $location?->production_line_id,
+            ))
+            ->pluck('id')
+            ->all();
     }
 }

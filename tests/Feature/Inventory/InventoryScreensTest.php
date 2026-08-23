@@ -321,6 +321,175 @@ class InventoryScreensTest extends TestCase
             ->assertSee(__('inventory.outstanding'));
     }
 
+    /**
+     * A catalogue you cannot correct is a catalogue that goes stale.
+     *
+     * Part numbers are mistyped, reorder levels are set before anybody knows
+     * the real lead time, and a part gets recategorised. Until now the only
+     * way to fix any of it was a spreadsheet import.
+     */
+    public function test_a_part_can_be_corrected_after_it_is_created(): void
+    {
+        $this->actingAs($this->storeManager)
+            ->get('/app/inventory/parts/'.$this->part->id.'/edit')
+            ->assertOk()
+            ->assertSee($this->part->part_number);
+
+        $category = SparePartCategory::whereNull('company_id')->where('code', 'KNITTING_PARTS')->firstOrFail();
+
+        $this->actingAs($this->storeManager)
+            ->patch('/app/inventory/parts/'.$this->part->id, [
+                'part_number' => $this->part->part_number,
+                'name' => 'Rotary hook, corrected',
+                'unit' => 'PCS',
+                'category_id' => $category->id,
+                'reorder_level' => '12',
+                'lead_time_days' => '30',
+                'is_critical_spare' => '1',
+            ])
+            ->assertRedirect('/app/inventory/parts/'.$this->part->id);
+
+        $part = $this->part->fresh();
+
+        $this->assertSame('Rotary hook, corrected', $part->name);
+        $this->assertSame($category->id, $part->category_id);
+        $this->assertSame(30, $part->lead_time_days);
+        $this->assertTrue($part->is_critical_spare);
+    }
+
+    public function test_editing_a_part_leaves_the_stock_it_holds_alone(): void
+    {
+        app(InventoryLedger::class)->post($this->part, $this->bin, 'RECEIPT', '10', '2450');
+
+        $before = $this->balance()->quantity_on_hand;
+
+        $this->actingAs($this->storeManager)
+            ->patch('/app/inventory/parts/'.$this->part->id, [
+                'part_number' => $this->part->part_number,
+                'name' => 'Renamed',
+                'unit' => 'PCS',
+            ])
+            ->assertRedirect();
+
+        // The catalogue and the ledger are different things. Editing what a
+        // part is must never move what is on the shelf.
+        $this->assertSame($before, $this->balance()->quantity_on_hand);
+    }
+
+    public function test_a_part_number_cannot_be_changed_to_one_already_in_use(): void
+    {
+        $other = InventoryFixture::part($this->delta, 'JK-OTHER-001');
+
+        $this->actingAs($this->storeManager)
+            ->from('/app/inventory/parts/'.$this->part->id.'/edit')
+            ->patch('/app/inventory/parts/'.$this->part->id, [
+                'part_number' => $other->part_number,
+                'name' => $this->part->name,
+                'unit' => 'PCS',
+            ])
+            ->assertSessionHasErrors('part_number');
+    }
+
+    /**
+     * The part typed in twice, which retiring would leave in every list for
+     * ever labelled as though it had once been real.
+     */
+    public function test_a_part_created_by_mistake_can_be_deleted(): void
+    {
+        $mistake = InventoryFixture::part($this->delta, 'JK-TYPO-001', 'Typed in twice');
+
+        $this->actingAs($this->storeManager)
+            ->delete('/app/inventory/parts/'.$mistake->id)
+            ->assertRedirect('/app/inventory/parts');
+
+        $this->assertNull(SparePart::find($mistake->id));
+    }
+
+    /**
+     * The line the delete must not cross.
+     */
+    public function test_a_part_the_ledger_names_cannot_be_deleted(): void
+    {
+        app(InventoryLedger::class)->post($this->part, $this->bin, 'RECEIPT', '10', '250');
+
+        $this->actingAs($this->storeManager)
+            ->from('/app/inventory/parts/'.$this->part->id.'/edit')
+            ->delete('/app/inventory/parts/'.$this->part->id)
+            ->assertSessionHasErrors('part_number');
+
+        // Still there, and so is the movement that names it: a valuation has to
+        // stay replayable.
+        $this->assertNotNull(SparePart::find($this->part->id));
+        $this->assertSame('10.0000', (string) $this->balance()->quantity_on_hand);
+    }
+
+    public function test_deleting_a_part_needs_the_permission_for_it(): void
+    {
+        $mistake = InventoryFixture::part($this->delta, 'JK-TYPO-002', 'Typed in twice');
+
+        $this->actingAs($this->technicianUser)
+            ->delete('/app/inventory/parts/'.$mistake->id)
+            ->assertForbidden();
+
+        $this->assertNotNull(SparePart::find($mistake->id));
+    }
+
+    public function test_a_part_is_retired_rather_than_deleted(): void
+    {
+        $this->actingAs($this->storeManager)
+            ->post('/app/inventory/parts/'.$this->part->id.'/toggle')
+            ->assertRedirect();
+
+        // Still there, with its ledger intact: what was fitted to a machine two
+        // years ago has to keep reading correctly.
+        $this->assertFalse($this->part->fresh()->active);
+        $this->assertNotNull(SparePart::find($this->part->id));
+    }
+
+    public function test_a_technician_cannot_edit_the_catalogue(): void
+    {
+        $this->actingAs($this->technicianUser)
+            ->get('/app/inventory/parts/'.$this->part->id.'/edit')
+            ->assertForbidden();
+
+        $this->actingAs($this->technicianUser)
+            ->patch('/app/inventory/parts/'.$this->part->id, [
+                'part_number' => $this->part->part_number,
+                'name' => 'Renamed by a technician',
+                'unit' => 'PCS',
+            ])
+            ->assertForbidden();
+
+        $this->assertNotSame('Renamed by a technician', $this->part->fresh()->name);
+    }
+
+    public function test_a_part_cannot_be_filed_under_another_companys_category(): void
+    {
+        $other = TenantFixture::company('Beta Textiles Ltd', 'BTL');
+        TenantFixture::actingAsTenant($other);
+
+        $theirCategory = SparePartCategory::create([
+            'company_id' => $other->id,
+            'name' => 'Their private category',
+            'code' => 'BTL_ONLY',
+            'active' => true,
+        ]);
+
+        TenantFixture::actingAsTenant($this->delta);
+
+        $this->actingAs($this->storeManager)
+            ->from('/app/inventory/parts/'.$this->part->id.'/edit')
+            ->patch('/app/inventory/parts/'.$this->part->id, [
+                'part_number' => $this->part->part_number,
+                'name' => $this->part->name,
+                'unit' => 'PCS',
+                'category_id' => $theirCategory->id,
+            ])
+            ->assertSessionHasErrors('category_id');
+
+        $this->assertNotSame($theirCategory->id, $this->part->fresh()->category_id);
+    }
+
     private function inProgressWorkOrder(): WorkOrder
     {
         TenantFixture::actingAsTenant($this->delta);
@@ -336,9 +505,8 @@ class InventoryScreensTest extends TestCase
         $transition = app(TransitionWorkOrder::class);
         $workOrder = $transition->schedule($workOrder, $this->storeManager->id);
 
-        $grade = WorkOrderFixture::grade($this->delta);
         $technician = WorkOrderFixture::technician(
-            $this->delta, $this->dhaka, $grade, 'Karim Mia', 'EMP-1001', $this->technicianUser,
+            $this->delta, $this->dhaka, 'Karim Mia', 'EMP-1001', $this->technicianUser,
         );
 
         app(AssignTechnicians::class)->handle($workOrder, [$technician->id], $this->storeManager->id);

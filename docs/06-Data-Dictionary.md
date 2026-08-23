@@ -1,6 +1,6 @@
 # 06-Data-Dictionary.md
 # Data Dictionary, Enums and State Machines
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.0
 **Status:** Accepted
@@ -95,7 +95,6 @@ Applies to `breakdowns.severity`. Severity describes the failure; priority descr
 | `maintenance_plans.non_working_day_policy` | `NONE`, `NEXT_WORKING_DAY`, `PREVIOUS_WORKING_DAY` |
 | `checklist_items.input_type` | `PASS_FAIL`, `NUMERIC`, `TEXT`, `CHOICE`, `PHOTO`, `SIGNATURE` |
 | `work_order_checklist_results.result` | `PASS`, `FAIL`, `NA` |
-| `work_order_labor_entries.labor_category` | `REGULAR`, `OVERTIME`, `EXTERNAL` |
 | `work_order_holds.reason_code` | `AWAITING_PARTS`, `AWAITING_APPROVAL`, `AWAITING_VENDOR`, `PRODUCTION_RUNNING`, `SHIFT_END`, `OTHER` |
 | `work_orders.source` | `PLAN`, `BREAKDOWN`, `MANUAL`, `CHECKLIST_FAILURE`, `IMPORT` |
 | `work_orders.approval_status` | `NOT_REQUIRED`, `PENDING`, `APPROVED`, `REJECTED` |

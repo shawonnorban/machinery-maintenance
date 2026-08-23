@@ -24,6 +24,7 @@
             <thead>
                 <tr>
                     <th>{{ __('inventory.spare_part') }}</th>
+                    <th class="text-end">{{ __('inventory.quantity_requested') }}</th>
                     <th class="text-end">{{ __('inventory.quantity_issued') }}</th>
                     <th class="text-end">{{ __('inventory.quantity_consumed') }}</th>
                     <th class="text-end">{{ __('inventory.quantity_returned') }}</th>
@@ -52,6 +53,16 @@
                                 <div class="small text-body-secondary">
                                     {{ __('inventory.substitute_for') }}: {{ $line->substituteFor->part_number }}
                                 </div>
+                            @endif
+                        </td>
+                        <td class="text-end">
+                            {{ $line->quantity_requested }}
+                            @if ($line->status === 'REQUESTED')
+                                {{-- Asked for, not yet handed over. The store sees the
+                                     same line on its own queue. --}}
+                                <span class="badge bg-warning text-dark">{{ __('inventory.awaiting_store') }}</span>
+                            @elseif ($line->status === 'CANCELLED')
+                                <span class="badge bg-secondary">{{ __('inventory.request_cancelled_badge') }}</span>
                             @endif
                         </td>
                         <td class="text-end">{{ $line->quantity_issued }}</td>
@@ -101,7 +112,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ $showCosts ? 7 : 6 }}" class="text-body-secondary">
+                        <td colspan="{{ $showCosts ? 8 : 7 }}" class="text-body-secondary">
                             {{ __('inventory.no_parts_on_work_order') }}
                         </td>
                     </tr>
@@ -114,6 +125,48 @@
         <div class="card-footer small text-body-secondary">{{ __('inventory.outstanding_hint') }}</div>
     @endif
 
+    {{-- The technician's own way in. They may ask for a part; only the store
+         may hand one over, which is why this is a separate form with a
+         separate permission behind it. --}}
+    @can('work_order.part.request')
+        @unless ($workOrder->isTerminal())
+            <div class="card-body border-top">
+                <form method="POST" action="{{ route('app.work-orders.parts.request', $workOrder) }}"
+                      class="row g-2 align-items-end">
+                    @csrf
+
+                    <div class="col-md-6">
+                        <label for="request_spare_part_id" class="form-label mb-1">
+                            {{ __('inventory.request_a_part') }}
+                        </label>
+                        <select id="request_spare_part_id" name="spare_part_id" class="form-select form-select-sm"
+                                required data-tom-select>
+                            <option value="">—</option>
+                            @foreach ($spareParts as $sparePart)
+                                <option value="{{ $sparePart->id }}">
+                                    {{ $sparePart->part_number }} — {{ $sparePart->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="request_quantity" class="form-label mb-1">{{ __('inventory.quantity') }}</label>
+                        <input id="request_quantity" name="quantity" type="number" step="0.0001" min="0.0001"
+                               class="form-control form-control-sm" value="1" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button class="btn btn-sm btn-outline-info w-100">{{ __('inventory.request_part') }}</button>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-text">{{ __('inventory.request_hint') }}</div>
+                    </div>
+                </form>
+            </div>
+        @endunless
+    @endcan
     @canany(['inventory.stock.issue', 'inventory.reservation.manage'])
         @unless ($workOrder->isTerminal())
             <div class="card-body border-top">

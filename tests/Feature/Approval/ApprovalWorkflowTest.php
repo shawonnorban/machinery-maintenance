@@ -112,7 +112,12 @@ class ApprovalWorkflowTest extends TestCase
         return $workflow->fresh();
     }
 
-    private function workOrder(string $labour = '0', string $parts = '0'): WorkOrder
+    /**
+     * Parts only. A salaried technician's hours are not a spend anybody signs
+     * for, so the estimate an approval threshold measures is the parts on the
+     * job and nothing else.
+     */
+    private function workOrder(string $parts = '0'): WorkOrder
     {
         TenantFixture::actingAsTenant($this->delta);
 
@@ -120,7 +125,6 @@ class ApprovalWorkflowTest extends TestCase
             'asset_id' => $this->asset->id,
             'maintenance_type_id' => MaintenanceType::where('code', 'PREVENTIVE')->firstOrFail()->id,
             'title' => 'Overhaul',
-            'estimated_labor_cost' => $labour,
             'estimated_parts_cost' => $parts,
         ], $this->engineer->id);
     }
@@ -129,7 +133,7 @@ class ApprovalWorkflowTest extends TestCase
     {
         $this->workflow();
 
-        $workOrder = $this->transition->schedule($this->workOrder('4000', '2000'), $this->engineer->id);
+        $workOrder = $this->transition->schedule($this->workOrder('6000'), $this->engineer->id);
 
         // Requiring a signature for a needle change teaches everybody to
         // approve without reading.
@@ -153,7 +157,7 @@ class ApprovalWorkflowTest extends TestCase
     {
         $this->workflow();
 
-        $workOrder = $this->transition->schedule($this->workOrder('30000', '15000'), $this->engineer->id);
+        $workOrder = $this->transition->schedule($this->workOrder('45000'), $this->engineer->id);
 
         $request = ApprovalRequest::firstOrFail();
 
@@ -171,7 +175,7 @@ class ApprovalWorkflowTest extends TestCase
         $request = ApprovalRequest::firstOrFail();
 
         // Somebody edits the estimate after the request went out.
-        $workOrder->forceFill(['estimated_labor_cost' => '900000'])->save();
+        $workOrder->forceFill(['estimated_parts_cost' => '900000'])->save();
 
         // The request still shows what the approver was asked to sign. Without
         // this, "what did they actually agree to" is unanswerable
@@ -296,8 +300,7 @@ class ApprovalWorkflowTest extends TestCase
 
         $workOrder = $this->transition->schedule($this->workOrder('150000'), $this->engineer->id);
 
-        $grade = WorkOrderFixture::grade($this->delta);
-        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka, $grade);
+        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka);
         app(AssignTechnicians::class)->handle($workOrder->fresh(), [$technician->id], $this->engineer->id);
 
         try {
@@ -323,8 +326,7 @@ class ApprovalWorkflowTest extends TestCase
 
         $workOrder = $this->transition->schedule($this->workOrder('150000'), $this->engineer->id);
 
-        $grade = WorkOrderFixture::grade($this->delta);
-        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka, $grade);
+        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka);
         app(AssignTechnicians::class)->handle($workOrder->fresh(), [$technician->id], $this->engineer->id);
 
         $this->decisions->reject(ApprovalRequest::firstOrFail(), $this->maintenanceManager, 'Not this quarter');

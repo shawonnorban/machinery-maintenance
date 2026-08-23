@@ -82,7 +82,6 @@ class CreateWorkOrder
                 'assigned_team_id' => $data['assigned_team_id'] ?? null,
                 'scheduled_start' => $data['scheduled_start'] ?? null,
                 'scheduled_end' => $data['scheduled_end'] ?? null,
-                'estimated_labor_cost' => $data['estimated_labor_cost'] ?? null,
                 'estimated_parts_cost' => $data['estimated_parts_cost'] ?? null,
                 'currency' => $data['currency'] ?? 'BDT',
                 'created_by' => $userId,

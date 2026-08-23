@@ -112,7 +112,6 @@ class PermissionSeeder extends Seeder
             'technician' => [
                 'technician.technician.manage' => ['Manage technicians'],
                 'technician.performance.view' => ['View individual technician KPIs'],
-                'technician.grade.manage' => ['Manage labor rate grades', true],
             ],
             'admin' => [
                 'admin.user.manage' => ['Manage users'],

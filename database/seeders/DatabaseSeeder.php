@@ -12,6 +12,7 @@ use App\Modules\Identity\Database\Seeders\RoleSeeder;
 use App\Modules\Inventory\Database\Seeders\SparePartCategorySeeder;
 use App\Modules\Maintenance\Database\Seeders\ChecklistTemplateSeeder;
 use App\Modules\Maintenance\Database\Seeders\MaintenanceTypeSeeder;
+use App\Modules\Metering\Database\Seeders\MeterTypeSeeder;
 use App\Modules\Settings\Database\Seeders\SettingDefinitionSeeder;
 use Illuminate\Database\Seeder;
 
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
             MaintenanceTypeSeeder::class,
             ChecklistTemplateSeeder::class,
             FailureTaxonomySeeder::class,
+            MeterTypeSeeder::class,
             SparePartCategorySeeder::class,
             CostCategorySeeder::class,
         ]);

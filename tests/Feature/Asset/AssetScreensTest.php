@@ -10,6 +10,7 @@ use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetType;
+use App\Modules\Breakdown\Actions\ReportBreakdown;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
@@ -321,6 +322,85 @@ class AssetScreensTest extends TestCase
         $this->actingAs($this->owner)
             ->post('/app/assets', $this->payload(['acquisition_cost' => '285000']))
             ->assertSessionHasErrors('currency');
+    }
+
+    /**
+     * The row that was typed twice this morning.
+     */
+    public function test_an_asset_with_no_history_can_be_removed_from_the_list(): void
+    {
+        $asset = $this->seedAsset(code: 'SEW-TYPO');
+
+        $this->actingAs($this->owner)
+            ->delete('/app/assets/'.$asset->id)
+            ->assertRedirect('/app/assets');
+
+        $this->assertNull(Asset::find($asset->id));
+    }
+
+    /**
+     * The rule that keeps delete from being a way to lose history.
+     */
+    public function test_an_asset_with_history_is_retired_rather_than_deleted(): void
+    {
+        $asset = $this->seedAsset(code: 'SEW-INSERVICE');
+
+        app(ReportBreakdown::class)->handle([
+            'asset_id' => $asset->id,
+            'problem_description' => 'Line stopped',
+            'failure_at' => now(),
+            'reported_at' => now(),
+        ], $this->owner->id);
+
+        $this->actingAs($this->owner)
+            ->from('/app/assets')
+            ->delete('/app/assets/'.$asset->id)
+            ->assertSessionHasErrors('asset');
+
+        // Still there, with its breakdown still attached to it.
+        $this->assertNotNull(Asset::find($asset->id));
+    }
+
+    public function test_deleting_an_asset_needs_the_permission_for_it(): void
+    {
+        $technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
+        TenantFixture::actingAsTenant($this->delta);
+
+        $asset = $this->seedAsset(code: 'SEW-GUARDED');
+
+        $this->actingAs($technician)
+            ->delete('/app/assets/'.$asset->id)
+            ->assertForbidden();
+
+        $this->assertNotNull(Asset::find($asset->id));
+    }
+
+    public function test_another_companys_asset_cannot_be_deleted(): void
+    {
+        $theirs = $this->seedAsset($this->rival, TenantFixture::factory($this->rival, 'Their Unit', 'RIV'), 'RIV-1');
+
+        TenantFixture::actingAsTenant($this->delta);
+
+        $this->actingAs($this->owner)
+            ->delete('/app/assets/'.$theirs->id)
+            ->assertNotFound();
+
+        $this->assertNotNull(Asset::withoutGlobalScopes()->find($theirs->id));
+    }
+
+    public function test_the_row_offers_view_edit_and_delete(): void
+    {
+        $asset = $this->seedAsset(code: 'SEW-ROWACTIONS');
+
+        // The action column was a row of blank squares until the icons it
+        // named actually existed in the font; these are the three things a
+        // person expects to be able to do from a list.
+        $this->actingAs($this->owner)
+            ->get('/app/assets')
+            ->assertOk()
+            ->assertSee(route('app.assets.show', $asset), escape: false)
+            ->assertSee(route('app.assets.edit', $asset), escape: false)
+            ->assertSee(route('app.assets.destroy', $asset), escape: false);
     }
 
     public function test_the_sidebar_now_lists_the_asset_module(): void

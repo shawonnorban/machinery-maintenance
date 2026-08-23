@@ -94,13 +94,17 @@ class FailureAnalysisTest extends TestCase
         return $breakdown;
     }
 
-    public function test_the_seeded_taxonomy_covers_the_garment_vocabulary(): void
+    public function test_the_seeded_taxonomy_covers_the_mill_vocabulary(): void
     {
         // Free text cannot be grouped, and "which failure keeps happening" is
         // the question the whole analysis half of the product answers.
-        $this->assertSame(5, FailureCategory::whereNull('company_id')->count());
+        //
+        // Floors rather than exact counts: the catalogue is meant to grow as
+        // more of the mill is covered, and a test that has to be edited every
+        // time a failure code is added stops being read.
+        $this->assertGreaterThanOrEqual(5, FailureCategory::whereNull('company_id')->count());
         $this->assertGreaterThanOrEqual(45, FailureCode::whereNull('company_id')->count());
-        $this->assertSame(14, RootCause::whereNull('company_id')->count());
+        $this->assertGreaterThanOrEqual(14, RootCause::whereNull('company_id')->count());
 
         // Every code hangs off a category, so the grouping is never partial.
         $this->assertSame(

@@ -42,27 +42,51 @@ window.Echo = config.reverbKey
  * Three states rather than two. "Reconnecting" is the one that matters: a
  * technician who thinks they are live, and is not, will trust a stale screen —
  * saying so is the difference between a pause and a wrong decision.
+ *
+ * All three are shown, including "live". Hiding the light while everything
+ * works sounds tidy and is not: the state a person actually wants to check is
+ * "is this screen updating itself right now", and an indicator that answers
+ * that only by being absent cannot be told apart from one that is broken.
  */
 function trackConnection() {
     const indicator = document.querySelector('[data-connection-state]');
 
-    if (!indicator || !window.Echo) {
+    if (!indicator) {
         return;
     }
 
-    const set = (state, label) => {
+    const labels = { ...indicator.dataset };
+
+    const set = (state) => {
+        const label = {
+            live: labels.labelLive,
+            reconnecting: labels.labelReconnecting,
+            offline: labels.labelOffline,
+        }[state];
+
         indicator.dataset.connectionState = state;
-        indicator.textContent = label;
-        indicator.hidden = state === 'live';
+        indicator.textContent = label ?? state;
+        indicator.hidden = false;
     };
 
-    const labels = indicator.dataset;
+    if (!window.Echo) {
+        // Nothing to connect to. Saying "offline" is honest — this screen will
+        // not update itself — where a green light would be a lie.
+        set('offline');
 
-    window.Echo.connector.pusher.connection.bind('connected', () => set('live', labels.labelLive));
-    window.Echo.connector.pusher.connection.bind('connecting', () => set('reconnecting', labels.labelReconnecting));
-    window.Echo.connector.pusher.connection.bind('unavailable', () => set('offline', labels.labelOffline));
-    window.Echo.connector.pusher.connection.bind('failed', () => set('offline', labels.labelOffline));
-    window.Echo.connector.pusher.connection.bind('disconnected', () => set('offline', labels.labelOffline));
+        return;
+    }
+
+    // Until the socket says otherwise, it is not live yet.
+    set('reconnecting');
+
+    const connection = window.Echo.connector.pusher.connection;
+
+    connection.bind('connected', () => set('live'));
+    connection.bind('connecting', () => set('reconnecting'));
+    connection.bind('unavailable', () => set('offline'));
+    connection.bind('failed', () => set('offline'));
+    connection.bind('disconnected', () => set('offline'));
 }
 
 /**

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'locations' => 'Locations',
     'dashboard' => 'Dashboard',
     'assets' => 'Assets',
     'all_assets' => 'All Assets',
@@ -25,6 +26,7 @@ return [
     'issue_return' => 'Issue / Return',
     'transfers' => 'Transfers',
     'low_stock' => 'Low Stock',
+    'part_requests' => 'Part requests',
     'technicians' => 'Technicians',
     'teams' => 'Teams',
     'vendors' => 'Vendors',
@@ -40,7 +42,6 @@ return [
     'master_data' => 'Master Data',
     'users' => 'Users',
     'roles' => 'Roles',
-    'labor_grades' => 'Labour Grades',
     'audit_log' => 'Audit Log',
     'billing' => 'Billing',
 ];

@@ -20,7 +20,6 @@ return [
     'will_queue' => 'রিপোর্টটি বড়, তাই এটি ব্যাকগ্রাউন্ডে তৈরি হবে।',
     'preview_note' => 'প্রথম :count টি সারি দেখানো হচ্ছে। সব সারি পেতে এক্সপোর্ট করুন।',
     'row_count' => ':count টি সারি',
-
     'filters' => 'ফিল্টার',
     'from' => 'শুরু',
     'to' => 'শেষ',
@@ -31,7 +30,6 @@ return [
     'status' => 'অবস্থা',
     'all_statuses' => 'সব অবস্থা',
     'scoped_by_header' => 'উপরে নির্বাচিত কারখানা অনুযায়ী সীমিত।',
-
     'groups' => [
         'asset' => 'সম্পদ',
         'maintenance' => 'রক্ষণাবেক্ষণ',
@@ -41,7 +39,6 @@ return [
         'people' => 'টেকনিশিয়ান',
         'vendor' => 'ভেন্ডর ও কভার',
     ],
-
     'job' => [
         'requested_at' => 'অনুরোধ',
         'format' => 'ফরম্যাট',
@@ -54,7 +51,6 @@ return [
         'none_hint' => 'একটি রিপোর্ট চালিয়ে এক্সপোর্ট করুন; ফাইলটি এখানে আসবে।',
         'retention' => 'তৈরি হওয়া ফাইল :days দিন রাখা হয়।',
     ],
-
     'statuses' => [
         'QUEUED' => 'অপেক্ষমাণ',
         'RUNNING' => 'চলছে',
@@ -62,7 +58,6 @@ return [
         'FAILED' => 'ব্যর্থ',
         'EXPIRED' => 'মেয়াদ শেষ',
     ],
-
     'meta' => [
         'report' => 'রিপোর্ট',
         'generated_at' => 'তৈরির সময়',
@@ -71,7 +66,6 @@ return [
         'all_factories' => 'সব কারখানা',
         'asset' => 'মেশিন',
     ],
-
     'columns' => [
         'asset_code' => 'মেশিন কোড',
         'name' => 'নাম',
@@ -102,7 +96,6 @@ return [
         'scheduled_start' => 'নির্ধারিত শুরু',
         'actual_start' => 'প্রকৃত শুরু',
         'completed_at' => 'সম্পন্ন',
-        'labor_cost' => 'শ্রম খরচ',
         'parts_cost' => 'পার্টস খরচ',
         'total_cost' => 'মোট খরচ',
         'plan' => 'পরিকল্পনা',
@@ -190,7 +183,6 @@ return [
         'days_remaining' => 'বাকি দিন',
         'value' => 'মূল্য',
     ],
-
     'asset_register' => [
         'title' => 'সম্পদ রেজিস্টার',
         'description' => 'খাতায় থাকা প্রতিটি মেশিন — কী এবং কোথায়।',

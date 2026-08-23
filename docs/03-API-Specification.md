@@ -1,6 +1,6 @@
 # 03-API-Specification.md
 # REST API Specification
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.1  
 **Base URL:** `/api/v1`  
@@ -628,7 +628,7 @@ Requires elevated permission and a reason. Increments `reopened_count` and write
 
 ### POST `/work-orders/{workOrder}/labor`
 
-Body: `technician_id`, `started_at`, `ended_at`, `labor_category`. The rate is resolved server-side from the technician grade rate effective on `started_at`; a client-supplied rate is ignored. For `EXTERNAL` labor the body carries `vendor_id` and the vendor charge.
+Body: `technician_id`, `started_at`, `ended_at`. Time only — the entry carries no rate and no amount, and a client-supplied one is rejected rather than ignored (ADR-065). Work done by an outside contractor is a vendor invoice, posted as a cost entry.
 
 ### PATCH `/work-orders/{workOrder}/labor/{entry}`
 
@@ -772,19 +772,9 @@ Posted costs cannot be edited directly. Corrections use adjustment entries.
 
 Requires `technician.performance.view`. Without it, only team-level and factory-level aggregates are returned (SRS 25.2).
 
-### GET `/labor-rate-grades`
+There are no labour rate endpoints. Maintenance labour carries no cost: technicians are salaried employees, so their hours are recorded as time, never as money (ADR-065).
 
-### POST `/labor-rate-grades`
-
-### PATCH `/labor-rate-grades/{grade}`
-
-A rate change creates a new effective period rather than editing the current one, so recorded work keeps its original cost.
-
-### DELETE `/labor-rate-grades/{grade}`
-
-End-dates the grade. Rejected while any technician is assigned to it.
-
-The system exposes no endpoint that accepts or returns an individual salary, wage, or payroll identifier. Labor cost is always grade-derived (SRS 25.1).
+The system exposes no endpoint that accepts or returns a salary, a wage, an hourly rate, or a payroll identifier.
 
 ---
 

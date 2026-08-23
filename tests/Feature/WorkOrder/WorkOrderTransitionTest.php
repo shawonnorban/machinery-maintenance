@@ -69,8 +69,7 @@ class WorkOrderTransitionTest extends TestCase
         $workOrder = $this->workOrder($overrides);
         $workOrder = $this->transition->schedule($workOrder, 'user-a');
 
-        $grade = WorkOrderFixture::grade($this->delta);
-        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka, $grade);
+        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka);
 
         app(AssignTechnicians::class)
             ->handle($workOrder, [$technician->id], 'user-a');

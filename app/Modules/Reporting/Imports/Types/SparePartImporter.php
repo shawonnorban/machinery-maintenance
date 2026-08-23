@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Reporting\Imports\Types;
 
+use App\Modules\Inventory\Actions\SaveSparePart;
 use App\Modules\Inventory\Models\SparePart;
 use App\Modules\Inventory\Models\SparePartCategory;
 use App\Modules\Reporting\Imports\ImportColumn;
@@ -12,6 +13,7 @@ use App\Modules\Reporting\Imports\Importer;
 use App\Modules\Reporting\Imports\ImportOutcome;
 use App\Modules\Reporting\Imports\PreparedRow;
 use App\Modules\Reporting\Imports\RowContext;
+use App\Shared\Tenancy\TenantContext;
 use Throwable;
 
 /**
@@ -28,6 +30,11 @@ use Throwable;
  */
 class SparePartImporter extends Importer
 {
+    public function __construct(
+        private readonly TenantContext $tenant,
+        private readonly SaveSparePart $save,
+    ) {}
+
     public function type(): string
     {
         return 'spare_parts';
@@ -73,7 +80,7 @@ class SparePartImporter extends Importer
             return PreparedRow::invalid($context->rowNumber, $errors, $row);
         }
 
-        $category = $context->remember("category:{$row['category_code']}", fn () => SparePartCategory::query()
+        $category = $context->remember("category:{$row['category_code']}", fn () => SparePartCategory::availableTo($this->tenant->companyId())
             ->where('code', $row['category_code'])->first());
 
         if ($category === null) {
@@ -136,13 +143,17 @@ class SparePartImporter extends Importer
         try {
             $existing = SparePart::where('part_number', $row->values['part_number'])->first();
 
+            // Through the same action the screen uses, so a rule added for one
+            // applies to the other (ADR-066). An importer with its own writes
+            // is an importer that creates rows the product's own rules would
+            // have refused.
             if ($existing !== null) {
-                $existing->update($row->values);
+                $this->save->update($existing, $row->values);
 
                 return ImportOutcome::updated();
             }
 
-            SparePart::create($row->values);
+            $this->save->create($row->values);
 
             return ImportOutcome::created();
         } catch (Throwable $e) {

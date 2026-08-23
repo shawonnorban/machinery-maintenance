@@ -8,7 +8,6 @@ use App\Modules\Costing\Models\CostCategory;
 use App\Modules\Costing\Models\CostEntry;
 use App\Modules\Inventory\Models\WorkOrderPart;
 use App\Modules\WorkOrder\Models\WorkOrder;
-use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -20,10 +19,11 @@ use Illuminate\Validation\ValidationException;
  *
  * Two kinds of entry live here and they behave differently on purpose.
  *
- * A derived entry — labour, parts — is written by the system from records that
- * already exist, and is rewritten in place when its source changes. It is not
- * an independent fact; it is a projection, and letting it drift from the labour
- * entry underneath would give two answers to "what did this repair cost".
+ * A derived entry — parts issued to a job — is written by the system from
+ * records that already exist, and is rewritten in place when its source
+ * changes. It is not an independent fact; it is a projection, and letting it
+ * drift from the part line underneath would give two answers to "what did this
+ * repair cost".
  *
  * A manual entry — a vendor invoice, transport, an external service — is an
  * independent fact somebody asserted. Once posted it is never edited. A
@@ -44,9 +44,9 @@ class CostPoster
         $sourceType = $data['source_type'] ?? 'MANUAL';
 
         if (in_array($sourceType, CostEntry::DERIVED_SOURCE_TYPES, true)) {
-            // Otherwise a user could post a labour cost by hand alongside the
+            // Otherwise a user could post a parts cost by hand alongside the
             // one the system derives, and the work order would be charged
-            // twice for the same hour.
+            // twice for the same part.
             throw ValidationException::withMessages([
                 'source_type' => __('cost.derived_not_manual'),
             ])->status(422);
@@ -141,26 +141,18 @@ class CostPoster
     /**
      * Rewrites the derived entries for a work order from its own records.
      *
-     * Idempotent: one labour entry produces exactly one live cost row, however
-     * many times this runs. Called after every labour or part movement, so the
-     * cost ledger and the work order's own total can never disagree.
+     * Idempotent: one part line produces exactly one live cost row, however
+     * many times this runs. Called after every part movement, so the cost
+     * ledger and the work order's own total can never disagree.
      */
     public function syncWorkOrder(WorkOrder $workOrder, ?string $userId = null): void
     {
         DB::transaction(function () use ($workOrder, $userId): void {
-            $labourCategory = $this->categoryFor($workOrder->company_id, 'LABOR');
             $partsCategory = $this->categoryFor($workOrder->company_id, 'PARTS');
 
-            foreach (WorkOrderLaborEntry::where('work_order_id', $workOrder->id)->get() as $entry) {
-                $this->syncDerived($workOrder, $labourCategory, 'LABOR', 'work_order_labor_entry', $entry->id, [
-                    'amount' => (string) $entry->amount,
-                    'currency' => $entry->currency,
-                    'exchange_rate' => (string) $entry->exchange_rate,
-                    'occurred_at' => $entry->started_at,
-                    'description' => __('cost.labour_on', ['number' => $workOrder->work_order_number]),
-                ], $userId);
-            }
-
+            // No labour row. A salaried technician's hour is not money leaving
+            // the business, and posting it would double-count the payroll a
+            // company already runs elsewhere.
             foreach (WorkOrderPart::where('work_order_id', $workOrder->id)->get() as $line) {
                 // Issued minus returned at the issue-time price: what the job
                 // actually kept, which is what the ledger charged it for.
@@ -248,16 +240,18 @@ class CostPoster
 
     private function pruneOrphans(WorkOrder $workOrder): void
     {
-        $labourIds = WorkOrderLaborEntry::where('work_order_id', $workOrder->id)->pluck('id');
         $partIds = WorkOrderPart::where('work_order_id', $workOrder->id)->pluck('id');
 
         CostEntry::where('work_order_id', $workOrder->id)
             ->where('is_reversal', false)
             ->whereIn('source_type', CostEntry::DERIVED_SOURCE_TYPES)
             ->get()
-            ->each(function (CostEntry $entry) use ($labourIds, $partIds): void {
+            ->each(function (CostEntry $entry) use ($partIds): void {
                 $stillExists = match ($entry->source_reference_type) {
-                    'work_order_labor_entry' => $labourIds->contains($entry->source_reference_id),
+                    // Labour rows are no longer posted at all, so any that
+                    // survive from before are orphans by definition and go the
+                    // same way as a deleted part line.
+                    'work_order_labor_entry' => false,
                     'work_order_part' => $partIds->contains($entry->source_reference_id),
                     default => true,
                 };

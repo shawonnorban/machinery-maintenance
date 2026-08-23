@@ -7,7 +7,6 @@ namespace App\Modules\WorkOrder\Services;
 use App\Modules\Costing\Services\CostPoster;
 use App\Modules\Inventory\Services\WorkOrderPartsCost;
 use App\Modules\WorkOrder\Models\WorkOrder;
-use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
 
 /**
  * Derives a work order's actual cost from its own records (ADR-064).
@@ -32,15 +31,10 @@ class WorkOrderCostCalculator
 
     public function recalculate(WorkOrder $workOrder): WorkOrder
     {
-        $labor = WorkOrderLaborEntry::where('work_order_id', $workOrder->id)
-            ->get()
-            ->reduce(
-                fn (string $carry, WorkOrderLaborEntry $entry) => bcadd(
-                    $carry, $this->money($entry->amount), self::SCALE,
-                ),
-                '0.0000',
-            );
-
+        // Labour is absent on purpose: technicians are salaried, so their
+        // hours are already paid for and charging them here would invent a
+        // number no ledger in the business agrees with.
+        //
         // Consumed and unreturned parts at their issue-time cost. Derived from
         // the part lines, which are themselves derived from the ledger, so the
         // number can always be traced back to a movement.
@@ -48,10 +42,9 @@ class WorkOrderCostCalculator
         $other = $this->money($workOrder->actual_other_cost);
 
         $workOrder->forceFill([
-            'actual_labor_cost' => $labor,
             'actual_parts_cost' => $parts,
             'actual_other_cost' => $other,
-            'actual_cost' => bcadd(bcadd($labor, $parts, self::SCALE), $other, self::SCALE),
+            'actual_cost' => bcadd($parts, $other, self::SCALE),
         ])->save();
 
         // The same figures, projected into the cost ledger so a machine's

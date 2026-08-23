@@ -151,18 +151,12 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="estimated_labor_cost" class="form-label">{{ __('work_order.labor') }}</label>
-                            <input id="estimated_labor_cost" name="estimated_labor_cost" type="number" step="0.0001"
-                                   min="0" class="form-control" value="{{ old('estimated_labor_cost') }}">
-                        </div>
-
-                        <div class="mb-3">
                             <label for="estimated_parts_cost" class="form-label">{{ __('work_order.parts') }}</label>
                             <input id="estimated_parts_cost" name="estimated_parts_cost" type="number" step="0.0001"
                                    min="0" class="form-control" value="{{ old('estimated_parts_cost') }}">
                         </div>
 
-                        {{-- Estimates only. Actual cost is derived from the labour and
+                        {{-- An estimate only. Actual cost is derived from the
                              part records underneath and is never typed in (ADR-064). --}}
                         <div class="form-text">{{ __('work_order.parts_pending_note') }}</div>
                     </div>

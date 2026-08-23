@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Actions;
 
-use App\Modules\WorkOrder\Models\LaborRateGrade;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderLaborEntry;
@@ -14,12 +13,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Records time spent on a work order (ADR-050, ADR-065).
+ * Records time spent on a work order (ADR-050).
  *
- * The rate is resolved server-side from the technician's grade, effective on
- * the day the work happened, and copied onto the entry. A client-supplied rate
- * is ignored for internal labour: it would let anyone set what the work cost,
- * and it would leak what people are paid.
+ * Time, and nothing but time. Technicians are salaried employees, so their
+ * hours carry no cost of their own — the work is paid for whether it happens
+ * on a dyeing machine or not. What the hours answer is workload and technician
+ * performance: who did the work, and how long it took.
+ *
+ * Money that genuinely leaves the business for a repair — parts, a contractor's
+ * invoice, a vendor's charge — is a cost entry in its own right, recorded
+ * where the invoice is.
  */
 class RecordLaborEntry
 {
@@ -29,19 +32,10 @@ class RecordLaborEntry
         WorkOrder $workOrder,
         CarbonImmutable $startedAt,
         CarbonImmutable $endedAt,
-        string $category = 'REGULAR',
         ?Technician $technician = null,
-        ?string $vendorId = null,
-        ?string $externalRate = null,
         ?string $notes = null,
         ?string $userId = null,
     ): WorkOrderLaborEntry {
-        if (! in_array($category, WorkOrderLaborEntry::CATEGORIES, true)) {
-            throw ValidationException::withMessages([
-                'labor_category' => __('work_order.labor_category_unknown'),
-            ]);
-        }
-
         if ($workOrder->isTerminal()) {
             throw ValidationException::withMessages([
                 'work_order_id' => __('work_order.labor_after_close'),
@@ -70,43 +64,29 @@ class RecordLaborEntry
             ]);
         }
 
-        [$rate, $grade] = $this->resolveRate($category, $technician, $externalRate, $startedAt);
-
-        if ($category !== 'EXTERNAL') {
-            if ($technician === null) {
-                throw ValidationException::withMessages([
-                    'technician_id' => __('work_order.labor_needs_technician'),
-                ]);
-            }
-
-            $this->assertNoOverlap($technician, $startedAt, $endedAt);
+        if ($technician === null) {
+            throw ValidationException::withMessages([
+                'technician_id' => __('work_order.labor_needs_technician'),
+            ]);
         }
 
-        $amount = number_format(((float) $rate) * ($minutes / 60), 4, '.', '');
+        $this->assertNoOverlap($technician, $startedAt, $endedAt);
 
         return DB::transaction(function () use (
-            $workOrder, $technician, $category, $grade, $vendorId,
-            $startedAt, $endedAt, $minutes, $rate, $amount, $notes, $userId
+            $workOrder, $technician, $startedAt, $endedAt, $minutes, $notes, $userId
         ): WorkOrderLaborEntry {
             $entry = WorkOrderLaborEntry::create([
                 'work_order_id' => $workOrder->id,
-                'technician_id' => $technician?->id,
-                'labor_category' => $category,
-                'labor_grade_id' => $grade?->id,
-                'vendor_id' => $vendorId,
+                'technician_id' => $technician->id,
                 'started_at' => $startedAt,
                 'ended_at' => $endedAt,
                 'minutes' => $minutes,
-                'hourly_rate' => $rate,
-                'currency' => $workOrder->currency,
-                'exchange_rate' => '1',
-                'amount' => $amount,
-                'base_amount' => $amount,
                 'notes' => $notes,
                 'recorded_by' => $userId,
             ]);
 
-            // Derived, never accepted from a client (ADR-064).
+            // The work order's own totals still come from parts and posted
+            // costs, so they are recomputed here as well (ADR-064).
             $this->costs->recalculate($workOrder);
 
             return $entry;
@@ -127,40 +107,6 @@ class RecordLaborEntry
             $entry->delete();
             $this->costs->recalculate($workOrder);
         });
-    }
-
-    /**
-     * @return array{0: string, 1: LaborRateGrade|null}
-     */
-    private function resolveRate(
-        string $category,
-        ?Technician $technician,
-        ?string $externalRate,
-        CarbonImmutable $on,
-    ): array {
-        if ($category === 'EXTERNAL') {
-            if (blank($externalRate)) {
-                throw ValidationException::withMessages([
-                    'hourly_rate' => __('work_order.external_needs_rate'),
-                ]);
-            }
-
-            // A contractor's charge is an invoiced amount, not employee
-            // compensation, so it is supplied rather than looked up.
-            return [number_format((float) $externalRate, 4, '.', ''), null];
-        }
-
-        $grade = $technician?->labor_grade_id !== null
-            ? LaborRateGrade::whereKey($technician->labor_grade_id)->effectiveOn($on)->first()
-            : null;
-
-        if ($grade === null) {
-            throw ValidationException::withMessages([
-                'technician_id' => __('work_order.technician_needs_grade'),
-            ]);
-        }
-
-        return [$grade->rateFor($category), $grade];
     }
 
     /**

@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Maintenance\Models;
 
+use App\Modules\WorkOrder\Models\WorkOrderChecklistResult;
 use App\Shared\Casts\MoneyCast;
 use App\Shared\Models\BaseModel;
+use App\Shared\Scopes\TenantScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * One line of a checklist. Immutable once its version is published
@@ -44,6 +47,19 @@ class ChecklistItem extends BaseModel
     public function version(): BelongsTo
     {
         return $this->belongsTo(MaintenanceTemplateVersion::class, 'template_version_id');
+    }
+
+    /**
+     * What technicians have recorded against this line.
+     *
+     * Without the tenant scope, because the only question asked of it is
+     * whether anybody at all has filled this item in — which is what decides
+     * whether a seeded item may still be removed.
+     */
+    public function results(): HasMany
+    {
+        return $this->hasMany(WorkOrderChecklistResult::class, 'checklist_item_id')
+            ->withoutGlobalScope(TenantScope::class);
     }
 
     public function isNumeric(): bool

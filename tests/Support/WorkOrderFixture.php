@@ -18,12 +18,11 @@ use App\Modules\Maintenance\Models\MaintenanceTemplate;
 use App\Modules\Maintenance\Models\MaintenanceTemplateVersion;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
-use App\Modules\WorkOrder\Models\LaborRateGrade;
 use App\Modules\WorkOrder\Models\Technician;
 
 /**
  * Work order test scaffolding. A work order needs a commissioned asset, a
- * factory, a graded technician and usually a published checklist, and repeating
+ * factory, a technician and usually a published checklist, and repeating
  * all of that in five test classes is how they drift apart.
  */
 class WorkOrderFixture
@@ -54,34 +53,22 @@ class WorkOrderFixture
         return $asset;
     }
 
-    public static function grade(Company $company, string $rate = '120.0000'): LaborRateGrade
-    {
-        return LaborRateGrade::create([
-            'company_id' => $company->id,
-            'name' => 'Technician',
-            'code' => 'G2',
-            'standard_hourly_rate' => $rate,
-            'overtime_multiplier' => '2.0000',
-            'currency' => 'BDT',
-            'effective_from' => '2026-01-01',
-            'active' => true,
-        ]);
-    }
-
     public static function technician(
         Company $company,
         Factory $factory,
-        LaborRateGrade $grade,
         string $name = 'Karim Mia',
         string $employeeId = 'EMP-1001',
         ?User $user = null,
         ?int $maxConcurrent = null,
+        ?string $departmentId = null,
+        ?string $productionLineId = null,
     ): Technician {
         return Technician::create([
             'company_id' => $company->id,
             'factory_id' => $factory->id,
             'user_id' => $user?->id,
-            'labor_grade_id' => $grade->id,
+            'department_id' => $departmentId,
+            'production_line_id' => $productionLineId,
             'employee_id' => $employeeId,
             'name' => $name,
             'status' => 'ACTIVE',

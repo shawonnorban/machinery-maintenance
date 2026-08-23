@@ -7,10 +7,14 @@ namespace App\Modules\Asset\Models;
 use App\Modules\Tenancy\Models\Building;
 use App\Modules\Tenancy\Models\Department;
 use App\Modules\Tenancy\Models\Factory;
+use App\Modules\Tenancy\Models\Floor;
 use App\Modules\Tenancy\Models\ProductionLine;
+use App\Modules\Tenancy\Models\Section;
+use App\Modules\Tenancy\Models\Workstation;
 use App\Shared\Concerns\BelongsToTenant;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * The single addressable location entity (ADR-052).
@@ -49,17 +53,44 @@ class AssetLocation extends BaseModel
         return $this->belongsTo(ProductionLine::class);
     }
 
+    public function floor(): BelongsTo
+    {
+        return $this->belongsTo(Floor::class);
+    }
+
+    /** The machines standing here. */
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class, 'asset_location_id');
+    }
+
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class);
+    }
+
+    public function workstation(): BelongsTo
+    {
+        return $this->belongsTo(Workstation::class);
+    }
+
     /**
      * Rebuilds the denormalised display path. Called on save and when the
      * hierarchy above it changes.
+     *
+     * Every level, in the order somebody walking the floor would name them,
+     * and the empty ones simply drop out.
      */
     public function buildFullPath(): string
     {
         $parts = array_filter([
             $this->factory?->name,
             $this->building?->name,
+            $this->floor?->name,
             $this->department?->name,
+            $this->section?->name,
             $this->productionLine?->name,
+            $this->workstation?->name,
             $this->name,
         ]);
 

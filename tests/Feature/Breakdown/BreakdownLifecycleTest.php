@@ -13,7 +13,6 @@ use App\Modules\Breakdown\Models\FailureCode;
 use App\Modules\Breakdown\Models\RootCause;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
-use App\Modules\WorkOrder\Models\LaborRateGrade;
 use App\Modules\WorkOrder\Models\Technician;
 use Carbon\CarbonImmutable;
 use Database\Seeders\DatabaseSeeder;
@@ -59,8 +58,7 @@ class BreakdownLifecycleTest extends TestCase
 
         $this->asset = WorkOrderFixture::runningAsset($this->delta, $this->dhaka);
 
-        $grade = WorkOrderFixture::grade($this->delta);
-        $this->technician = WorkOrderFixture::technician($this->delta, $this->dhaka, $grade);
+        $this->technician = WorkOrderFixture::technician($this->delta, $this->dhaka);
 
         $this->report = app(ReportBreakdown::class);
         $this->transition = app(TransitionBreakdown::class);
@@ -292,9 +290,8 @@ class BreakdownLifecycleTest extends TestCase
     public function test_a_technician_from_another_factory_cannot_be_assigned(): void
     {
         $gazipur = TenantFixture::factory($this->delta, 'Gazipur Unit 2', 'GAZ');
-        $grade = LaborRateGrade::firstOrFail();
         $elsewhere = WorkOrderFixture::technician(
-            $this->delta, $gazipur, $grade, 'Jahangir Alam', 'EMP-2001',
+            $this->delta, $gazipur, 'Jahangir Alam', 'EMP-2001',
         );
 
         $breakdown = $this->transition->acknowledge($this->reported(), 'user-b');

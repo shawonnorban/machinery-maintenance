@@ -32,7 +32,10 @@ class FailureTaxonomySeeder extends Seeder
     {
         foreach ([
             ['MECHANICAL', 'Mechanical', 'যান্ত্রিক', $this->mechanical()],
+            ['KNITTING', 'Knitting', 'নিটিং', $this->knitting()],
+            ['DYEING_FINISHING', 'Dyeing and finishing', 'ডাইং ও ফিনিশিং', $this->dyeingAndFinishing()],
             ['ELECTRICAL', 'Electrical', 'বৈদ্যুতিক', $this->electrical()],
+            ['PROCESS_CONTROL', 'Process and instrumentation', 'প্রসেস ও ইনস্ট্রুমেন্টেশন', $this->processControl()],
             ['PNEUMATIC_HYDRAULIC', 'Pneumatic and hydraulic', 'নিউম্যাটিক ও হাইড্রলিক', $this->pneumatic()],
             ['UTILITY_STEAM', 'Utility and steam', 'ইউটিলিটি ও স্টিম', $this->utility()],
             ['OPERATIONAL', 'Operational and other', 'পরিচালনাগত ও অন্যান্য', $this->operational()],
@@ -81,6 +84,58 @@ class FailureTaxonomySeeder extends Seeder
     }
 
     /**
+     * A knitting machine's own vocabulary (Seed Catalog 3).
+     *
+     * Kept apart from the general mechanical list because these are the codes
+     * a knitting fitter actually says, and because grouping them is what makes
+     * "which machine keeps dropping needles" answerable at all.
+     *
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function knitting(): array
+    {
+        return [
+            ['KNIT_NEEDLE_BROKEN', 'Knitting needle broken or bent', 'নিটিং সুই ভাঙা'],
+            ['SINKER_BROKEN', 'Sinker broken or worn', 'সিংকার ভাঙা'],
+            ['CAM_DAMAGE', 'Cam damaged or loose', 'ক্যাম ক্ষতিগ্রস্ত'],
+            ['CYLINDER_DIAL_SCRATCH', 'Cylinder or dial scratched', 'সিলিন্ডার/ডায়াল আঁচড়'],
+            ['YARN_FEEDER_FAULT', 'Yarn feeder fault', 'ইয়ার্ন ফিডার সমস্যা'],
+            ['POSITIVE_FEEDER_BELT', 'Positive feeder belt broken or slipping', 'পজিটিভ ফিডার বেল্ট সমস্যা'],
+            ['LYCRA_FEEDER_FAULT', 'Lycra feeder fault', 'লাইক্রা ফিডার সমস্যা'],
+            ['STOP_MOTION_FAULT', 'Stop motion or yarn detector fault', 'স্টপ মোশন সমস্যা'],
+            ['TAKE_DOWN_TENSION', 'Take-down tension fault', 'টেক-ডাউন টেনশন সমস্যা'],
+            ['DROPPED_STITCH', 'Dropped stitch or hole in fabric', 'স্টিচ পড়ে যাওয়া'],
+            ['OIL_PUMP_FAULT', 'Needle oil pump or spray fault', 'অয়েল পাম্প সমস্যা'],
+            ['LINT_ACCUMULATION', 'Lint accumulation or blower fault', 'লিন্ট জমা / ব্লোয়ার সমস্যা'],
+        ];
+    }
+
+    /**
+     * The dye house and the finishing floor (Seed Catalog 3).
+     *
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function dyeingAndFinishing(): array
+    {
+        return [
+            ['PUMP_SEAL_LEAK', 'Main pump seal leak', 'পাম্প সিল লিক'],
+            ['IMPELLER_DAMAGE', 'Pump impeller damaged', 'ইম্পেলার ক্ষতিগ্রস্ত'],
+            ['NOZZLE_BLOCKED', 'Dyeing nozzle blocked or worn', 'নোজল ব্লক'],
+            ['REEL_DRIVE_FAULT', 'Reel or winch drive fault', 'রিল ড্রাইভ সমস্যা'],
+            ['DOOR_SEAL_LEAK', 'Vessel door seal leak', 'ভেসেল ডোর সিল লিক'],
+            ['ROPE_TANGLE', 'Fabric rope entangled in vessel', 'কাপড় পেঁচিয়ে যাওয়া'],
+            ['HEAT_EXCHANGER_SCALING', 'Heat exchanger scaled or leaking', 'হিট এক্সচেঞ্জার স্কেলিং'],
+            ['STENTER_CHAIN_FAULT', 'Stenter chain, clip or pin fault', 'স্টেন্টার চেইন সমস্যা'],
+            ['STENTER_BURNER_FAULT', 'Stenter burner or heating fault', 'স্টেন্টার বার্নার সমস্যা'],
+            ['PADDER_ROLLER_WEAR', 'Padder roller worn or uneven', 'প্যাডার রোলার ক্ষয়'],
+            ['BLANKET_DAMAGE', 'Compactor blanket or felt damaged', 'কম্প্যাক্টর ব্ল্যাঙ্কেট ক্ষতি'],
+            ['SELVEDGE_UNCURLER_FAULT', 'Selvedge uncurler fault', 'সেলভেজ আনকার্লার সমস্যা'],
+            ['FABRIC_GUIDER_FAULT', 'Fabric guider or centring fault', 'ফেব্রিক গাইডার সমস্যা'],
+            ['SHADE_VARIATION', 'Shade variation traced to the machine', 'মেশিনজনিত শেড ভ্যারিয়েশন'],
+        ];
+    }
+
+    /**
      * @return list<array{0: string, 1: string, 2: string}>
      */
     private function electrical(): array
@@ -96,6 +151,32 @@ class FailureTaxonomySeeder extends Seeder
             ['DISPLAY_FAULT', 'Display or panel fault', 'ডিসপ্লে সমস্যা'],
             ['OVERHEATING', 'Overheating', 'অতিরিক্ত গরম'],
             ['POWER_FLUCTUATION_DAMAGE', 'Damage from voltage fluctuation', 'ভোল্টেজ সমস্যায় ক্ষতি'],
+        ];
+    }
+
+    /**
+     * Instrumentation, which in a dye house is not a footnote.
+     *
+     * A temperature probe reading two degrees low does not stop the machine;
+     * it produces a batch in the wrong shade, and the loss is counted in
+     * fabric rather than in downtime. Coding these separately is what lets a
+     * dye house see that at all.
+     *
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function processControl(): array
+    {
+        return [
+            ['TEMP_SENSOR_DRIFT', 'Temperature sensor drift or failure', 'তাপমাত্রা সেন্সর ড্রিফট'],
+            ['PH_PROBE_FAULT', 'pH probe fault', 'পিএইচ প্রোব সমস্যা'],
+            ['FLOW_METER_FAULT', 'Flow meter fault', 'ফ্লো মিটার সমস্যা'],
+            ['LEVEL_SENSOR_FAULT', 'Level sensor fault', 'লেভেল সেন্সর সমস্যা'],
+            ['PRESSURE_TRANSMITTER_FAULT', 'Pressure transmitter fault', 'প্রেসার ট্রান্সমিটার সমস্যা'],
+            ['DOSING_VALVE_FAULT', 'Dosing valve fault', 'ডোজিং ভালভ সমস্যা'],
+            ['CONTROL_VALVE_PASSING', 'Control valve passing or stuck', 'কন্ট্রোল ভালভ পাসিং'],
+            ['PLC_FAULT', 'PLC or process controller fault', 'পিএলসি সমস্যা'],
+            ['RECIPE_DISPENSING_ERROR', 'Recipe or dispensing error', 'রেসিপি/ডিসপেন্সিং ভুল'],
+            ['CALIBRATION_OVERDUE', 'Instrument out of calibration', 'ক্যালিব্রেশন মেয়াদোত্তীর্ণ'],
         ];
     }
 
@@ -127,6 +208,14 @@ class FailureTaxonomySeeder extends Seeder
             ['FUEL_SUPPLY_FAULT', 'Fuel supply interruption', 'জ্বালানি সরবরাহ সমস্যা'],
             ['GENERATOR_START_FAILURE', 'Generator fails to start', 'জেনারেটর চালু হয় না'],
             ['COMPRESSOR_TRIP', 'Compressor tripped', 'কম্প্রেসার ট্রিপ'],
+            ['CHILLER_TRIP', 'Chiller tripped', 'চিলার ট্রিপ'],
+            ['THERMAL_OIL_FAULT', 'Thermal oil heater fault', 'থার্মাল অয়েল হিটার সমস্যা'],
+            // Hardness or iron out of limit is a shade failure before it is a
+            // machine failure, and the dye house is the first to notice it.
+            ['WATER_QUALITY_FAULT', 'Treated water out of limit', 'পানির মান সীমার বাইরে'],
+            ['SOFTENER_RESIN_EXHAUSTED', 'Softener resin exhausted', 'সফটেনার রেজিন শেষ'],
+            ['ETP_DOSING_FAULT', 'ETP dosing or blower fault', 'ইটিপি ডোজিং সমস্যা'],
+            ['CONDENSATE_RECOVERY_FAULT', 'Condensate recovery fault', 'কনডেনসেট রিকভারি সমস্যা'],
         ];
     }
 
@@ -167,6 +256,16 @@ class FailureTaxonomySeeder extends Seeder
             ['OVERLOAD', 'Machine run beyond rated capacity', 'অতিরিক্ত লোড'],
             ['DESIGN_LIMITATION', 'Design or model limitation', 'ডিজাইনের সীমাবদ্ধতা'],
             ['MANUFACTURING_DEFECT', 'Manufacturing defect', 'উৎপাদনগত ত্রুটি'],
+            // Wet processing wears machines out in ways a sewing floor never
+            // sees: scale, corrosion and chemical attack are the three that
+            // account for most dye house replacements.
+            ['SCALE_DEPOSIT', 'Scale or chemical deposit', 'স্কেল বা রাসায়নিক জমা'],
+            ['CORROSION', 'Corrosion', 'ক্ষয়/মরিচা'],
+            ['CHEMICAL_ATTACK', 'Chemical attack on components', 'রাসায়নিক ক্ষতি'],
+            ['WATER_QUALITY', 'Water hardness or quality', 'পানির মান'],
+            ['LINT_DUST_BUILDUP', 'Lint or dust build-up', 'লিন্ট/ধুলা জমা'],
+            ['YARN_QUALITY', 'Poor yarn or fabric quality', 'সুতা/কাপড়ের নিম্নমান'],
+            ['CALIBRATION_DRIFT', 'Instrument calibration drift', 'ক্যালিব্রেশন ড্রিফট'],
             ['END_OF_LIFE', 'Asset past useful life', 'মেয়াদোত্তীর্ণ'],
             ['UNDETERMINED', 'Not determined', 'নির্ণয় করা যায়নি'],
         ] as [$code, $name, $nameBn]) {
@@ -196,6 +295,14 @@ class FailureTaxonomySeeder extends Seeder
             ['MATERIAL_SHORTAGE', 'EXTERNAL', false, 'Material not available', 'কাঁচামাল নেই'],
             ['NO_OPERATOR', 'EXTERNAL', false, 'Operator not available', 'অপারেটর নেই'],
             ['STYLE_CHANGEOVER', 'EXTERNAL', false, 'Style or line changeover', 'স্টাইল পরিবর্তন'],
+            // A dye house and a knitting floor stop for reasons a sewing floor
+            // never does, and calling them all "changeover" hides where the
+            // hours actually go.
+            ['BATCH_CHANGEOVER', 'EXTERNAL', false, 'Batch or shade changeover', 'ব্যাচ/শেড পরিবর্তন'],
+            ['QUALITY_CHANGEOVER', 'EXTERNAL', false, 'Yarn or fabric quality changeover', 'সুতা/কাপড় পরিবর্তন'],
+            ['STEAM_UNAVAILABLE', 'EXTERNAL', false, 'Steam not available', 'স্টিম নেই'],
+            ['WATER_UNAVAILABLE', 'EXTERNAL', false, 'Water supply interruption', 'পানি সরবরাহ বন্ধ'],
+            ['EFFLUENT_LIMIT', 'EXTERNAL', false, 'Stopped for effluent limit', 'বর্জ্য সীমার কারণে বন্ধ'],
             ['SHIFT_BREAK', 'NON_OPERATING', false, 'Break or shift end', 'বিরতি বা শিফট শেষ'],
             ['HOLIDAY', 'NON_OPERATING', false, 'Factory holiday', 'কারখানা ছুটি'],
         ] as [$code, $class, $counts, $name, $nameBn]) {

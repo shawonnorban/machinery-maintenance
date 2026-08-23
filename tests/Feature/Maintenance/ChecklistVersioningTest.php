@@ -265,11 +265,13 @@ class ChecklistVersioningTest extends TestCase
         $this->assertNull($item->isWithinTolerance(null));
     }
 
-    public function test_the_seeded_garment_templates_are_published_and_usable(): void
+    public function test_the_seeded_templates_are_published_and_usable(): void
     {
         $seeded = MaintenanceTemplate::whereNull('company_id')->get();
 
-        $this->assertCount(5, $seeded);
+        // A floor, not an exact count: templates are added as more of the mill
+        // is covered. What matters is that every seeded one is usable.
+        $this->assertGreaterThanOrEqual(5, $seeded->count());
 
         foreach ($seeded as $template) {
             $current = $template->currentVersion();

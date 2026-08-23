@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Asset\Http\Controllers\Web;
 
 use App\Modules\Asset\Actions\CreateAsset;
+use App\Modules\Asset\Actions\DeleteAsset;
 use App\Modules\Asset\Actions\UpdateAsset;
 use App\Modules\Asset\Http\Requests\StoreAssetRequest;
 use App\Modules\Asset\Http\Requests\UpdateAssetRequest;
@@ -129,6 +130,26 @@ class AssetController extends Controller
         return redirect()
             ->route('app.assets.show', $asset)
             ->with('status', __('asset.updated', ['code' => $asset->asset_code]));
+    }
+
+    /**
+     * Remove a machine that should never have been registered.
+     *
+     * Not how a factory disposes of one — that is RETIRED and then SCRAPPED,
+     * which keeps the repair history and the reason it left the floor. The
+     * action refuses anything with history behind it.
+     */
+    public function destroy(Request $request, Asset $asset, DeleteAsset $action): RedirectResponse
+    {
+        $this->authorize('delete', $asset);
+
+        $code = $asset->asset_code;
+
+        $action->handle($asset);
+
+        return redirect()
+            ->route('app.assets.index')
+            ->with('status', __('asset.deleted', ['code' => $code]));
     }
 
     /**

@@ -150,14 +150,33 @@
                             <form method="POST" action="{{ route('app.work-orders.assign', $workOrder) }}">
                                 @csrf
                                 <label for="technician_ids" class="form-label">{{ __('work_order.technicians') }}</label>
+                                @php($responsible = $technicians->filter(fn ($t) => in_array($t->id, $responsibleTechnicianIds, true)))
+                                @php($others = $technicians->reject(fn ($t) => in_array($t->id, $responsibleTechnicianIds, true)))
+
                                 <select id="technician_ids" name="technician_ids[]" class="form-select" multiple
                                         size="5" required data-tom-select>
-                                    @foreach ($technicians as $technician)
-                                        <option value="{{ $technician->id }}"
-                                            @selected($workOrder->activeAssignments->contains('technician_id', $technician->id))>
-                                            {{ $technician->name }} ({{ $technician->employee_id }})
-                                        </option>
-                                    @endforeach
+                                    {{-- Grouped rather than filtered. The dye house
+                                         technician comes first for a dye house job, and
+                                         everybody else is still one scroll away, because
+                                         at two in the morning a manager sends whoever is
+                                         awake. --}}
+                                    @if ($responsible->isNotEmpty() && $others->isNotEmpty())
+                                        <optgroup label="{{ __('work_order.covers_this_area') }}">
+                                            @foreach ($responsible as $technician)
+                                                @include('work_order::work-orders._technician-option', ['technician' => $technician])
+                                            @endforeach
+                                        </optgroup>
+
+                                        <optgroup label="{{ __('work_order.other_technicians') }}">
+                                            @foreach ($others as $technician)
+                                                @include('work_order::work-orders._technician-option', ['technician' => $technician])
+                                            @endforeach
+                                        </optgroup>
+                                    @else
+                                        @foreach ($technicians as $technician)
+                                            @include('work_order::work-orders._technician-option', ['technician' => $technician])
+                                        @endforeach
+                                    @endif
                                 </select>
                                 {{-- Only technicians at this factory are listed: sending
                                      someone to another site is a transfer, not an
@@ -179,10 +198,6 @@
                         <table class="table table-sm mb-0">
                             <tbody>
                                 <tr>
-                                    <td>{{ __('work_order.labor') }}</td>
-                                    <td class="text-end">{{ $workOrder->actual_labor_cost }}</td>
-                                </tr>
-                                <tr>
                                     <td>{{ __('work_order.parts') }}</td>
                                     <td class="text-end">{{ $workOrder->actual_parts_cost }}</td>
                                 </tr>
@@ -194,24 +209,19 @@
                                     <td>{{ __('work_order.total') }}</td>
                                     <td class="text-end">{{ $workOrder->actual_cost }} {{ $workOrder->currency }}</td>
                                 </tr>
-                                @if ($workOrder->estimated_labor_cost !== null || $workOrder->estimated_parts_cost !== null)
+                                @if ($workOrder->estimated_parts_cost !== null)
                                     <tr class="text-body-secondary">
                                         <td>{{ __('work_order.estimated') }}</td>
-                                        <td class="text-end">
-                                            {{ bcadd(
-                                                (string) ($workOrder->estimated_labor_cost ?? '0'),
-                                                (string) ($workOrder->estimated_parts_cost ?? '0'),
-                                                4,
-                                            ) }}
-                                        </td>
+                                        <td class="text-end">{{ $workOrder->estimated_parts_cost }}</td>
                                     </tr>
                                 @endif
                             </tbody>
                         </table>
 
-                        {{-- Derived from the labour and part records underneath, never
-                             typed in: a total that disagrees with its own lines is
-                             worse than no total (ADR-064). --}}
+                        {{-- Derived from the part records underneath, never typed in:
+                             a total that disagrees with its own lines is worse than no
+                             total (ADR-064). Technicians' hours are not in it — they
+                             are salaried, so their time is already paid for. --}}
                         <div class="form-text">{{ __('work_order.parts_pending_note') }}</div>
                     </div>
                 </div>

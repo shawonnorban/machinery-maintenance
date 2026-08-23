@@ -12,7 +12,6 @@ use App\Modules\Tenancy\Models\Factory;
 use App\Modules\WorkOrder\Actions\AssignTechnicians;
 use App\Modules\WorkOrder\Actions\CreateWorkOrder;
 use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
-use App\Modules\WorkOrder\Models\LaborRateGrade;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use Database\Seeders\DatabaseSeeder;
@@ -40,8 +39,6 @@ class WorkOrderScreensTest extends TestCase
 
     private Technician $technician;
 
-    private LaborRateGrade $grade;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -53,13 +50,12 @@ class WorkOrderScreensTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
 
         $this->asset = WorkOrderFixture::runningAsset($this->delta, $this->dhaka);
-        $this->grade = WorkOrderFixture::grade($this->delta);
 
         $this->manager = TenantFixture::user($this->delta, 'MAINTENANCE_MANAGER', 'mm@delta.test');
         $this->technicianUser = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
 
         $this->technician = WorkOrderFixture::technician(
-            $this->delta, $this->dhaka, $this->grade, 'Karim Mia', 'EMP-1001', $this->technicianUser,
+            $this->delta, $this->dhaka, 'Karim Mia', 'EMP-1001', $this->technicianUser,
         );
     }
 
@@ -253,7 +249,7 @@ class WorkOrderScreensTest extends TestCase
             ->assertSee('Needle condition');
     }
 
-    public function test_labour_can_be_recorded_over_http_without_a_rate_field(): void
+    public function test_time_can_be_recorded_over_http_and_carries_no_money(): void
     {
         $workOrder = $this->existing();
 
@@ -264,19 +260,17 @@ class WorkOrderScreensTest extends TestCase
         $this->actingAs($this->technicianUser)
             ->post("/app/work-orders/{$workOrder->id}/labor", [
                 'technician_id' => $this->technician->id,
-                'labor_category' => 'REGULAR',
                 'started_at' => '2026-08-17T09:00',
                 'ended_at' => '2026-08-17T11:00',
-                // Sent, and ignored: only EXTERNAL labour carries a supplied
-                // rate. Otherwise anyone could set what the work cost.
-                'hourly_rate' => '99999',
             ])
             ->assertRedirect();
 
         $entry = $workOrder->fresh()->laborEntries()->firstOrFail();
 
-        $this->assertSame('120.0000', $entry->hourly_rate);
-        $this->assertSame('240.0000', $workOrder->fresh()->actual_labor_cost);
+        // Two hours of a salaried technician's time: recorded, and costing
+        // nothing, because the work order's total is parts and posted costs.
+        $this->assertSame(120, $entry->minutes);
+        $this->assertSame('0.0000', $workOrder->fresh()->actual_cost);
     }
 
     public function test_a_technician_does_not_see_the_cost_panel(): void
@@ -306,7 +300,7 @@ class WorkOrderScreensTest extends TestCase
         ], $this->manager->id);
 
         $other = WorkOrderFixture::technician(
-            $this->delta, $this->dhaka, $this->grade, 'Jahangir Alam', 'EMP-2001',
+            $this->delta, $this->dhaka, 'Jahangir Alam', 'EMP-2001',
         );
 
         app(TransitionWorkOrder::class)->schedule($mine, $this->manager->id);

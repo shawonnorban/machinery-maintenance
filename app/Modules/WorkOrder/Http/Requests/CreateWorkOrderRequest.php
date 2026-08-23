@@ -32,7 +32,6 @@ class CreateWorkOrderRequest extends FormRequest
             'scheduled_end' => ['nullable', 'date', 'after_or_equal:scheduled_start'],
             // Estimates, not actuals. Actual cost is derived from labour and
             // part records and is never accepted from a client (ADR-064).
-            'estimated_labor_cost' => ['nullable', 'numeric', 'min:0', 'max:99999999999999'],
             'estimated_parts_cost' => ['nullable', 'numeric', 'min:0', 'max:99999999999999'],
         ];
     }
@@ -62,8 +61,6 @@ class CreateWorkOrderRequest extends FormRequest
             // timezone, so parsing it as UTC would shift every scheduled job.
             'scheduled_start' => $this->localDateTime('scheduled_start'),
             'scheduled_end' => $this->localDateTime('scheduled_end'),
-            'estimated_labor_cost' => filled($validated['estimated_labor_cost'] ?? null)
-                ? $validated['estimated_labor_cost'] : null,
             'estimated_parts_cost' => filled($validated['estimated_parts_cost'] ?? null)
                 ? $validated['estimated_parts_cost'] : null,
             'source' => 'MANUAL',

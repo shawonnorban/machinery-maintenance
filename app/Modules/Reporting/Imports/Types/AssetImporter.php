@@ -19,6 +19,7 @@ use App\Modules\Reporting\Imports\ImportOutcome;
 use App\Modules\Reporting\Imports\PreparedRow;
 use App\Modules\Reporting\Imports\RowContext;
 use App\Modules\Tenancy\Models\Factory;
+use App\Shared\Tenancy\TenantContext;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -43,6 +44,7 @@ class AssetImporter extends Importer
     public function __construct(
         private readonly CreateAsset $create,
         private readonly UpdateAsset $update,
+        private readonly TenantContext $tenant,
     ) {}
 
     public function type(): string
@@ -95,7 +97,7 @@ class AssetImporter extends Importer
             return PreparedRow::invalid($context->rowNumber, $errors, $row);
         }
 
-        $type = $context->remember("type:{$row['asset_type_code']}", fn () => AssetType::query()
+        $type = $context->remember("type:{$row['asset_type_code']}", fn () => AssetType::availableTo($this->tenant->companyId())
             ->where('code', $row['asset_type_code'])->first());
 
         if ($type === null) {
@@ -106,7 +108,7 @@ class AssetImporter extends Importer
             ];
         }
 
-        $category = $context->remember("category:{$row['asset_category_code']}", fn () => AssetCategory::query()
+        $category = $context->remember("category:{$row['asset_category_code']}", fn () => AssetCategory::availableTo($this->tenant->companyId())
             ->where('code', $row['asset_category_code'])->first());
 
         if ($category === null) {
@@ -201,10 +203,10 @@ class AssetImporter extends Importer
             return PreparedRow::invalid($context->rowNumber, $errors, $row);
         }
 
-        $manufacturer = $row['manufacturer_code'] === null ? null : Manufacturer::query()
+        $manufacturer = $row['manufacturer_code'] === null ? null : Manufacturer::availableTo($this->tenant->companyId())
             ->where('code', $row['manufacturer_code'])->first();
 
-        $model = $row['model_code'] === null ? null : AssetModel::query()
+        $model = $row['model_code'] === null ? null : AssetModel::availableTo($this->tenant->companyId())
             ->where('code', $row['model_code'])->first();
 
         $values = [

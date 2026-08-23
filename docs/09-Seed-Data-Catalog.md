@@ -1,6 +1,6 @@
 # 09-Seed-Data-Catalog.md
 # Seed and Master Data Catalog
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.0
 **Status:** Accepted
@@ -17,7 +17,7 @@ This catalog defines two seed layers:
 | Layer | Scope | Editable by tenant |
 |---|---|---|
 | **Platform seed** | Permissions, roles, setting definitions, locales, units | No |
-| **Industry seed** | Garment-specific asset types, failure codes, reason codes, maintenance types, checklist templates, labor grades | Yes, copied into the tenant on provisioning |
+| **Industry seed** | Textile-specific asset types, failure codes, reason codes, maintenance types, checklist templates, labor grades | Yes, copied into the tenant on provisioning |
 
 The industry seed is **copied**, not referenced. A factory that renames `NEEDLE_BREAK` to something its technicians actually say must be able to, without affecting any other tenant.
 
@@ -26,6 +26,15 @@ Every seeded row carries an English and a Bengali label through `translations` (
 ---
 
 ## 2. Asset Types and Categories
+
+The catalog covers a composite mill, not only a sewing floor: yarn, knitting, dyeing and fabric finishing run under the same roof as cutting and sewing in most Bangladeshi groups, and a maintenance system that knows only the sewing floor is one the dye house keeps a spreadsheet beside.
+
+### 2.0 Yarn Preparation and Knitting
+
+| Type code | Category codes | Typical criticality |
+|---|---|---|
+| `YARN_PREP` | `SOFT_WINDING`, `REWINDING`, `YARN_CONDITIONING`, `WARPING`, `YARN_CLEARER` | `MEDIUM` |
+| `KNITTING` | `CIRCULAR_SINGLE_JERSEY`, `CIRCULAR_INTERLOCK`, `CIRCULAR_RIB`, `FLEECE_TERRY`, `CIRCULAR_JACQUARD`, `FLAT_KNITTING`, `COLLAR_CUFF`, `WARP_KNITTING`, `SEAMLESS_KNITTING`, `SOCKS_KNITTING`, `LYCRA_FEEDER_UNIT` | `HIGH` |
 
 ### 2.1 Sewing
 
@@ -45,11 +54,15 @@ Every seeded row carries an English and a Bengali label through `translations` (
 |---|---|
 | `FINISHING` | `STEAM_IRON`, `VACUUM_TABLE`, `STEAM_PRESS`, `FORM_FINISHER`, `THREAD_SUCKER`, `NEEDLE_DETECTOR`, `METAL_DETECTOR`, `TAGGING_MACHINE` |
 
-### 2.4 Washing and Dyeing
+### 2.4 Dyeing, Fabric Finishing and Garment Washing
 
-| Type code | Category codes |
-|---|---|
-| `WET_PROCESS` | `WASHING_MACHINE`, `HYDRO_EXTRACTOR`, `TUMBLE_DRYER`, `DYEING_MACHINE`, `SAMPLE_DYEING`, `CURING_OVEN`, `SANDBLAST_CABIN`, `OZONE_MACHINE` |
+Fabric and yarn dyeing are their own type. A dye house is not a washing plant with extra vessels: different machines, different failures, and a different person answering for them. `DYEING` is seeded `CRITICAL` because a vessel that stops mid-batch does not pause, it ruins the batch inside it.
+
+| Type code | Category codes | Typical criticality |
+|---|---|---|
+| `DYEING` | `SOFT_FLOW_DYEING`, `HT_HP_DYEING`, `JET_DYEING`, `WINCH_DYEING`, `JIGGER_DYEING`, `PAD_BATCH`, `CONTINUOUS_RANGE`, `SCOURING_BLEACHING`, `YARN_PACKAGE_DYEING`, `HANK_DYEING`, `RF_DRYER`, `COLOR_KITCHEN`, `DOSING_UNIT` | `CRITICAL` |
+| `FABRIC_FINISHING` | `STENTER`, `COMPACTOR_OPEN`, `COMPACTOR_TUBULAR`, `DEWATERING`, `SLITTING`, `RELAX_DRYER`, `FABRIC_TUMBLE_DRYER`, `CALENDER`, `RAISING`, `SUEDING`, `SHEARING`, `SANFORIZING`, `FABRIC_INSPECTION`, `FABRIC_ROLLING`, `BALING_PRESS` | `HIGH` |
+| `WET_PROCESS` | `WASHING_MACHINE`, `HYDRO_EXTRACTOR`, `TUMBLE_DRYER`, `GARMENT_DYEING`, `CURING_OVEN`, `SANDBLAST_CABIN`, `OZONE_MACHINE`, `LASER_MACHINE` | `HIGH` |
 
 ### 2.5 Embroidery and Printing
 
@@ -64,11 +77,11 @@ These carry the highest criticality in most factories: when a boiler or generato
 
 | Type code | Category codes | Typical criticality |
 |---|---|---|
-| `UTILITY` | `BOILER`, `GENERATOR`, `AIR_COMPRESSOR`, `AIR_DRYER`, `CHILLER`, `COOLING_TOWER`, `WATER_PUMP`, `ETP_UNIT`, `SUBSTATION`, `TRANSFORMER`, `UPS`, `STABILIZER` | `CRITICAL` |
+| `UTILITY` | `BOILER`, `THERMAL_OIL_HEATER`, `CONDENSATE_RECOVERY`, `GENERATOR`, `GAS_BOOSTER`, `AIR_COMPRESSOR`, `AIR_DRYER`, `CHILLER`, `COOLING_TOWER`, `WATER_PUMP`, `DEEP_TUBEWELL`, `WTP_UNIT`, `SOFTENER_PLANT`, `ETP_UNIT`, `SUBSTATION`, `TRANSFORMER`, `UPS`, `STABILIZER` | `CRITICAL` |
 | `HVAC` | `AHU`, `EXHAUST_FAN`, `HUMIDIFIER`, `SPLIT_AC`, `AIR_CURTAIN` | `HIGH` |
 | `MATERIAL_HANDLING` | `TROLLEY`, `HANGER_SYSTEM`, `CONVEYOR`, `FORKLIFT`, `HOIST` | `MEDIUM` |
 | `SAFETY` | `FIRE_PUMP`, `FIRE_EXTINGUISHER`, `SMOKE_DETECTOR`, `EMERGENCY_LIGHT`, `FIRE_HYDRANT`, `SPRINKLER` | `CRITICAL` |
-| `QUALITY_LAB` | `GSM_CUTTER`, `CROCKMETER`, `TENSILE_TESTER`, `LIGHT_BOX`, `WEIGHING_SCALE` | `MEDIUM` |
+| `QUALITY_LAB` | `GSM_CUTTER`, `CROCKMETER`, `TENSILE_TESTER`, `LIGHT_BOX`, `WEIGHING_SCALE`, `SPECTROPHOTOMETER`, `LAB_DYEING`, `LAB_STENTER`, `WASH_FASTNESS_TESTER`, `PILLING_TESTER`, `SHRINKAGE_DRYER`, `PH_METER` | `MEDIUM` |
 
 `SAFETY` assets are seeded as `CRITICAL` because their failure is discovered during an inspection or an emergency, not during production.
 
@@ -98,6 +111,44 @@ Failure codes are the input to root cause analysis and to the "which machine kee
 | `LUBRICATION_FAILURE` | Lubrication failure or oil leak | তেল সমস্যা |
 | `VIBRATION_ABNORMAL` | Abnormal vibration or noise | অস্বাভাবিক কম্পন |
 
+### 3.1a Knitting
+
+Kept apart from the general mechanical list because these are the codes a knitting fitter actually says, and because grouping them is what makes "which machine keeps dropping needles" answerable.
+
+| Code | English | Bengali |
+|---|---|---|
+| `KNIT_NEEDLE_BROKEN` | Knitting needle broken or bent | নিটিং সুই ভাঙা |
+| `SINKER_BROKEN` | Sinker broken or worn | সিংকার ভাঙা |
+| `CAM_DAMAGE` | Cam damaged or loose | ক্যাম ক্ষতিগ্রস্ত |
+| `CYLINDER_DIAL_SCRATCH` | Cylinder or dial scratched | সিলিন্ডার/ডায়াল আঁচড় |
+| `YARN_FEEDER_FAULT` | Yarn feeder fault | ইয়ার্ন ফিডার সমস্যা |
+| `POSITIVE_FEEDER_BELT` | Positive feeder belt broken or slipping | পজিটিভ ফিডার বেল্ট সমস্যা |
+| `LYCRA_FEEDER_FAULT` | Lycra feeder fault | লাইক্রা ফিডার সমস্যা |
+| `STOP_MOTION_FAULT` | Stop motion or yarn detector fault | স্টপ মোশন সমস্যা |
+| `TAKE_DOWN_TENSION` | Take-down tension fault | টেক-ডাউন টেনশন সমস্যা |
+| `DROPPED_STITCH` | Dropped stitch or hole in fabric | স্টিচ পড়ে যাওয়া |
+| `OIL_PUMP_FAULT` | Needle oil pump or spray fault | অয়েল পাম্প সমস্যা |
+| `LINT_ACCUMULATION` | Lint accumulation or blower fault | লিন্ট জমা / ব্লোয়ার সমস্যা |
+
+### 3.1b Dyeing and Finishing
+
+| Code | English | Bengali |
+|---|---|---|
+| `PUMP_SEAL_LEAK` | Main pump seal leak | পাম্প সিল লিক |
+| `IMPELLER_DAMAGE` | Pump impeller damaged | ইম্পেলার ক্ষতিগ্রস্ত |
+| `NOZZLE_BLOCKED` | Dyeing nozzle blocked or worn | নোজল ব্লক |
+| `REEL_DRIVE_FAULT` | Reel or winch drive fault | রিল ড্রাইভ সমস্যা |
+| `DOOR_SEAL_LEAK` | Vessel door seal leak | ভেসেল ডোর সিল লিক |
+| `ROPE_TANGLE` | Fabric rope entangled in vessel | কাপড় পেঁচিয়ে যাওয়া |
+| `HEAT_EXCHANGER_SCALING` | Heat exchanger scaled or leaking | হিট এক্সচেঞ্জার স্কেলিং |
+| `STENTER_CHAIN_FAULT` | Stenter chain, clip or pin fault | স্টেন্টার চেইন সমস্যা |
+| `STENTER_BURNER_FAULT` | Stenter burner or heating fault | স্টেন্টার বার্নার সমস্যা |
+| `PADDER_ROLLER_WEAR` | Padder roller worn or uneven | প্যাডার রোলার ক্ষয় |
+| `BLANKET_DAMAGE` | Compactor blanket or felt damaged | কম্প্যাক্টর ব্ল্যাঙ্কেট ক্ষতি |
+| `SELVEDGE_UNCURLER_FAULT` | Selvedge uncurler fault | সেলভেজ আনকার্লার সমস্যা |
+| `FABRIC_GUIDER_FAULT` | Fabric guider or centring fault | ফেব্রিক গাইডার সমস্যা |
+| `SHADE_VARIATION` | Shade variation traced to the machine | মেশিনজনিত শেড ভ্যারিয়েশন |
+
 ### 3.2 Electrical
 
 | Code | English | Bengali |
@@ -112,6 +163,23 @@ Failure codes are the input to root cause analysis and to the "which machine kee
 | `DISPLAY_FAULT` | Display or panel fault | ডিসপ্লে সমস্যা |
 | `OVERHEATING` | Overheating | অতিরিক্ত গরম |
 | `POWER_FLUCTUATION_DAMAGE` | Damage from voltage fluctuation | ভোল্টেজ সমস্যায় ক্ষতি |
+
+### 3.2a Process and Instrumentation
+
+In a dye house instrumentation is not a footnote. A temperature probe reading two degrees low does not stop the machine; it produces a batch in the wrong shade, and the loss is counted in fabric rather than in downtime. Coding these separately is what lets a dye house see it at all.
+
+| Code | English | Bengali |
+|---|---|---|
+| `TEMP_SENSOR_DRIFT` | Temperature sensor drift or failure | তাপমাত্রা সেন্সর ড্রিফট |
+| `PH_PROBE_FAULT` | pH probe fault | পিএইচ প্রোব সমস্যা |
+| `FLOW_METER_FAULT` | Flow meter fault | ফ্লো মিটার সমস্যা |
+| `LEVEL_SENSOR_FAULT` | Level sensor fault | লেভেল সেন্সর সমস্যা |
+| `PRESSURE_TRANSMITTER_FAULT` | Pressure transmitter fault | প্রেসার ট্রান্সমিটার সমস্যা |
+| `DOSING_VALVE_FAULT` | Dosing valve fault | ডোজিং ভালভ সমস্যা |
+| `CONTROL_VALVE_PASSING` | Control valve passing or stuck | কন্ট্রোল ভালভ পাসিং |
+| `PLC_FAULT` | PLC or process controller fault | পিএলসি সমস্যা |
+| `RECIPE_DISPENSING_ERROR` | Recipe or dispensing error | রেসিপি/ডিসপেন্সিং ভুল |
+| `CALIBRATION_OVERDUE` | Instrument out of calibration | ক্যালিব্রেশন মেয়াদোত্তীর্ণ |
 
 ### 3.3 Pneumatic and Hydraulic
 
@@ -135,6 +203,12 @@ Failure codes are the input to root cause analysis and to the "which machine kee
 | `FUEL_SUPPLY_FAULT` | Fuel supply interruption | জ্বালানি সরবরাহ সমস্যা |
 | `GENERATOR_START_FAILURE` | Generator fails to start | জেনারেটর চালু হয় না |
 | `COMPRESSOR_TRIP` | Compressor tripped | কম্প্রেসার ট্রিপ |
+| `CHILLER_TRIP` | Chiller tripped | চিলার ট্রিপ |
+| `THERMAL_OIL_FAULT` | Thermal oil heater fault | থার্মাল অয়েল হিটার সমস্যা |
+| `WATER_QUALITY_FAULT` | Treated water out of limit | পানির মান সীমার বাইরে |
+| `SOFTENER_RESIN_EXHAUSTED` | Softener resin exhausted | সফটেনার রেজিন শেষ |
+| `ETP_DOSING_FAULT` | ETP dosing or blower fault | ইটিপি ডোজিং সমস্যা |
+| `CONDENSATE_RECOVERY_FAULT` | Condensate recovery fault | কনডেনসেট রিকভারি সমস্যা |
 
 ### 3.5 Operational and Other
 
@@ -194,6 +268,11 @@ Each maps to a class from Data Dictionary 2.5 and carries whether it counts agai
 | `MATERIAL_SHORTAGE` | `EXTERNAL` | No | Material not available |
 | `NO_OPERATOR` | `EXTERNAL` | No | Operator not available |
 | `STYLE_CHANGEOVER` | `EXTERNAL` | No | Style or line changeover |
+| `BATCH_CHANGEOVER` | `EXTERNAL` | No | Batch or shade changeover |
+| `QUALITY_CHANGEOVER` | `EXTERNAL` | No | Yarn or fabric quality changeover |
+| `STEAM_UNAVAILABLE` | `EXTERNAL` | No | Steam not available |
+| `WATER_UNAVAILABLE` | `EXTERNAL` | No | Water supply interruption |
+| `EFFLUENT_LIMIT` | `EXTERNAL` | No | Stopped for effluent limit |
 | `SHIFT_BREAK` | `NON_OPERATING` | No | Break or shift end |
 | `HOLIDAY` | `NON_OPERATING` | No | Factory holiday |
 
@@ -230,25 +309,22 @@ Each maps to a class from Data Dictionary 2.5 and carries whether it counts agai
 | `ENERGY_CONSUMED` | `KWH` | Compressor, chiller, substation |
 | `WATER_CONSUMED` | `CUBIC_METRE` | Washing, dyeing, ETP |
 | `DISTANCE` | `KM` | Forklift, vehicles |
+| `STEAM_CONSUMED` | `KG` | Dyeing, stenter, boiler |
+| `BATCH_COUNT` | `BATCH` | Dyeing vessels |
+| `FABRIC_LENGTH` | `METRE` | Finishing, inspection |
+| `FABRIC_WEIGHT` | `KG` | Knitting, dyeing |
+
+A dye vessel's service interval is counted in batches and a knitting machine's in kilograms off the take-down, neither of them in hours.
 
 ---
 
-## 8. Labor Rate Grades
+## 8. Technician Areas
 
-Seeded with rate `0` and a currency, so a factory must set its own figures before labor cost is reported. A seeded fake rate would silently produce wrong costs.
+Nothing is seeded here, and there are no labour rate grades to seed: maintenance labour has no cost, because technicians are salaried employees (ADR-065).
 
-| Code | English | Bengali | Overtime multiplier |
-|---|---|---|---|
-| `HELPER` | Maintenance Helper | সহকারী | 2.0 |
-| `JR_TECH` | Junior Technician | জুনিয়র টেকনিশিয়ান | 2.0 |
-| `TECH` | Technician | টেকনিশিয়ান | 2.0 |
-| `SR_TECH` | Senior Technician | সিনিয়র টেকনিশিয়ান | 2.0 |
-| `ELECTRICIAN` | Electrician | ইলেকট্রিশিয়ান | 2.0 |
-| `MECHANIC` | Mechanic | মেকানিক | 2.0 |
-| `ENGINEER` | Maintenance Engineer | মেইনটেন্যান্স ইঞ্জিনিয়ার | 1.5 |
-| `CONTRACTOR` | External Contractor | বাইরের কন্ট্রাক্টর | n/a |
+What a technician carries instead is the part of the mill they look after, and that comes from the company's own floor plan rather than from a platform list — a dyeing technician is attached to that company's dyeing department, which only that company has.
 
-The overtime multiplier of 2.0 reflects the common Bangladesh Labour Act treatment of overtime at twice the ordinary rate. It is seeded as a default and is editable, because it is a legal and contractual matter, not a product decision.
+The specialisation field is free text for the same reason: "Dyeing machines", "Sewing machines", "Boiler and generator" are what a factory writes on its own roster, and a fixed list would be wrong for the next factory.
 
 ---
 
@@ -341,28 +417,53 @@ Every item on this template is seeded as required with attachment on fail, becau
 
 ## 10. Spare Part Categories
 
-| Code | English |
-|---|---|
-| `NEEDLE` | Needles |
-| `HOOK_LOOPER` | Hooks and loopers |
-| `FEED_PART` | Feed dogs and throat plates |
-| `PRESSER_PART` | Presser feet and guides |
-| `BOBBIN_PART` | Bobbins and bobbin cases |
-| `BLADE_KNIFE` | Blades and knives |
-| `BEARING` | Bearings and bushings |
-| `BELT` | Belts |
-| `GEAR_SHAFT` | Gears and shafts |
-| `MOTOR_PART` | Motors and servo parts |
-| `ELECTRICAL` | Electrical components |
-| `ELECTRONIC` | Boards, sensors, displays |
-| `PNEUMATIC` | Pneumatic components |
-| `HYDRAULIC` | Hydraulic components |
-| `FILTER` | Filters |
-| `LUBRICANT` | Oils and greases |
-| `FASTENER` | Screws, nuts, springs |
-| `STEAM_PART` | Steam and boiler parts |
-| `SAFETY_PART` | Safety and guard components |
-| `CONSUMABLE` | General consumables |
+Grouped by where the part is fitted rather than by what it is made of, because the question a store answers is "what is knitting costing us this quarter", not "how much steel do we hold".
+
+| Code | English | Bengali |
+|---|---|---|
+| `SEWING_PARTS` | Sewing machine parts | সেলাই মেশিনের পার্টস |
+| `CUTTING_PARTS` | Cutting machine parts | কাটিং মেশিনের পার্টস |
+| `KNITTING_PARTS` | Knitting parts (needles, sinkers, cams) | নিটিং পার্টস |
+| `DYEING_PARTS` | Dyeing parts (pumps, seals, nozzles) | ডাইং পার্টস |
+| `FINISHING_PARTS` | Finishing parts (chains, clips, blankets) | ফিনিশিং পার্টস |
+| `ELECTRICAL` | Electrical | বৈদ্যুতিক |
+| `MECHANICAL` | Mechanical | যান্ত্রিক |
+| `INSTRUMENTATION` | Instrumentation and sensors | ইনস্ট্রুমেন্টেশন ও সেন্সর |
+| `BEARINGS` | Bearings and bushes | বেয়ারিং ও বুশ |
+| `BELTS_CHAINS` | Belts and chains | বেল্ট ও চেইন |
+| `SEALS_GASKETS` | Seals and gaskets | সিল ও গ্যাসকেট |
+| `VALVES_FITTINGS` | Valves and fittings | ভালভ ও ফিটিংস |
+| `FILTERS` | Filters and strainers | ফিল্টার ও স্ট্রেইনার |
+| `PNEUMATIC` | Pneumatic | নিউম্যাটিক |
+| `HYDRAULIC` | Hydraulic | হাইড্রলিক |
+| `LUBRICANTS` | Lubricants and oils | তেল ও লুব্রিক্যান্ট |
+| `FASTENERS` | Fasteners | নাট-বোল্ট |
+| `STEAM_UTILITY` | Steam and utility | স্টিম ও ইউটিলিটি |
+| `UTILITY_CHEMICALS` | Boiler and water treatment chemicals | বয়লার ও পানি ট্রিটমেন্ট কেমিক্যাল |
+| `SAFETY` | Safety equipment | নিরাপত্তা সরঞ্জাম |
+| `CONSUMABLES` | Consumables | ভোগ্য সামগ্রী |
+
+Needles and sinkers are bought by the thousand and consumed by the hundred, so `KNITTING_PARTS` is separated from general mechanical stock: a knitting floor that cannot see its needle spend separately cannot see its largest recurring cost.
+
+Dyes and process chemicals are production stock and are not held here. `UTILITY_CHEMICALS` covers boiler and water treatment only.
+
+---
+
+### 9.6 Circular Knitting Machine — Monthly PM
+
+`PM-KNITTING-MONTHLY`, 90 minutes, 15 items. Isolation and lock-out (safety); lint blown from cylinder, dial and creel; needle and sinker inspection with a count of needles replaced; cam condition and mounting; cylinder and dial surface; oil spray nozzles and level; positive feeder belts; yarn stop motion tested; lycra feeder alignment; take-down tension; fabric width and machine speed recorded; guards and emergency stop (safety); a sample course run and checked for holes.
+
+### 9.7 Soft Flow Dyeing Machine — Monthly PM
+
+`PM-DYEING-MONTHLY`, 120 minutes, 16 items. The longest seeded checklist, deliberately: a dye vessel is the one machine where a fault does not stop production, it produces a wrong shade, and the loss is counted in rejected fabric rather than downtime. Drain, isolate and lock-out (safety); main pump seal, impeller and casing; nozzle; reel drive and lubrication; door seal and locking interlock (safety); heat exchanger cleaned and checked for scale; steam and cooling valves for passing; filters and strainers; dosing pump and valve; temperature probe against reference (±2 °C); pH probe calibration; level and pressure sensors; safety valve tested (safety); heating and cooling gradient test; photo after service.
+
+### 9.8 Stenter — Monthly PM
+
+`PM-STENTER-MONTHLY`, 120 minutes, 12 items. Isolate, cool and lock-out (safety); chain, clips and pins inspected and lubricated; chain track alignment and wear; burner flame and gas train leak check (safety); exhaust and circulation fans with filters; chamber temperature against set point (±5 °C); padder rollers; selvedge uncurler and guider; weft straightener; overfeed and width setting; emergency stops and guards (safety); gas leak detector tested (safety).
+
+### 9.9 Laboratory Instruments — Quarterly Calibration
+
+`CAL-LAB-QUARTERLY`, 60 minutes, 9 items, maintenance type `CALIBRATION`. A spectrophotometer out of calibration passes shades the buyer's lab then rejects, which is a maintenance failure with a container-sized invoice behind it. Instrument cleaned and warmed up; calibration standard in date; white and black calibration; reference tile within tolerance (ΔE 0–1); light source hours; pH buffer calibration at 4, 7 and 10; balance against a reference weight; certificate updated; label applied with the next due date.
 
 ---
 

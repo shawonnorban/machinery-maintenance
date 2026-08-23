@@ -54,7 +54,6 @@ class MaintenanceHistoryReport extends Report
             'scheduled_start' => ['label' => 'report.columns.scheduled_start'],
             'actual_start' => ['label' => 'report.columns.actual_start'],
             'completed_at' => ['label' => 'report.columns.completed_at'],
-            'labor_cost' => ['label' => 'report.columns.labor_cost', 'numeric' => true],
             'parts_cost' => ['label' => 'report.columns.parts_cost', 'numeric' => true],
             'total_cost' => ['label' => 'report.columns.total_cost', 'numeric' => true],
         ];
@@ -73,7 +72,6 @@ class MaintenanceHistoryReport extends Report
                 'scheduled_start' => $this->timezone->format($order->scheduled_start),
                 'actual_start' => $this->timezone->format($order->actual_start),
                 'completed_at' => $this->timezone->format($order->completed_at),
-                'labor_cost' => $order->actual_labor_cost,
                 'parts_cost' => $order->actual_parts_cost,
                 'total_cost' => $order->actual_cost,
             ];

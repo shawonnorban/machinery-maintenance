@@ -1,6 +1,6 @@
 # 08-API-Schemas.md
 # API Request and Response Schemas
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.0
 **Status:** Accepted
@@ -442,29 +442,22 @@ Every one returns the full updated work order. Failures return the specific code
 ```json
 {
   "technician_id": "01HW...",
-  "labor_category": "REGULAR",
   "started_at": "2026-08-18T02:14:00.000Z",
   "ended_at": "2026-08-18T03:44:00.000Z",
   "notes": "Feed dog replacement and timing adjustment"
 }
 ```
 
-For `EXTERNAL`, `vendor_id` and `hourly_rate` are required and `technician_id` is optional. For `REGULAR` and `OVERTIME`, `hourly_rate` is rejected if supplied: the rate comes from the grade effective on `started_at` (ADR-065).
+A labour entry carries no money at all: `technician_id`, `started_at` and `ended_at`, and `minutes` derived from them. Technicians are salaried, so their hours have no cost (ADR-065). A contractor's charge is a cost entry against the asset, not a labour entry.
 
 Response `201`:
 ```json
 {
   "id": "01HX...",
   "technician": {"id": "01HW...", "employee_id": "T-1042", "name": "Karim Mia"},
-  "labor_category": "REGULAR",
-  "labor_grade": {"id": "01HW...", "code": "SR_TECH", "name": "Senior Technician"},
   "started_at": "2026-08-18T02:14:00.000Z",
   "ended_at": "2026-08-18T03:44:00.000Z",
-  "minutes": 90,
-  "hourly_rate": "275.0000",
-  "currency": "BDT",
-  "amount": "412.5000",
-  "base_amount": "412.5000"
+  "minutes": 90
 }
 ```
 

@@ -51,13 +51,12 @@ class BreakdownScreensTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
 
         $this->asset = WorkOrderFixture::runningAsset($this->delta, $this->dhaka);
-        $grade = WorkOrderFixture::grade($this->delta);
 
         $this->manager = TenantFixture::user($this->delta, 'MAINTENANCE_MANAGER', 'mm@delta.test');
         $this->technicianUser = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
 
         $this->technician = WorkOrderFixture::technician(
-            $this->delta, $this->dhaka, $grade, 'Karim Mia', 'EMP-1001', $this->technicianUser,
+            $this->delta, $this->dhaka, 'Karim Mia', 'EMP-1001', $this->technicianUser,
         );
     }
 

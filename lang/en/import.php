@@ -18,14 +18,12 @@ return [
     'recent' => 'Recent imports',
     'no_recent' => 'You have not imported anything yet',
     'back_to_imports' => 'All imports',
-
     'columns_expected' => 'Expected columns',
     'column' => 'Column',
     'required' => 'Required',
     'optional' => 'Optional',
     'example' => 'Example',
     'accepted_values' => 'Accepted values',
-
     'review' => 'Review before importing',
     'preview' => 'Preview',
     'preview_hint' => 'The first :count rows of your file, as they would be read.',
@@ -40,13 +38,11 @@ return [
     'not_permitted' => 'You do not have permission to import this.',
     'nothing_valid' => 'No row in this file can be imported. Fix the errors and upload it again.',
     'history_reason' => 'Imported historical maintenance record (:reference)',
-
     'upload_failed' => 'The file could not be uploaded.',
     'too_large' => 'The file is larger than :limit.',
     'too_many_rows' => 'The file has more than :max rows. Split it and import in parts.',
     'unsupported_file' => 'Files of type :extension cannot be imported. Use CSV or XLSX.',
     'type_not_allowed' => 'A file of type :type cannot be imported.',
-
     'stats' => [
         'total' => 'Rows read',
         'valid' => 'Ready to import',
@@ -54,7 +50,6 @@ return [
         'created' => 'Created',
         'updated' => 'Updated',
     ],
-
     'statuses' => [
         'UPLOADED' => 'Uploaded',
         'VALIDATING' => 'Checking',
@@ -64,19 +59,16 @@ return [
         'FAILED' => 'Failed',
         'CANCELLED' => 'Cancelled',
     ],
-
     'errors_title' => 'What needs fixing',
     'download_errors' => 'Download error report',
     'errors_truncated' => 'Showing the first :count problems of :total.',
     'row' => 'Row :number',
-
     'error_columns' => [
         'row' => 'Row',
         'column' => 'Column',
         'value' => 'Value',
         'error' => 'Problem',
     ],
-
     'errors' => [
         'required' => 'This column is required and was empty.',
         'unknown_reference' => 'No record in this company has that code.',
@@ -94,7 +86,6 @@ return [
         'not_in_the_past' => 'This is history, so the date cannot be in the future.',
         'write_failed' => 'The row passed checking but could not be written.',
     ],
-
     'types' => [
         'locations' => [
             'title' => 'Locations',
@@ -117,7 +108,6 @@ return [
             'description' => 'Work already done, from whatever you were using before.',
         ],
     ],
-
     'columns' => [
         'asset_code' => 'Machine code',
         'code' => 'Code',
@@ -159,7 +149,6 @@ return [
         'completed_at' => 'Completed at',
         'started_at' => 'Started at',
         'description' => 'Description',
-        'labor_cost' => 'Labour cost',
         'parts_cost' => 'Parts cost',
         'other_cost' => 'Other cost',
         'vendor_type' => 'Vendor type',

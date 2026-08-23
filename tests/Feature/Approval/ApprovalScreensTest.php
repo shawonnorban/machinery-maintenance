@@ -91,7 +91,7 @@ class ApprovalScreensTest extends TestCase
             'asset_id' => $this->asset->id,
             'maintenance_type_id' => MaintenanceType::where('code', 'PREVENTIVE')->firstOrFail()->id,
             'title' => 'Head overhaul',
-            'estimated_labor_cost' => '60000',
+            'estimated_parts_cost' => '60000',
         ], $raisedBy->id);
 
         app(TransitionWorkOrder::class)->schedule($workOrder, $raisedBy->id);
@@ -233,15 +233,16 @@ class ApprovalScreensTest extends TestCase
 
     public function test_a_derived_source_type_is_refused_by_the_form(): void
     {
-        // The form does not offer labour or parts, and the endpoint refuses
-        // them too: posting one by hand would charge the machine twice.
+        // Parts cost is posted by the system from what the store issued, so
+        // the form does not offer it and the endpoint refuses it too: posting
+        // one by hand would charge the machine twice for the same part.
         $this->actingAs($this->maintenanceManager)
             ->post('/app/costs', [
                 'asset_id' => $this->asset->id,
-                'cost_category_id' => CostCategory::where('code', 'LABOR')->firstOrFail()->id,
+                'cost_category_id' => CostCategory::where('code', 'PARTS')->firstOrFail()->id,
                 'amount' => '5000',
                 'currency' => 'BDT',
-                'source_type' => 'LABOR',
+                'source_type' => 'PARTS',
             ])
             ->assertSessionHasErrors('source_type');
     }

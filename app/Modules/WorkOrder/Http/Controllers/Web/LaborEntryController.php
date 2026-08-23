@@ -21,9 +21,7 @@ class LaborEntryController extends Controller
     {
         $validated = $request->validated();
 
-        $technician = filled($validated['technician_id'] ?? null)
-            ? Technician::find($validated['technician_id'])
-            : null;
+        $technician = Technician::find($validated['technician_id']);
 
         $this->action->handle(
             workOrder: $workOrder,
@@ -32,11 +30,7 @@ class LaborEntryController extends Controller
             // the overlap check and any comparison against the work order.
             startedAt: $request->localDateTime('started_at'),
             endedAt: $request->localDateTime('ended_at'),
-            category: $validated['labor_category'],
             technician: $technician,
-            vendorId: filled($validated['vendor_id'] ?? null) ? $validated['vendor_id'] : null,
-            // Only read for EXTERNAL. Internal rates come from the grade.
-            externalRate: filled($validated['hourly_rate'] ?? null) ? (string) $validated['hourly_rate'] : null,
             notes: $validated['notes'] ?? null,
             userId: $request->user()->id,
         );

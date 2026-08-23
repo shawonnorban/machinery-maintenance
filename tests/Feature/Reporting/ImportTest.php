@@ -286,8 +286,8 @@ class ImportTest extends TestCase
         app(ImportProcessor::class)->import($this->upload('assets', $this->assetCsv()));
 
         $csv = <<<'CSV'
-        asset_code,title,maintenance_type_code,completed_at,started_at,labor_cost,parts_cost
-        IMP-001,Quarterly service,PREVENTIVE,2025-11-14 16:30,2025-11-14 14:30,600,2450
+        asset_code,title,maintenance_type_code,completed_at,started_at,parts_cost
+        IMP-001,Quarterly service,PREVENTIVE,2025-11-14 16:30,2025-11-14 14:30,2450
         CSV;
 
         $job = app(ImportProcessor::class)->import($this->upload('maintenance_history', $csv));
@@ -300,7 +300,8 @@ class ImportTest extends TestCase
         $this->assertSame('IMPORT', $order->source);
         // Declared history, distinguishable from history this system measured.
         $this->assertTrue((bool) $order->is_imported);
-        $this->assertSame('3050.0000', $order->actual_cost);
+        // Parts only: a salaried technician's imported hours are not a cost.
+        $this->assertSame('2450.0000', $order->actual_cost);
 
         // Two rows: raised, then closed as imported history. No SCHEDULED, no
         // IN_PROGRESS — replaying the state machine over a record that arrived

@@ -20,7 +20,6 @@ return [
     'will_queue' => 'This report is large, so it will be generated in the background.',
     'preview_note' => 'Showing the first :count rows. Export to get every row.',
     'row_count' => ':count rows',
-
     'filters' => 'Filters',
     'from' => 'From',
     'to' => 'To',
@@ -31,7 +30,6 @@ return [
     'status' => 'Status',
     'all_statuses' => 'All statuses',
     'scoped_by_header' => 'Scoped to the factory selected in the header.',
-
     'groups' => [
         'asset' => 'Assets',
         'maintenance' => 'Maintenance',
@@ -41,7 +39,6 @@ return [
         'people' => 'Technicians',
         'vendor' => 'Vendors and cover',
     ],
-
     'job' => [
         'requested_at' => 'Requested',
         'format' => 'Format',
@@ -54,7 +51,6 @@ return [
         'none_hint' => 'Run a report and export it; the file will appear here.',
         'retention' => 'Generated files are kept for :days days.',
     ],
-
     'statuses' => [
         'QUEUED' => 'Queued',
         'RUNNING' => 'Running',
@@ -62,7 +58,6 @@ return [
         'FAILED' => 'Failed',
         'EXPIRED' => 'Expired',
     ],
-
     'meta' => [
         'report' => 'Report',
         'generated_at' => 'Generated at',
@@ -71,7 +66,6 @@ return [
         'all_factories' => 'All factories',
         'asset' => 'Machine',
     ],
-
     'columns' => [
         'asset_code' => 'Machine code',
         'name' => 'Name',
@@ -102,7 +96,6 @@ return [
         'scheduled_start' => 'Scheduled start',
         'actual_start' => 'Actual start',
         'completed_at' => 'Completed',
-        'labor_cost' => 'Labour cost',
         'parts_cost' => 'Parts cost',
         'total_cost' => 'Total cost',
         'plan' => 'Plan',
@@ -190,8 +183,6 @@ return [
         'days_remaining' => 'Days remaining',
         'value' => 'Value',
     ],
-
-    // Titles and one-line descriptions, keyed by report.
     'asset_register' => [
         'title' => 'Asset register',
         'description' => 'Every machine on the books, with what it is and where it is.',

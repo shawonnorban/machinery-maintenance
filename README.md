@@ -1,12 +1,14 @@
-# Garment Industry Machinery Asset & Maintenance Management SaaS
+# Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 A multi-tenant SaaS platform for garment, textile, and manufacturing organizations to manage machinery and assets, preventive maintenance, breakdowns, corrective maintenance, work orders, spare parts, inventory, maintenance costs, downtime, vendors, warranties, service contracts, notifications, reports, and subscriptions.
+
+The seeded industry data covers a composite mill end to end — yarn preparation, knitting, fabric and yarn dyeing, fabric finishing, cutting, sewing, garment washing, printing, embroidery, the quality lab, and the utilities that feed all of them. See `docs/09-Seed-Data-Catalog.md`.
 
 ## Scope
 
 This is a **maintenance and machine tracking system**. It is deliberately not an HR, payroll, attendance, production planning, or accounting system.
 
-Labor cost is computed from standard rates per skill grade. No salary, wage, attendance, or appraisal data is stored anywhere in the schema. Where a factory needs payroll-accurate costing or production output data, that is an integration, not a column here. See `01-SRS.md` Section 3.3 for the full boundary.
+Maintenance labour carries no cost. Technicians are salaried employees, so a work order records who worked and for how long, never what an hour was worth; cost is parts and invoices. No salary, wage, rate, attendance, or appraisal data is stored anywhere in the schema. Where a factory needs payroll-accurate costing or production output data, that is an integration, not a column here. See `01-SRS.md` Section 3.3 for the full boundary.
 
 ## Technology Stack
 
@@ -100,7 +102,7 @@ Draft
 → Closed
 ```
 
-Work orders can include technicians, teams, checklists, parts, labor, costs, downtime, attachments, and verification.
+Work orders can include technicians, teams, checklists, parts, time on the job, costs, downtime, attachments, and verification.
 
 ## Breakdown & Downtime
 
@@ -249,7 +251,7 @@ The platform requires:
 12. Maintenance Plans
 13. Scheduling Engine
 14. Meter Management
-15. Work Orders (incl. labor & parts)
+15. Work Orders (incl. time & parts)
 16. Checklist Engine
 17. Breakdown Management
 18. Downtime & KPI Engine

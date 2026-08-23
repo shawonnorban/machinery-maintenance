@@ -31,6 +31,62 @@ class WorkOrderPartsController extends Controller
         private readonly WorkOrderCostCalculator $costs,
     ) {}
 
+    /**
+     * A technician asks for a part.
+     *
+     * The step that was missing between "this machine needs a hook" and "the
+     * store handed one over". Without it the only record of a part being
+     * needed was the moment it was issued, so a part nobody had in stock left
+     * no trace at all — the job simply sat there, and the reason lived in
+     * somebody's memory.
+     *
+     * It moves no stock and reserves nothing. It is a request, and the store
+     * decides what to do with it.
+     */
+    public function request(Request $request, WorkOrder $workOrder): RedirectResponse
+    {
+        $this->authorize('work_order.part.request');
+
+        $validated = $request->validate([
+            'spare_part_id' => ['required', 'string', 'size:26'],
+            'quantity' => ['required', 'numeric', 'gt:0'],
+        ]);
+
+        $this->parts->request(
+            $workOrder,
+            SparePart::findOrFail($validated['spare_part_id']),
+            (string) $validated['quantity'],
+        );
+
+        return back()->with('status', __('inventory.requested_message'));
+    }
+
+    /**
+     * Withdraw a request that is no longer needed.
+     *
+     * Only while nothing has been issued against it: once the store has handed
+     * parts over, the line is a record of stock that moved, and cancelling it
+     * would leave those units unaccounted for.
+     */
+    public function cancelRequest(Request $request, WorkOrder $workOrder, string $line): RedirectResponse
+    {
+        $this->authorize('work_order.part.request');
+
+        $record = WorkOrderPart::where('work_order_id', $workOrder->id)
+            ->where('id', $line)
+            ->firstOrFail();
+
+        if (bccomp((string) $record->quantity_issued, '0', 4) === 1) {
+            throw ValidationException::withMessages([
+                'quantity' => __('inventory.cannot_cancel_issued'),
+            ])->status(409);
+        }
+
+        $record->forceFill(['status' => 'CANCELLED'])->save();
+
+        return back()->with('status', __('inventory.request_cancelled'));
+    }
+
     public function reserve(Request $request, WorkOrder $workOrder): RedirectResponse
     {
         $this->authorize('inventory.reservation.manage');

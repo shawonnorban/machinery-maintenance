@@ -1,6 +1,6 @@
 # 10-Frontend-Specification.md
 # Frontend Specification
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 2.0
 **Status:** Accepted

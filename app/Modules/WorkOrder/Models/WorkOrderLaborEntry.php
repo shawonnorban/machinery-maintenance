@@ -4,31 +4,26 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Models;
 
-use App\Shared\Casts\MoneyCast;
 use App\Shared\Concerns\BelongsToTenant;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Time spent on a work order, converted to cost (ADR-050).
+ * Time spent on a work order (ADR-050).
  *
- * This table is why actual_cost and every technician KPI have a source. v1.0
- * defined the cost field with nothing behind it, so the figure would have been
- * a number somebody typed.
+ * Time only. Technicians are salaried, so an hour of theirs carries no cost of
+ * its own; what these rows answer is workload and technician performance —
+ * who did the work and how long it took.
  */
 class WorkOrderLaborEntry extends BaseModel
 {
     use BelongsToTenant;
 
-    public const CATEGORIES = ['REGULAR', 'OVERTIME', 'EXTERNAL'];
-
     protected $table = 'work_order_labor_entries';
 
     protected $fillable = [
-        'company_id', 'work_order_id', 'technician_id', 'labor_category',
-        'labor_grade_id', 'vendor_id', 'started_at', 'ended_at', 'minutes',
-        'hourly_rate', 'currency', 'exchange_rate', 'amount', 'base_amount',
-        'notes', 'recorded_by',
+        'company_id', 'work_order_id', 'technician_id',
+        'started_at', 'ended_at', 'minutes', 'notes', 'recorded_by',
     ];
 
     /** Millisecond precision, matching the column (ERD rule 15). */
@@ -40,9 +35,6 @@ class WorkOrderLaborEntry extends BaseModel
             'started_at' => 'datetime',
             'ended_at' => 'datetime',
             'minutes' => 'integer',
-            'hourly_rate' => MoneyCast::class,
-            'amount' => MoneyCast::class,
-            'base_amount' => MoneyCast::class,
         ];
     }
 

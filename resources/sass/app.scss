@@ -471,7 +471,23 @@ $sidebar-nesting-step: 0.75rem;
     background: var(--bs-warning-bg-subtle, #fff3cd);
   }
 
-  &[data-connection-state='live'] { color: var(--bs-success, #198754); }
+  &[data-connection-state='live'] {
+    color: var(--bs-success-text-emphasis, #0a3622);
+    background: var(--bs-success-bg-subtle, #d1e7dd);
+  }
+
+  // A dot as well as the word, so the state is readable at a glance and does
+  // not depend on telling three similar chips apart by their wording.
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-inline-end: 0.35rem;
+    border-radius: 50%;
+    background: currentcolor;
+    vertical-align: baseline;
+  }
 }
 
 // Live events surface here. Fixed to the corner so it never reflows the page

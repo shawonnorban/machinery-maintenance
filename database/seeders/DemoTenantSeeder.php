@@ -59,7 +59,6 @@ use App\Modules\WorkOrder\Actions\AssignTechnicians;
 use App\Modules\WorkOrder\Actions\CreateWorkOrder;
 use App\Modules\WorkOrder\Actions\RecordChecklistResult;
 use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
-use App\Modules\WorkOrder\Models\LaborRateGrade;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Services\WorkOrderCostCalculator;
@@ -113,7 +112,7 @@ class DemoTenantSeeder extends Seeder
         $this->user($delta, 'AUDITOR', 'auditor@delta.test', 'Tanvir Rahman');
         $this->user($delta, 'VIEWER', 'viewer@delta.test', 'Shirin Sultana');
 
-        $this->technicians($delta, $dhaka, $this->laborGrades($delta), $technicianUser);
+        $this->technicians($delta, $dhaka, $technicianUser);
 
         // Machines and work in every interesting state, so the screens can be
         // judged against real data rather than against empty tables.
@@ -258,56 +257,23 @@ class DemoTenantSeeder extends Seeder
     }
 
     /**
-     * Labour rate grades (ADR-065, Seed Catalog 13).
+     * Technicians, each with the part of the mill they look after.
      *
-     * Grades, not wages. Two technicians on the same grade cost the same by
-     * design: maintenance needs comparable cost per machine, and putting real
-     * pay here would make a maintenance tool an HR data store (SRS 3.3).
+     * A dyeing technician covers the dye house and a sewing mechanic the sewing
+     * floor, which is how a factory actually divides the work — and how the
+     * assignment screen decides who to offer first.
      */
-    private function laborGrades(Company $company): array
-    {
-        $grades = [];
-
-        foreach ([
-            ['Helper', 'G1', '60.0000'],
-            ['Technician', 'G2', '110.0000'],
-            ['Senior Technician', 'G3', '160.0000'],
-            ['Engineer', 'G4', '240.0000'],
-        ] as [$name, $code, $rate]) {
-            $grades[$code] = LaborRateGrade::updateOrCreate(
-                ['company_id' => $company->id, 'code' => $code, 'effective_from' => '2026-01-01'],
-                [
-                    'name' => $name,
-                    'standard_hourly_rate' => $rate,
-                    // Twice the ordinary rate is the common Bangladesh Labour
-                    // Act treatment.
-                    'overtime_multiplier' => '2.0000',
-                    'currency' => 'BDT',
-                    'active' => true,
-                ],
-            );
-        }
-
-        return $grades;
-    }
-
-    /**
-     * Technicians. Enough of them, on different grades, that a work order's cost
-     * breakdown and the capacity check are both exercisable.
-     *
-     * @param  array<string, LaborRateGrade>  $grades
-     */
-    private function technicians(Company $company, Factory $factory, array $grades, ?User $linkedUser): void
+    private function technicians(Company $company, Factory $factory, ?User $linkedUser): void
     {
         $roster = [
-            ['Karim Mia', 'EMP-1001', 'G2', 'Sewing machines', 5],
-            ['Jahangir Alam', 'EMP-1002', 'G3', 'Electrical', 5],
-            ['Sumon Sheikh', 'EMP-1003', 'G1', 'General', 8],
-            ['Ruhul Amin', 'EMP-1004', 'G3', 'Boiler and generator', 4],
-            ['Abdul Karim', 'EMP-1005', 'G4', 'Compressor and HVAC', 3],
+            ['Karim Mia', 'EMP-1001', 'Sewing machines', 5],
+            ['Jahangir Alam', 'EMP-1002', 'Electrical', 5],
+            ['Sumon Sheikh', 'EMP-1003', 'Knitting machines', 8],
+            ['Ruhul Amin', 'EMP-1004', 'Boiler and generator', 4],
+            ['Abdul Karim', 'EMP-1005', 'Dyeing machines', 3],
         ];
 
-        foreach ($roster as $index => [$name, $employeeId, $gradeCode, $specialisation, $limit]) {
+        foreach ($roster as $index => [$name, $employeeId, $specialisation, $limit]) {
             Technician::updateOrCreate(
                 ['company_id' => $company->id, 'employee_id' => $employeeId],
                 [
@@ -316,7 +282,6 @@ class DemoTenantSeeder extends Seeder
                     // exist without an account, and a supervisor records their
                     // time for them (ERD Section 16).
                     'user_id' => $index === 0 ? $linkedUser?->id : null,
-                    'labor_grade_id' => $grades[$gradeCode]->id,
                     'name' => $name,
                     'phone' => '+8801'.str_pad((string) (700000000 + $index), 9, '0'),
                     'specialization' => $specialisation,
@@ -511,7 +476,7 @@ class DemoTenantSeeder extends Seeder
                 'title' => $template?->name ?? 'Preventive service',
                 'priority' => $priority,
                 'scheduled_start' => CarbonImmutable::now()->addDays($dayOffset)->setTime(9, 0),
-                'estimated_labor_cost' => $estimate,
+                'estimated_parts_cost' => $estimate,
             ], $raisedBy->id);
 
             if ($target === 'DRAFT') {

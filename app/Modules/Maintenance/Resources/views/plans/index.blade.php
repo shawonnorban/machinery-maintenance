@@ -54,11 +54,21 @@
                         </x-status-pill>
                     </td>
                     <td>
-                        <a href="{{ route('app.maintenance.plans.show', $plan) }}"
-                           class="btn btn-sm btn-info text-white btn-icon"
-                           title="{{ __('common.view') }}" aria-label="{{ __('common.view') }}">
-                            <i class="cil-eye" aria-hidden="true"></i>
-                        </a>
+                        <div class="d-flex gap-1">
+                            <a href="{{ route('app.maintenance.plans.show', $plan) }}"
+                               class="btn btn-sm btn-info text-white btn-icon"
+                               title="{{ __('common.view') }}" aria-label="{{ __('common.view') }}">
+                                <i class="cil-magnifying-glass" aria-hidden="true"></i>
+                            </a>
+
+                            @can('maintenance.plan.update')
+                                <a href="{{ route('app.maintenance.plans.edit', $plan) }}"
+                                   class="btn btn-sm btn-outline-secondary btn-icon"
+                                   title="{{ __('common.edit') }}" aria-label="{{ __('common.edit') }}">
+                                    <i class="cil-pencil" aria-hidden="true"></i>
+                                </a>
+                            @endcan
+                        </div>
                     </td>
                 </tr>
             @empty

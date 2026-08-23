@@ -18,6 +18,7 @@ use App\Modules\Maintenance\Models\MaintenanceSchedule;
 use App\Modules\Maintenance\Models\MaintenanceType;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
+use Carbon\CarbonImmutable;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\TenantFixture;
@@ -41,6 +42,12 @@ class PlanScreensTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Frozen, because every date in this class is asserted literally. A
+        // preview never offers a date in the past — it clamps to today — so a
+        // test written against "next Friday" quietly starts asserting a
+        // different day once that Friday goes by.
+        CarbonImmutable::setTestNow('2026-08-18 09:00:00');
 
         $this->seed(DatabaseSeeder::class);
 
@@ -70,6 +77,13 @@ class PlanScreensTest extends TestCase
         }
 
         $this->manager = TenantFixture::user($this->delta, 'MAINTENANCE_MANAGER', 'mm@delta.test');
+    }
+
+    protected function tearDown(): void
+    {
+        CarbonImmutable::setTestNow();
+
+        parent::tearDown();
     }
 
     /**

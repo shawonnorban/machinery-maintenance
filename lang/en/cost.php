@@ -20,7 +20,6 @@ return [
     'vendor' => 'Vendor',
     'no_entries' => 'No costs posted',
     'no_entries_hint' => 'Labour and parts post themselves as work is recorded.',
-
     'source_labor' => 'Labour',
     'source_parts' => 'Parts',
     'source_external_service' => 'External service',
@@ -28,7 +27,6 @@ return [
     'source_transport' => 'Transport',
     'source_manual' => 'Posted manually',
     'source_reversal' => 'Reversal',
-
     'derived' => 'Derived',
     'derived_hint' => 'Written by the system from the labour entries and part lines underneath, so a work order\'s cost cannot drift from its own records.',
     'derived_not_manual' => 'Labour and parts costs are derived from the work order itself and cannot be posted by hand.',
@@ -44,11 +42,7 @@ return [
     'posted' => 'Cost posted.',
     'post_cost' => 'Post a cost',
     'reason' => 'Reason',
-
-    'labour_on' => 'Labour on :number',
     'parts_on' => 'Parts on :number',
-
-    // --- lifecycle ---
     'lifecycle' => 'Lifetime cost',
     'acquisition' => 'Purchase',
     'installation' => 'Installation',

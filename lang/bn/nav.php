@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'locations' => 'লোকেশন',
     'dashboard' => 'ড্যাশবোর্ড',
     'assets' => 'মেশিন ও সম্পদ',
     'all_assets' => 'সব মেশিন',
@@ -25,6 +26,7 @@ return [
     'issue_return' => 'ইস্যু / ফেরত',
     'transfers' => 'স্থানান্তর',
     'low_stock' => 'কম মজুদ',
+    'part_requests' => 'পার্টসের চাহিদা',
     'technicians' => 'টেকনিশিয়ান',
     'teams' => 'টিম',
     'vendors' => 'সরবরাহকারী',
@@ -40,7 +42,6 @@ return [
     'master_data' => 'মাস্টার ডেটা',
     'users' => 'ব্যবহারকারী',
     'roles' => 'ভূমিকা',
-    'labor_grades' => 'শ্রম গ্রেড',
     'audit_log' => 'অডিট লগ',
     'billing' => 'বিলিং',
 ];

@@ -119,7 +119,7 @@
             @if ($invoice->creditNotes->isNotEmpty())
                 <div class="card mb-4">
                     <div class="card-header">
-                        <i class="cil-note" aria-hidden="true"></i>
+                        <i class="cil-notes" aria-hidden="true"></i>
                         <span>{{ __('billing.credit_notes') }}</span>
                     </div>
 

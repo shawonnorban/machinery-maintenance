@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 return [
+    'covers_this_area' => 'Looks after this part of the floor',
+    'other_technicians' => 'Other technicians at this factory',
     'work_orders' => 'Work orders',
     'work_order' => 'Work order',
     'scheduled_maintenance' => 'Scheduled maintenance',
-
     'invalid_transition' => 'A work order cannot move from :from to :to.',
     'assign_needs_technician' => 'Assign at least one technician first.',
     'hold_reason_unknown' => 'Unknown hold reason.',
@@ -17,23 +18,16 @@ return [
     'approval_pending' => 'This work order is still awaiting approval.',
     'cancel_needs_reason' => 'Cancelling a work order needs a reason.',
     'reopen_needs_reason' => 'Reopening a completed work order needs a reason.',
-
     'asset_not_found' => 'The selected machine does not exist.',
     'asset_terminal' => 'A :status machine cannot have new work raised against it.',
     'maintenance_type_required' => 'Choose a maintenance type.',
     'schedule_not_open' => 'This maintenance occurrence is no longer open.',
-
-    'labor_category_unknown' => 'Unknown labour category.',
     'labor_after_close' => 'A closed work order no longer accepts labour entries.',
     'labor_end_before_start' => 'The end time must be after the start time.',
     'labor_in_future' => 'Labour cannot be recorded for a time that has not happened yet.',
     'labor_too_long' => 'A single labour entry cannot exceed 24 hours. Split it across shifts.',
     'labor_needs_technician' => 'Choose the technician who did the work.',
     'labor_overlap' => 'This technician already has time recorded from :from to :to. One person cannot be in two places at once.',
-    'technician_needs_grade' => 'This technician has no labour grade in force, so their time cannot be costed.',
-    'external_needs_rate' => 'External contractor labour needs the rate the vendor charged.',
-
-    // --- checklist execution (SRS 12, ERD Section 9 rules 1-4) ---
     'checklist' => 'Checklist',
     'checklist_needs_in_progress' => 'A checklist can only be answered while the work is in progress.',
     'checklist_result_unknown' => 'Unknown checklist result.',
@@ -63,10 +57,11 @@ return [
     'safety_item' => 'Safety item',
     'followup_raised' => 'Follow-up raised',
     'followup_title' => 'Corrective work: :item',
-    'followup_description' => "Raised automatically by a failed check on work order :number.\n\nItem: :item\nObservation: :observation",
-    'followup_no_note' => 'No note recorded.',
+    'followup_description' => 'Raised automatically by a failed check on work order :number.
 
-    // --- assignment ---
+Item: :item
+Observation: :observation',
+    'followup_no_note' => 'No note recorded.',
     'assign' => 'Assign',
     'assigned' => 'Technicians assigned.',
     'unassign' => 'Remove',
@@ -81,8 +76,6 @@ return [
     'nobody_assigned' => 'Nobody assigned yet',
     'technician' => 'Technician',
     'technicians' => 'Technicians',
-
-    // --- transitions ---
     'scheduled' => 'Work order scheduled.',
     'started' => 'Work started.',
     'held' => 'Work put on hold.',
@@ -103,8 +96,6 @@ return [
     'cancel' => 'Cancel',
     'reopen' => 'Reopen',
     'new_work_order' => 'New work order',
-
-    // --- statuses, priorities, hold reasons ---
     'status' => 'Status',
     'status_draft' => 'Draft',
     'status_pending_approval' => 'Pending approval',
@@ -135,27 +126,16 @@ return [
     'source_manual' => 'Raised manually',
     'source_checklist_failure' => 'Failed check',
     'source_import' => 'Imported',
-
-    // --- labour ---
     'labor' => 'Labour',
     'labor_recorded' => 'Time recorded.',
     'labor_deleted' => 'Labour entry removed.',
-    'labor_category' => 'Category',
-    'labor_category_regular' => 'Regular',
-    'labor_category_overtime' => 'Overtime',
-    'labor_category_external' => 'External contractor',
-    'labor_grade_note' => 'The rate comes from the technician\'s grade. This system holds no salary data.',
     'started_at' => 'From',
     'ended_at' => 'To',
     'minutes' => 'Minutes',
-    'hourly_rate' => 'Hourly rate',
     'external_rate_hint' => 'The rate the contractor charged.',
     'amount' => 'Amount',
     'no_labor' => 'No time recorded yet.',
     'record_time' => 'Record time',
-    'total_labor' => 'Total labour',
-
-    // --- detail screen ---
     'details' => 'Details',
     'asset' => 'Machine',
     'maintenance_type' => 'Type',
@@ -184,8 +164,6 @@ return [
     'reopen_reason' => 'Reason for reopening',
     'notes' => 'Notes',
     'verified_by_other' => 'Verification needs someone other than the person who did the work.',
-
-    // --- listing and queues ---
     'filter_open' => 'Open',
     'filter_all' => 'All',
     'filter_in_progress' => 'In progress',
@@ -199,11 +177,11 @@ return [
     'not_a_technician' => 'Your account is not linked to a technician record, so it has no work queue.',
     'open_work_orders' => 'Open work orders',
     'due' => 'Due',
-
     'checklist_item' => 'Item',
     'checklist_failed_count' => '{1} :count failed|[2,*] :count failed',
     'checklist_version_hint' => 'The version is frozen onto the work order now, so a template edited later does not change what this technician was asked to check.',
     'shutdown_hint' => 'The machine stops for this job, and its stoppage counts as planned downtime.',
     'parts_outstanding' => 'This work order still holds parts on :count line(s) that were neither fitted nor returned. Account for them before closing.',
     'approval_rejected' => 'This work order was rejected at approval and cannot be started.',
+    'total_time' => 'Total time',
 ];

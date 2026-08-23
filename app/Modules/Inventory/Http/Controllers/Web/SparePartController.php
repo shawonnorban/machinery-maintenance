@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Http\Controllers\Web;
 
+use App\Modules\Inventory\Actions\DeleteSparePart;
+use App\Modules\Inventory\Actions\SaveSparePart;
 use App\Modules\Inventory\Models\Bin;
 use App\Modules\Inventory\Models\InventoryBalance;
 use App\Modules\Inventory\Models\InventoryTransaction;
@@ -61,15 +63,91 @@ class SparePartController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, SaveSparePart $action): RedirectResponse
     {
         $this->authorize('inventory.part.create');
 
+        $part = $action->create($this->validated($request, null));
+
+        return redirect()
+            ->route('app.inventory.parts.show', $part)
+            ->with('status', __('inventory.part_created', ['number' => $part->part_number]));
+    }
+
+    public function edit(SparePart $part): View
+    {
+        $this->authorize('inventory.part.update');
+
+        return view('inventory::parts.edit', [
+            'part' => $part,
+            'categories' => SparePartCategory::availableTo($this->context->companyId())
+                ->where('active', true)->orderBy('name')->get(),
+        ]);
+    }
+
+    public function update(Request $request, SparePart $part, SaveSparePart $action): RedirectResponse
+    {
+        $this->authorize('inventory.part.update');
+
+        $action->update($part, $this->validated($request, $part));
+
+        return redirect()
+            ->route('app.inventory.parts.show', $part)
+            ->with('status', __('inventory.part_updated', ['number' => $part->part_number]));
+    }
+
+    /**
+     * Retire a part from the catalogue, or bring it back.
+     *
+     * The way out for a part that was real: the ledger points at this row, and
+     * a part nobody stocks any more is still the part that was fitted to a
+     * machine two years ago. Deleting is for the row that was never real.
+     */
+    public function toggle(SparePart $part, SaveSparePart $action): RedirectResponse
+    {
+        $this->authorize('inventory.part.update');
+
+        $action->setActive($part, ! $part->active);
+
+        return back()->with('status', __('inventory.part_updated', ['number' => $part->part_number]));
+    }
+
+    /**
+     * Remove a catalogue entry that should never have been created.
+     *
+     * Narrow on purpose: the action refuses anything the ledger or a work
+     * order points at, because those are retired rather than removed. What is
+     * left is the case this exists for — the part typed in twice, or under the
+     * wrong number, which retiring would leave in every list for ever.
+     */
+    public function destroy(SparePart $part, DeleteSparePart $action): RedirectResponse
+    {
+        $this->authorize('inventory.part.update');
+
+        $number = $part->part_number;
+
+        $action->handle($part);
+
+        return redirect()
+            ->route('app.inventory.parts')
+            ->with('status', __('inventory.part_deleted', ['number' => $number]));
+    }
+
+    /**
+     * The rules, in one place, so creating and editing cannot drift apart.
+     *
+     * @return array<string, mixed>
+     */
+    private function validated(Request $request, ?SparePart $part): array
+    {
+        $unique = Rule::unique('spare_parts')->where('company_id', $this->context->companyId());
+
+        if ($part !== null) {
+            $unique = $unique->ignore($part->id);
+        }
+
         $validated = $request->validate([
-            'part_number' => [
-                'required', 'string', 'max:64',
-                Rule::unique('spare_parts')->where('company_id', $this->context->companyId()),
-            ],
+            'part_number' => ['required', 'string', 'max:64', $unique],
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['nullable', 'string', 'size:26'],
             'brand' => ['nullable', 'string', 'max:255'],
@@ -85,27 +163,12 @@ class SparePartController extends Controller
             'notes' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        $part = SparePart::create([
-            'part_number' => $validated['part_number'],
-            'name' => $validated['name'],
-            'category_id' => filled($validated['category_id'] ?? null) ? $validated['category_id'] : null,
-            'brand' => $validated['brand'] ?? null,
-            'manufacturer' => $validated['manufacturer'] ?? null,
-            'unit' => $validated['unit'],
-            'minimum_stock' => $validated['minimum_stock'] ?? '0',
-            'reorder_level' => $validated['reorder_level'] ?? '0',
-            'lead_time_days' => $validated['lead_time_days'] ?? null,
-            'shelf_life_days' => $validated['shelf_life_days'] ?? null,
-            'is_critical_spare' => $request->boolean('is_critical_spare'),
-            'hazardous' => $request->boolean('hazardous'),
-            'notes' => $validated['notes'] ?? null,
-            'currency' => 'BDT',
-            'active' => true,
-        ]);
+        // Read from the request rather than the validated array: an unchecked
+        // box is absent, which is not the same as false to array access.
+        $validated['is_critical_spare'] = $request->boolean('is_critical_spare');
+        $validated['hazardous'] = $request->boolean('hazardous');
 
-        return redirect()
-            ->route('app.inventory.parts.show', $part)
-            ->with('status', __('inventory.received'));
+        return $validated;
     }
 
     public function show(SparePart $part): View

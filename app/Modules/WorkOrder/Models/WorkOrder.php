@@ -65,7 +65,7 @@ class WorkOrder extends BaseModel
         'status', 'priority', 'source', 'approval_status', 'approval_request_id',
         'requires_verification', 'requires_shutdown', 'downtime_class',
         'assigned_team_id', 'scheduled_start', 'scheduled_end',
-        'estimated_labor_cost', 'estimated_parts_cost', 'currency',
+        'estimated_parts_cost', 'currency',
         'created_by', 'is_imported',
     ];
 
@@ -87,9 +87,7 @@ class WorkOrder extends BaseModel
             'hold_minutes' => 'integer',
             'reopened_count' => 'integer',
             'version' => 'integer',
-            'estimated_labor_cost' => MoneyCast::class,
             'estimated_parts_cost' => MoneyCast::class,
-            'actual_labor_cost' => MoneyCast::class,
             'actual_parts_cost' => MoneyCast::class,
             'actual_other_cost' => MoneyCast::class,
             'actual_cost' => MoneyCast::class,

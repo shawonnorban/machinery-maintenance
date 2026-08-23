@@ -118,10 +118,6 @@ class RoleSeeder extends Seeder
             // reported, so it sits with the person who signs off high-cost
             // work rather than with whoever entered it.
             'cost.entry.reverse',
-            // Labour grades decide what maintenance work costs, so they belong
-            // with the person accountable for that spend rather than being
-            // administrative configuration (ADR-065).
-            'technician.grade.manage',
             'asset.asset.delete',
             'work_order.work_order.reopen',
             'inventory.adjustment.create',

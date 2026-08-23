@@ -77,8 +77,7 @@ class CostLedgerTest extends TestCase
         $this->bin = InventoryFixture::bin($this->delta, $this->dhaka);
         $this->part = InventoryFixture::part($this->delta);
 
-        $grade = WorkOrderFixture::grade($this->delta, '120.0000');
-        $this->technician = WorkOrderFixture::technician($this->delta, $this->dhaka, $grade);
+        $this->technician = WorkOrderFixture::technician($this->delta, $this->dhaka);
 
         $this->costs = app(CostPoster::class);
         $this->transition = app(TransitionWorkOrder::class);
@@ -105,7 +104,7 @@ class CostLedgerTest extends TestCase
         return CostCategory::where('code', $code)->firstOrFail();
     }
 
-    public function test_labour_posts_a_cost_entry_without_anyone_typing_one(): void
+    public function test_time_on_the_job_costs_nothing(): void
     {
         $workOrder = $this->inProgress();
 
@@ -119,13 +118,12 @@ class CostLedgerTest extends TestCase
 
         app(WorkOrderCostCalculator::class)->recalculate($workOrder->fresh());
 
-        $entry = CostEntry::where('source_type', 'LABOR')->firstOrFail();
-
-        // Two hours at 120. Derived from the labour entry, so the cost ledger
-        // and the work order cannot disagree (ERD Section 14 rule 3).
-        $this->assertSame('240.0000', (string) $entry->amount);
-        $this->assertSame($this->asset->id, $entry->asset_id);
-        $this->assertSame($workOrder->id, $entry->work_order_id);
+        // Technicians are salaried: two hours of their time is already paid
+        // for, so charging the machine for it would invent a number no ledger
+        // in the business agrees with.
+        $this->assertSame(0, CostEntry::where('work_order_id', $workOrder->id)->count());
+        $this->assertSame('0.0000', (string) $workOrder->fresh()->actual_cost);
+        $this->assertSame(120, $workOrder->fresh()->laborEntries()->firstOrFail()->minutes);
     }
 
     public function test_a_derived_entry_is_rewritten_rather_than_duplicated(): void
@@ -133,13 +131,7 @@ class CostLedgerTest extends TestCase
         $workOrder = $this->inProgress();
         $calculator = app(WorkOrderCostCalculator::class);
 
-        app(RecordLaborEntry::class)->handle(
-            workOrder: $workOrder,
-            startedAt: CarbonImmutable::parse('2026-08-17 09:00:00'),
-            endedAt: CarbonImmutable::parse('2026-08-17 11:00:00'),
-            technician: $this->technician,
-            userId: 'user-a',
-        );
+        app(IssuePartsToWorkOrder::class)->issue($workOrder, $this->part, $this->bin, '4', 'user-a');
 
         $calculator->recalculate($workOrder->fresh());
         $calculator->recalculate($workOrder->fresh());
@@ -148,43 +140,40 @@ class CostLedgerTest extends TestCase
         // A projection, not an independent fact. Running the sync three times
         // must leave one live row, or the machine's cost triples every time
         // somebody opens the screen.
-        $this->assertSame(1, CostEntry::where('source_type', 'LABOR')->count());
-        $this->assertSame('240.0000', (string) CostEntry::where('source_type', 'LABOR')->firstOrFail()->amount);
+        $this->assertSame(1, CostEntry::where('source_type', 'PARTS')->count());
+        $this->assertSame('1000.0000', (string) CostEntry::where('source_type', 'PARTS')->firstOrFail()->amount);
     }
 
-    public function test_deleting_the_source_clears_the_derived_cost(): void
+    public function test_returning_every_part_clears_the_derived_cost(): void
     {
         $workOrder = $this->inProgress();
-        $labour = app(RecordLaborEntry::class);
+        $parts = app(IssuePartsToWorkOrder::class);
+        $calculator = app(WorkOrderCostCalculator::class);
 
-        $entry = $labour->handle(
-            workOrder: $workOrder,
-            startedAt: CarbonImmutable::parse('2026-08-17 09:00:00'),
-            endedAt: CarbonImmutable::parse('2026-08-17 11:00:00'),
-            technician: $this->technician,
-            userId: 'user-a',
-        );
+        $line = $parts->issue($workOrder, $this->part, $this->bin, '4', 'user-a');
+        $calculator->recalculate($workOrder->fresh());
 
-        app(WorkOrderCostCalculator::class)->recalculate($workOrder->fresh());
-        $this->assertSame(1, CostEntry::where('source_type', 'LABOR')->count());
+        $this->assertSame('1000.0000', (string) CostEntry::where('source_type', 'PARTS')->firstOrFail()->amount);
 
-        $labour->delete($entry);
+        $parts->returnToStore($line->fresh(), '4', 'user-a');
+        $calculator->recalculate($workOrder->fresh());
 
-        // Removing a projection is not rewriting history. Leaving it would
-        // charge the machine for an hour nobody worked.
-        $this->assertSame(0, CostEntry::where('source_type', 'LABOR')->count());
+        // A projection follows its source, and a row worth nothing is removed
+        // rather than kept: leaving either would charge the machine for parts
+        // that went back on the shelf.
+        $this->assertSame(0, CostEntry::where('source_type', 'PARTS')->count());
     }
 
-    public function test_labour_and_parts_costs_cannot_be_posted_by_hand(): void
+    public function test_parts_costs_cannot_be_posted_by_hand(): void
     {
         try {
-            // Otherwise a user posts a labour cost alongside the derived one and
-            // the work order is charged twice for the same hour.
+            // Otherwise a user posts a parts cost alongside the derived one and
+            // the work order is charged twice for the same part.
             $this->costs->post([
                 'asset_id' => $this->asset->id,
-                'cost_category_id' => $this->category('LABOR')->id,
+                'cost_category_id' => $this->category('PARTS')->id,
                 'amount' => '5000',
-                'source_type' => 'LABOR',
+                'source_type' => 'PARTS',
             ], 'user-a');
             $this->fail('A derived source type must not be postable by hand.');
         } catch (ValidationException $e) {
@@ -329,25 +318,18 @@ class CostLedgerTest extends TestCase
     {
         $workOrder = $this->inProgress();
 
-        app(RecordLaborEntry::class)->handle(
-            workOrder: $workOrder,
-            startedAt: CarbonImmutable::parse('2026-08-17 09:00:00'),
-            endedAt: CarbonImmutable::parse('2026-08-17 11:00:00'),
-            technician: $this->technician,
-            userId: 'user-a',
-        );
-
         app(IssuePartsToWorkOrder::class)->issue($workOrder, $this->part, $this->bin, '4', 'user-a');
         app(WorkOrderCostCalculator::class)->recalculate($workOrder->fresh());
 
         $summary = app(AssetLifecycleCost::class)->forAsset($this->asset->fresh());
 
-        // 240 labour + 1000 parts.
-        $this->assertSame('1240.0000', $summary['total_spend']);
+        // Parts only: the technician's hours are salaried and cost the machine
+        // nothing.
+        $this->assertSame('1000.0000', $summary['total_spend']);
         // The purchase price counts even though nobody posted an entry for it:
         // most machines are bought before this system exists.
         $this->assertSame('285000.0000', $summary['acquisition']);
-        $this->assertSame('286240.0000', $summary['lifetime_total']);
+        $this->assertSame('286000.0000', $summary['lifetime_total']);
     }
 
     public function test_spend_against_value_is_null_without_a_purchase_price(): void

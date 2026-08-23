@@ -55,7 +55,6 @@ class TechnicianPerformanceReport extends Report
             'assigned' => ['label' => 'report.columns.jobs_assigned', 'numeric' => true],
             'completed' => ['label' => 'report.columns.jobs_completed', 'numeric' => true],
             'labor_hours' => ['label' => 'report.columns.labor_hours', 'numeric' => true],
-            'labor_cost' => ['label' => 'report.columns.labor_cost', 'numeric' => true],
         ];
     }
 
@@ -86,7 +85,6 @@ class TechnicianPerformanceReport extends Report
                 'assigned' => $assignedIds->count(),
                 'completed' => $completed,
                 'labor_hours' => round(((int) $labor->minutes) / 60, 1),
-                'labor_cost' => $labor->amount,
             ];
         }
     }

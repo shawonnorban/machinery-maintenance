@@ -7,17 +7,29 @@ namespace App\Modules\Audit\Providers;
 use App\Modules\Approval\Models\ApprovalAction;
 use App\Modules\Approval\Models\ApprovalRequest;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\AssetCategory;
+use App\Modules\Asset\Models\AssetModel;
+use App\Modules\Asset\Models\AssetType;
+use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Audit\Listeners\RecordAuthenticationEvents;
 use App\Modules\Audit\Observers\AuditObserver;
 use App\Modules\Audit\Observers\LoginAttemptObserver;
 use App\Modules\Breakdown\Models\Breakdown;
+use App\Modules\Breakdown\Models\DowntimeReasonCode;
+use App\Modules\Breakdown\Models\FailureCategory;
+use App\Modules\Breakdown\Models\FailureCode;
+use App\Modules\Breakdown\Models\RootCause;
+use App\Modules\Costing\Models\CostCategory;
 use App\Modules\Costing\Models\CostEntry;
 use App\Modules\Identity\Models\LoginAttempt;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserRole;
 use App\Modules\Inventory\Models\SparePart;
+use App\Modules\Inventory\Models\SparePartCategory;
 use App\Modules\Maintenance\Models\MaintenancePlan;
+use App\Modules\Maintenance\Models\MaintenanceType;
+use App\Modules\Metering\Models\MeterType;
 use App\Modules\Settings\Models\Setting;
 use App\Modules\Vendor\Models\ServiceContract;
 use App\Modules\Vendor\Models\Vendor;
@@ -75,6 +87,24 @@ class AuditServiceProvider extends ServiceProvider
 
         // Several settings change how money and KPIs are computed (SRS 20).
         Setting::class,
+
+        // Master data (SRS 6). These lists are the vocabulary every report is
+        // written in, so a change here rewrites the meaning of figures that
+        // were already published: move a downtime reason out of the
+        // availability calculation and last quarter's availability changes
+        // without a single breakdown record being touched.
+        AssetType::class,
+        AssetCategory::class,
+        Manufacturer::class,
+        AssetModel::class,
+        FailureCategory::class,
+        FailureCode::class,
+        RootCause::class,
+        DowntimeReasonCode::class,
+        MaintenanceType::class,
+        MeterType::class,
+        SparePartCategory::class,
+        CostCategory::class,
     ];
 
     public function boot(): void

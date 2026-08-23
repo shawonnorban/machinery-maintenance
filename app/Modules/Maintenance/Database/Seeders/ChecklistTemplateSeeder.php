@@ -12,7 +12,7 @@ use App\Modules\Maintenance\Models\MaintenanceType;
 use Illuminate\Database\Seeder;
 
 /**
- * The five seeded checklists from Seed Catalog 9.
+ * The seeded checklists from Seed Catalog 9, one per part of the mill.
  *
  * Platform-seeded and published, so a factory can run its first PM the day it
  * signs up rather than authoring 14 items first. A tenant clones a template to
@@ -128,6 +128,94 @@ class ChecklistTemplateSeeder extends Seeder
                     ['Emergency stop functional', 'PASS_FAIL', true, 'safety'],
                 ],
             ],
+            'PM-KNITTING-MONTHLY' => [
+                'asset_type' => 'KNITTING',
+                'maintenance_type' => 'PREVENTIVE',
+                'name' => 'Circular knitting machine — monthly PM',
+                'duration' => 90,
+                'items' => [
+                    ['Machine isolated and lock-out applied', 'PASS_FAIL', true, 'safety'],
+                    ['Blow out lint from cylinder, dial and creel', 'PASS_FAIL', true],
+                    ['Needle and sinker inspection, broken ones replaced', 'PASS_FAIL', true],
+                    ['Needles replaced this service', 'NUMERIC', false, null, 'PCS'],
+                    ['Cam condition and mounting bolts', 'PASS_FAIL', true],
+                    ['Cylinder and dial surface for scratches', 'PASS_FAIL', true],
+                    ['Oil spray nozzles clear and oil level', 'PASS_FAIL', true],
+                    ['Positive feeder belts and tension', 'PASS_FAIL', true],
+                    ['Yarn stop motion and detectors tested', 'PASS_FAIL', true],
+                    ['Lycra feeder alignment', 'PASS_FAIL', false],
+                    ['Take-down tension setting verified', 'PASS_FAIL', true],
+                    ['Fabric width measured', 'NUMERIC', false, null, 'INCH'],
+                    ['Machine speed', 'NUMERIC', false, null, 'RPM'],
+                    ['Guards and emergency stop functional', 'PASS_FAIL', true, 'safety'],
+                    ['Sample course run and fabric checked for holes', 'PASS_FAIL', true],
+                ],
+            ],
+            // Longest of the seeded checklists, and deliberately so. A dye
+            // vessel is the one machine where a fault does not stop
+            // production — it produces a wrong shade, and the loss is counted
+            // in rejected fabric rather than in downtime.
+            'PM-DYEING-MONTHLY' => [
+                'asset_type' => 'DYEING',
+                'maintenance_type' => 'PREVENTIVE',
+                'name' => 'Soft flow dyeing machine — monthly PM',
+                'duration' => 120,
+                'items' => [
+                    ['Machine drained, isolated and lock-out applied', 'PASS_FAIL', true, 'safety'],
+                    ['Main pump seal for leaks', 'PASS_FAIL', true],
+                    ['Pump impeller and casing condition', 'PASS_FAIL', true],
+                    ['Nozzle clear and undamaged', 'PASS_FAIL', true],
+                    ['Reel drive, bearings and lubrication', 'PASS_FAIL', true],
+                    ['Vessel door seal and locking interlock', 'PASS_FAIL', true, 'safety'],
+                    ['Heat exchanger cleaned and checked for scale', 'PASS_FAIL', true],
+                    ['Steam and cooling valves for passing', 'PASS_FAIL', true],
+                    ['Filter and strainer cleaned', 'PASS_FAIL', true],
+                    ['Dosing pump and dosing valve operation', 'PASS_FAIL', true],
+                    ['Temperature probe checked against reference', 'NUMERIC', true, null, 'CELSIUS', -2, 2],
+                    ['pH probe calibrated', 'PASS_FAIL', true],
+                    ['Level and pressure sensor readings verified', 'PASS_FAIL', true],
+                    ['Safety valve and pressure relief tested', 'PASS_FAIL', true, 'safety'],
+                    ['Heating and cooling gradient test run', 'PASS_FAIL', true],
+                    ['Photo of machine after service', 'PHOTO', false],
+                ],
+            ],
+            'PM-STENTER-MONTHLY' => [
+                'asset_type' => 'FABRIC_FINISHING',
+                'maintenance_type' => 'PREVENTIVE',
+                'name' => 'Stenter — monthly PM',
+                'duration' => 120,
+                'items' => [
+                    ['Machine isolated, cooled and lock-out applied', 'PASS_FAIL', true, 'safety'],
+                    ['Chain, clips and pins inspected and lubricated', 'PASS_FAIL', true],
+                    ['Chain track alignment and wear', 'PASS_FAIL', true],
+                    ['Burner flame and gas train leak check', 'PASS_FAIL', true, 'safety'],
+                    ['Exhaust and circulation fans, filters cleaned', 'PASS_FAIL', true],
+                    ['Chamber temperature checked against set point', 'NUMERIC', true, null, 'CELSIUS', -5, 5],
+                    ['Padder rollers for wear and even pressure', 'PASS_FAIL', true],
+                    ['Selvedge uncurler and guider operation', 'PASS_FAIL', true],
+                    ['Weft straightener operation', 'PASS_FAIL', false],
+                    ['Overfeed and width setting verified', 'PASS_FAIL', true],
+                    ['Emergency stops and guards functional', 'PASS_FAIL', true, 'safety'],
+                    ['Gas leak detector tested', 'PASS_FAIL', true, 'safety'],
+                ],
+            ],
+            'CAL-LAB-QUARTERLY' => [
+                'asset_type' => 'QUALITY_LAB',
+                'maintenance_type' => 'CALIBRATION',
+                'name' => 'Laboratory instruments — quarterly calibration',
+                'duration' => 60,
+                'items' => [
+                    ['Instrument cleaned and warmed up', 'PASS_FAIL', true],
+                    ['Calibration standard or tile in date', 'PASS_FAIL', true],
+                    ['White and black calibration performed', 'PASS_FAIL', true],
+                    ['Reference tile reading within tolerance', 'NUMERIC', true, null, 'DE', 0, 1],
+                    ['Light source hours checked', 'PASS_FAIL', true],
+                    ['pH buffer calibration at 4, 7 and 10', 'PASS_FAIL', false],
+                    ['Balance checked with reference weight', 'PASS_FAIL', false],
+                    ['Calibration certificate or record updated', 'PASS_FAIL', true],
+                    ['Calibration label applied with next due date', 'PASS_FAIL', true],
+                ],
+            ],
         ];
     }
 
@@ -163,31 +251,43 @@ class ChecklistTemplateSeeder extends Seeder
                 ],
             );
 
-            $version->items()->delete();
-
+            // Updated in place rather than deleted and rebuilt. A rebuild
+            // works exactly once — on an install where nobody has completed a
+            // checklist yet — and from then on the results referencing these
+            // items refuse the delete, which would leave the whole platform
+            // seed unable to run on any database in real use.
             foreach ($definition['items'] as $index => $item) {
                 [$label, $inputType, $required] = [$item[0], $item[1], $item[2]];
                 $isSafety = ($item[3] ?? null) === 'safety';
 
-                ChecklistItem::create([
-                    'company_id' => null,
-                    'template_version_id' => $version->id,
-                    'sequence' => $index + 1,
-                    'label' => $label,
-                    'input_type' => $inputType,
-                    'unit' => $item[4] ?? null,
-                    'tolerance_min' => $item[5] ?? null,
-                    'tolerance_max' => $item[6] ?? null,
-                    'required' => $required,
-                    'is_safety_item' => $isSafety,
-                    // A failed safety item needs evidence and a note, and it
-                    // raises corrective work automatically. A tick in a box is
-                    // not a record of a guard that was missing.
-                    'requires_attachment_on_fail' => $isSafety,
-                    'requires_note_on_fail' => $isSafety,
-                    'fail_creates_followup_work_order' => $isSafety,
-                ]);
+                ChecklistItem::updateOrCreate(
+                    ['template_version_id' => $version->id, 'sequence' => $index + 1],
+                    [
+                        'company_id' => null,
+                        'label' => $label,
+                        'input_type' => $inputType,
+                        'unit' => $item[4] ?? null,
+                        'tolerance_min' => $item[5] ?? null,
+                        'tolerance_max' => $item[6] ?? null,
+                        'required' => $required,
+                        'is_safety_item' => $isSafety,
+                        // A failed safety item needs evidence and a note, and
+                        // it raises corrective work automatically. A tick in a
+                        // box is not a record of a guard that was missing.
+                        'requires_attachment_on_fail' => $isSafety,
+                        'requires_note_on_fail' => $isSafety,
+                        'fail_creates_followup_work_order' => $isSafety,
+                    ],
+                );
             }
+
+            // Lines the template no longer has — but only where nobody has
+            // filled them in. A recorded result is somebody's inspection, and
+            // a seeder does not delete those.
+            $version->items()
+                ->where('sequence', '>', count($definition['items']))
+                ->whereDoesntHave('results')
+                ->delete();
         }
     }
 }

@@ -80,11 +80,31 @@
                         <td class="text-end">{{ number_format($available, 2) }}</td>
                         <td class="text-end text-body-secondary">{{ number_format((float) $part->reorder_level, 2) }}</td>
                         <td>
-                            <a href="{{ route('app.inventory.parts.show', $part) }}"
-                               class="btn btn-sm btn-info text-white btn-icon"
-                               title="{{ __('common.view') }}" aria-label="{{ __('common.view') }}">
-                                <i class="cil-eye" aria-hidden="true"></i>
-                            </a>
+                            <div class="d-flex gap-1">
+                                <a href="{{ route('app.inventory.parts.show', $part) }}"
+                                   class="btn btn-sm btn-info text-white btn-icon"
+                                   title="{{ __('common.view') }}" aria-label="{{ __('common.view') }}">
+                                    <i class="cil-magnifying-glass" aria-hidden="true"></i>
+                                </a>
+
+                                @can('inventory.part.update')
+                                    <a href="{{ route('app.inventory.parts.edit', $part) }}"
+                                       class="btn btn-sm btn-outline-secondary btn-icon"
+                                       title="{{ __('common.edit') }}" aria-label="{{ __('common.edit') }}">
+                                        <i class="cil-pencil" aria-hidden="true"></i>
+                                    </a>
+
+                                    <form method="POST" action="{{ route('app.inventory.parts.destroy', $part) }}"
+                                          onsubmit="return confirm(@js(__('inventory.delete_confirm', ['number' => $part->part_number])))">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-outline-danger btn-icon"
+                                                title="{{ __('common.delete') }}" aria-label="{{ __('common.delete') }}">
+                                            <i class="cil-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                 @empty

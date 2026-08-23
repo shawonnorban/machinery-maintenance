@@ -121,11 +121,10 @@ class RequestApproval
     {
         $asset = Asset::find($workOrder->asset_id);
 
-        $cost = bcadd(
-            $this->money($workOrder->estimated_labor_cost),
-            $this->money($workOrder->estimated_parts_cost),
-            4,
-        );
+        // Parts only: a salaried technician's hours are not a spend anybody
+        // approves, so they were never part of what an approval threshold is
+        // measuring.
+        $cost = $this->money($workOrder->estimated_parts_cost);
 
         return [
             'cost' => $cost,

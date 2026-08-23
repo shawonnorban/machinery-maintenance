@@ -1,6 +1,6 @@
 # 05-Gap-Analysis-and-Traceability.md
 # Gap Analysis and Traceability
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Review date:** 2026-08-18 (first pass: specification completeness; second pass: buildability)
 **Reviewed:** `README.md`, `01-SRS.md`, `02-Database-ERD.md`, `03-API-Specification.md`, `04-Architecture-Decision-Record.md` at v1.0
@@ -36,7 +36,7 @@ Alongside these, the set was silent on several things a Bangladeshi garment-fact
 
 | # | Gap | Evidence in v1.0 | Closed by |
 |---|---|---|---|
-| 1 | No labor time or rate table | SRS 13 required `estimated_labor_cost` and `actual_cost`; SRS 25 required "average repair time" per technician. No table recorded who worked, how long, at what rate. | ERD `work_order_labor_entries`; `technicians.hourly_rate`; SRS 13.2; API 11; ADR-050 |
+| 1 | No labor time table | SRS 25 required "average repair time" per technician, and no table recorded who worked or for how long. Rates were specified too, and later removed: labour carries no cost (ADR-065). | ERD `work_order_labor_entries`; SRS 13.2; API 11; ADR-050, 065 |
 | 2 | No work order parts table | API 11 exposed `GET /work-orders/{id}/parts`. Nothing backed it. Parts cost had no source. | ERD `work_order_parts`; SRS 13.3; API 11; ADR-050 |
 | 3 | No teams table | SRS 10 and 13 referenced "assigned team" repeatedly. No `teams`, no `team_members`, no `assigned_team_id`. | ERD `teams`, `team_members`; API 4.1 |
 | 4 | No working calendar | SRS 17 required downtime "configurable by factory and timezone"; SRS 31 defined availability against "scheduled production time". No shift, break, or holiday model existed. | ERD Section 23; SRS 47; API 5.1; ADR-048 |
@@ -126,7 +126,7 @@ v1.0 defined tables and RBAC with no way to administer either.
 | 61 | RPO of 24 hours | A failure at end of shift would discard a full day of floor-captured records that exist nowhere else. | ADR-062: RPO tightened to 15 minutes |
 | 62 | Platform Super Admin had unbounded tenant access | A platform role with implicit access to every tenant's data, unlogged. | SRS 5.4 and `support_access_grants`: time-boxed, reasoned, audited, tenant-visible |
 | 63 | No permission naming convention or role matrix | 12 roles and a dozen example permissions, with no scheme and no mapping. | SRS 5.1 to 5.3 |
-| 64 | Scope boundary never stated | The set never said what the system is *not*. Labor cost was specified with a per-person rate, which reads as salary and would have made a maintenance tool an unintended payroll store. | SRS 3.3, 25.1, 25.2; ERD 16.1 `labor_rate_grades`; ADR-065 |
+| 64 | Scope boundary never stated | The set never said what the system is *not*. Labor cost was specified with a per-person rate, which reads as salary and would have made a maintenance tool an unintended payroll store. Labour cost was removed entirely. | SRS 3.3, 25.1, 25.2; ADR-065 |
 
 ---
 
@@ -146,7 +146,7 @@ Every requirement resolves to tables, endpoints, and an acceptance criterion. A 
 | 11 | Meter readings | `asset_meters`, `meter_readings`, `meter_reset_events` | 10 | 013 | AC 5 |
 | 12 | Templates and checklists | `maintenance_templates`, `maintenance_template_versions`, `checklist_items` | 5.2 | 020 | AC 6 |
 | 13 | Work orders | `work_orders`, `work_order_status_histories` | 11 | 051 | AC 6 |
-| 13.2 | Labor logging | `work_order_labor_entries`, `labor_rate_grades` | 11, 16 | 050, 065 | AC 16 |
+| 13.2 | Labor logging (time only) | `work_order_labor_entries` | 11, 16 | 050, 065 | AC 16 |
 | 13.3 | Parts consumption | `work_order_parts` | 11 | 050 | AC 16 |
 | 14 | Approval workflow | `approval_workflows`, `approval_rules`, `approval_requests`, `approval_actions` | 27 | — | AC 17 |
 | 15 | Breakdown | `breakdowns`, `breakdown_status_histories` | 12 | — | AC 7 |
@@ -157,8 +157,8 @@ Every requirement resolves to tables, endpoints, and an acceptance criterion. A 
 | 21 | Inventory transfer | `inventory_transfers`, `inventory_transfer_items` | 14 | — | AC 8 |
 | 23 | Cost management | `cost_entries`, `cost_categories` | 15 | 015 | AC 9, 16 |
 | 24 | Multi-currency | `cost_entries.exchange_rate`, `base_amount` | 15 | 027 | AC 9 |
-| 25 | Technicians | `technicians`, `technician_skills`, `labor_rate_grades` | 16 | 050, 065 | AC 16 |
-| 3.3 | Scope boundary (no HR, payroll, MES, or appraisal data) | `labor_rate_grades` | 16 | 065 | AC 16 |
+| 25 | Technicians | `technicians`, `technician_skills` | 16 | 050, 065 | AC 16 |
+| 3.3 | Scope boundary (no HR, payroll, MES, or appraisal data) | no salary, wage or rate field anywhere | 16 | 065 | AC 16 |
 | 26 | Vendor, warranty, AMC | `vendors`, `warranties`, `service_contracts` | 17, 18 | — | AC 3 |
 | 27, 28 | Notifications and escalation | `notifications`, `notification_preferences`, `escalation_rules` | 19 | 017 | AC 10 |
 | 29 | Real-time | broadcast only | 20, 40 | 008, 018 | AC 10, 14 |
@@ -185,8 +185,8 @@ These are decisions, not omissions. Each needs an answer from the business befor
 | # | Question | Blocks | Needed by |
 |---|---|---|---|
 | 1 | Statutory retention periods in the target jurisdiction | Confirmation of the SRS 49.1 table | Before production onboarding |
-| 2 | Is external contractor labor invoiced through the platform, or only recorded as cost? | Scope of `work_order_labor_entries` with `labor_category = EXTERNAL`, and whether vendor billing is needed | Before the cost module |
-| 7 | Seeded labor grade names and standard rates per factory | `labor_rate_grades` seed data | Before the cost module |
+| 2 | ~~Is external contractor labor invoiced through the platform?~~ — settled: a contractor's charge is a vendor cost entry, and `work_order_labor_entries` records only our own people's time (ADR-065) | — | — |
+| 7 | ~~Seeded labor grade names and standard rates per factory~~ — withdrawn: labour carries no cost (ADR-065) | — | — |
 | 3 | Is production loss manually entered at MVP, or does it require production system integration? | Whether `production_impacts` is user-facing or integration-only | Before the downtime module |
 | 4 | Payment gateway selection, and whether local gateways (bKash, Nagad, SSLCommerz) are required at MVP | Subscription payment implementation | Before the billing module |
 | 5 | Tax treatment and invoice format requirements for Bangladesh | `subscription_invoices` tax fields and PDF template | Before the billing module |

@@ -10,17 +10,19 @@ use Illuminate\Database\Seeder;
 /**
  * Cost categories (SRS 23).
  *
- * LABOR and PARTS are not optional: the system posts derived entries against
- * them from every work order, and a tenant without them would silently record
- * no cost at all. The rest are the buckets a garment factory's maintenance
- * spend actually falls into.
+ * PARTS is not optional: the system posts a derived entry against it for
+ * every part a work order keeps, and a tenant without it would silently record
+ * no cost at all. The rest are the buckets a mill's maintenance spend actually
+ * falls into.
+ *
+ * There is no labour category. Technicians are salaried employees, so their
+ * hours are not money leaving the business and are never posted as cost.
  */
 class CostCategorySeeder extends Seeder
 {
     public function run(): void
     {
         foreach ([
-            ['LABOR', 'Labour', 'শ্রম', 'MAINTENANCE'],
             ['PARTS', 'Spare parts', 'স্পেয়ার পার্টস', 'MAINTENANCE'],
             ['EXTERNAL_SERVICE', 'External service', 'বাইরের সার্ভিস', 'MAINTENANCE'],
             ['VENDOR', 'Vendor charges', 'ভেন্ডর চার্জ', 'MAINTENANCE'],

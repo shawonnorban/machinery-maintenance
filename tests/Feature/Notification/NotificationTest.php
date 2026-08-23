@@ -277,9 +277,8 @@ class NotificationTest extends TestCase
 
         $workOrder = app(TransitionWorkOrder::class)->schedule($workOrder, $this->manager->id);
 
-        $grade = WorkOrderFixture::grade($this->delta);
         $technician = WorkOrderFixture::technician(
-            $this->delta, $this->dhaka, $grade, 'Karim Mia', 'EMP-1001', $this->technicianUser,
+            $this->delta, $this->dhaka, 'Karim Mia', 'EMP-1001', $this->technicianUser,
         );
 
         app(AssignTechnicians::class)->handle($workOrder, [$technician->id], $this->manager->id);
@@ -301,9 +300,8 @@ class NotificationTest extends TestCase
 
         $workOrder = app(TransitionWorkOrder::class)->schedule($workOrder, $this->manager->id);
 
-        $grade = WorkOrderFixture::grade($this->delta);
         // No user account: their supervisor tells them.
-        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka, $grade);
+        $technician = WorkOrderFixture::technician($this->delta, $this->dhaka);
 
         $result = app(AssignTechnicians::class)->handle($workOrder, [$technician->id], $this->manager->id);
 

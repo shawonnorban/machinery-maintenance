@@ -1,6 +1,6 @@
 # 07-Permissions-and-Module-Structure.md
 # Permission Catalog, Module Structure and Developer Setup
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.0
 **Status:** Accepted
@@ -95,7 +95,6 @@ Naming follows SRS 5.2: `{module}.{resource}.{action}`.
 | `vendor.warranty.manage` / `vendor.contract.manage` | Warranty and AMC |
 | `technician.technician.manage` | Technician records |
 | `technician.performance.view` | Individual KPI figures (SRS 25.2) |
-| `technician.grade.manage` | Labor rate grades — elevated |
 
 ### 2.5 Platform, Admin and Cross-Cutting
 

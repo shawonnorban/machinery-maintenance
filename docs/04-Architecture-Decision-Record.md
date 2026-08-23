@@ -1,6 +1,6 @@
 # 04-Architecture-Decision-Record.md
 # Architecture Decision Record (ADR)
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.1  
 **Status:** Accepted  
@@ -977,33 +977,35 @@ Derived values are computed server-side from their source records and are never 
 
 ---
 
-## ADR-065: Grade-Based Labor Rates, No Payroll Data
+## ADR-065: Maintenance Labour Has No Cost; Technicians Have an Area
 
 ### Status
-Accepted. Refines ADR-050.
+Accepted. Supersedes the grade-based labour rate decision previously recorded here, and refines ADR-050.
 
 ### Context
-ADR-050 established labor entries as the source of maintenance cost, and specified a rate on the technician record. That left the rate's meaning open, and the obvious reading is an individual's actual pay.
+The earlier decision costed maintenance labour at an effective-dated standard rate per skill grade, on the reasoning that cost per machine needs to include effort.
 
-The product is a maintenance and machine tracking system. Storing per-person compensation in it has three costs and no benefit the product needs:
+A factory reading it disagreed, and was right. Technicians and mechanics are company employees on a monthly salary. That salary is paid whether they spend the shift on a dyeing machine, on a sewing line, or waiting. Charging an hourly rate against a work order therefore:
 
-1. Every maintenance manager who can read a work order's cost breakdown can then derive a colleague's pay.
-2. The system inherits payroll's compliance and access-control obligations without being built for them.
-3. It duplicates data that HR already owns authoritatively, so the two will drift.
+1. Invents a figure that no ledger in the business agrees with — nothing is actually paid per repair.
+2. Double-counts, because payroll has already recorded the same money once.
+3. Distorts the comparison it was meant to serve: a machine that breaks more looks more expensive purely because more already-paid-for hours were logged against it.
 
-The only thing maintenance genuinely needs from labor cost is comparability: which machine consumes the most repair effort, and is repair cheaper than replacement.
+What maintenance genuinely needs from a person's time is not money. It is who did the work, how long it took, and whether the right person was there — workload, response time, and repair time.
 
 ### Decision
-Labor cost is computed from `labor_rate_grades`, an effective-dated standard rate per skill grade, per company and optionally per factory. Technicians reference a grade. No salary, wage, bonus, deduction, or payroll identifier exists anywhere in the schema or the API.
+Maintenance labour carries no cost. There are no rate grades, no hourly rates, and no money of any kind on a labour entry; the entry records the technician, the start, the end and the minutes. `labor_rate_grades` is dropped, and work orders no longer carry a labour cost.
 
-External contractor labor is exempt because it is a vendor's invoiced charge, not employee compensation.
+A work order's cost is parts consumed plus posted costs. A contractor's charge is a cost entry against the machine, recorded where the invoice is, because that is money genuinely leaving the business.
+
+Technicians instead carry the part of the mill they look after: a factory always, a department where the factory is divided into them, and a production line where people are assigned line by line. A dyeing technician covers the dye house; a sewing mechanic covers the sewing floor.
 
 ### Consequences
-- Cost per machine, per work order, and per asset lifecycle stay computable, which is what repair-versus-replace decisions require.
-- Two technicians on the same grade cost the same. This is a deliberate modelling choice, not an approximation to be refined later.
-- Grade rates are effective-dated, so a rate change never rewrites the cost of work already recorded.
+- Cost per machine is parts and invoices — real money — and is directly comparable with a replacement quote.
+- Effort is still visible, measured in hours rather than money, which is what a maintenance manager actually schedules against.
+- No salary, wage, bonus, deduction, rate or payroll identifier exists anywhere in the schema or the API, and no maintenance figure can be worked backwards into a colleague's pay.
+- Area of responsibility decides who is offered first when a job is assigned. It never decides who *may* be assigned: at two in the morning a manager sends whoever is awake.
 - Payroll-accurate costing, if a customer ever requires it, is an HR system integration rather than a column here.
-- Technician KPIs are correspondingly bounded: work metrics only, no attendance or appraisal data, individual figures behind a separate permission (SRS 25.2).
 
 ---
 
@@ -1110,7 +1112,7 @@ The system starts as a modular monolith with strict module boundaries and is des
 | 062 | Backup verification and recovery objectives | Accepted (refines 039, tightens RPO) |
 | 063 | Search strategy boundary | Accepted (refines 033) |
 | 064 | No client-supplied derived values | Accepted (new) |
-| 065 | Grade-based labor rates, no payroll data | Accepted (refines 050) |
+| 065 | Maintenance labour carries no cost; no payroll data | Accepted (refines 050) |
 | 066 | Server-rendered Blade frontend with CoreUI Free | Accepted (supersedes 002; amends 034, 043) |
 
 Any future change to tenant isolation, maintenance scheduling, inventory costing, KPI definitions, the working calendar, subscription lifecycle, or core architecture requires a new ADR rather than an edit to an existing one.

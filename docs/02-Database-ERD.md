@@ -1,6 +1,6 @@
 # 02-Database-ERD.md
 # Database Design and ERD
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.1  
 **Database:** MySQL 8+  
@@ -723,16 +723,14 @@ Unique: `(company_id, work_order_number)`.
 - company_id
 - work_order_id
 - technician_id
-- labor_category (`REGULAR` | `OVERTIME` | `EXTERNAL`)
 - started_at
 - ended_at
 - minutes (derived)
-- labor_grade_id nullable (null for EXTERNAL)
-- hourly_rate (resolved from the grade, or the vendor rate for EXTERNAL)
-- currency
-- exchange_rate
-- amount
-- base_amount
+
+No money of any kind: no rate, no amount, no currency. Technicians are salaried
+employees, so the entry records who worked and for how long, and nothing else
+(ADR-065). Work done by an outside contractor is a vendor invoice, recorded as a
+cost entry in its own right.
 - vendor_id nullable (for EXTERNAL labor)
 - notes nullable
 - recorded_by
@@ -740,10 +738,11 @@ Unique: `(company_id, work_order_number)`.
 
 Rules:
 1. Entries for the same technician may not overlap in time.
-2. `hourly_rate` is resolved from the technician grade rate effective on `started_at` and copied onto the entry, so historical cost stays reproducible when grade rates change. It is never a per-person wage (Section 16.1).
-3. Labor entries are append-only once the work order is `CLOSED`.
+2. Labor entries are append-only once the work order is `CLOSED`.
 
-This table was absent in v1.0, which left `actual_cost` and every technician KPI without a source.
+This table was absent in v1.0, which left every technician KPI without a source.
+It answers workload and repair time, not cost: a work order's cost is parts and
+posted invoices (ADR-065).
 
 ### work_order_parts
 - id
@@ -1306,8 +1305,8 @@ Cost records are append-only after posting.
 - phone nullable
 - email nullable
 - specialization nullable
-- labor_grade_id
-- (no salary, wage, or payroll field: see Section 16.1)
+- production_line_id nullable
+- (no salary, wage, rate, or payroll field: see Section 16.1)
 - joining_date nullable
 - shift_id nullable
 - max_concurrent_work_orders nullable
@@ -1316,7 +1315,14 @@ Cost records are append-only after posting.
 
 Unique: `(company_id, employee_id)`.
 
-`factory_id` was missing in v1.0, which left technician workload unscopeable. Costing is attached through `labor_grade_id` rather than a per-person wage; see Section 16.1.
+`factory_id` was missing in v1.0, which left technician workload unscopeable.
+
+`department_id` and `production_line_id` say what a person looks after: a dyeing
+technician covers the dye house, a sewing mechanic the sewing floor, and where a
+factory assigns people line by line the line is named too. Both are nullable —
+a small factory has one mechanic for everything, and forcing a department on
+them would invent structure they do not have. The area decides who an assignment
+screen offers first; it never decides who may be assigned.
 
 ### technician_skills
 - id
@@ -1325,35 +1331,23 @@ Unique: `(company_id, employee_id)`.
 - skill_name
 - proficiency
 
-### 16.1 Labor Rate Grades
+### 16.1 Area of Responsibility
 
-The platform is a maintenance and machine tracking system, not an HR or payroll system. It stores no salary, wage, or individual compensation data.
+The platform is a maintenance and machine tracking system, not an HR or payroll system. It stores no salary, wage, rate, or individual compensation data of any kind.
 
-Labor cost is therefore computed from a standard rate per grade, not from what any person is actually paid.
+Maintenance labour has no cost. Technicians are salaried employees, so their hours are already paid for; a work order records who worked and for how long, and its cost is parts and posted invoices. There is no `labor_rate_grades` table.
 
-### labor_rate_grades
-- id
-- company_id
-- factory_id nullable
-- name (for example `Junior Technician`, `Senior Technician`, `Electrician`, `Maintenance Engineer`)
-- code
-- standard_hourly_rate
-- overtime_multiplier (default 2.0)
-- currency
-- effective_from
-- effective_to nullable
-- active
-- created_at
-- updated_at
+A technician instead carries the part of the mill they look after:
 
-Unique: `(company_id, code, effective_from)`.
+- `factory_id` — always
+- `department_id` nullable — the section they cover: dyeing, knitting, sewing
+- `production_line_id` nullable — narrower still, where a factory assigns people line by line
 
 Rules:
 
-1. A technician is assigned to a grade. Two technicians on the same grade cost the same, by design.
-2. Grades are effective-dated. Changing a rate creates a new effective period; it never rewrites the cost of work already recorded.
-3. Overtime cost is `standard_hourly_rate * overtime_multiplier`, not a separately entered wage.
-4. External contractor labor does not use a grade. Its cost is the vendor's charge, recorded on the labor entry with `vendor_id`, because that is an invoiced amount rather than employee compensation.
+1. A technician with no department named covers the whole factory, which is how a small factory works.
+2. Area decides who is offered first when work is assigned. It never decides who may be assigned: a system that refuses at two in the morning is a system that gets worked around.
+3. A contractor's charge is a cost entry against the asset with a `vendor_id`, because that is an invoiced amount rather than employee time.
 
 Consequences:
 
@@ -2154,7 +2148,7 @@ Every requirement in the SRS must resolve to at least one table. Requirements ad
 
 | SRS section | Tables |
 |---|---|
-| 13.2 Labor logging | `work_order_labor_entries`, `labor_rate_grades` |
+| 13.2 Labor logging | `work_order_labor_entries` (time only; ADR-065) |
 | 13.3 Parts consumption | `work_order_parts`, `inventory_transactions` |
 | 13.4 Attachments | `work_order_attachments`, `breakdown_attachments`, `attachments` |
 | 14 Approval workflow | `approval_workflows`, `approval_rules`, `approval_requests`, `approval_actions`, `work_orders.approval_status` |

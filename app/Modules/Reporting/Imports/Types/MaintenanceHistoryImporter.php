@@ -15,6 +15,7 @@ use App\Modules\Reporting\Imports\RowContext;
 use App\Modules\WorkOrder\Actions\CreateWorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderStatusHistory;
 use App\Shared\Support\TenantTimezone;
+use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -43,6 +44,7 @@ class MaintenanceHistoryImporter extends Importer
     public function __construct(
         private readonly CreateWorkOrder $create,
         private readonly TenantTimezone $timezone,
+        private readonly TenantContext $tenant,
     ) {}
 
     public function type(): string
@@ -64,7 +66,6 @@ class MaintenanceHistoryImporter extends Importer
             'completed_at' => new ImportColumn('import.columns.completed_at', true, '2025-11-14 16:30'),
             'started_at' => new ImportColumn('import.columns.started_at', false, '2025-11-14 14:30'),
             'description' => new ImportColumn('import.columns.description', false, 'Belt and needle plate replaced'),
-            'labor_cost' => new ImportColumn('import.columns.labor_cost', false, '600'),
             'parts_cost' => new ImportColumn('import.columns.parts_cost', false, '2450'),
             'other_cost' => new ImportColumn('import.columns.other_cost', false, '0'),
             'currency' => new ImportColumn('import.columns.currency', false, 'BDT'),
@@ -97,7 +98,7 @@ class MaintenanceHistoryImporter extends Importer
             ];
         }
 
-        $type = $context->remember("type:{$row['maintenance_type_code']}", fn () => MaintenanceType::query()
+        $type = $context->remember("type:{$row['maintenance_type_code']}", fn () => MaintenanceType::availableTo($this->tenant->companyId())
             ->where('code', $row['maintenance_type_code'])->first());
 
         if ($type === null) {
@@ -146,7 +147,7 @@ class MaintenanceHistoryImporter extends Importer
             ];
         }
 
-        foreach (['labor_cost', 'parts_cost', 'other_cost'] as $numeric) {
+        foreach (['parts_cost', 'other_cost'] as $numeric) {
             if ($row[$numeric] !== null && ! is_numeric(str_replace(',', '', $row[$numeric]))) {
                 $errors[] = [
                     'field' => $numeric,
@@ -167,7 +168,6 @@ class MaintenanceHistoryImporter extends Importer
             'description' => $row['description'],
             'actual_start' => ($startedAt ?? $completedAt)->toIso8601String(),
             'completed_at' => $completedAt->toIso8601String(),
-            'labor_cost' => $this->number($row['labor_cost']),
             'parts_cost' => $this->number($row['parts_cost']),
             'other_cost' => $this->number($row['other_cost']),
             'currency' => $row['currency'] ?? 'BDT',
@@ -189,7 +189,6 @@ class MaintenanceHistoryImporter extends Importer
                     'source' => 'IMPORT',
                 ], $context->userId);
 
-                $labor = $row->values['labor_cost'] ?? '0';
                 $parts = $row->values['parts_cost'] ?? '0';
                 $other = $row->values['other_cost'] ?? '0';
 
@@ -201,10 +200,9 @@ class MaintenanceHistoryImporter extends Importer
                     'completed_by' => $context->userId,
                     'closed_at' => $row->values['completed_at'],
                     'closed_by' => $context->userId,
-                    'actual_labor_cost' => $labor,
                     'actual_parts_cost' => $parts,
                     'actual_other_cost' => $other,
-                    'actual_cost' => bcadd(bcadd((string) $labor, (string) $parts, 4), (string) $other, 4),
+                    'actual_cost' => bcadd((string) $parts, (string) $other, 4),
                     'currency' => $row->values['currency'],
                     'requires_verification' => false,
                     'is_imported' => true,

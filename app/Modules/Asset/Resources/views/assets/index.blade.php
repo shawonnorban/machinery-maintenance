@@ -106,11 +106,36 @@
                     <td>@include('asset::assets._criticality', ['criticality' => $asset->criticality])</td>
                     <td>@include('asset::assets._status', ['status' => $asset->status])</td>
                     <td>
-                        <a href="{{ route('app.assets.show', $asset) }}"
-                           class="btn btn-sm btn-info text-white btn-icon"
-                           title="{{ __('common.view') }}" aria-label="{{ __('common.view') }}">
-                            <i class="cil-eye" aria-hidden="true"></i>
-                        </a>
+                        <div class="d-flex gap-1">
+                            <a href="{{ route('app.assets.show', $asset) }}"
+                               class="btn btn-sm btn-info text-white btn-icon"
+                               title="{{ __('common.view') }}" aria-label="{{ __('common.view') }}">
+                                <i class="cil-magnifying-glass" aria-hidden="true"></i>
+                            </a>
+
+                            @can('update', $asset)
+                                <a href="{{ route('app.assets.edit', $asset) }}"
+                                   class="btn btn-sm btn-outline-secondary btn-icon"
+                                   title="{{ __('common.edit') }}" aria-label="{{ __('common.edit') }}">
+                                    <i class="cil-pencil" aria-hidden="true"></i>
+                                </a>
+                            @endcan
+
+                            @can('delete', $asset)
+                                {{-- Confirmed in the browser as well as refused on the
+                                     server: a delete one click away from a list is a
+                                     delete somebody makes by accident. --}}
+                                <form method="POST" action="{{ route('app.assets.destroy', $asset) }}"
+                                      onsubmit="return confirm(@js(__('asset.delete_confirm', ['code' => $asset->asset_code])))">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger btn-icon"
+                                            title="{{ __('common.delete') }}" aria-label="{{ __('common.delete') }}">
+                                        <i class="cil-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            @endcan
+                        </div>
                     </td>
                 </tr>
             @empty

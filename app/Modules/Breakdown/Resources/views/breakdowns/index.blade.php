@@ -122,7 +122,7 @@
                             <a href="{{ route('app.breakdowns.show', $breakdown) }}"
                                class="btn btn-sm btn-info text-white btn-icon"
                                title="{{ __('common.view') }}" aria-label="{{ __('common.view') }}">
-                                <i class="cil-eye" aria-hidden="true"></i>
+                                <i class="cil-magnifying-glass" aria-hidden="true"></i>
                             </a>
                         </td>
                     </tr>

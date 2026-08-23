@@ -1,6 +1,6 @@
 # 01-SRS.md
 # Software Requirements Specification (SRS)
-## Garment Industry Machinery Asset & Maintenance Management SaaS
+## Textile & Garment Industry Machinery Asset & Maintenance Management SaaS
 
 **Version:** 1.1  
 **Status:** Final Draft (Revision 1 — gap closure)  
@@ -103,7 +103,7 @@ The platform is a **maintenance and machine tracking system**. Several adjacent 
 
 | Not this | Why | What the system does instead |
 |---|---|---|
-| HR or payroll system | Salary is HR data with its own access controls and legal handling. A maintenance system that stores it becomes an unintended payroll data store. | Labor cost uses standard grade rates (Section 25.1). No salary, wage, or compensation field exists anywhere in the schema. |
+| HR or payroll system | Salary is HR data with its own access controls and legal handling. A maintenance system that stores it becomes an unintended payroll data store. | Maintenance labour has no cost at all: a work order records hours, never money (Section 25.1). No salary, wage, rate, or compensation field exists anywhere in the schema. |
 | Attendance or time-and-attendance system | Labor entries record time spent on a work order, not presence at work. | A technician's total logged hours in the system is not, and must not be presented as, an attendance record. |
 | Production planning or MES | Production quantity, efficiency, and output belong to the production system. | Production loss is recorded as an optional impact figure on a breakdown (Section 18), entered manually or via future integration. |
 | Accounting or ERP ledger | Maintenance costing and financial accounting are distinct domains. | Cost entries feed maintenance and lifecycle cost analysis, with integration points for ERP export (Section 43). |
@@ -442,7 +442,6 @@ Work order fields include:
 - Assigned technician
 - Checklist
 - Instructions
-- Estimated labor cost
 - Estimated parts cost
 - Actual cost
 - Start/end timestamps
@@ -493,21 +492,19 @@ Cancelled        → (terminal)
 
 ### 13.2 Labor Logging
 
-Work orders must record labor as discrete time entries rather than a single free-text duration. Each labor entry records:
+Work orders must record time as discrete entries rather than a single free-text duration. Each entry records:
 
 - Technician
 - Start time and end time (UTC)
-- Labor category (regular, overtime, external)
-- Labor grade and the standard hourly rate resolved from it
-- Computed hours and cost
+- Computed minutes
 - Notes
 
 Requirements:
 
-1. Labor entries may not overlap for the same technician.
-2. Actual labor cost is the sum of posted labor entries, not a manually typed figure.
-3. Rates are resolved from the technician grade rate effective at entry time and stored on the entry, so historical costs are reproducible when grade rates change. The system stores no individual salary or wage; see Section 3.3 and 25.1.
-4. Technician KPIs (Section 25) are computed from labor entries and work order timestamps, not from estimates.
+1. Time entries may not overlap for the same technician: one person cannot be in two places at once, and an overlap is almost always a mistyped date.
+2. A time entry carries no money. Technicians are salaried employees, so their hours are already paid for whether they are spent on a machine or not, and charging them against a work order would invent a figure no ledger in the business agrees with (Section 3.3, ADR-065).
+3. A work order's actual cost is parts consumed plus posted costs. A contractor's charge is a cost entry against the asset, recorded where the invoice is.
+4. Technician KPIs (Section 25) are computed from time entries and work order timestamps, not from estimates.
 
 ### 13.3 Parts Consumption
 
@@ -773,19 +770,17 @@ KPIs:
 - Breakdown resolution
 - Preventive maintenance compliance
 
-### 25.1 Labor Rate Grades
+### 25.1 Area of Responsibility
 
-Technician profiles carry a **labor grade**, not a salary. Each grade defines a standard hourly rate and an overtime multiplier, effective-dated per company and optionally per factory.
+Technician profiles carry the part of the mill a person looks after, and no money of any kind.
 
-Examples: `Junior Technician`, `Senior Technician`, `Electrician`, `Maintenance Engineer`.
+A technician always belongs to a factory. Where a factory is divided into departments, the department is named: the dyeing technicians cover the dye house, the sewing mechanics cover the sewing floor. Where people are assigned line by line, the production line is named as well.
 
 Rules:
 
-1. Two technicians on the same grade cost the same. This is intentional, not an approximation to be refined later.
-2. Grade rates are effective-dated. A rate change never rewrites the cost of work already recorded.
-3. Overtime cost is the standard rate multiplied by the grade's overtime multiplier.
-4. External contractor labor uses the vendor's charged rate, recorded against a vendor. That is an invoiced amount, not employee compensation.
-5. No salary, wage, bonus, deduction, or payroll identifier is stored anywhere in the system (Section 3.3).
+1. Area decides who is offered first when work is assigned. It never decides who *may* be assigned — at two in the morning a manager sends whoever is awake, and a system that refuses is a system that gets worked around.
+2. A technician with no department named covers the whole factory, which is how a small factory works.
+3. No salary, wage, rate, bonus, deduction, or payroll identifier is stored anywhere in the system (Section 3.3). Maintenance labour has no cost: technicians are salaried, and their hours are recorded as time, not money.
 
 If a factory needs true payroll-accurate maintenance costing, that is an integration with the HR system, not a field in this one.
 

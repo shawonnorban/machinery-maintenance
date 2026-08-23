@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Asset\Http\Controllers\Web\AssetController;
 use App\Modules\Asset\Http\Controllers\Web\AssetLabelController;
+use App\Modules\Asset\Http\Controllers\Web\AssetLocationController;
 use App\Modules\Asset\Http\Controllers\Web\AssetStatusController;
 use App\Modules\Asset\Http\Controllers\Web\AssetTransferController;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,10 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/assets/{asset}/edit', [AssetController::class, 'edit'])->name('assets.edit');
     Route::patch('/assets/{asset}', [AssetController::class, 'update'])->name('assets.update');
 
+    // Only for a machine with no history behind it. Disposal is RETIRED then
+    // SCRAPPED, which keeps the record; this is for the row typed twice.
+    Route::delete('/assets/{asset}', [AssetController::class, 'destroy'])->name('assets.destroy');
+
     Route::post('/assets/{asset}/status', [AssetStatusController::class, 'store'])->name('assets.status');
 
     Route::get('/assets/{asset}/transfer', [AssetTransferController::class, 'create'])->name('assets.transfer.create');
@@ -33,4 +38,19 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/assets-labels', [AssetLabelController::class, 'index'])->name('assets.labels');
     Route::post('/assets/{asset}/qr/regenerate', [AssetLabelController::class, 'regenerate'])
         ->name('assets.qr.regenerate');
+});
+
+/*
+ * Locations (ADR-052). Under /settings because they are configuration, not
+ * day-to-day work, and behind masterdata.manage — the same permission the
+ * location import already uses.
+ */
+Route::middleware('auth')->prefix('settings')->name('settings.')->group(function (): void {
+    Route::get('/locations', [AssetLocationController::class, 'index'])->name('locations');
+    Route::get('/locations/create', [AssetLocationController::class, 'create'])->name('locations.create');
+    Route::post('/locations', [AssetLocationController::class, 'store'])->name('locations.store');
+    Route::get('/locations/{location}/edit', [AssetLocationController::class, 'edit'])->name('locations.edit');
+    Route::patch('/locations/{location}', [AssetLocationController::class, 'update'])->name('locations.update');
+    Route::post('/locations/{location}/toggle', [AssetLocationController::class, 'toggle'])->name('locations.toggle');
+    Route::delete('/locations/{location}', [AssetLocationController::class, 'destroy'])->name('locations.destroy');
 });

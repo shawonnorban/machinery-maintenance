@@ -16,6 +16,16 @@
             @if ($part->hazardous)
                 <x-status-pill status="HAZARDOUS" tone="warning">{{ __('inventory.hazardous') }}</x-status-pill>
             @endif
+
+            @unless ($part->active)
+                <x-status-pill status="INACTIVE" tone="secondary">{{ __('inventory.part_inactive') }}</x-status-pill>
+            @endunless
+
+            @can('inventory.part.update')
+                <a href="{{ route('app.inventory.parts.edit', $part) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="cil-pencil" aria-hidden="true"></i> {{ __('common.edit') }}
+                </a>
+            @endcan
         </x-slot:actions>
     </x-page-header>
 

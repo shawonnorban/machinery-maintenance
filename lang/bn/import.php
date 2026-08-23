@@ -18,14 +18,12 @@ return [
     'recent' => 'সাম্প্রতিক ইমপোর্ট',
     'no_recent' => 'আপনি এখনো কিছু ইমপোর্ট করেননি',
     'back_to_imports' => 'সব ইমপোর্ট',
-
     'columns_expected' => 'প্রত্যাশিত কলাম',
     'column' => 'কলাম',
     'required' => 'আবশ্যক',
     'optional' => 'ঐচ্ছিক',
     'example' => 'উদাহরণ',
     'accepted_values' => 'গ্রহণযোগ্য মান',
-
     'review' => 'ইমপোর্টের আগে যাচাই',
     'preview' => 'প্রিভিউ',
     'preview_hint' => 'আপনার ফাইলের প্রথম :count টি সারি, যেভাবে পড়া হবে।',
@@ -40,13 +38,11 @@ return [
     'not_permitted' => 'এটি ইমপোর্ট করার অনুমতি আপনার নেই।',
     'nothing_valid' => 'এই ফাইলের কোনো সারিই ইমপোর্ট করা যাবে না। ত্রুটি ঠিক করে আবার আপলোড করুন।',
     'history_reason' => 'ইমপোর্ট করা পুরোনো রক্ষণাবেক্ষণ রেকর্ড (:reference)',
-
     'upload_failed' => 'ফাইলটি আপলোড করা যায়নি।',
     'too_large' => 'ফাইলটি :limit এর চেয়ে বড়।',
     'too_many_rows' => 'ফাইলে :max এর বেশি সারি আছে। ভাগ করে ইমপোর্ট করুন।',
     'unsupported_file' => ':extension ধরনের ফাইল ইমপোর্ট করা যায় না। CSV বা XLSX ব্যবহার করুন।',
     'type_not_allowed' => ':type ধরনের ফাইল ইমপোর্ট করা যায় না।',
-
     'stats' => [
         'total' => 'পড়া সারি',
         'valid' => 'ইমপোর্টের জন্য প্রস্তুত',
@@ -54,7 +50,6 @@ return [
         'created' => 'নতুন তৈরি',
         'updated' => 'হালনাগাদ',
     ],
-
     'statuses' => [
         'UPLOADED' => 'আপলোড হয়েছে',
         'VALIDATING' => 'যাচাই চলছে',
@@ -64,19 +59,16 @@ return [
         'FAILED' => 'ব্যর্থ',
         'CANCELLED' => 'বাতিল',
     ],
-
     'errors_title' => 'যা ঠিক করতে হবে',
     'download_errors' => 'ত্রুটির রিপোর্ট ডাউনলোড',
     'errors_truncated' => 'মোট :total টির মধ্যে প্রথম :count টি দেখানো হচ্ছে।',
     'row' => 'সারি :number',
-
     'error_columns' => [
         'row' => 'সারি',
         'column' => 'কলাম',
         'value' => 'মান',
         'error' => 'সমস্যা',
     ],
-
     'errors' => [
         'required' => 'এই কলামটি আবশ্যক, কিন্তু খালি ছিল।',
         'unknown_reference' => 'এই কোডের কোনো রেকর্ড এই কোম্পানিতে নেই।',
@@ -94,7 +86,6 @@ return [
         'not_in_the_past' => 'এটি ইতিহাস, তাই তারিখ ভবিষ্যতে হতে পারে না।',
         'write_failed' => 'সারিটি যাচাইয়ে উতরালেও লেখা যায়নি।',
     ],
-
     'types' => [
         'locations' => [
             'title' => 'অবস্থান',
@@ -117,7 +108,6 @@ return [
             'description' => 'আগে যে পদ্ধতিতে কাজ হতো, সেখান থেকে সম্পন্ন কাজের রেকর্ড।',
         ],
     ],
-
     'columns' => [
         'asset_code' => 'মেশিন কোড',
         'code' => 'কোড',
@@ -159,7 +149,6 @@ return [
         'completed_at' => 'সম্পন্নের সময়',
         'started_at' => 'শুরুর সময়',
         'description' => 'বিবরণ',
-        'labor_cost' => 'শ্রম খরচ',
         'parts_cost' => 'পার্টস খরচ',
         'other_cost' => 'অন্যান্য খরচ',
         'vendor_type' => 'ভেন্ডরের ধরন',
