@@ -86,6 +86,10 @@ return Application::configure(basePath: dirname(__DIR__))
             AuthenticateSession::class,
             SetLocale::class,
             ResolveTenantContext::class,
+            // The API's own tenant resolution belongs in the same slot for the
+            // same reason: without it, `{asset}` in a route is looked up
+            // before there is a company to scope the lookup to.
+            AuthenticateApiToken::class,
             SubstituteBindings::class,
             Authorize::class,
         ]);

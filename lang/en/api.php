@@ -65,6 +65,7 @@ return [
     'default_token_name' => 'API token',
     'token_company_mismatch' => 'This token was issued for a different company. Request a token for the company you are naming.',
     'client_cannot_switch_company' => 'A machine client belongs to one company and cannot switch.',
+    'step_needs_a_person' => 'This step is recorded against a person, so it cannot be taken by a machine client.',
 
     'token_name_required' => 'Give the token a name so it can be recognised later.',
     'client_created' => 'API client :name created. The secret is shown once and cannot be retrieved again.',
