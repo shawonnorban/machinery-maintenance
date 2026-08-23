@@ -1,8 +1,9 @@
-// Bootstrap 5 + CoreUI 5 Free (MIT). No commercial component is used;
-// the requirement is the CoreUI design, not its PRO widgets (ADR-066).
+// CoreUI 5 Free (MIT), which is itself a fork of Bootstrap 5. No commercial
+// component is used; the requirement is the CoreUI design, not its PRO
+// widgets (ADR-066).
 
 // ---------------------------------------------------------------------------
-// Theme variables. Set before the imports so Bootstrap picks them up.
+// Theme variables. Set before the import so the framework picks them up.
 // ---------------------------------------------------------------------------
 $font-family-sans-serif:
   'Noto Sans', 'Noto Sans Bengali', -apple-system, BlinkMacSystemFont,
@@ -50,7 +51,14 @@ $h4-font-size: 1.05rem;
 $h5-font-size: 0.95rem;
 $h6-font-size: 0.875rem;
 
-@import 'bootstrap/scss/bootstrap';
+// CoreUI 5 is a fork of Bootstrap 5, not a layer on top of it: it ships its
+// own reboot, grid, tables, forms, buttons and utilities API, and emits the
+// same set of components. Importing Bootstrap as well emitted almost
+// every rule in the framework twice and cost roughly 12 KB gzipped — the
+// difference between meeting the 60 KB budget and missing it (Frontend 10.3).
+//
+// The Bootstrap *JavaScript* is still used and imported separately in app.js;
+// only the duplicated stylesheet is gone.
 @import '@coreui/coreui/scss/coreui';
 @import '@coreui/icons/css/free.css';
 @import 'mobile';
@@ -62,12 +70,16 @@ $h6-font-size: 0.875rem;
 // declares --cui-sidebar-occupy-start for the siblings but nothing in this
 // build consumes it, and the content was sitting underneath the nav.
 //
-// The prefix matters and cost an hour. Compiling @coreui/coreui from SCSS
-// emits --bs-* variables; only the prebuilt dist CSS uses --cui-*. Every
-// --cui-sidebar-* override here was inert, so the sidebar kept its 16rem
-// default while the wrapper was padded to the 14rem it was told to expect —
-// 32px of every page hidden behind the nav, which is why the D of "Dashboard"
-// was missing.
+// The prefix matters, and it is not a matter of taste: an override written
+// with the wrong one is silently inert, the sidebar keeps its 16rem default
+// while the wrapper is padded to the 14rem it was told to expect, and 32px of
+// every page sits behind the nav — which is why the D of "Dashboard" goes
+// missing rather than anything looking obviously broken.
+//
+// CoreUI's own prefix is --cui-. It only ever emitted --bs-* here because
+// Bootstrap was imported first and CoreUI inherited its `$prefix` default;
+// removing that duplicate import above put the prefix back to CoreUI's own,
+// and every override in this file with it.
 //
 // One value drives both the nav and the offset so they cannot drift apart.
 $sidebar-width: 14rem;
@@ -81,20 +93,28 @@ $sidebar-icon-margin: 0.5rem;
 $sidebar-nesting-step: 0.75rem;
 
 .sidebar {
-  --bs-sidebar-width: #{$sidebar-width};
-  --bs-sidebar-nav-link-padding-y: 0.45rem;
-  --bs-sidebar-nav-link-padding-x: #{$sidebar-link-padding-x};
-  --bs-sidebar-nav-link-font-size: 0.8125rem;
-  --bs-sidebar-nav-link-icon-width: #{$sidebar-icon-width};
-  --bs-sidebar-nav-link-icon-margin: #{$sidebar-icon-margin};
-  --bs-sidebar-nav-group-items-padding-y: 0;
-  --bs-sidebar-brand-height: #{$shell-header-height};
+  --cui-sidebar-width: #{$sidebar-width};
+  --cui-sidebar-nav-link-padding-y: 0.45rem;
+  --cui-sidebar-nav-link-padding-x: #{$sidebar-link-padding-x};
+  --cui-sidebar-nav-link-icon-width: #{$sidebar-icon-width};
+  --cui-sidebar-nav-link-icon-margin: #{$sidebar-icon-margin};
+  --cui-sidebar-nav-group-items-padding-y: 0;
 
   // The requested shell colour.
-  --bs-sidebar-bg: #0c2b4b;
-  --bs-sidebar-brand-bg: #0c2b4b;
-  --bs-sidebar-footer-bg: #0c2b4b;
+  --cui-sidebar-bg: #0c2b4b;
+  --cui-sidebar-brand-bg: #0c2b4b;
   background: #0c2b4b;
+
+  // CoreUI has no variable for the footer's own background or the brand's
+  // height, so both are set as plain properties. A variable it does not
+  // define is not a smaller override; it is no override at all.
+  .sidebar-footer {
+    background: #0c2b4b;
+  }
+
+  .sidebar-brand {
+    min-height: #{$shell-header-height};
+  }
 
   .sidebar-header,
   .sidebar-footer {
@@ -158,7 +178,6 @@ $sidebar-nesting-step: 0.75rem;
 // shell instead of the header sitting a few pixels shallower than the block
 // beside it.
 .header {
-  --bs-header-min-height: #{$shell-header-height};
   min-height: #{$shell-header-height};
   padding-block: 0;
 
@@ -459,21 +478,22 @@ $sidebar-nesting-step: 0.75rem;
   padding: 0.15rem 0.5rem;
   border-radius: 0.75rem;
 
-  // The prefixed variables the SCSS build actually emits are --bs-*; --cui-*
-  // exists only in CoreUI's prebuilt dist CSS, so these were previously inert.
+  // --cui-*, CoreUI's own prefix. Each carries a literal fallback anyway:
+  // a connection indicator that renders as black on transparent because a
+  // variable name drifted is worse than one that never used variables.
   &[data-connection-state='offline'] {
-    color: var(--bs-danger-text-emphasis, #58151c);
-    background: var(--bs-danger-bg-subtle, #f8d7da);
+    color: var(--cui-danger-text-emphasis, #58151c);
+    background: var(--cui-danger-bg-subtle, #f8d7da);
   }
 
   &[data-connection-state='reconnecting'] {
-    color: var(--bs-warning-text-emphasis, #664d03);
-    background: var(--bs-warning-bg-subtle, #fff3cd);
+    color: var(--cui-warning-text-emphasis, #664d03);
+    background: var(--cui-warning-bg-subtle, #fff3cd);
   }
 
   &[data-connection-state='live'] {
-    color: var(--bs-success-text-emphasis, #0a3622);
-    background: var(--bs-success-bg-subtle, #d1e7dd);
+    color: var(--cui-success-text-emphasis, #0a3622);
+    background: var(--cui-success-bg-subtle, #d1e7dd);
   }
 
   // A dot as well as the word, so the state is readable at a glance and does

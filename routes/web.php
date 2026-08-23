@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Asset\Http\Controllers\Web\ScanController;
 use App\Modules\Identity\Http\Controllers\Web\LoginController;
+use App\Modules\Identity\Http\Controllers\Web\MfaChallengeController;
 use App\Modules\Identity\Http\Controllers\Web\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,14 @@ Route::redirect('/', '/app/dashboard');
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'store']);
+
+    /*
+     * The second half of signing in (SRS 50.3). Under `guest` because that is
+     * exactly what somebody at this screen still is: the password was accepted
+     * and nothing was logged in.
+     */
+    Route::get('/mfa/challenge', [MfaChallengeController::class, 'show'])->name('mfa.challenge');
+    Route::post('/mfa/challenge', [MfaChallengeController::class, 'store']);
 
     Route::get('/forgot-password', [PasswordResetController::class, 'request'])->name('password.request');
     Route::post('/forgot-password', [PasswordResetController::class, 'email'])->name('password.email');

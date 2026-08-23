@@ -9,6 +9,7 @@ use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
 use App\Shared\Exceptions\TenantContextMissingException;
 use App\Shared\Http\Api\ApiExceptionRenderer;
 use App\Shared\Http\Middleware\AssignRequestId;
+use App\Shared\Http\Middleware\SecurityHeaders;
 use App\Shared\Http\Middleware\SetLocale;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateSession;
@@ -39,6 +40,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // failure can be traced; the tenant is resolved after authentication,
         // because it derives from membership.
         $middleware->append(AssignRequestId::class);
+
+        // On every response, HTML and JSON alike. A JSON endpoint that can be
+        // framed or MIME-sniffed is a JSON endpoint that can be read across
+        // origins (SRS 50, API 35.3).
+        $middleware->append(SecurityHeaders::class);
 
         $middleware->web(append: [
             SetLocale::class,

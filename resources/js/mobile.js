@@ -3,3 +3,5 @@
  * reporting and meter entry routes.
  */
 import './offline/queue';
+import './offline/indicator';
+import './offline/forms';

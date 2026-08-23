@@ -4,19 +4,40 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Shared\Http\Middleware\Nonce;
 use App\Shared\Support\TenantTimezone;
 use App\Shared\Tenancy\TenantContext;
 use App\Shared\View\Composers\AppShellComposer;
+use Illuminate\Contracts\Validation\UncompromisedVerifier;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\NotPwnedVerifier;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        /*
+         * The breached-password check, with a timeout a factory can live with
+         * (SRS 50.1).
+         *
+         * Laravel's default gives the lookup thirty seconds. On a mill network
+         * behind a filtering proxy that is thirty seconds of a password-change
+         * form appearing to hang, after which the password is accepted anyway
+         * — the rule treats an unreachable service as "not known to be
+         * breached", which is the right call and the reason the wait buys
+         * nothing. Three seconds is long enough for the service when it is
+         * reachable and short enough not to look like a failure when it is not.
+         */
+        $this->app->singleton(UncompromisedVerifier::class, fn ($app) => new NotPwnedVerifier(
+            $app[HttpFactory::class],
+            timeout: 3,
+        ));
+
         // Must be a singleton: middleware resolves the tenant once per request
         // and every model, policy, and service reads that same instance. A new
         // instance per resolution would silently lose the context.
@@ -66,6 +87,19 @@ class AppServiceProvider extends ServiceProvider
             '<?php echo e(app(%s::class)->forInput(%s)); ?>',
             TenantTimezone::class,
             $expression,
+        ));
+
+        /*
+         * @cspnonce on an inline <script> tag.
+         *
+         * The content security policy permits inline scripts only by nonce, so
+         * a tag that forgets this one does not run — which is the intended
+         * failure. `'unsafe-inline'` would let every tag run including one an
+         * attacker injected, and that is the entire difference.
+         */
+        Blade::directive('cspnonce', fn () => sprintf(
+            '<?php echo \'nonce="\'.e(%s::current()).\'"\'; ?>',
+            Nonce::class,
         ));
     }
 }

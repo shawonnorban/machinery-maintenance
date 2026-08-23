@@ -9,6 +9,20 @@ window.http = http;
  * Kept small on purpose: this bundle loads on the technician's phone too.
  */
 
+/**
+ * The service worker (SRS 38).
+ *
+ * Registered late and failing silently: it caches build assets so the shell
+ * starts on a slow factory connection, and nothing on the page depends on it
+ * being there. A browser that refuses it — an insecure origin in development,
+ * a private window — gets the application exactly as before.
+ */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+    });
+}
+
 // Sidebar collapse, persisted so a user's choice survives navigation.
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.querySelector('.sidebar');

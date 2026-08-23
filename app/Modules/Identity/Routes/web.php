@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Identity\Http\Controllers\Web\AccountController;
 use App\Modules\Identity\Http\Controllers\Web\CompanySwitchController;
 use App\Modules\Identity\Http\Controllers\Web\RoleController;
 use App\Modules\Identity\Http\Controllers\Web\TeamController;
@@ -16,6 +17,27 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function (): void {
     Route::post('/switch-company', [CompanySwitchController::class, 'store'])
         ->name('switch-company');
+
+    /*
+     * Your own account (SRS 50.2, 50.3). No permission guards any of it:
+     * every route here acts on the account of whoever is asking, and a
+     * technician who can reach no other screen still has to be able to change
+     * their own password.
+     */
+    Route::get('/account', [AccountController::class, 'index'])->name('account');
+    Route::post('/account/password', [AccountController::class, 'changePassword'])->name('account.password');
+
+    Route::post('/account/mfa', [AccountController::class, 'beginMfa'])->name('account.mfa.begin');
+    Route::post('/account/mfa/confirm', [AccountController::class, 'confirmMfa'])->name('account.mfa.confirm');
+    Route::post('/account/mfa/cancel', [AccountController::class, 'cancelMfa'])->name('account.mfa.cancel');
+    Route::delete('/account/mfa', [AccountController::class, 'disableMfa'])->name('account.mfa.disable');
+    Route::post('/account/mfa/recovery-codes', [AccountController::class, 'regenerateRecoveryCodes'])
+        ->name('account.mfa.recovery-codes');
+
+    Route::delete('/account/sessions/{session}', [AccountController::class, 'revokeSession'])
+        ->name('account.sessions.revoke');
+    Route::delete('/account/tokens/{token}', [AccountController::class, 'revokeToken'])
+        ->name('account.tokens.revoke');
 
     /*
      * Maintenance teams (SRS 25): who a job goes to when it does not go to one

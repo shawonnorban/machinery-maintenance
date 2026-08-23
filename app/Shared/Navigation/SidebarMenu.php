@@ -125,6 +125,7 @@ class SidebarMenu
                     ['label' => 'nav.locations', 'route' => 'app.settings.locations', 'permission' => 'masterdata.manage'],
                     ['label' => 'nav.calendar_shifts', 'route' => 'app.settings.calendar', 'permission' => 'settings.calendar.manage'],
                     ['label' => 'nav.master_data', 'route' => 'app.settings.master-data', 'permission' => 'masterdata.manage'],
+                    ['label' => 'nav.numbering', 'route' => 'app.settings.numbering', 'permission' => 'settings.numbering.manage'],
                     ['label' => 'nav.approval_workflows', 'route' => 'app.settings.approval-workflows', 'permission' => 'settings.company.manage'],
                     ['label' => 'nav.escalations', 'route' => 'app.settings.escalations', 'permission' => 'settings.company.manage'],
                     ['label' => 'nav.users', 'route' => 'app.settings.users', 'permission' => 'admin.user.manage'],

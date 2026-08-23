@@ -39,6 +39,7 @@ return [
     'import_data' => 'Import data',
     'webhooks' => 'Webhooks',
     'api_clients' => 'API clients',
+    'numbering' => 'Document numbering',
     'settings' => 'Settings',
     'company' => 'Company',
     'factories' => 'Factories',

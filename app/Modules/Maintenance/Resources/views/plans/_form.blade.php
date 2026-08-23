@@ -260,7 +260,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script @cspnonce>
 (function () {
     const url = @json(route('app.maintenance.plans.preview'));
     const movedLabel = @json(__('maintenance.preview_moved'));

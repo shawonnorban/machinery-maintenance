@@ -34,24 +34,13 @@ class AttemptLogin
     private const IP_DECAY_SECONDS = 60;
 
     /**
-     * @throws ValidationException
-     */
-    public function handle(string $email, string $password, string $ip, bool $remember = false): User
-    {
-        $user = $this->verify($email, $password, $ip);
-
-        Auth::login($user, $remember);
-
-        return $user;
-    }
-
-    /**
-     * Everything `handle()` does except starting a session.
+     * The credential check, the rate limiting and the audit row — and nothing
+     * else.
      *
-     * The API needs the credential check, the rate limiting and the audit row,
-     * and must not have the session: a bearer token is not a login, and a
-     * session cookie handed back from a token endpoint is a cookie nobody
-     * asked for and nobody will clear.
+     * Starting the session is the caller's job, and deliberately so. The API
+     * must not have one at all (a bearer token is not a login), and the web
+     * login must not start one until a second factor has been answered, or
+     * MFA would be a screen somebody could simply navigate past.
      *
      * @throws ValidationException
      */
@@ -89,8 +78,10 @@ class AttemptLogin
             'attempted_at' => now(),
         ]);
 
-        $user->forceFill(['last_login_at' => now()])->saveQuietly();
-
+        // `last_login_at` is set by the caller, not here. Accepting a password
+        // is not signing in when a second factor is still owed, and a column
+        // that records the attempt rather than the arrival makes "when did
+        // this account last get used" the wrong answer during an incident.
         return $user;
     }
 

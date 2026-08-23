@@ -39,6 +39,7 @@ return [
     'import_data' => 'ডেটা ইমপোর্ট',
     'webhooks' => 'ওয়েবহুক',
     'api_clients' => 'এপিআই ক্লায়েন্ট',
+    'numbering' => 'ডকুমেন্ট নম্বর',
     'settings' => 'সেটিংস',
     'company' => 'কোম্পানি',
     'factories' => 'ফ্যাক্টরি',

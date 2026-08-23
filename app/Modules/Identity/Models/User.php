@@ -33,7 +33,7 @@ class User extends Authenticatable
         'timezone', 'locale', 'is_platform_admin',
     ];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'mfa_secret'];
 
     protected function casts(): array
     {
@@ -42,7 +42,23 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'password' => 'hashed',
             'is_platform_admin' => 'boolean',
+            // Encrypted, not hashed: verifying a one-time code needs the
+            // secret itself. That makes it the only credential here a database
+            // dump could be used with, so the key lives in the environment
+            // rather than beside it (SRS 50.3).
+            'mfa_secret' => 'encrypted',
+            'mfa_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * A second factor is only in force once the person has proved they can
+     * produce a code. Scanning the QR and then losing the phone must not lock
+     * somebody out of an account that never gained the factor.
+     */
+    public function hasMfa(): bool
+    {
+        return $this->mfa_secret !== null && $this->mfa_confirmed_at !== null;
     }
 
     public function companies(): BelongsToMany

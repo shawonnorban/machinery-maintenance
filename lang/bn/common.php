@@ -19,6 +19,15 @@ return [
     'factory_scope' => 'ফ্যাক্টরি',
     'language' => 'ভাষা',
     'connection_live' => 'সংযুক্ত',
+
+    // অফলাইন সারি — ইঞ্জিনিয়ারের ভাষায় নয়, টেকনিশিয়ানের ভাষায়।
+    'sync_live' => 'সংরক্ষিত',
+    'sync_pending' => 'পাঠানোর অপেক্ষায়',
+    'sync_failed' => 'পাঠানো যায়নি',
+    'sync_offline' => 'সংযোগ নেই',
+    'sync_refused' => 'সার্ভার এটি গ্রহণ করেনি',
+    'sync_will_send' => 'এই ডিভাইসে সংরক্ষিত। সংযোগ ফিরলেই পাঠানো হবে।',
+    'sync_discard' => 'বাতিল করুন',
     'connection_reconnecting' => 'পুনঃসংযোগ হচ্ছে',
     'connection_offline' => 'সংযোগ নেই',
     'toggle_navigation' => 'মেনু দেখান/লুকান',
@@ -51,6 +60,7 @@ return [
     'delete' => 'মুছুন',
     'confirm_delete' => 'এই এন্ট্রি সরাবেন? এটি ফেরানো যাবে না।',
     'cancel' => 'বাতিল',
+    'continue' => 'এগিয়ে যান',
     'confirm' => 'নিশ্চিত করুন',
     'save' => 'সংরক্ষণ',
     'back' => 'পেছনে',

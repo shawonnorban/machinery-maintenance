@@ -89,6 +89,7 @@ class BreakdownApiController extends ApiController
             'production_line_id' => ['nullable', 'string', 'size:26'],
             'failure_category_id' => ['nullable', 'string', 'size:26'],
             'failure_code_id' => ['nullable', 'string', 'size:26'],
+            'downtime_reason_code_id' => ['nullable', 'string', 'size:26'],
             'production_order_reference' => ['nullable', 'string', 'max:255'],
         ]);
 

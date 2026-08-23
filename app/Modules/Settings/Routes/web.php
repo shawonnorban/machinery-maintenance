@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Settings\Http\Controllers\Web\CompanySettingsController;
 use App\Modules\Settings\Http\Controllers\Web\MasterDataController;
+use App\Modules\Settings\Http\Controllers\Web\NumberingController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->prefix('settings')->name('settings.')->group(function (): void {
@@ -13,6 +14,13 @@ Route::middleware('auth')->prefix('settings')->name('settings.')->group(function
     Route::post('/company', [CompanySettingsController::class, 'update'])->name('company.update');
     // Drops a factory own answer so it follows the company again.
     Route::delete('/company', [CompanySettingsController::class, 'reset'])->name('company.reset');
+
+    // What this company's documents are called (SRS 52). A format change is
+    // date-effective by construction: it takes hold when the counter next
+    // restarts, never in the middle of a period.
+    Route::get('/numbering', [NumberingController::class, 'index'])->name('numbering');
+    Route::patch('/numbering/{documentType}', [NumberingController::class, 'update'])->name('numbering.update');
+    Route::delete('/numbering/{documentType}', [NumberingController::class, 'reset'])->name('numbering.reset');
 
     // The name the sidebar has been pointing at since the shell was built.
     Route::get('/master-data', [MasterDataController::class, 'index'])->name('master-data');

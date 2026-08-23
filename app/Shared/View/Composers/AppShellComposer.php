@@ -66,6 +66,18 @@ class AppShellComposer
                 't' => [
                     'breakdown' => __('breakdown.breakdown'),
                     'assignedToYou' => __('notification.event_work_order_assigned'),
+
+                    // What the offline queue says about itself (SRS 38). A
+                    // technician must never wonder whether their work was
+                    // recorded, and a queue that can only say so in English
+                    // does not answer that for most of this factory floor.
+                    'sync_live' => __('common.sync_live'),
+                    'sync_pending' => __('common.sync_pending'),
+                    'sync_failed' => __('common.sync_failed'),
+                    'sync_offline' => __('common.sync_offline'),
+                    'sync_refused' => __('common.sync_refused'),
+                    'sync_will_send' => __('common.sync_will_send'),
+                    'sync_discard' => __('common.sync_discard'),
                 ],
             ],
         ]);

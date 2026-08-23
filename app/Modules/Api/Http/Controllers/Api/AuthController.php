@@ -63,6 +63,10 @@ class AuthController extends ApiController
             days: $data['expires_in_days'] ?? null,
         );
 
+        // Set here rather than inside the credential check: a token in hand is
+        // an arrival, and that is what this column is asked about afterwards.
+        $user->forceFill(['last_login_at' => now()])->saveQuietly();
+
         return ApiResponse::created([
             'access_token' => $plain,
             'token_type' => 'Bearer',

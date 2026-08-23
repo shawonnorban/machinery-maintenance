@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Offline</title>
+    <style>
+        /* Inline and tiny on purpose. This page has to render when nothing
+           else can be fetched, which rules out the stylesheet. */
+        :root { color-scheme: light dark; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 2rem;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: Canvas;
+            color: CanvasText;
+        }
+        main { max-width: 30rem; text-align: center; }
+        h1 { font-size: 1.25rem; margin: 0 0 .75rem; }
+        p { margin: 0 0 1rem; line-height: 1.5; opacity: .8; }
+        button {
+            font: inherit;
+            padding: .6rem 1.25rem;
+            border: 1px solid currentColor;
+            border-radius: .4rem;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>No connection</h1>
+        <!-- Both sentences matter. The first says what happened; the second
+             says what did not happen, which is the thing somebody standing at
+             a stopped machine actually needs to know. -->
+        <p>This page could not be loaded.</p>
+        <p>Anything you have already submitted is saved on this device and will
+           be sent as soon as the connection returns.</p>
+        <button type="button" onclick="location.reload()">Try again</button>
+    </main>
+</body>
+</html>

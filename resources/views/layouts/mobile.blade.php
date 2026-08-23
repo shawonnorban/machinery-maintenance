@@ -7,10 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') — {{ config('app.name') }}</title>
+
+    {{-- Installable to a phone's home screen (SRS 38). This is the layout it
+         matters on: a technician who can open the app from the home screen
+         does not have to find a bookmark while standing at a stopped machine. --}}
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/js/mobile.js'])
 </head>
 <body>
-    <script>
+    <script @cspnonce>
         window.App = @json($appJs);
     </script>
 

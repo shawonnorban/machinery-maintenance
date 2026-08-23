@@ -97,6 +97,16 @@
                     <div class="dropdown-header bg-body-secondary fw-semibold py-2">
                         {{ auth()->user()->email }}
                     </div>
+                    {{-- Reachable from the name in the corner, which is where
+                         somebody looks for their own settings — not from the
+                         Settings menu, which is where they administer other
+                         people's. --}}
+                    <a class="dropdown-item" href="{{ route('app.account') }}">
+                        {{ __('account.your_account') }}
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="dropdown-item">{{ __('common.sign_out') }}</button>

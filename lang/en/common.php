@@ -19,6 +19,17 @@ return [
     'factory_scope' => 'Factory',
     'language' => 'Language',
     'connection_live' => 'Live',
+
+    // The offline queue, in a technician's words rather than an engineer's.
+    // "Synced" means nothing to somebody standing at a stopped machine;
+    // "saved" answers the question they are actually asking.
+    'sync_live' => 'Saved',
+    'sync_pending' => 'Waiting to send',
+    'sync_failed' => 'Not sent',
+    'sync_offline' => 'No connection',
+    'sync_refused' => 'The server refused this',
+    'sync_will_send' => 'Saved on this device. It will be sent as soon as the connection returns.',
+    'sync_discard' => 'Discard',
     'connection_reconnecting' => 'Reconnecting',
     'connection_offline' => 'Offline',
     'toggle_navigation' => 'Toggle navigation',
@@ -51,6 +62,7 @@ return [
     'delete' => 'Delete',
     'confirm_delete' => 'Remove this entry? This cannot be undone.',
     'cancel' => 'Cancel',
+    'continue' => 'Continue',
     'confirm' => 'Confirm',
     'save' => 'Save',
     'back' => 'Back',

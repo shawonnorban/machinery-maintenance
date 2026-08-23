@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', __('breakdown.report_breakdown'))
 
+@push('head')
+    {{-- The offline bundle, on this screen alone among the desktop ones. This
+         is the form somebody fills in standing at a stopped machine on a phone
+         with two bars, and it is the only write in the product where losing
+         what was typed means a line stays down while it is typed again
+         (SRS 38). --}}
+    @vite(['resources/js/mobile.js'])
+@endpush
+
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">{{ __('nav.dashboard') }}</a></li>
     <li class="breadcrumb-item"><a href="{{ route('app.breakdowns.index') }}">{{ __('breakdown.breakdowns') }}</a></li>
@@ -10,7 +19,25 @@
 @section('content')
     <x-page-header :title="__('breakdown.report_breakdown')" />
 
-    <form method="POST" action="{{ route('app.breakdowns.store') }}">
+    {{-- Reports that have not reached the server yet. Shown before the form,
+         because somebody who just tapped Report is asking whether *their*
+         report went in, and a count in the corner does not answer that. --}}
+    <div data-offline-drafts hidden></div>
+
+    <div class="alert alert-warning" data-offline-notice hidden>
+        {{ __('breakdown.queued_offline') }}
+    </div>
+
+    {{-- Two separate promises. `persist` keeps what was typed through a
+         reload or a phone that locked; `endpoint` queues a submit made with no
+         signal and sends it when there is one. The second is only safe because
+         POST /breakdowns is idempotent: a queued write is a write that may
+         arrive twice, and the key travels with the draft (API 32). --}}
+    <form method="POST" action="{{ route('app.breakdowns.store') }}"
+          data-offline-persist="breakdown"
+          data-offline-endpoint="/breakdowns"
+          data-offline-label="{{ __('breakdown.report_breakdown') }}"
+          data-offline-fields="asset_id,problem_description,failure_at,reported_at,priority,severity,production_line_id,production_order_reference,failure_code_id,downtime_reason_code_id">
         @csrf
 
         <div class="row">

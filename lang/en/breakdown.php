@@ -6,6 +6,7 @@ return [
     'breakdowns' => 'Breakdowns',
     'breakdown' => 'Breakdown',
     'report_breakdown' => 'Report breakdown',
+    'queued_offline' => 'No connection. This report is saved on your device and will be sent as soon as the connection returns.',
     'breakdown_number' => 'Breakdown',
 
     // --- the timestamp chain (SRS 17) ---

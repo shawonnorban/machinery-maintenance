@@ -10,6 +10,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', __('nav.dashboard')) — {{ config('app.name') }}</title>
 
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @stack('head')
 </head>
@@ -18,7 +22,7 @@
         Per-request context passed from Blade, not compiled into the bundle:
         it varies per user and per company (Handbook 5.2).
     --}}
-    <script>
+    <script @cspnonce>
         window.App = @json($appJs);
     </script>
 
