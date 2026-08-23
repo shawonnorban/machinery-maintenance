@@ -6,6 +6,7 @@ use App\Modules\WorkOrder\Http\Controllers\Web\ChecklistExecutionController;
 use App\Modules\WorkOrder\Http\Controllers\Web\LaborEntryController;
 use App\Modules\WorkOrder\Http\Controllers\Web\MyWorkController;
 use App\Modules\WorkOrder\Http\Controllers\Web\TechnicianController;
+use App\Modules\WorkOrder\Http\Controllers\Web\TechnicianSkillController;
 use App\Modules\WorkOrder\Http\Controllers\Web\WorkOrderController;
 use App\Modules\WorkOrder\Http\Controllers\Web\WorkOrderTransitionController;
 use App\Shared\Files\Http\Controllers\FileAttachmentController;
@@ -73,4 +74,12 @@ Route::middleware('auth')->group(function (): void {
     // Only somebody with no work behind them: a repair whose technician cannot
     // be named is a repair nobody can ask about.
     Route::delete('/technicians/{technician}', [TechnicianController::class, 'destroy'])->name('technicians.destroy');
+
+    // What they are trained on, which is not the same as the area they
+    // cover: the person to send to a tripped panel is the one with the
+    // certificate, not whoever is nearest.
+    Route::post('/technicians/{technician}/skills', [TechnicianSkillController::class, 'store'])
+        ->name('technicians.skills.store');
+    Route::delete('/technicians/{technician}/skills/{skill}', [TechnicianSkillController::class, 'destroy'])
+        ->name('technicians.skills.destroy');
 });

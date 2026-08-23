@@ -73,7 +73,9 @@ class TechnicianController extends Controller
         $this->authorizeRoster($request);
         $this->assertReachable($technician);
 
-        return view('work_order::technicians.form', $this->formOptions() + ['technician' => $technician]);
+        return view('work_order::technicians.form', $this->formOptions() + [
+            'technician' => $technician->load('skills'),
+        ]);
     }
 
     public function update(Request $request, Technician $technician, ManageTechnician $action): RedirectResponse
@@ -150,8 +152,8 @@ class TechnicianController extends Controller
             'factories' => Factory::whereIn('id', $this->context->accessibleFactoryIds())->orderBy('name')->get(),
             'departments' => Department::orderBy('name')->get(),
             'lines' => ProductionLine::orderBy('name')->get(),
-            // Only members of this company, and only those not already linked
-            // to somebody else on the roster.
+            'proficiencies' => TechnicianSkillController::PROFICIENCIES,
+            // Members of this company only.
             'users' => User::query()
                 ->whereHas('memberships', fn ($q) => $q->where('company_id', $companyId)->where('status', 'ACTIVE'))
                 ->orderBy('name')

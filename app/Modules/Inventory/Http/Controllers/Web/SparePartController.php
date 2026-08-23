@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Http\Controllers\Web;
 
+use App\Modules\Asset\Models\AssetModel;
 use App\Modules\Inventory\Actions\DeleteSparePart;
 use App\Modules\Inventory\Actions\SaveSparePart;
 use App\Modules\Inventory\Models\Bin;
@@ -11,6 +12,7 @@ use App\Modules\Inventory\Models\InventoryBalance;
 use App\Modules\Inventory\Models\InventoryTransaction;
 use App\Modules\Inventory\Models\SparePart;
 use App\Modules\Inventory\Models\SparePartCategory;
+use App\Modules\Inventory\Models\SparePartCompatibility;
 use App\Modules\Inventory\Services\InventoryLedger;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
@@ -203,6 +205,15 @@ class SparePartController extends Controller
                     'result' => $this->ledger->verify($part, $b->bin),
                 ])
                 : collect(),
+            // Which machines this part fits, and what will do instead when
+            // the store is out of it (SRS 20).
+            'compatibility' => SparePartCompatibility::where('spare_part_id', $part->id)
+                ->with(['assetModel:id,model', 'substituteFor:id,part_number,name'])
+                ->get(),
+            'assetModels' => AssetModel::availableTo($this->context->companyId())
+                ->where('active', true)->orderBy('model')->get(['id', 'model']),
+            'otherParts' => SparePart::where('active', true)
+                ->whereKeyNot($part->id)->orderBy('part_number')->get(['id', 'part_number', 'name']),
             'bins' => Bin::where('is_in_transit', false)
                 ->where('active', true)
                 ->with('store.warehouse')

@@ -174,9 +174,73 @@
             </div>
         </div>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 mb-4">
             <button type="submit" class="btn btn-info text-white">{{ __('common.save') }}</button>
             <a href="{{ route('app.technicians.index') }}" class="btn btn-outline-secondary">{{ __('common.cancel') }}</a>
         </div>
     </form>
+
+    @if ($technician)
+        <div class="card">
+            <div class="card-header">{{ __('technician.skills') }}</div>
+
+            <div class="card-body">
+                {{-- Separate from the area they cover: a dyeing technician may
+                     hold an electrical certificate, and the person to send to a
+                     tripped panel at 2am is the one who has it. --}}
+                <p class="small text-body-secondary">{{ __('technician.skills_hint') }}</p>
+
+                @if ($technician->skills->isEmpty())
+                    <p class="text-body-secondary mb-3">{{ __('technician.no_skills') }}</p>
+                @else
+                    <div class="mb-3 d-flex flex-wrap gap-2">
+                        @foreach ($technician->skills as $skill)
+                            <span class="badge bg-light text-dark d-inline-flex align-items-center gap-2 p-2">
+                                {{ $skill->skill_name }}
+                                <span class="text-body-secondary">
+                                    {{ __('technician.proficiency_'.strtolower($skill->proficiency)) }}
+                                </span>
+
+                                <form method="POST"
+                                      action="{{ route('app.technicians.skills.destroy', [$technician, $skill]) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-link p-0 text-danger"
+                                            title="{{ __('common.delete') }}"
+                                            aria-label="{{ __('common.delete') }}">&times;</button>
+                                </form>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('app.technicians.skills.store', $technician) }}"
+                      class="row g-2 align-items-end">
+                    @csrf
+
+                    <div class="col-md-5">
+                        <label for="skill_name" class="form-label mb-1">{{ __('technician.skill_name') }}</label>
+                        <input id="skill_name" name="skill_name" type="text" class="form-control form-control-sm"
+                               required maxlength="255" placeholder="{{ __('technician.skill_example') }}">
+                        @error('skill_name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="proficiency" class="form-label mb-1">{{ __('technician.proficiency') }}</label>
+                        <select id="proficiency" name="proficiency" class="form-select form-select-sm" required>
+                            @foreach ($proficiencies as $level)
+                                <option value="{{ $level }}">
+                                    {{ __('technician.proficiency_'.strtolower($level)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button class="btn btn-sm btn-outline-info w-100">{{ __('technician.add_skill') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
 @endsection

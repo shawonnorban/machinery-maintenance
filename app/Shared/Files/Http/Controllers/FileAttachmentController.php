@@ -23,8 +23,14 @@ class FileAttachmentController extends Controller
     {
         // The tenant scope on the model already refuses another company's file.
         // The permission check is what stops a member of the right company from
-        // reading work they have no business seeing.
-        $this->authorize('work_order.work_order.view');
+        // reading something they have no business seeing — and which permission
+        // that is depends on what the file is attached to. A machine's manual
+        // is not evidence from somebody's work order, and asking for the work
+        // order permission to read one would deny it to the people who need it.
+        $this->authorize(match ($attachment->attachable_type) {
+            'asset' => 'asset.asset.view',
+            default => 'work_order.work_order.view',
+        });
 
         abort_unless(Storage::disk($attachment->disk)->exists($attachment->path), 404);
 

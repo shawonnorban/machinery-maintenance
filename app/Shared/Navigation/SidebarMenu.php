@@ -49,6 +49,7 @@ class SidebarMenu
                     ['label' => 'nav.plans', 'route' => 'app.maintenance.plans', 'permission' => 'maintenance.plan.view_any'],
                     ['label' => 'nav.schedule', 'route' => 'app.maintenance.schedule', 'permission' => 'maintenance.schedule.view_any'],
                     ['label' => 'nav.templates', 'route' => 'app.maintenance.templates', 'permission' => 'maintenance.template.view_any'],
+                    ['label' => 'nav.meters', 'route' => 'app.meters.index', 'permission' => 'meter.reading.view_any'],
                 ],
             ],
             [
@@ -124,6 +125,8 @@ class SidebarMenu
                     ['label' => 'nav.locations', 'route' => 'app.settings.locations', 'permission' => 'masterdata.manage'],
                     ['label' => 'nav.calendar_shifts', 'route' => 'app.settings.calendar', 'permission' => 'settings.calendar.manage'],
                     ['label' => 'nav.master_data', 'route' => 'app.settings.master-data', 'permission' => 'masterdata.manage'],
+                    ['label' => 'nav.approval_workflows', 'route' => 'app.settings.approval-workflows', 'permission' => 'settings.company.manage'],
+                    ['label' => 'nav.escalations', 'route' => 'app.settings.escalations', 'permission' => 'settings.company.manage'],
                     ['label' => 'nav.users', 'route' => 'app.settings.users', 'permission' => 'admin.user.manage'],
                     ['label' => 'nav.roles', 'route' => 'app.settings.roles', 'permission' => 'admin.role.manage'],
                     ['label' => 'nav.webhooks', 'route' => 'app.webhooks.index', 'permission' => 'webhook.endpoint.manage'],

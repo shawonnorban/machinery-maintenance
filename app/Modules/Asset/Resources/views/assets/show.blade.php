@@ -125,6 +125,10 @@
                 </div>
             @endif
 
+            @include('asset::assets._meters')
+
+            @include('asset::assets._documents')
+
             <div class="card mb-4">
                 <div class="card-header">{{ __('asset.history') }}</div>
                 <div class="card-body p-0">

@@ -15,8 +15,11 @@ use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetType;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Asset\Services\QrCodeRenderer;
+use App\Modules\Metering\Http\Controllers\Web\MeterController;
+use App\Modules\Metering\Models\AssetMeter;
 use App\Modules\Tenancy\Models\Factory;
 use App\Modules\Vendor\Services\AssetCoverage;
+use App\Shared\Files\Models\FileAttachment;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -97,6 +100,16 @@ class AssetController extends Controller
             'transfers' => $asset->transfers()->with(['fromFactory:id,name', 'toFactory:id,name', 'toLocation:id,name'])->limit(20)->get(),
             'allowedTransitions' => Asset::TRANSITIONS[$asset->status] ?? [],
             'qrSvg' => $qr->inlineSvg(route('scan.asset', $asset->qr_code), 150),
+            // What is counted on this machine. A usage-based plan has nothing
+            // to measure until one of these exists (SRS 11).
+            'meters' => AssetMeter::where('asset_id', $asset->id)->with('type:id,name,unit')->get(),
+            'meterTypes' => MeterController::typesFor($this->context->companyId()),
+            // The manual and the certificates, on the machine screen where
+            // somebody standing at it will look for them (SRS 8).
+            'documents' => FileAttachment::where('attachable_type', 'asset')
+                ->where('attachable_id', $asset->id)
+                ->latest()
+                ->get(),
         ]);
     }
 

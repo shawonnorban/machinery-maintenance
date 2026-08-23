@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 return [
+    'approval_workflows' => 'অনুমোদনের ধাপ',
+    'escalations' => 'এস্কেলেশন নিয়ম',
+    'meters' => 'মিটার',
     'locations' => 'লোকেশন',
     'dashboard' => 'ড্যাশবোর্ড',
     'assets' => 'মেশিন ও সম্পদ',

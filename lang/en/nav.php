@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 return [
+    'approval_workflows' => 'Approval chains',
+    'escalations' => 'Escalation rules',
+    'meters' => 'Meters',
     'locations' => 'Locations',
     'dashboard' => 'Dashboard',
     'assets' => 'Assets',

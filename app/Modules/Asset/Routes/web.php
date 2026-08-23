@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Asset\Http\Controllers\Web\AssetController;
+use App\Modules\Asset\Http\Controllers\Web\AssetDocumentController;
 use App\Modules\Asset\Http\Controllers\Web\AssetLabelController;
 use App\Modules\Asset\Http\Controllers\Web\AssetLocationController;
 use App\Modules\Asset\Http\Controllers\Web\AssetStatusController;
@@ -23,6 +24,13 @@ Route::middleware('auth')->group(function (): void {
     // Only for a machine with no history behind it. Disposal is RETIRED then
     // SCRAPPED, which keeps the record; this is for the row typed twice.
     Route::delete('/assets/{asset}', [AssetController::class, 'destroy'])->name('assets.destroy');
+
+    // A machine papers: manual, wiring diagram, calibration certificate.
+    // Read by everybody who works on it, changed by very few.
+    Route::post('/assets/{asset}/documents', [AssetDocumentController::class, 'store'])
+        ->name('assets.documents.store');
+    Route::delete('/assets/{asset}/documents/{attachment}', [AssetDocumentController::class, 'destroy'])
+        ->name('assets.documents.destroy');
 
     Route::post('/assets/{asset}/status', [AssetStatusController::class, 'store'])->name('assets.status');
 

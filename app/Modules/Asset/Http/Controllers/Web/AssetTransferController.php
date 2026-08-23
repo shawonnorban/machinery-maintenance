@@ -95,7 +95,14 @@ class AssetTransferController extends Controller
     public function receive(AssetTransfer $transfer, TransferAsset $action): RedirectResponse
     {
         $asset = Asset::findOrFail($transfer->asset_id);
-        $this->authorize('approveTransfer', $asset);
+        $this->authorize('receiveTransfer', $asset);
+
+        // The far end confirms, not the end that sent it. A sending manager
+        // ticking this off marks a machine as installed somewhere nobody has
+        // laid eyes on it.
+        if (! $this->context->canAccessFactory((string) $transfer->to_factory_id)) {
+            abort(403);
+        }
 
         $action->receive($transfer, request()->user()->id);
 

@@ -69,6 +69,19 @@ class AssetPolicy
             && $this->withinFactoryReach($asset);
     }
 
+    /**
+     * Confirming a machine arrived belongs to the factory it arrived at.
+     *
+     * Not the same act as approving the move, and not the same people: a
+     * sending manager confirming receipt on the far end's behalf marks a
+     * machine as installed somewhere nobody has seen it. The destination is
+     * checked by the caller, which is the only place that knows it.
+     */
+    public function receiveTransfer(User $user, Asset $asset): bool
+    {
+        return $user->can('asset.transfer.receive');
+    }
+
     public function viewFinancial(User $user, Asset $asset): bool
     {
         // Separate from view: a technician needs the machine record, not its

@@ -3,6 +3,20 @@
 declare(strict_types=1);
 
 return [
+    'skills' => 'Trained on',
+    'skills_hint' => 'Separate from the area they cover: a dyeing technician may hold an electrical certificate, and the person to send to a tripped panel at 2am is the one who has it.',
+    'skill_name' => 'Skill',
+    'skill_example' => 'Soft flow dyeing, VFD, boiler operation',
+    'proficiency' => 'Level',
+    'proficiency_basic' => 'Basic',
+    'proficiency_intermediate' => 'Intermediate',
+    'proficiency_expert' => 'Expert',
+    'proficiency_certified' => 'Certified',
+    'add_skill' => 'Add skill',
+    'skill_added' => 'Skill added.',
+    'skill_removed' => 'Skill removed.',
+    'skill_already_listed' => 'That skill is already listed for this person.',
+    'no_skills' => 'Nothing recorded yet.',
     'technicians' => 'Technicians',
     'technician' => 'Technician',
     'intro' => 'Who is on the floor and what they look after. A dyeing technician covers the dye house, a sewing mechanic the sewing floor.',

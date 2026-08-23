@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Identity\Http\Controllers\Web\CompanySwitchController;
 use App\Modules\Identity\Http\Controllers\Web\RoleController;
+use App\Modules\Identity\Http\Controllers\Web\TeamController;
 use App\Modules\Identity\Http\Controllers\Web\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,17 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function (): void {
     Route::post('/switch-company', [CompanySwitchController::class, 'store'])
         ->name('switch-company');
+
+    /*
+     * Maintenance teams (SRS 25): who a job goes to when it does not go to one
+     * person. Work orders, breakdowns, plans, approval steps and escalation
+     * rules can all name one.
+     */
+    Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+    Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+    Route::patch('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+    Route::post('/teams/{team}/toggle', [TeamController::class, 'toggle'])->name('teams.toggle');
+    Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
 });
 
 /*

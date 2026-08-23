@@ -12,6 +12,7 @@ use App\Modules\Inventory\Models\SparePart;
 use App\Modules\Inventory\Services\InventoryLedger;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -104,6 +105,70 @@ class StockController extends Controller
         );
 
         return back()->with('status', __('inventory.received'));
+    }
+
+    /**
+     * Issuing and returning stock without a work order (SRS 23).
+     *
+     * The consumables case: a box of gloves to the dye house, a roll of tape to
+     * the sewing floor. There is no machine to charge, so nothing is posted
+     * against an asset — the ledger records that the stock left, and the
+     * screen says plainly that it is not attributed to any repair.
+     *
+     * Anything fitted to a machine goes through its work order instead, which
+     * is where the cost belongs and where the failure history can find it.
+     */
+    public function issueIndex(Request $request): View
+    {
+        $this->authorize('inventory.stock.view');
+
+        return view('inventory::stock.issue', [
+            'bins' => $this->accessibleBins(),
+            'parts' => SparePart::where('active', true)
+                ->orderBy('part_number')
+                ->get(['id', 'part_number', 'name', 'unit']),
+            'movements' => InventoryTransaction::query()
+                ->whereIn('transaction_type', ['ISSUE', 'RETURN'])
+                ->whereNull('work_order_id')
+                ->with(['sparePart:id,part_number,name', 'bin'])
+                ->orderByDesc('transaction_at')
+                ->limit(50)
+                ->get(),
+        ]);
+    }
+
+    public function issue(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'spare_part_id' => ['required', 'string', 'size:26'],
+            'bin_id' => ['required', 'string', 'size:26'],
+            'quantity' => ['required', 'numeric', 'gt:0'],
+            'transaction_type' => ['required', Rule::in(['ISSUE', 'RETURN'])],
+            // Stock that moves with no work order behind it and no explanation
+            // is indistinguishable from loss.
+            'notes' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $this->authorize($validated['transaction_type'] === 'ISSUE'
+            ? 'inventory.stock.issue'
+            : 'inventory.stock.return');
+
+        $this->ledger->post(
+            SparePart::findOrFail($validated['spare_part_id']),
+            Bin::findOrFail($validated['bin_id']),
+            $validated['transaction_type'],
+            (string) $validated['quantity'],
+            null,
+            [
+                'performed_by' => $request->user()->id,
+                'notes' => $validated['notes'],
+                'transaction_at' => CarbonImmutable::now(),
+            ],
+        );
+
+        return back()->with('status', $validated['transaction_type'] === 'ISSUE'
+            ? __('inventory.issued')
+            : __('inventory.returned'));
     }
 
     public function adjust(Request $request): RedirectResponse

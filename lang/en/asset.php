@@ -3,6 +3,13 @@
 declare(strict_types=1);
 
 return [
+    'documents' => 'Documents',
+    'no_documents' => 'No manual, diagram or certificate attached yet.',
+    'add_document' => 'Attach a document',
+    'upload' => 'Upload',
+    'document_uploaded' => 'Document attached.',
+    'document_removed' => 'Document removed.',
+    'document_delete_confirm' => 'Remove this document? The file is deleted with it.',
     'locations' => 'Locations',
     'locations_intro' => 'Where machines stand. Everything above the factory is optional, so a flat list of line codes is a complete answer.',
     'new_location' => 'Add location',

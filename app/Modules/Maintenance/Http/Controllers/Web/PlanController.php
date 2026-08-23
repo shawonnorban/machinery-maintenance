@@ -10,6 +10,7 @@ use App\Modules\Identity\Models\Team;
 use App\Modules\Maintenance\Actions\SaveMaintenancePlan;
 use App\Modules\Maintenance\Http\Requests\SaveMaintenancePlanRequest;
 use App\Modules\Maintenance\Models\MaintenancePlan;
+use App\Modules\Maintenance\Models\MaintenanceSchedule;
 use App\Modules\Maintenance\Models\MaintenanceTemplate;
 use App\Modules\Maintenance\Models\MaintenanceType;
 use App\Modules\Maintenance\Services\DueDatePreview;
@@ -19,6 +20,8 @@ use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class PlanController extends Controller
@@ -110,6 +113,41 @@ class PlanController extends Controller
         $action->deactivate($plan);
 
         return back()->with('status', __('maintenance.plan_deactivated', ['name' => $plan->name]));
+    }
+
+    /**
+     * Remove a plan that should never have existed.
+     *
+     * Deliberately narrow. A plan that has generated occurrences is the reason
+     * those jobs exist, and deleting it would leave a maintenance history
+     * nobody can explain — those are deactivated, which stops new occurrences
+     * and leaves every past one readable. What is left is the plan typed in
+     * twice this morning.
+     */
+    public function destroy(MaintenancePlan $plan): RedirectResponse
+    {
+        $this->authorize('maintenance.plan.delete');
+
+        $occurrences = MaintenanceSchedule::where('maintenance_plan_id', $plan->id)->count();
+
+        if ($occurrences > 0) {
+            throw ValidationException::withMessages([
+                'plan' => __('maintenance.plan_has_occurrences', ['count' => $occurrences]),
+            ])->status(409);
+        }
+
+        $name = $plan->name;
+
+        DB::transaction(function () use ($plan): void {
+            // The rules are the plan's own definition and have no meaning
+            // without it; nothing else points at them.
+            $plan->rules()->delete();
+            $plan->delete();
+        });
+
+        return redirect()
+            ->route('app.maintenance.plans')
+            ->with('status', __('maintenance.plan_deleted', ['name' => $name]));
     }
 
     /**

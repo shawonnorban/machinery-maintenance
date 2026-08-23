@@ -7,6 +7,7 @@ namespace App\Modules\Settings\MasterData;
 use App\Modules\Settings\MasterData\Types\AssetCategoryData;
 use App\Modules\Settings\MasterData\Types\AssetModelData;
 use App\Modules\Settings\MasterData\Types\AssetTypeData;
+use App\Modules\Settings\MasterData\Types\BinData;
 use App\Modules\Settings\MasterData\Types\BuildingData;
 use App\Modules\Settings\MasterData\Types\CostCategoryData;
 use App\Modules\Settings\MasterData\Types\DepartmentData;
@@ -21,6 +22,8 @@ use App\Modules\Settings\MasterData\Types\ProductionLineData;
 use App\Modules\Settings\MasterData\Types\RootCauseData;
 use App\Modules\Settings\MasterData\Types\SectionData;
 use App\Modules\Settings\MasterData\Types\SparePartCategoryData;
+use App\Modules\Settings\MasterData\Types\StoreData;
+use App\Modules\Settings\MasterData\Types\WarehouseData;
 use App\Modules\Settings\MasterData\Types\WorkstationData;
 
 /**
@@ -69,6 +72,10 @@ class MasterDataRegistry
             new DowntimeReasonCodeData,
             new MaintenanceTypeData,
             new MeterTypeData,
+            // Parents before children: a bin cannot exist before its store.
+            new WarehouseData,
+            new StoreData,
+            new BinData,
             new SparePartCategoryData,
             new CostCategoryData,
         ])->keyBy(fn (MasterDataType $type) => $type->key())->all();

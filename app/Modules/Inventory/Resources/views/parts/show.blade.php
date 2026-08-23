@@ -222,4 +222,7 @@
             @endcan
         </div>
     </div>
+
+    @include('inventory::parts._compatibility')
+
 @endsection

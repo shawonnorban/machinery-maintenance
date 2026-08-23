@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Inventory\Http\Controllers\Web\CompatibilityController;
 use App\Modules\Inventory\Http\Controllers\Web\PartRequestController;
 use App\Modules\Inventory\Http\Controllers\Web\SparePartController;
 use App\Modules\Inventory\Http\Controllers\Web\StockController;
@@ -20,6 +21,13 @@ Route::middleware('auth')->group(function (): void {
     // Only reaches a part nothing points at — the row typed in twice. Anything
     // the ledger or a work order names is retired instead.
     Route::delete('/inventory/parts/{part}', [SparePartController::class, 'destroy'])->name('inventory.parts.destroy');
+
+    // Which machines a part fits, and what will do instead when the store is
+    // out of it (SRS 20).
+    Route::post('/inventory/parts/{part}/compatibility', [CompatibilityController::class, 'store'])
+        ->name('inventory.parts.compatibility.store');
+    Route::delete('/inventory/parts/{part}/compatibility/{compatibility}', [CompatibilityController::class, 'destroy'])
+        ->name('inventory.parts.compatibility.destroy');
 
     Route::get('/inventory/stock', [StockController::class, 'index'])->name('inventory.stock');
     Route::get('/inventory/low-stock', [StockController::class, 'lowStock'])->name('inventory.low-stock');
@@ -40,6 +48,11 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/inventory/requests', [PartRequestController::class, 'index'])->name('inventory.requests');
     Route::post('/inventory/stock/receive', [StockController::class, 'store'])->name('inventory.stock.receive');
     Route::post('/inventory/stock/adjust', [StockController::class, 'adjust'])->name('inventory.stock.adjust');
+
+    // Consumables leaving the store with no machine to charge. Anything
+    // fitted to a machine goes through its work order instead.
+    Route::get('/inventory/issue', [StockController::class, 'issueIndex'])->name('inventory.issue');
+    Route::post('/inventory/issue', [StockController::class, 'issue'])->name('inventory.issue.store');
     // A correction is a new opposing row, never an edit of the original, so
     // this posts rather than patches.
     Route::post('/inventory/transactions/{transaction}/reverse', [StockController::class, 'reverse'])
