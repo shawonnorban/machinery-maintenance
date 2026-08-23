@@ -38,6 +38,7 @@ return [
     'reports' => 'রিপোর্ট',
     'import_data' => 'ডেটা ইমপোর্ট',
     'webhooks' => 'ওয়েবহুক',
+    'api_clients' => 'এপিআই ক্লায়েন্ট',
     'settings' => 'সেটিংস',
     'company' => 'কোম্পানি',
     'factories' => 'ফ্যাক্টরি',

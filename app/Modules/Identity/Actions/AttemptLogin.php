@@ -38,6 +38,25 @@ class AttemptLogin
      */
     public function handle(string $email, string $password, string $ip, bool $remember = false): User
     {
+        $user = $this->verify($email, $password, $ip);
+
+        Auth::login($user, $remember);
+
+        return $user;
+    }
+
+    /**
+     * Everything `handle()` does except starting a session.
+     *
+     * The API needs the credential check, the rate limiting and the audit row,
+     * and must not have the session: a bearer token is not a login, and a
+     * session cookie handed back from a token endpoint is a cookie nobody
+     * asked for and nobody will clear.
+     *
+     * @throws ValidationException
+     */
+    public function verify(string $email, string $password, string $ip): User
+    {
         $email = Str::lower(trim($email));
 
         $this->ensureNotRateLimited($email, $ip);
@@ -69,8 +88,6 @@ class AttemptLogin
             'successful' => true,
             'attempted_at' => now(),
         ]);
-
-        Auth::login($user, $remember);
 
         $user->forceFill(['last_login_at' => now()])->saveQuietly();
 

@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Modules\Api\Http\Middleware\AuthenticateApiToken;
+use App\Modules\Api\Http\Middleware\EnforceIdempotency;
 use App\Modules\Billing\Http\Middleware\EnforceSubscriptionState;
 use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
 use App\Shared\Exceptions\TenantContextMissingException;
+use App\Shared\Http\Api\ApiExceptionRenderer;
 use App\Shared\Http\Middleware\AssignRequestId;
 use App\Shared\Http\Middleware\SetLocale;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -50,13 +53,19 @@ return Application::configure(basePath: dirname(__DIR__))
             SetLocale::class,
         ]);
 
-        $middleware->api(append: [
-            ResolveTenantContext::class,
+        // The API resolves its tenant from the bearer token rather than from
+        // membership and a header, because a token is minted for exactly one
+        // company. That check lives in `api.auth`, and the subscription state
+        // has to be enforced after it — a middleware that runs before the
+        // tenant is known has no company whose contract it could read.
+        $middleware->group('api.auth', [
+            AuthenticateApiToken::class,
             EnforceSubscriptionState::class,
         ]);
 
         $middleware->alias([
             'company' => ResolveTenantContext::class,
+            'idempotent' => EnforceIdempotency::class,
         ]);
 
         // Route model binding MUST run after the tenant is resolved.
@@ -84,6 +93,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+        );
+
+        // Every way the application can fail, turned into the one error
+        // envelope a client can branch on. Scoped to api/* inside the
+        // renderer itself: the web UI's failures are redirects with flash
+        // messages and must stay that way.
+        $exceptions->render(
+            fn (Throwable $e, Request $request) => (new ApiExceptionRenderer)($e, $request),
         );
 
         // A query that escaped tenant scoping is a defect, not a user error.

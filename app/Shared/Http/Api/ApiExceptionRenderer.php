@@ -37,7 +37,7 @@ class ApiExceptionRenderer
         }
 
         return match (true) {
-            $e instanceof ApiException => ApiResponse::error($e->code, $e->getMessage(), $e->errors, $e->meta),
+            $e instanceof ApiException => ApiResponse::error($e->errorCode, $e->getMessage(), $e->errors, $e->meta),
 
             $e instanceof ValidationException => $this->validation($e),
 

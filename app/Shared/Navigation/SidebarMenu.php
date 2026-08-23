@@ -130,6 +130,7 @@ class SidebarMenu
                     ['label' => 'nav.users', 'route' => 'app.settings.users', 'permission' => 'admin.user.manage'],
                     ['label' => 'nav.roles', 'route' => 'app.settings.roles', 'permission' => 'admin.role.manage'],
                     ['label' => 'nav.webhooks', 'route' => 'app.webhooks.index', 'permission' => 'webhook.endpoint.manage'],
+                    ['label' => 'nav.api_clients', 'route' => 'app.settings.api-clients', 'permission' => 'admin.api_client.manage'],
                 ],
             ],
             [

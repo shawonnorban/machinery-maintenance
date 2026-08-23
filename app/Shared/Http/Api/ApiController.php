@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Http\Api;
 
+use App\Modules\Api\Support\ApiCaller;
 use App\Shared\Http\Controllers\Controller;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -20,6 +21,27 @@ abstract class ApiController extends Controller
     private const DEFAULT_PER_PAGE = 25;
 
     private const MAX_PER_PAGE = 100;
+
+    /**
+     * The permission check every API endpoint uses.
+     *
+     * Deliberately not `$this->authorize()`. That path runs through the Gate
+     * with the logged-in user, and half the callers here are machines with no
+     * user at all; `ApiCaller` is what knows how to answer for both, and
+     * having one method means an endpoint cannot accidentally be written to
+     * only understand people.
+     */
+    protected function allow(string $permission): void
+    {
+        if (! app(ApiCaller::class)->can($permission)) {
+            throw ApiException::of(ErrorCode::FORBIDDEN);
+        }
+    }
+
+    protected function caller(): ApiCaller
+    {
+        return app(ApiCaller::class);
+    }
 
     /**
      * Page size, clamped. A client asking for 5,000 rows gets 100 rather than

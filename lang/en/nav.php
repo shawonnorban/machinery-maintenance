@@ -38,6 +38,7 @@ return [
     'reports' => 'Reports',
     'import_data' => 'Import data',
     'webhooks' => 'Webhooks',
+    'api_clients' => 'API clients',
     'settings' => 'Settings',
     'company' => 'Company',
     'factories' => 'Factories',

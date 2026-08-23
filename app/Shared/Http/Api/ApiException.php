@@ -22,13 +22,16 @@ class ApiException extends RuntimeException
      * @param  array<string, mixed>  $meta
      */
     public function __construct(
-        public readonly ErrorCode $code,
+        // Not named `$code`. `Exception` already has one — an integer, and not
+        // readonly — and a subclass may not narrow it. The name here has to be
+        // different or nothing in this class loads at all.
+        public readonly ErrorCode $errorCode,
         ?string $message = null,
         public readonly array $errors = [],
         public readonly array $meta = [],
         ?Throwable $previous = null,
     ) {
-        parent::__construct($message ?? $code->message(), $code->status(), $previous);
+        parent::__construct($message ?? $errorCode->message(), $errorCode->status(), $previous);
     }
 
     /**
