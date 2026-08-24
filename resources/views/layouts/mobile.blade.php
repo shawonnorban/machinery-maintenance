@@ -22,6 +22,8 @@
         window.App = @json($appJs);
     </script>
 
+    <x-layout.support-banner />
+
     <div class="mobile-shell">
         <div class="mobile-topbar border-bottom px-3 py-2 d-flex align-items-center gap-3">
             @yield('topbar')

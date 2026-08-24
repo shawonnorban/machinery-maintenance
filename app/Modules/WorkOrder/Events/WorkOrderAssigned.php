@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\WorkOrder\Events;
 
 use App\Modules\WorkOrder\Models\WorkOrder;
+use App\Shared\Broadcasting\AdvisoryBroadcast;
 use App\Shared\Realtime\BroadcastsToFactory;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -21,6 +22,7 @@ use Illuminate\Queue\SerializesModels;
  */
 class WorkOrderAssigned implements ShouldBroadcast
 {
+    use AdvisoryBroadcast;
     use BroadcastsToFactory;
     use Dispatchable;
     use InteractsWithSockets;

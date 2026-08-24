@@ -19,11 +19,30 @@ class FileAttachment extends BaseModel
     protected $fillable = [
         'company_id', 'attachable_type', 'attachable_id', 'disk', 'path',
         'original_name', 'mime_type', 'size_bytes', 'sha256', 'uploaded_by',
+        'scan_status', 'scanned_at', 'scan_result',
     ];
 
     protected function casts(): array
     {
-        return ['size_bytes' => 'integer'];
+        return [
+            'size_bytes' => 'integer',
+            'scanned_at' => 'datetime',
+        ];
+    }
+
+    /**
+     * May this file be served (API 19.1 rule 3)?
+     *
+     * CLEAN was checked and passed. SKIPPED was never checked, because scanning
+     * was off when it arrived — which is a decision the operator made, not a
+     * question still outstanding, so the file is usable and the row says why.
+     *
+     * PENDING and INFECTED both refuse, for opposite reasons: one has not been
+     * looked at yet, the other has.
+     */
+    public function isDownloadable(): bool
+    {
+        return in_array($this->scan_status, ['CLEAN', 'SKIPPED'], true);
     }
 
     public function isImage(): bool

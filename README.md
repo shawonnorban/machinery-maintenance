@@ -233,8 +233,12 @@ The platform requires:
 | `openapi.yaml` | Machine-readable API contract, generated from route and request classes; the integration contract for ERP, IoT, and future mobile clients |
 | `09-Seed-Data-Catalog.md` | Garment-industry master data: asset taxonomy, failure codes, downtime reasons, checklist templates, demo tenant |
 | `10-Frontend-Specification.md` | Screen inventory, state management, design system, localization, offline behavior, performance budgets |
+| `11-Deployment.md` | Production runbook: the five processes, first and subsequent deploys, health checks, what to alert on, backups, load testing, scaling order |
 
-## Recommended Development Order
+## Development Order
+
+All thirty-five steps are built. Where a step's scope was larger than the MVP,
+what was delivered and what was deliberately left is recorded below the list.
 
 ```text
 1. Project Setup (Laravel + Vite + CoreUI Free)
@@ -273,6 +277,32 @@ The platform requires:
 34. Performance & Load Testing
 35. Production Deployment
 ```
+
+### What each of the last three actually covers
+
+**32 — Offline.** Draft persistence, a retry-safe queue keyed by an idempotency
+key generated when the draft is created, and a PWA shell. Full offline
+*synchronisation* is out of scope by SRS 38: a technician can report a
+breakdown with no signal, not browse the asset register.
+
+**33 — Security hardening.** Defensive headers on every response, a content
+security policy that admits inline scripts only by per-request nonce, TOTP
+two-step sign-in with single-use recovery codes, and device and token
+revocation. MFA is available to every user and enforced per account; a
+company-wide "require MFA" policy is not built.
+
+**34 — Load testing.** `load-tests/` holds two k6 scenarios that fail on the
+SRS 45 latency target and on any duplicated write. They need a staging instance
+seeded to the SRS 51 *target* column to mean anything; running them against a
+small database measures nothing. `tests/Feature/Performance` covers the
+complementary case in CI.
+
+**API surface.** Doc 03 specifies twenty-eight sections. What is built is the
+authentication and machine-credential layer plus the resources an integration
+actually calls — assets, meters and readings, breakdowns, work orders, spare
+parts and stock. Reports, dashboards, imports, exports, subscriptions and the
+remaining sections are served by the web application and have no API endpoints
+yet.
 
 ## Development Principles
 

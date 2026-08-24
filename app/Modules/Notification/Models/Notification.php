@@ -44,6 +44,10 @@ class Notification extends BaseModel
         'WARRANTY_EXPIRY',
         'AMC_EXPIRY',
         'WEBHOOK_DISABLED',
+        // Platform support access to this company's data (SRS 5.4). A customer
+        // is entitled to be told, in the product, that somebody outside their
+        // company looked at their data.
+        'SUPPORT_ACCESS',
     ];
 
     protected $table = 'notifications';

@@ -64,7 +64,12 @@ class LoginController extends Controller
 
         $request->session()->forget([self::PENDING_USER_KEY, self::PENDING_REMEMBER_KEY]);
 
-        return redirect()->intended(route('app.dashboard'));
+        // Platform staff have no company, so the tenant dashboard has nothing
+        // to show them and would refuse to resolve a tenant. Their home is the
+        // customer list (SRS 5).
+        return redirect()->intended($user->is_platform_admin
+            ? route('platform.tenants')
+            : route('app.dashboard'));
     }
 
     public function destroy(Request $request): RedirectResponse

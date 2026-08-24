@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Notification\Events;
 
 use App\Modules\Notification\Models\Notification;
+use App\Shared\Broadcasting\AdvisoryBroadcast;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -25,6 +26,7 @@ use Illuminate\Queue\SerializesModels;
  */
 class NotificationCreated implements ShouldBroadcast
 {
+    use AdvisoryBroadcast;
     use Dispatchable;
     use InteractsWithSockets;
     use SerializesModels;

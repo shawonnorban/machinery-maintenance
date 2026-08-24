@@ -19,9 +19,11 @@ use App\Modules\Tenancy\Models\Factory;
 use App\Modules\WorkOrder\Actions\CreateWorkOrder;
 use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
 use App\Modules\WorkOrder\Events\WorkOrderUpdated;
+use App\Shared\Broadcasting\AdvisoryBroadcast;
 use Carbon\CarbonImmutable;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\Support\InventoryFixture;
@@ -233,6 +235,55 @@ class BroadcastEventTest extends TestCase
                 $this->assertStringStartsWith('private-', $channel);
                 $this->assertMatchesRegularExpression('/^private-(company|factory|user)\.[0-9a-zA-Z]{26}$/', $channel);
             }
+        }
+    }
+
+    public function test_every_broadcast_is_queued_as_advisory(): void
+    {
+        $breakdown = app(ReportBreakdown::class)->handle([
+            'asset_id' => $this->asset->id,
+            'problem_description' => 'Stopped',
+        ], 'user-a');
+
+        $part = InventoryFixture::part($this->delta);
+
+        $events = [
+            new AssetStatusChanged($this->asset, 'RUNNING', 'IDLE'),
+            new BreakdownReported($breakdown),
+            new StockChanged($part, '10.0000', false),
+        ];
+
+        foreach ($events as $event) {
+            $name = $event::class;
+
+            // Its own queue, drained after the default one. A websocket server
+            // that is down or slow must never delay the notifications,
+            // webhooks and exports queued behind it — none of which have
+            // anything to do with it.
+            $this->assertSame('broadcasts', $event->broadcastQueue(), $name);
+
+            // One attempt. Every one of these announces something already
+            // recorded and durable; a retried live update arrives stale, after
+            // the screen has been refreshed, and contradicts what is on it.
+            $this->assertSame(1, $event->tries, $name);
+        }
+
+        // Every broadcast in the product, not merely the three built above:
+        // a new event that forgets the trait is a new way for a dead websocket
+        // server to block the queue, and nothing else would catch it.
+        foreach (glob(app_path('Modules/*/Events/*.php')) as $file) {
+            $class = 'App\\Modules\\'
+                .basename(dirname($file, 2)).'\\Events\\'.basename($file, '.php');
+
+            if (! is_subclass_of($class, ShouldBroadcast::class)) {
+                continue;
+            }
+
+            $this->assertContains(
+                AdvisoryBroadcast::class,
+                class_uses_recursive($class),
+                $class.' broadcasts without the advisory queue behaviour.',
+            );
         }
     }
 }

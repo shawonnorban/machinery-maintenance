@@ -11,4 +11,9 @@ return [
     'uploaded_by' => 'Uploaded by',
     'uploaded_at' => 'Uploaded',
     'download' => 'Open',
+
+    // Said in terms of what to do, not of what the scanner is. "Come back in a
+    // moment" is actionable; "scan status PENDING" is not.
+    'scan_pending' => 'This file is still being checked. Try again in a moment.',
+    'infected' => 'This file was rejected because a security check found a problem with it.',
 ];

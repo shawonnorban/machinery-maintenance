@@ -162,6 +162,12 @@ class FileAttachmentTest extends TestCase
             'mime_type' => 'image/jpeg',
             'size_bytes' => 10,
             'sha256' => str_repeat('c', 64),
+            // As a real orphan would be. Rows that predate the scan columns
+            // were marked SKIPPED by the migration, and one written today goes
+            // through the scanner; only a row conjured straight into the table
+            // is left at the PENDING default, which would be refused with a 409
+            // before the disk is ever consulted.
+            'scan_status' => 'SKIPPED',
         ]);
 
         $this->actingAs($this->manager)

@@ -54,6 +54,15 @@ class ResolveTenantContext
             $companyId = $this->defaultCompanyIdFor($user);
 
             if ($companyId === null) {
+                // Platform staff belong to no company by design (SRS 5), and
+                // the platform area needs no tenant. Passing through with no
+                // context is correct for them; anything under /app that needs
+                // a tenant will still refuse, because TenantContext throws
+                // rather than quietly returning an unscoped result.
+                if ($user->is_platform_admin) {
+                    return $next($request);
+                }
+
                 // Authenticated but with no active membership. This is not a
                 // 403 on a specific resource; the user has no tenant at all.
                 return $this->denyNoMembership($request);

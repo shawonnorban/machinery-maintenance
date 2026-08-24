@@ -32,6 +32,20 @@ class FileAttachmentController extends Controller
             default => 'work_order.work_order.view',
         });
 
+        // 409, not 404 (API 19.1 rule 3). The file exists and the caller may
+        // see it; it is simply not usable yet, and "come back in a moment" is a
+        // different answer from "no such file".
+        //
+        // `abort` rather than an ApiException, because this is a web route: the
+        // JSON envelope is only rendered for api/* and this would otherwise
+        // become a 500. The API's own file endpoints, when they exist, throw
+        // FILE_SCAN_PENDING instead — the code is already in the enum.
+        if (! $attachment->isDownloadable()) {
+            abort(409, $attachment->scan_status === 'INFECTED'
+                ? __('file.infected')
+                : __('file.scan_pending'));
+        }
+
         abort_unless(Storage::disk($attachment->disk)->exists($attachment->path), 404);
 
         return Storage::disk($attachment->disk)->response(

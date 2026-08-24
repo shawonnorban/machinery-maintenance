@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Asset\Events;
 
 use App\Modules\Asset\Models\Asset;
+use App\Shared\Broadcasting\AdvisoryBroadcast;
 use App\Shared\Realtime\BroadcastsToFactory;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -22,6 +23,7 @@ use Illuminate\Queue\SerializesModels;
  */
 class AssetStatusChanged implements ShouldBroadcast
 {
+    use AdvisoryBroadcast;
     use BroadcastsToFactory;
     use Dispatchable;
     use InteractsWithSockets;

@@ -16,9 +16,13 @@ use Illuminate\Support\Facades\Schedule;
  * Scheduled tasks (ADR-011).
  *
  * The scheduler being optional in development is a trap: without it nothing
- * looks broken, maintenance simply stops being generated. It runs in the
- * docker compose stack for that reason, and a missed heartbeat alerts in
- * production (ADR-061).
+ * looks broken, maintenance simply stops being generated. That is why a missed
+ * heartbeat is the first thing on the alerting list in doc 11 §8, ahead of
+ * anything that would actually show somebody an error page (ADR-061).
+ *
+ * It must run every minute rather than every five: escalation is evaluated on
+ * its tick, and a rule promising "tell the manager after thirty minutes"
+ * cannot be kept by a scheduler coarser than the promise.
  */
 Schedule::command(GenerateMaintenanceSchedules::class)
     ->hourly()

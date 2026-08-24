@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Breakdown\Events;
 
 use App\Modules\Breakdown\Models\Breakdown;
+use App\Shared\Broadcasting\AdvisoryBroadcast;
 use App\Shared\Realtime\BroadcastsToFactory;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -28,6 +29,7 @@ use Illuminate\Support\Str;
  */
 class BreakdownReported implements ShouldBroadcast
 {
+    use AdvisoryBroadcast;
     use BroadcastsToFactory;
     use Dispatchable;
     use InteractsWithSockets;

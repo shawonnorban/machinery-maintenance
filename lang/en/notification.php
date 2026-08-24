@@ -126,6 +126,13 @@ return [
             'title' => 'Webhook disabled: :url',
             'body' => 'It failed :count times in a row and has been switched off. Fix the receiver, then enable it again.',
         ],
+        // Named, timed and reasoned, because a vague "support accessed your
+        // data" is the kind of notice that worries people without telling them
+        // anything they can act on (SRS 5.4).
+        'SUPPORT_ACCESS' => [
+            'title' => 'Support access to your data',
+            'body' => ':name from support was given access to :company until :until. Reason given: :reason',
+        ],
         'AMC_EXPIRY' => [
             'title' => 'Contract ending: :number',
             'body' => ':vendor\'s contract ends on :end_date, in :days days.',

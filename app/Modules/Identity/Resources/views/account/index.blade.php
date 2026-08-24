@@ -9,6 +9,15 @@
 @section('content')
     <x-page-header :title="__('account.your_account')" :subtitle="$user->email" />
 
+    @if (session('mfa_required'))
+        {{-- Somebody asked for the dashboard and got their own account screen.
+             Saying why turns what looks like a bug into an instruction. --}}
+        <div class="alert alert-warning">
+            <div class="fw-semibold">{{ __('account.mfa_required_now') }}</div>
+            <div class="small">{{ __('account.mfa_required_why') }}</div>
+        </div>
+    @endif
+
     @if (session('recovery_codes'))
         {{-- The one and only time these are readable. Flashed, never stored
              anywhere they can be asked for again — they are hashed exactly

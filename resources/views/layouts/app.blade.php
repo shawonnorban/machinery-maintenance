@@ -26,6 +26,8 @@
         window.App = @json($appJs);
     </script>
 
+    <x-layout.support-banner />
+
     <x-layout.sidebar :menu="$menu" />
 
     <div class="wrapper d-flex flex-column min-vh-100">

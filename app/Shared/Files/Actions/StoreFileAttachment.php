@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Files\Actions;
 
 use App\Shared\Files\Models\FileAttachment;
+use App\Shared\Files\Services\FileScanner;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,10 @@ class StoreFileAttachment
 
     public const MAX_BYTES = 10 * 1024 * 1024;
 
-    public function __construct(private readonly TenantContext $context) {}
+    public function __construct(
+        private readonly TenantContext $context,
+        private readonly FileScanner $scanner,
+    ) {}
 
     public function handle(
         UploadedFile $file,
@@ -70,7 +74,7 @@ class StoreFileAttachment
             ]);
         }
 
-        return FileAttachment::create([
+        $attachment = FileAttachment::create([
             'attachable_type' => $attachableType,
             'attachable_id' => $attachableId,
             'disk' => 'local',
@@ -80,7 +84,29 @@ class StoreFileAttachment
             'size_bytes' => (int) Storage::disk('local')->size($path),
             'sha256' => hash_file('sha256', Storage::disk('local')->path($path)) ?: '',
             'uploaded_by' => $userId,
+            // Not downloadable until something has looked at it (API 19.1
+            // rule 3). With scanning off the scanner records SKIPPED below and
+            // it becomes usable immediately.
+            'scan_status' => 'PENDING',
         ]);
+
+        // Inline rather than queued. A technician who photographs a seized
+        // needle bar expects to see it on the work order a second later, and
+        // an upload that becomes visible only once a worker gets to it is one
+        // they will assume failed and do again. A local daemon answers in
+        // milliseconds; if it cannot, the file stays PENDING and the reason is
+        // in the log.
+        $status = $this->scanner->scan($attachment);
+
+        if ($status === 'INFECTED') {
+            $this->scanner->quarantine($attachment);
+
+            throw ValidationException::withMessages([
+                'file' => __('file.infected'),
+            ]);
+        }
+
+        return $attachment->fresh();
     }
 
     /**

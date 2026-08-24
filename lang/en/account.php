@@ -43,6 +43,11 @@ return [
     'mfa_not_started' => 'Start setting up two-step sign-in first.',
     'mfa_code_wrong' => 'That code is not right. Codes change every 30 seconds — try the current one.',
     'mfa_throttled' => 'Too many attempts. Try again in :seconds seconds.',
+    // Shown when somebody asked for another screen and was sent here instead.
+    // A redirect with no explanation reads as a bug.
+    'mfa_required_now' => 'Two-step sign-in is required for your account. Set it up below to carry on.',
+    'mfa_required_why' => 'Your company requires it, or your role does. Nothing else is available until it is on.',
+
     'mfa_challenge' => 'Two-step sign-in',
     'mfa_challenge_for' => 'Signing in as :email',
     'mfa_back_to_login' => 'Start again',
