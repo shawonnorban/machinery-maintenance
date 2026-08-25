@@ -307,6 +307,73 @@ class AssetTaxonomySeeder extends Seeder
             'GRUNDFOS' => ['Grundfos', 'DK'],
             'ALFA_LAVAL' => ['Alfa Laval', 'SE'],
 
+            // Sewing — the rest of the floor's supplier list. Jack alone is
+            // the largest producer by volume in the world, and a catalogue
+            // that omits it is a catalogue no Bangladeshi mill recognises.
+            'HIKARI' => ['Hikari', 'CN'],
+            'HIGHLEAD' => ['Highlead', 'CN'],
+            'SUNSTAR' => ['SunStar', 'KR'],
+            'KINGTEX' => ['Kingtex', 'TW'],
+            'VIBEMAC' => ['Vi.Be.Mac.', 'IT'],
+            'PFAFF' => ['Pfaff Industrial', 'DE'],
+            'SIPAMI' => ['Sipami', 'BR'],
+            'TREASURE' => ['Treasure', 'JP'],
+            'UNION_SPECIAL' => ['Union Special', 'US'],
+            'MAIER_UNITAS' => ['Maier-Unitas', 'DE'],
+            'HH_SEALING' => ['H&H', 'HK'],
+            'QUEEN_LIGHT' => ['Queen Light', 'JP'],
+            'ARDMEL' => ['Ardmel Automation', 'GB'],
+            'SONOTRONIC' => ['Sonotronic', 'DE'],
+
+            // Cutting room
+            'MORGAN_TECNICA' => ['Morgan Tecnica', 'IT'],
+            'BULLMER' => ['Bullmer', 'DE'],
+            'OSHIMA' => ['Oshima', 'TW'],
+            'EASTMAN' => ['Eastman', 'US'],
+            'KM_CUTTER' => ['KM', 'JP'],
+            'KURIS' => ['Kuris', 'DE'],
+            'YIN' => ['Yin', 'CN'],
+            'SERKON' => ['Serkon', 'TR'],
+            'KAWAKAMI' => ['Kawakami', 'JP'],
+            'DAYANG' => ['Dayang', 'CN'],
+            'HOOGS' => ['Hoogs', 'DE'],
+            'SUPRENA' => ['Suprena', 'JP'],
+            'ATOM' => ['Atom', 'IT'],
+            'MAIMIN' => ['Maimin', 'US'],
+            'RAMSONS' => ['Ramsons', 'IN'],
+            'USTER' => ['Uster', 'CH'],
+            'MEYER' => ['Meyer', 'DE'],
+            'KANNEGIESSER' => ['Kannegiesser', 'DE'],
+            'MARTIN_GROUP' => ['Martin Group', 'IT'],
+            'RICHPEACE' => ['Richpeace', 'CN'],
+            'SINAJET' => ['Sinajet', 'CN'],
+            'AVERY_DENNISON' => ['Avery Dennison', 'US'],
+            'SILVER_STAR' => ['Silver Star', 'KR'],
+
+            // Embroidery
+            'ZSK' => ['ZSK', 'DE'],
+            'SWF' => ['SWF', 'KR'],
+            'RICOMA' => ['Ricoma', 'US'],
+            'FEIYA' => ['Feiya', 'CN'],
+            'PROMAKER' => ['Promaker', 'CN'],
+            'MAYA_EMB' => ['Maya', 'CN'],
+
+            // Yarn preparation. Nothing in this list is bought by a knit
+            // composite that does not spin its own yarn — which is most of
+            // them — but a group that does is a different customer, not a
+            // different product.
+            'TRUTZSCHLER' => ['Trützschler', 'DE'],
+            'RIETER' => ['Rieter', 'CH'],
+            'LMW' => ['Lakshmi Machine Works', 'IN'],
+            'MARZOLI' => ['Marzoli', 'IT'],
+            'JINGWEI' => ['Jingwei', 'CN'],
+            'TOYOTA' => ['Toyota Industries', 'JP'],
+            'SAURER' => ['Saurer Schlafhorst', 'DE'],
+            'MURATA' => ['Murata Machinery', 'JP'],
+            'SAVIO' => ['Savio', 'IT'],
+            'XORELLA' => ['Xorella', 'CH'],
+            'WELKER' => ['Welker Spool', 'DE'],
+
             'OTHER' => ['Other', null],
         ];
     }

@@ -105,41 +105,6 @@ class DemoTenantSeeder extends Seeder
     ];
 
     /**
-     * Manufacturer, asset type, model name, code.
-     *
-     * Real machines from each section, because a demo asset list is the first
-     * thing a customer reads closely — and "Machine 1, Machine 2" tells them
-     * nothing about whether this product knows their industry.
-     *
-     * @var list<array{0: string, 1: string, 2: string, 3: string}>
-     */
-    private const MODELS = [
-        ['MAYER_CIE', 'KNITTING', 'Relanit 3.2 II', 'MC-RELANIT-32'],
-        ['MAYER_CIE', 'KNITTING', 'OVJA 2.4 EM', 'MC-OVJA-24'],
-        ['TERROT', 'KNITTING', 'I3P 176', 'TR-I3P-176'],
-        ['FUKUHARA', 'KNITTING', 'V-LEC4BW', 'FK-VLEC4BW'],
-        ['PAILUNG', 'KNITTING', 'LFC-A', 'PL-LFC-A'],
-
-        ['THIES', 'DYEING', 'iMaster H2O', 'TH-IMASTER-H2O'],
-        ['FONGS', 'DYEING', 'ALLFIT ECO-6', 'FG-ALLFIT-ECO6'],
-        ['SCLAVOS', 'DYEING', 'Venus Nova', 'SC-VENUS-NOVA'],
-        ['DILMENLER', 'DYEING', 'DL-HTHP-500', 'DM-HTHP-500'],
-
-        ['GERBER', 'CUTTING', 'Paragon HX', 'GB-PARAGON-HX'],
-        ['GERBER', 'CUTTING', 'XLc7000', 'GB-XLC7000'],
-        ['LECTRA', 'CUTTING', 'Vector iQ', 'LC-VECTOR-IQ'],
-        ['HASHIMA', 'CUTTING', 'HP-450MS', 'HS-HP450MS'],
-
-        ['JUKI', 'SEWING', 'DDL-9000C', 'JK-DDL9000C'],
-        ['JUKI', 'SEWING', 'DDL-8700', 'JK-DDL8700'],
-        ['JUKI', 'SEWING', 'MO-6714S', 'JK-MO6714S'],
-        ['BROTHER', 'SEWING', 'S-7300A', 'BR-S7300A'],
-        ['PEGASUS', 'SEWING', 'M700', 'PG-M700'],
-        ['SIRUBA', 'SEWING', 'F007K', 'SR-F007K'],
-        ['KANSAI', 'SEWING', 'DFB-1404P', 'KS-DFB1404P'],
-    ];
-
-    /**
      * The sections generated straight from the taxonomy: asset type code =>
      * department code, department name, asset code prefix, acquisition cost,
      * criticality, and the manufacturers to cycle through.
@@ -184,46 +149,51 @@ class DemoTenantSeeder extends Seeder
     ];
 
     /**
-     * The machines themselves: section, type, category, manufacturer, asset
-     * code prefix, acquisition cost, and the list of units.
+     * The named machines: section, asset type, category, asset code prefix,
+     * acquisition cost, and the units — each unit carrying its own maker and
+     * model, because a sewing floor runs four brands side by side.
+     *
+     * The model is matched by name against that maker in the platform
+     * catalogue (AssetModelSeeder) rather than by a code kept here, so the two
+     * lists cannot drift into disagreeing about what a DDL-9000C is called.
      *
      * Sewing is first and stays first. Work orders, breakdowns, costs and
      * coverage are all staged against the first six entries of the returned
      * list, and a breakdown written about a lockstitch landing on a dye vessel
      * would make the demo read as nonsense.
      *
-     * @var list<array{0: string, 1: string, 2: string, 3: string, 4: string, 5: string, 6: list<array{0: string, 1: string}>}>
+     * @var list<array{0: string, 1: string, 2: string, 3: string, 4: string, 5: list<array{0: string, 1: string, 2: string}>}>
      */
     private const MACHINES = [
-        ['SEW', 'SEWING', 'LOCKSTITCH', 'JUKI', 'SEW', '285000', [
-            ['Juki DDL-9000C', 'JK-DDL9000C'],
-            ['Juki DDL-8700', 'JK-DDL8700'],
-            ['Brother S-7300A', 'BR-S7300A'],
-            ['Juki MO-6714S', 'JK-MO6714S'],
-            ['Pegasus M700', 'PG-M700'],
-            ['Siruba F007K', 'SR-F007K'],
+        ['SEW', 'SEWING', 'LOCKSTITCH', 'SEW', '285000', [
+            ['Juki DDL-9000C', 'JUKI', 'DDL-9000C'],
+            ['Juki DDL-8700', 'JUKI', 'DDL-8700'],
+            ['Brother S-7300A', 'BROTHER', 'S-7300A'],
+            ['Juki MO-6714S', 'JUKI', 'MO-6714S'],
+            ['Pegasus M700', 'PEGASUS', 'M700'],
+            ['Siruba F007K', 'SIRUBA', 'F007K'],
         ]],
 
-        ['KNIT', 'KNITTING', 'CIRCULAR_SINGLE_JERSEY', 'MAYER_CIE', 'KNT', '4850000', [
-            ['Mayer & Cie Relanit 3.2 II — 30"', 'MC-RELANIT-32'],
-            ['Mayer & Cie Relanit 3.2 II — 34"', 'MC-RELANIT-32'],
-            ['Terrot I3P 176 — 32"', 'TR-I3P-176'],
-            ['Fukuhara V-LEC4BW — 30"', 'FK-VLEC4BW'],
-            ['Pai Lung LFC-A — 34"', 'PL-LFC-A'],
+        ['KNIT', 'KNITTING', 'CIRCULAR_SINGLE_JERSEY', 'KNT', '4850000', [
+            ['Mayer & Cie Relanit 3.2 II — 30"', 'MAYER_CIE', 'Relanit 3.2 II'],
+            ['Mayer & Cie Relanit 3.2 II — 34"', 'MAYER_CIE', 'Relanit 3.2 II'],
+            ['Terrot I3P 176 — 32"', 'TERROT', 'I3P 176'],
+            ['Fukuhara V-LEC4BW — 30"', 'FUKUHARA', 'V-LEC4BW'],
+            ['Pai Lung LFC-A — 34"', 'PAILUNG', 'LFC-A'],
         ]],
 
-        ['DYE', 'DYEING', 'SOFT_FLOW_DYEING', 'THIES', 'DYE', '18500000', [
-            ['Thies iMaster H2O — 300 kg', 'TH-IMASTER-H2O'],
-            ['Thies iMaster H2O — 600 kg', 'TH-IMASTER-H2O'],
-            ['Fong\'s ALLFIT ECO-6 — 450 kg', 'FG-ALLFIT-ECO6'],
-            ['Sclavos Venus Nova — 250 kg', 'SC-VENUS-NOVA'],
+        ['DYE', 'DYEING', 'SOFT_FLOW_DYEING', 'DYE', '18500000', [
+            ['Thies iMaster H2O — 300 kg', 'THIES', 'iMaster H2O'],
+            ['Thies iMaster H2O — 600 kg', 'THIES', 'iMaster H2O'],
+            ['Fong\'s ALLFIT ECO-6 — 450 kg', 'FONGS', 'ALLFIT ECO-6'],
+            ['Sclavos Venus Nova — 250 kg', 'SCLAVOS', 'Venus Nova'],
         ]],
 
-        ['CUT', 'CUTTING', 'AUTO_CUTTER', 'GERBER', 'CUT', '9200000', [
-            ['Gerber Paragon HX', 'GB-PARAGON-HX'],
-            ['Gerber XLc7000', 'GB-XLC7000'],
-            ['Lectra Vector iQ', 'LC-VECTOR-IQ'],
-            ['Hashima HP-450MS fusing', 'HS-HP450MS'],
+        ['CUT', 'CUTTING', 'AUTO_CUTTER', 'CUT', '9200000', [
+            ['Gerber Paragon HX', 'GERBER', 'Paragon HX'],
+            ['Gerber XLc7000', 'GERBER', 'XLc7000'],
+            ['Lectra Vector iQ', 'LECTRA', 'Vector iQ'],
+            ['Hashima HP-450MS fusing', 'HASHIMA', 'HP-450MS'],
         ]],
     ];
 
@@ -295,9 +265,6 @@ class DemoTenantSeeder extends Seeder
         // judged against real data rather than against empty tables.
         $this->approvalWorkflow($delta);
         $this->escalationRules($delta);
-
-        // Platform-level, and before the machines that reference them.
-        $this->assetModels();
 
         $assets = $this->assets($delta, $dhaka);
         $this->maintenancePlans($delta, $dhaka, $assets, $maintenanceManager);
@@ -411,50 +378,6 @@ class DemoTenantSeeder extends Seeder
         }
 
         unset($main);
-    }
-
-    /**
-     * The machine models this mill actually owns.
-     *
-     * Nothing seeds asset_models — the platform taxonomy stops at manufacturer
-     * — so a demo without these leaves the model field empty on every machine
-     * and the "which model is this" question unanswerable on screen.
-     *
-     * Platform-level (a null company_id) like the rest of the taxonomy: a Juki
-     * DDL-9000C is the same machine in every mill that owns one.
-     */
-    private function assetModels(): void
-    {
-        foreach (self::MODELS as [$manufacturerCode, $typeCode, $model, $code]) {
-            $manufacturer = Manufacturer::whereNull('company_id')
-                ->where('code', $manufacturerCode)
-                ->first();
-
-            $type = AssetType::whereNull('company_id')->where('code', $typeCode)->first();
-
-            if ($manufacturer === null || $type === null) {
-                // Said out loud rather than skipped. A code that no longer
-                // exists in the platform taxonomy would otherwise produce a
-                // demo with quietly fewer models than the list says, and
-                // nobody would find out until a screen looked thin.
-                $this->command?->warn(
-                    "Demo: skipped model {$model} — unknown ".
-                    ($manufacturer === null ? "manufacturer {$manufacturerCode}" : "asset type {$typeCode}"),
-                );
-
-                continue;
-            }
-
-            AssetModel::updateOrCreate(
-                ['company_id' => null, 'code' => $code],
-                [
-                    'manufacturer_id' => $manufacturer->id,
-                    'asset_type_id' => $type->id,
-                    'model' => $model,
-                    'active' => true,
-                ],
-            );
-        }
     }
 
     /**
@@ -624,7 +547,7 @@ class DemoTenantSeeder extends Seeder
         $status = app(ChangeAssetStatus::class);
         $assets = [];
 
-        foreach (self::MACHINES as [$section, $typeCode, $categoryCode, $manufacturerCode, $prefix, $cost, $items]) {
+        foreach (self::MACHINES as [$section, $typeCode, $categoryCode, $prefix, $cost, $items]) {
             $type = AssetType::whereNull('company_id')->where('code', $typeCode)->first();
             $category = AssetCategory::whereNull('company_id')->where('code', $categoryCode)->first();
 
@@ -634,13 +557,9 @@ class DemoTenantSeeder extends Seeder
                 continue;
             }
 
-            $manufacturer = Manufacturer::whereNull('company_id')
-                ->where('code', $manufacturerCode)
-                ->first();
-
             $location = $this->assetLocation($company, $factory, $section);
 
-            foreach ($items as $index => [$name, $modelCode]) {
+            foreach ($items as $index => [$name, $makerCode, $modelName]) {
                 $code = sprintf('%s-%s-%05d', $prefix, $factory->code, 401 + $index);
 
                 if (Asset::where('asset_code', $code)->exists()) {
@@ -649,12 +568,23 @@ class DemoTenantSeeder extends Seeder
                     continue;
                 }
 
+                // Per machine, not per section: the sewing floor runs Juki,
+                // Brother, Pegasus and Siruba side by side, and stamping them
+                // all with one maker would be wrong on four of six.
+                $manufacturer = Manufacturer::whereNull('company_id')
+                    ->where('code', $makerCode)
+                    ->first();
+
                 $asset = $create->handle([
                     'asset_type_id' => $type->id,
                     'asset_category_id' => $category->id,
                     'manufacturer_id' => $manufacturer?->id,
-                    'asset_model_id' => AssetModel::whereNull('company_id')
-                        ->where('code', $modelCode)
+                    // Matched by model name against that maker, so the demo
+                    // reads the platform catalogue rather than keeping its own
+                    // copy of the codes.
+                    'asset_model_id' => $manufacturer === null ? null : AssetModel::whereNull('company_id')
+                        ->where('manufacturer_id', $manufacturer->id)
+                        ->where('model', $modelName)
                         ->value('id'),
                     'asset_code' => $code,
                     'name' => $name,

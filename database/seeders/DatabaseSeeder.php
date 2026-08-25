@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Modules\Asset\Database\Seeders\AssetModelSeeder;
 use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
 use App\Modules\Breakdown\Database\Seeders\FailureTaxonomySeeder;
 use App\Modules\Costing\Database\Seeders\CostCategorySeeder;
@@ -32,6 +33,9 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             SettingDefinitionSeeder::class,
             AssetTaxonomySeeder::class,
+            // After the taxonomy: every model hangs off a manufacturer and an
+            // asset type that has to exist first.
+            AssetModelSeeder::class,
             MaintenanceTypeSeeder::class,
             ChecklistTemplateSeeder::class,
             FailureTaxonomySeeder::class,
