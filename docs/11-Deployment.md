@@ -31,7 +31,9 @@ three; it simply asks more of MySQL.
 
 ## 2. Requirements
 
-- PHP 8.4+ with `bcmath`, `pdo_mysql`, `mbstring`, `openssl`, `zip`, `intl`
+- PHP 8.3+ with `bcmath`, `pdo_mysql`, `mbstring`, `openssl`, `zip`, `intl`
+  - 8.3 is the floor `composer.json` actually enforces (`php: ^8.3`), which
+    matters because shared hosting rarely offers newer.
   - `bcmath` is not optional. Money is DECIMAL(18,4) and every arithmetic
     operation on it goes through bcmath (ADR-063). Without the extension the
     application will not boot.
@@ -65,16 +67,20 @@ the platform seeder or by an existing platform administrator.
 
 ---
 
-## 4. `APP_KEY` is not rotatable on a whim
+## 4. `APP_KEY`
 
-`mfa_secret` is encrypted with it (SRS 50.3). Rotating `APP_KEY` without
-re-encrypting makes every enrolled second factor undecryptable, which locks out
-exactly the accounts that were most careful. Keep it in a secret manager, back
-it up separately from the database, and if it must be rotated, re-encrypt first
-and expect to re-enrol anybody whose secret cannot be recovered.
+Nothing in the schema is encrypted at rest any more. Passwords, API client
+secrets and API tokens are *hashed*, and a hash survives a key change — so
+rotating `APP_KEY` no longer destroys anything stored.
 
-Nothing else in the schema is encrypted at rest; passwords, client secrets,
-API tokens and recovery codes are hashed, and hashes survive a key change.
+It still signs sessions and signed URLs, so rotating it logs everybody out and
+invalidates every outstanding file-download link. Keep it in a secret manager
+and back it up separately from the database; treat rotation as a deliberate,
+announced act rather than routine hygiene.
+
+> This section used to say `mfa_secret` was encrypted with it, and that
+> rotating the key would lock out every enrolled account. Two-step sign-in was
+> removed and the column with it, so that warning no longer applies.
 
 ---
 
@@ -355,3 +361,179 @@ In order of how often it is the answer:
 2. DNS has not propagated. **Check now** says "not visible yet" rather than
    "wrong" for exactly this reason. Wait, then press it again.
 3. The CNAME is there and the certificate is not — see (3) above.
+
+---
+
+## 13. Shared hosting (cPanel), and what it cannot run
+
+Everything above assumes a machine you control: a process supervisor, a
+reverse proxy, a Redis you can start. Shared hosting gives you none of those,
+and the product runs there anyway — but three things change, and one of them
+is a feature that stops working. Read this before promising a customer
+anything real-time.
+
+### What still works
+
+The whole application. Sign-in, machines, work orders, breakdowns, stock,
+approvals, reports, the platform area, invoicing, file uploads. PHP 8.3 is
+enough (`composer.json` requires `^8.3`), and MySQL 8 is the only service the
+request path actually needs.
+
+### 13.1 Where the code goes
+
+A subdomain on cPanel points at a folder. Laravel's document root has to be
+`public/`, never the project root — anything else serves `.env` to whoever
+asks for it.
+
+Two ways, in order of preference:
+
+1. **Point the subdomain's document root at `public/`.** In cPanel →
+   Domains → the subdomain, set Document Root to
+   `machinery.example.xyz/public` where the project sits in
+   `~/machinery.example.xyz`. Nothing else to change.
+2. If the host refuses to point a subdomain anywhere but its own folder, put
+   the *contents* of `public/` in that folder and the rest of the project one
+   level above it, then edit the two `require` paths in `index.php`. This
+   works and is worse: every deployment has to keep two directories in step.
+
+Verify it before anything else:
+
+```
+curl -I https://machinery.example.xyz/.env      # must be 403 or 404, never 200
+```
+
+### 13.2 First deployment
+
+```bash
+cd ~/machinery.example.xyz
+
+git clone <repo> .
+composer install --no-dev --optimize-autoloader
+
+cp .env.example .env
+php artisan key:generate
+# Edit .env — see 13.4 below. APP_DEBUG=false, or a stack trace with your
+# database credentials in it is one error page away from the public.
+
+php artisan migrate --force
+php artisan db:seed --force        # not optional: roles, permissions, settings
+php artisan storage:link
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+php artisan platform:admin you@example.com --name="Your Name"
+```
+
+If the host has no SSH, `composer install` has to be done locally and the
+`vendor/` directory uploaded with the rest. Build the front end locally too —
+`npm run build` — and upload `public/build`. Neither Node nor Composer needs
+to exist on the server.
+
+### 13.3 The cron entries
+
+cPanel → Cron Jobs. Two entries, both every minute:
+
+```
+* * * * * cd ~/machinery.example.xyz && php artisan schedule:run >/dev/null 2>&1
+* * * * * cd ~/machinery.example.xyz && php artisan queue:work --stop-when-empty --max-time=55 >/dev/null 2>&1
+```
+
+The first runs the eight scheduled commands — maintenance schedules, KPI
+snapshots, escalations, subscription billing, webhook retries. Without it the
+product looks fine and quietly stops doing anything on a timer.
+
+The second is the queue, and it is a substitute rather than the real thing.
+A supervised `queue:work` picks a job up the moment it is queued; this picks
+it up within a minute. That is invisible for an email or an export and
+noticeable for a notification, and it is the best shared hosting allows.
+`--max-time=55` makes the process exit before the next minute's copy starts,
+so two never overlap.
+
+### 13.4 What has to change in `.env`
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://machinery.example.xyz
+
+# Derived from APP_URL, so this normally needs no entry at all. The tenant
+# middleware compares the request's host against it (see section 12).
+# TENANCY_PLATFORM_HOST=machinery.example.xyz
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_DATABASE=cpaneluser_machinery
+DB_USERNAME=cpaneluser_machinery
+DB_PASSWORD=…
+
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+
+# The one that matters. See 13.5.
+BROADCAST_CONNECTION=log
+
+# No ClamAV on shared hosting. Left off, uploads are recorded SKIPPED and stay
+# usable, and the row says plainly it was never checked. Turned on with no
+# scanner installed, every upload stays PENDING and refuses to download.
+VIRUS_SCAN_ENABLED=false
+```
+
+`SESSION_DRIVER`, `CACHE_STORE` and `QUEUE_CONNECTION` all use the database
+because there is no Redis. That is fine at this size and is the first thing to
+move when it stops being fine.
+
+### 13.5 Real-time does not work, and the screen says so
+
+`BROADCAST_CONNECTION=reverb` needs `php artisan reverb:start` running
+permanently on a port. Shared hosting cannot do that — there is no supervisor
+and usually no open port.
+
+Set `BROADCAST_CONNECTION=log` and know what you have given up:
+
+- The connection indicator in the header stays on **Reconnecting**. That is
+  the truth, and it is deliberately not rendered as "live" until a socket
+  actually connects (Frontend 8 rule 3).
+- Notification badges, breakdown lists and work-order boards update on page
+  load rather than by themselves.
+
+Nothing is lost and nothing is wrong; a technician has to refresh. If
+real-time matters — and on a breakdown screen it eventually will — that is the
+reason to move to a VPS, not a reason to fake it here.
+
+### 13.6 Every deployment after the first
+
+```bash
+cd ~/machinery.example.xyz
+php artisan down
+
+git pull
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+php artisan db:seed --force        # still not optional — see section 6
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+php artisan up
+```
+
+`db:seed --force` is on this list for the reason section 6 explains: a new
+setting definition that has not been seeded takes down every page with
+`Unknown setting key`, and it has done exactly that once already.
+
+### 13.7 Limits worth knowing before they surprise you
+
+- **`max_execution_time`** is often 30 seconds. A large import or export will
+  hit it. Both run on the queue, where the cron's `--max-time=55` is the real
+  ceiling, so keep imports modest.
+- **Inode limits.** `storage/logs` and `storage/framework/views` grow. The
+  scheduled `PruneReportFiles` handles report files; log rotation is on you.
+- **No `pcntl`.** `queue:work` cannot handle signals gracefully, which is why
+  `--stop-when-empty` is used instead of a daemon.
+- **Wildcard subdomains for customers** (section 12) generally are not
+  available on shared hosting. Every customer uses the one address until you
+  move.
