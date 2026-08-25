@@ -48,6 +48,33 @@ class Notification extends BaseModel
         // is entitled to be told, in the product, that somebody outside their
         // company looked at their data.
         'SUPPORT_ACCESS',
+
+        // A support ticket, told to the customer's own keyholders.
+        'TICKET_REPLIED',
+        'TICKET_RESOLVED',
+
+        // Addressed to platform staff rather than to anybody inside a tenant,
+        // and so carrying a null company_id. The customer has their own
+        // SUPPORT_ACCESS notice above; this is the other half of the same
+        // accountability, told to the people who can act on it.
+        'PLATFORM_SUPPORT_OPENED',
+        'PLATFORM_SUPPORT_CLOSED',
+        'PLATFORM_TENANT_SUSPENDED',
+        'PLATFORM_TENANT_CLOSED',
+        'PLATFORM_TENANT_ERASED',
+        'PLATFORM_TICKET_OPENED',
+        'PLATFORM_TICKET_REPLIED',
+    ];
+
+    /** Those of the above that are addressed to the platform, not to a tenant. */
+    public const PLATFORM_EVENT_TYPES = [
+        'PLATFORM_SUPPORT_OPENED',
+        'PLATFORM_SUPPORT_CLOSED',
+        'PLATFORM_TENANT_SUSPENDED',
+        'PLATFORM_TENANT_CLOSED',
+        'PLATFORM_TENANT_ERASED',
+        'PLATFORM_TICKET_OPENED',
+        'PLATFORM_TICKET_REPLIED',
     ];
 
     protected $table = 'notifications';

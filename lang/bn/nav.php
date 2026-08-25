@@ -49,4 +49,5 @@ return [
     'roles' => 'ভূমিকা',
     'audit_log' => 'অডিট লগ',
     'billing' => 'বিলিং',
+    'support' => 'সাপোর্ট',
 ];

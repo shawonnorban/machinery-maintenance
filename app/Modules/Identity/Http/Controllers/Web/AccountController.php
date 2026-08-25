@@ -6,11 +6,7 @@ namespace App\Modules\Identity\Http\Controllers\Web;
 
 use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Api\Models\ApiToken;
-use App\Modules\Asset\Services\QrCodeRenderer;
 use App\Modules\Audit\Services\AuditRecorder;
-use App\Modules\Identity\Actions\ManageMfa;
-use App\Modules\Identity\Models\MfaRecoveryCode;
-use App\Modules\Identity\Services\Totp;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Scopes\TenantScope;
 use Illuminate\Http\RedirectResponse;
@@ -22,11 +18,10 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 /**
- * The one screen a person owns rather than administers (SRS 50.2, 50.3).
+ * The one screen a person owns rather than administers (SRS 50.2).
  *
- * Password, second factor, and the list of devices currently signed in. Three
- * things that belong together because they answer one question: is this
- * account still only mine?
+ * Password and the list of devices currently signed in. The two belong
+ * together because they answer one question: is this account still only mine?
  *
  * No permission guards any of it. Every one of these acts on the account of
  * whoever is asking, and a technician who cannot reach a single other screen
@@ -36,29 +31,12 @@ class AccountController extends Controller
 {
     public function __construct(private readonly AuditRecorder $audit) {}
 
-    public function index(Request $request, QrCodeRenderer $qr): View
+    public function index(Request $request): View
     {
         $user = $request->user();
 
-        $enrolling = $user->mfa_secret !== null && ! $user->hasMfa();
-
         return view('identity::account.index', [
             'user' => $user,
-            'mfaOn' => $user->hasMfa(),
-            'enrolling' => $enrolling,
-            // Only while enrolling. Once confirmed there is no way back to the
-            // secret, which is the point of it being a secret.
-            'enrolmentQr' => $enrolling
-                ? $qr->inlineSvg(
-                    app(Totp::class)
-                        ->provisioningUri($user->mfa_secret, $user->email, config('app.name')),
-                    200,
-                )
-                : null,
-            'enrolmentSecret' => $enrolling ? $user->mfa_secret : null,
-            'recoveryRemaining' => MfaRecoveryCode::where('user_id', $user->id)
-                ->whereNull('used_at')
-                ->count(),
             'sessions' => $this->sessions($request),
             'tokens' => ApiToken::withoutGlobalScope(TenantScope::class)
                 ->where('user_id', $user->id)
@@ -68,7 +46,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function changePassword(Request $request, ManageMfa $mfa, IssueApiToken $tokens): RedirectResponse
+    public function changePassword(Request $request, IssueApiToken $tokens): RedirectResponse
     {
         $user = $request->user();
 
@@ -91,9 +69,15 @@ class AccountController extends Controller
         $user->forceFill(['password' => $data['password']])->save();
 
         // A password changed because it may have leaked is a password whose
-        // sessions and tokens may have leaked with it. This session is kept so
-        // the person is not thrown out of the screen they are standing on.
-        $mfa->revokeEverythingFor($user, $tokens, $request->session()->getId());
+        // sessions and tokens may have leaked with it; leaving those alive
+        // makes the change ceremonial. This session is kept so the person is
+        // not thrown out of the screen they are standing on (SRS 50.2).
+        $tokens->revokeAllFor($user);
+
+        DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->where('id', '!=', $request->session()->getId())
+            ->delete();
 
         $this->audit->event(
             'SECURITY_EVENT',
@@ -103,61 +87,6 @@ class AccountController extends Controller
         );
 
         return back()->with('status', __('account.password_changed'));
-    }
-
-    // -- Second factor ------------------------------------------------------
-
-    public function beginMfa(Request $request, ManageMfa $mfa): RedirectResponse
-    {
-        $mfa->begin($request->user(), config('app.name'));
-
-        return back();
-    }
-
-    public function confirmMfa(Request $request, ManageMfa $mfa): RedirectResponse
-    {
-        $data = $request->validate(['code' => ['required', 'string', 'max:16']]);
-
-        $codes = $mfa->confirm($request->user(), $data['code']);
-
-        // Flashed, never stored anywhere readable. Shown on the next render
-        // and gone after it.
-        return back()
-            ->with('status', __('account.mfa_enabled'))
-            ->with('recovery_codes', $codes);
-    }
-
-    public function cancelMfa(Request $request): RedirectResponse
-    {
-        $user = $request->user();
-
-        if (! $user->hasMfa()) {
-            $user->forceFill(['mfa_secret' => null])->save();
-        }
-
-        return back();
-    }
-
-    public function disableMfa(Request $request, ManageMfa $mfa): RedirectResponse
-    {
-        $data = $request->validate(['code' => ['required', 'string', 'max:32']]);
-
-        $mfa->disable($request->user(), $data['code']);
-
-        return back()->with('status', __('account.mfa_disabled'));
-    }
-
-    public function regenerateRecoveryCodes(Request $request, ManageMfa $mfa): RedirectResponse
-    {
-        $data = $request->validate(['code' => ['required', 'string', 'max:32']]);
-
-        if (! $mfa->verifyChallenge($request->user(), $data['code'])) {
-            throw ValidationException::withMessages(['code' => __('account.mfa_code_wrong')]);
-        }
-
-        return back()
-            ->with('status', __('account.recovery_codes_regenerated'))
-            ->with('recovery_codes', $mfa->regenerateRecoveryCodes($request->user()));
     }
 
     // -- Devices ------------------------------------------------------------

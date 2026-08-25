@@ -133,6 +133,14 @@ return [
             'title' => 'Support access to your data',
             'body' => ':name from support was given access to :company until :until. Reason given: :reason',
         ],
+        'TICKET_REPLIED' => [
+            'title' => 'Reply on your ticket: :subject',
+            'body' => ':name from support has replied.',
+        ],
+        'TICKET_RESOLVED' => [
+            'title' => 'Ticket marked resolved: :subject',
+            'body' => 'If this did not fix it, reply and it reopens automatically.',
+        ],
         'AMC_EXPIRY' => [
             'title' => 'Contract ending: :number',
             'body' => ':vendor\'s contract ends on :end_date, in :days days.',

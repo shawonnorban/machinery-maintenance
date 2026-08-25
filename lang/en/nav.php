@@ -49,4 +49,5 @@ return [
     'roles' => 'Roles',
     'audit_log' => 'Audit Log',
     'billing' => 'Billing',
+    'support' => 'Support',
 ];

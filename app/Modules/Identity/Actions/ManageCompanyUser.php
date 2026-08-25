@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Actions;
 
+use App\Modules\Billing\Services\EntitlementGuard;
 use App\Modules\Identity\Models\CompanyUser;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
@@ -36,6 +37,7 @@ class ManageCompanyUser
     public function __construct(
         private readonly TenantContext $context,
         private readonly PermissionResolver $permissions,
+        private readonly EntitlementGuard $entitlements,
     ) {}
 
     /**
@@ -48,6 +50,12 @@ class ManageCompanyUser
     public function invite(array $data, array $roleIds, ?string $factoryId): array
     {
         $companyId = $this->context->companyId();
+
+        // Only on invite. Reactivating somebody who is already on the books is
+        // handled by setMembershipStatus, and blocking that would leave a
+        // customer at their limit unable to bring back a person they had just
+        // suspended by mistake.
+        $this->entitlements->assertCanAdd('ACTIVE_USERS');
 
         return DB::transaction(function () use ($data, $roleIds, $factoryId, $companyId): array {
             $existing = User::where('email', $data['email'])->first();

@@ -146,6 +146,14 @@ class SidebarMenu
                 'route' => 'app.billing',
                 'permission' => 'billing.subscription.manage',
             ],
+            [
+                'label' => 'nav.support',
+                'icon' => 'envelope-letter',
+                'route' => 'app.support.tickets.index',
+                // No gate: raising a problem with the provider is not an
+                // administrative act the way managing users or billing is.
+                'permission' => null,
+            ],
         ];
 
         return $this->filter($tree);

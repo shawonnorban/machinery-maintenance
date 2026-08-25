@@ -6,7 +6,6 @@ namespace App\Modules\Identity\Http\Controllers\Web;
 
 use App\Modules\Identity\Actions\AttemptLogin;
 use App\Modules\Identity\Http\Requests\LoginRequest;
-use App\Modules\Identity\Models\User;
 use App\Shared\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,11 +17,6 @@ use Illuminate\View\View;
  */
 class LoginController extends Controller
 {
-    /** Where the half-finished login waits while a code is entered. */
-    public const PENDING_USER_KEY = 'mfa.pending_user_id';
-
-    public const PENDING_REMEMBER_KEY = 'mfa.pending_remember';
-
     public function show(): View
     {
         return view('identity::auth.login');
@@ -36,33 +30,15 @@ class LoginController extends Controller
             $request->ip() ?? '0.0.0.0',
         );
 
-        if ($user->hasMfa()) {
-            // Nothing is logged in yet. Only the identity of who is halfway
-            // through is remembered, so a challenge screen somebody navigates
-            // away from leaves them signed out rather than signed in
-            // (SRS 50.3).
-            $request->session()->put(self::PENDING_USER_KEY, $user->id);
-            $request->session()->put(self::PENDING_REMEMBER_KEY, $request->boolean('remember'));
+        Auth::login($user, $request->boolean('remember'));
 
-            return redirect()->route('mfa.challenge');
-        }
-
-        return $this->completeLogin($request, $user, $request->boolean('remember'));
-    }
-
-    /**
-     * Start the session, once there is nothing left to prove.
-     */
-    public function completeLogin(Request $request, User $user, bool $remember): RedirectResponse
-    {
-        Auth::login($user, $remember);
-
+        // Recorded here rather than inside the credential check: accepting a
+        // password and arriving are not the same event, and this column is
+        // asked "when was this account last used".
         $user->forceFill(['last_login_at' => now()])->saveQuietly();
 
         // Prevents session fixation: the pre-login session id is discarded.
         $request->session()->regenerate();
-
-        $request->session()->forget([self::PENDING_USER_KEY, self::PENDING_REMEMBER_KEY]);
 
         // Platform staff have no company, so the tenant dashboard has nothing
         // to show them and would refuse to resolve a tenant. Their home is the

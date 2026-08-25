@@ -1,4 +1,4 @@
-{{-- Guest layout: login, MFA, password reset (Frontend 5.1). --}}
+{{-- Guest layout: login and password reset (Frontend 5.1). --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-coreui-theme="light">
 <head>

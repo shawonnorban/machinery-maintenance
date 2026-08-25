@@ -1294,7 +1294,6 @@ During secret rotation both the current and previous secret are accepted for 24 
 - `SUBSCRIPTION_READ_ONLY`
 - `SUBSCRIPTION_EXPIRED`
 - `PLAN_LIMIT_EXCEEDED`
-- `MFA_REQUIRED`
 - `ACCOUNT_LOCKED`
 - `PASSWORD_POLICY_VIOLATION`
 - `RESERVATION_EXPIRED`

@@ -709,7 +709,6 @@ A decreasing value returns `422 METER_VALUE_DECREASED` with the current value in
 |---|---|---|
 | `VALIDATION_ERROR` | 422 | Field validation |
 | `UNAUTHENTICATED` | 401 | Missing or expired token |
-| `MFA_REQUIRED` | 401 | MFA not yet satisfied |
 | `ACCOUNT_LOCKED` | 403 | Brute force lockout |
 | `FORBIDDEN` | 403 | Permission or policy denial |
 | `TENANT_ACCESS_DENIED` | 403 | `X-Company-Id` names a non-membership |

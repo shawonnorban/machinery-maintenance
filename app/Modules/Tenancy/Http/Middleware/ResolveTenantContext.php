@@ -7,6 +7,9 @@ namespace App\Modules\Tenancy\Http\Middleware;
 use App\Modules\Audit\Services\AuditRecorder;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Services\PermissionResolver;
+use App\Modules\Tenancy\Models\Company;
+use App\Modules\Tenancy\Models\CompanyDomain;
+use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
@@ -40,7 +43,13 @@ class ResolveTenantContext
             return $next($request);
         }
 
-        $requested = $this->requestedCompanyId($request);
+        // The host wins over the session, and that ordering is the point. A
+        // person who works for two companies in a group and opens the second
+        // one's address should land in the second one — not in whichever they
+        // had open in another tab an hour ago.
+        $hostCompanyId = $this->companyIdForHost($request->getHost());
+
+        $requested = $hostCompanyId ?? $this->requestedCompanyId($request);
 
         if ($requested !== null) {
             // Membership check before anything else. An id naming a company
@@ -69,6 +78,29 @@ class ResolveTenantContext
             }
         }
 
+        // Suspension is checked here rather than at sign-in, because signing in
+        // is not the only way to arrive: a live session, a company switch and a
+        // bookmarked URL all pass through this middleware and none of them
+        // through the login screen. Deleting sessions when a company is
+        // suspended stops the people already inside; this is what stops them
+        // coming back.
+        // withTrashed, deliberately. Company is soft-deleted, so a closed
+        // customer resolves to null here — and a null company skipped the check
+        // below and let their people in with a context pointing at a company
+        // that no longer exists. A membership naming a company we cannot find
+        // is not a reason to admit somebody either.
+        $company = Company::withTrashed()->find($companyId);
+
+        if (! $this->isAlwaysAllowed($request)) {
+            if ($company === null || $company->trashed()) {
+                return $this->denyClosed($request, $company);
+            }
+
+            if ($company->isSuspended()) {
+                return $this->denySuspended($request, $company);
+            }
+        }
+
         $this->context->set(
             $companyId,
             $this->permissions->accessibleFactoryIds($user, $companyId),
@@ -83,6 +115,30 @@ class ResolveTenantContext
         }
 
         return $next($request);
+    }
+
+    /**
+     * The customer whose address this request arrived on, if any.
+     *
+     * Verified rows only. An unverified row is a claim — somebody has typed
+     * maintenance.another-company.com into a form — and honouring a claim
+     * would hand them another company's sign-in page.
+     *
+     * The platform's own host is skipped without a query, because that is the
+     * common case and it resolves from membership as it always has.
+     */
+    private function companyIdForHost(string $host): ?string
+    {
+        $host = CompanyDomain::normaliseHost($host);
+
+        if ($host === '' || $host === CompanyDomain::normaliseHost((string) config('tenancy.platform_host'))) {
+            return null;
+        }
+
+        return CompanyDomain::withoutGlobalScope(TenantScope::class)
+            ->where('host', $host)
+            ->whereNotNull('verified_at')
+            ->value('company_id');
     }
 
     /**
@@ -147,6 +203,77 @@ class ResolveTenantContext
         }
 
         abort(403, __('auth.tenant_access_denied'));
+    }
+
+    /**
+     * The few things that stay open while a company is suspended.
+     *
+     * Signing out, changing language, and switching to another company the
+     * person belongs to. Locking somebody into a dead-end page they cannot
+     * leave is a second problem on top of the first, and a person who works
+     * for two companies in a group should not lose both because one was
+     * stopped.
+     */
+    private function isAlwaysAllowed(Request $request): bool
+    {
+        return $request->is('logout', 'app/locale', 'app/switch-company');
+    }
+
+    /**
+     * The company is stopped, and the customer is told why.
+     *
+     * A screen rather than a bare 403, and the reason is on it. Somebody whose
+     * whole company has just stopped working will otherwise ring support to ask
+     * a question the platform already knows the answer to — and a refusal with
+     * no explanation reads as a fault in the product rather than a decision
+     * somebody made.
+     *
+     * Signing out stays available, and so does the account screen: locking a
+     * person into a dead-end page they cannot leave is a second problem on top
+     * of the first.
+     */
+    private function denySuspended(Request $request, Company $company): Response
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => __('tenancy.suspended_body', [
+                    'company' => $company->name,
+                    'reason' => $company->suspension_reason ?? __('tenancy.suspended_no_reason'),
+                ]),
+                'code' => 'TENANT_SUSPENDED',
+                'meta' => ['request_id' => $request->attributes->get('request_id')],
+            ], 403);
+        }
+
+        return response()->view('tenancy::suspended', [
+            'company' => $company,
+            'since' => $company->suspended_at,
+            'reason' => $company->suspension_reason,
+        ], 403);
+    }
+
+    /**
+     * A closed account, which is a different sentence from a suspended one: a
+     * suspension is something that can be lifted this afternoon, and this is
+     * an account that has been ended. Neither says "error", because neither is
+     * one.
+     */
+    private function denyClosed(Request $request, ?Company $company): Response
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => __('tenancy.closed_body'),
+                'code' => 'TENANT_CLOSED',
+                'meta' => ['request_id' => $request->attributes->get('request_id')],
+            ], 403);
+        }
+
+        return response()->view('tenancy::closed', [
+            'company' => $company,
+            'since' => $company?->deleted_at,
+        ], 403);
     }
 
     private function denyNoMembership(Request $request): Response

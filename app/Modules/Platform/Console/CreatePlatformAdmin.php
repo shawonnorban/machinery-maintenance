@@ -94,15 +94,14 @@ class CreatePlatformAdmin extends Command
             $this->comment('  Shown once. There is no way back to it.');
         }
 
-        if (! $user->hasMfa()) {
-            // Not enrolled from here: a second factor has to be set up on the
-            // phone that will hold it, by the person who will use it. Saying so
-            // beats letting them discover the redirect and think it is a fault
-            // (SRS 50.3).
-            $this->newLine();
-            $this->comment('  Two-step sign-in is compulsory for platform accounts.');
-            $this->comment('  First sign-in lands on the account screen to set it up.');
-        }
+        // Worth saying out loud, because this account can open a support grant
+        // and act inside any customer's data (SRS 5.4) and a password is the
+        // whole of what stands in front of that. Two-step sign-in was withdrawn
+        // from the product (SRS 50.3), so the compensating controls are the
+        // audit trail, the grant's expiry, and the customer's notification.
+        $this->newLine();
+        $this->comment('  This account can open an audited support grant into any customer.');
+        $this->comment('  Give it a password worth that, and do not share it.');
 
         $this->newLine();
         $this->line('  Sign in, then go to /platform');

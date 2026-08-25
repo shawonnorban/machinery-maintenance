@@ -9,30 +9,6 @@
 @section('content')
     <x-page-header :title="__('account.your_account')" :subtitle="$user->email" />
 
-    @if (session('mfa_required'))
-        {{-- Somebody asked for the dashboard and got their own account screen.
-             Saying why turns what looks like a bug into an instruction. --}}
-        <div class="alert alert-warning">
-            <div class="fw-semibold">{{ __('account.mfa_required_now') }}</div>
-            <div class="small">{{ __('account.mfa_required_why') }}</div>
-        </div>
-    @endif
-
-    @if (session('recovery_codes'))
-        {{-- The one and only time these are readable. Flashed, never stored
-             anywhere they can be asked for again — they are hashed exactly
-             like a password, because that is what they are worth. --}}
-        <div class="alert alert-warning">
-            <div class="fw-semibold">{{ __('account.recovery_codes_shown_once') }}</div>
-            <div class="row row-cols-2 row-cols-md-4 g-2 my-2">
-                @foreach (session('recovery_codes') as $code)
-                    <div class="col"><code class="user-select-all">{{ $code }}</code></div>
-                @endforeach
-            </div>
-            <div class="small">{{ __('account.recovery_codes_hint') }}</div>
-        </div>
-    @endif
-
     <div class="row">
         <div class="col-lg-6">
             {{-- Password ------------------------------------------------- --}}
@@ -82,104 +58,6 @@
                         <button class="btn btn-primary">{{ __('account.change_password') }}</button>
                     </div>
                 </form>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            {{-- Second factor -------------------------------------------- --}}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="cil-shield-alt" aria-hidden="true"></i>
-                    <span>{{ __('account.two_factor') }}</span>
-                    <span class="ms-auto">
-                        <x-status-pill :status="$mfaOn ? 'ON' : 'OFF'" :tone="$mfaOn ? 'success' : 'secondary'">
-                            {{ $mfaOn ? __('account.mfa_on') : __('account.mfa_off') }}
-                        </x-status-pill>
-                    </span>
-                </div>
-
-                <div class="card-body">
-                    @if ($mfaOn)
-                        <p class="mb-3">
-                            {{ trans_choice('account.recovery_codes_left', $recoveryRemaining, ['count' => $recoveryRemaining]) }}
-                        </p>
-
-                        @error('code')<div class="alert alert-danger py-2">{{ $message }}</div>@enderror
-
-                        <form method="POST" action="{{ route('app.account.mfa.recovery-codes') }}"
-                              class="row g-2 align-items-end mb-3">
-                            @csrf
-                            <div class="col-7">
-                                <label for="regen_code" class="form-label mb-1">{{ __('account.mfa_code') }}</label>
-                                <input id="regen_code" name="code" type="text" class="form-control form-control-sm"
-                                       inputmode="numeric" autocomplete="one-time-code" required maxlength="32">
-                            </div>
-                            <div class="col-5">
-                                <button class="btn btn-sm btn-outline-secondary w-100">
-                                    {{ __('account.new_recovery_codes') }}
-                                </button>
-                            </div>
-                        </form>
-
-                        <form method="POST" action="{{ route('app.account.mfa.disable') }}"
-                              class="row g-2 align-items-end">
-                            @csrf
-                            @method('DELETE')
-                            <div class="col-7">
-                                <label for="off_code" class="form-label mb-1">{{ __('account.mfa_code') }}</label>
-                                <input id="off_code" name="code" type="text" class="form-control form-control-sm"
-                                       inputmode="numeric" autocomplete="one-time-code" required maxlength="32">
-                            </div>
-                            <div class="col-5">
-                                <button class="btn btn-sm btn-outline-danger w-100">
-                                    {{ __('account.turn_off') }}
-                                </button>
-                            </div>
-                            {{-- A code, never the password alone. Somebody who
-                                 has taken over a session must not be able to
-                                 remove the factor that would stop them. --}}
-                            <div class="col-12 form-text">{{ __('account.mfa_off_needs_code') }}</div>
-                        </form>
-                    @elseif ($enrolling)
-                        <p>{{ __('account.mfa_scan') }}</p>
-
-                        <div class="d-flex flex-wrap gap-3 align-items-start mb-3">
-                            <div>{!! $enrolmentQr !!}</div>
-                            <div>
-                                <div class="small text-body-secondary">{{ __('account.mfa_manual_entry') }}</div>
-                                <code class="user-select-all">{{ $enrolmentSecret }}</code>
-                            </div>
-                        </div>
-
-                        @error('code')<div class="alert alert-danger py-2">{{ $message }}</div>@enderror
-
-                        <form method="POST" action="{{ route('app.account.mfa.confirm') }}"
-                              class="row g-2 align-items-end">
-                            @csrf
-                            <div class="col-7">
-                                <label for="confirm_code" class="form-label mb-1">{{ __('account.mfa_code') }}</label>
-                                <input id="confirm_code" name="code" type="text" class="form-control"
-                                       inputmode="numeric" autocomplete="one-time-code" required
-                                       maxlength="16" autofocus>
-                            </div>
-                            <div class="col-5">
-                                <button class="btn btn-primary w-100">{{ __('account.mfa_confirm') }}</button>
-                            </div>
-                        </form>
-
-                        <form method="POST" action="{{ route('app.account.mfa.cancel') }}" class="mt-2">
-                            @csrf
-                            <button class="btn btn-sm btn-link px-0">{{ __('common.cancel') }}</button>
-                        </form>
-                    @else
-                        <p>{{ __('account.mfa_why') }}</p>
-
-                        <form method="POST" action="{{ route('app.account.mfa.begin') }}">
-                            @csrf
-                            <button class="btn btn-primary">{{ __('account.turn_on') }}</button>
-                        </form>
-                    @endif
-                </div>
             </div>
         </div>
     </div>

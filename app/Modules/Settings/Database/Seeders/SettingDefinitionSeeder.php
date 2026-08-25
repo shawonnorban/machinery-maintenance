@@ -101,18 +101,6 @@ class SettingDefinitionSeeder extends Seeder
                 'name' => 'Enable notification escalation',
             ],
             [
-                // SRS 50.3: "MFA is enforceable per company policy". Company
-                // level only — a second factor is a property of an account, and
-                // an account is not per factory, so a factory-level answer
-                // could not be applied to anybody.
-                'key' => 'security.require_mfa',
-                'value_type' => 'BOOL',
-                'default' => false,
-                'levels' => ['COMPANY'],
-                'name' => 'Require two-step sign-in for everybody',
-                'description' => 'Company Owners always need it whatever this says. Turning it on sends anybody without it to their account screen to enrol; nobody is locked out.',
-            ],
-            [
                 'key' => 'subscription.grace_period_days',
                 'value_type' => 'INT',
                 'default' => 14,

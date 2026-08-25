@@ -21,7 +21,6 @@ enum ErrorCode: string
     case FORBIDDEN = 'FORBIDDEN';
     case TENANT_ACCESS_DENIED = 'TENANT_ACCESS_DENIED';
     case TENANT_CONTEXT_REQUIRED = 'TENANT_CONTEXT_REQUIRED';
-    case MFA_REQUIRED = 'MFA_REQUIRED';
     case ACCOUNT_LOCKED = 'ACCOUNT_LOCKED';
     case PASSWORD_POLICY_VIOLATION = 'PASSWORD_POLICY_VIOLATION';
 
@@ -82,7 +81,6 @@ enum ErrorCode: string
             self::SUBSCRIPTION_EXPIRED,
             self::PLAN_LIMIT_EXCEEDED,
             self::ACCOUNT_LOCKED,
-            self::MFA_REQUIRED,
             self::SELF_APPROVAL_NOT_ALLOWED => 403,
 
             // 404 for a record in another tenant as well as one that never

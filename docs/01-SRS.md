@@ -1349,9 +1349,23 @@ Deletion after offboarding follows: `Read Only` then `Archived`, with hard delet
 
 ### 50.3 Multi-Factor Authentication
 
+**Withdrawn by the product owner, 2026-08-24. Not implemented and not planned.**
+
+The requirement as written was:
+
 - TOTP-based MFA is supported for all users.
 - MFA is enforceable per company policy, and is mandatory for Platform Super Admin and Company Owner roles.
 - Recovery codes are issued once, stored hashed, and single-use.
+
+It was built and then removed at the customer's instruction. Kept here rather
+than deleted so the decision is visible: a requirement that quietly disappears
+gets re-reported as a gap by the next person to read the specification.
+
+The consequence to be aware of when revisiting this: a Platform Super Admin can
+open a support grant and act inside any customer's data (Section 5.4), so a
+single password is the only thing standing in front of every tenant. The
+compensating controls that remain are the audit trail on both ends of a support
+session, its expiry, and the notification the customer receives.
 
 ### 50.4 Brute Force and Abuse Controls
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Modules\Api\Http\Middleware\AuthenticateApiToken;
 use App\Modules\Api\Http\Middleware\EnforceIdempotency;
 use App\Modules\Billing\Http\Middleware\EnforceSubscriptionState;
-use App\Modules\Identity\Http\Middleware\EnsureMfaWhereRequired;
 use App\Modules\Platform\Http\Middleware\EnsurePlatformAdmin;
 use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
 use App\Shared\Exceptions\TenantContextMissingException;
@@ -55,11 +54,6 @@ return Application::configure(basePath: dirname(__DIR__))
             // that decides this. Reads and exports pass through it untouched
             // (ADR-029).
             EnforceSubscriptionState::class,
-            // After the tenant too, because the company's own policy is one of
-            // the two things that can require a second factor (SRS 50.3).
-            // Runs after sign-in rather than during it: refusing the password
-            // would lock out every account that has not enrolled yet.
-            EnsureMfaWhereRequired::class,
         ]);
 
         $middleware->api(prepend: [

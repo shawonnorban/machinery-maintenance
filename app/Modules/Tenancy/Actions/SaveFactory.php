@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Tenancy\Actions;
 
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Billing\Services\EntitlementGuard;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
@@ -24,13 +25,20 @@ use Illuminate\Validation\ValidationException;
  */
 class SaveFactory
 {
-    public function __construct(private readonly TenantContext $context) {}
+    public function __construct(
+        private readonly TenantContext $context,
+        private readonly EntitlementGuard $entitlements,
+    ) {}
 
     /**
      * @param  array<string, mixed>  $data
      */
     public function create(array $data): Factory
     {
+        // In the action rather than the controller, so the API cannot walk
+        // around it (ADR-066). Only a contract set to BLOCK stops anything.
+        $this->entitlements->assertCanAdd('ACTIVE_FACTORIES');
+
         return Factory::create([
             'company_id' => $this->context->companyId(),
             'name' => $data['name'],

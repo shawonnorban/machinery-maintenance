@@ -137,4 +137,11 @@ return [
     'credit_note_amount' => 'A credit note must be for more than zero and no more than the invoice total.',
     'cannot_void_paid' => 'A paid invoice cannot be voided. Issue a credit note or a refund instead.',
     'reason_required' => 'Record why.',
+
+    // Read by somebody in a factory, not by whoever signed the contract. So it
+    // says what has happened and who can fix it, and does not use the word
+    // "entitlement".
+    'limit_reached_active_factories' => 'Your plan covers :limit factories, and they are all in use. Contact your provider to raise the limit.',
+    'limit_reached_active_assets' => 'Your plan covers :limit machines, and they are all in use. Retire a machine you no longer run, or contact your provider to raise the limit.',
+    'limit_reached_active_users' => 'Your plan covers :limit users, and they are all in use. Remove somebody who has left, or contact your provider to raise the limit.',
 ];

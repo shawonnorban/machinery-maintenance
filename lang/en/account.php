@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * Your own account (SRS 50.2, 50.3).
+ * Your own account (SRS 50.2).
  *
  * The one screen a person owns rather than administers. Every sentence here is
  * read by somebody deciding whether their account is still only theirs, so
@@ -23,41 +23,6 @@ return [
     'password_change_signs_out' => 'Changing your password signs out every other device and stops every API token you hold. This device stays signed in.',
     'password_changed' => 'Your password has been changed. Everywhere else has been signed out.',
     'current_password_wrong' => 'That is not your current password.',
-
-    // -- Second factor ----------------------------------------------------
-    'two_factor' => 'Two-step sign-in',
-    'mfa_on' => 'On',
-    'mfa_off' => 'Off',
-    'turn_on' => 'Turn on',
-    'turn_off' => 'Turn off',
-    'mfa_why' => 'Ask for a code from your phone as well as your password. A stolen password on its own is then not enough to sign in.',
-    'mfa_scan' => 'Scan this with an authenticator app, then type the code it shows to finish.',
-    'mfa_manual_entry' => 'Or type this into the app:',
-    'mfa_confirm' => 'Finish',
-    'mfa_code' => 'Code from your app',
-    'mfa_or_recovery' => 'You can use a recovery code here instead.',
-    'mfa_off_needs_code' => 'A code is required to turn this off — knowing the password is not enough.',
-    'mfa_enabled' => 'Two-step sign-in is on.',
-    'mfa_disabled' => 'Two-step sign-in is off.',
-    'mfa_already_on' => 'Two-step sign-in is already on for this account.',
-    'mfa_not_started' => 'Start setting up two-step sign-in first.',
-    'mfa_code_wrong' => 'That code is not right. Codes change every 30 seconds — try the current one.',
-    'mfa_throttled' => 'Too many attempts. Try again in :seconds seconds.',
-    // Shown when somebody asked for another screen and was sent here instead.
-    // A redirect with no explanation reads as a bug.
-    'mfa_required_now' => 'Two-step sign-in is required for your account. Set it up below to carry on.',
-    'mfa_required_why' => 'Your company requires it, or your role does. Nothing else is available until it is on.',
-
-    'mfa_challenge' => 'Two-step sign-in',
-    'mfa_challenge_for' => 'Signing in as :email',
-    'mfa_back_to_login' => 'Start again',
-    'mfa_start_again' => 'That sign-in expired. Please start again.',
-
-    'recovery_codes_shown_once' => 'Save these recovery codes now. They are shown once and cannot be retrieved again.',
-    'recovery_codes_hint' => 'Each works once, and only if you cannot use your phone. Keep them somewhere other than the phone.',
-    'recovery_codes_left' => '{0} No recovery codes left|{1} :count recovery code left|[2,*] :count recovery codes left',
-    'new_recovery_codes' => 'New codes',
-    'recovery_codes_regenerated' => 'New recovery codes issued. The old ones no longer work.',
 
     // -- Devices ----------------------------------------------------------
     'signed_in_devices' => 'Signed-in devices',

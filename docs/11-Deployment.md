@@ -279,3 +279,79 @@ what only appears under contention.
 
 Horizontal application scaling works today provided session and cache are
 shared — meaning Redis, or the database driver, never the file driver.
+
+---
+
+## 12. Customer addresses
+
+A customer can reach their system on three kinds of address. They cost very
+different amounts of setup, and only the first needs nothing.
+
+**1. The shared address.** `APP_URL`, the default. The tenant is resolved from
+the signed-in user's membership. Nothing to configure, and every customer works
+this way until told otherwise.
+
+**2. A subdomain of ours** — `delta.example.com`. Issued from the customer's
+page in the platform area and working the moment it is saved, because the host
+is already ours. It needs two things once, for all customers ever:
+
+```
+; DNS — one wildcard record
+*.example.com.   300   IN   A   <the application's address>
+```
+
+and a wildcard certificate for `*.example.com`. With Caddy that is one line;
+with nginx it means a DNS-01 challenge, because HTTP-01 cannot issue wildcards.
+
+Set `TENANCY_SUBDOMAIN_HOST=example.com` if customers should be issued
+subdomains somewhere other than the platform's own host — for instance when the
+platform area is served from `admin.example.com`.
+
+**3. The customer's own domain** — `maintenance.deltaapparels.com`. Three
+things must be true, and only the middle one happens in this application:
+
+1. **They point it at us.** A CNAME from their address to ours. Their DNS,
+   their decision, and nobody here can do it for them.
+2. **They prove they own it.** A TXT record at `_mm-verify.<their address>`
+   containing the token shown on their page in the platform area. Until this
+   check passes, the address resolves to nobody — deliberately. An unverified
+   row is a claim, and honouring a claim would let one customer put their name
+   on an address they do not own and collect another company's sign-ins.
+3. **The server has a certificate for it.** This is the part that is missed.
+   The application will happily serve a verified custom domain and the browser
+   will refuse to load it, which reads to the customer as the product being
+   broken.
+
+For (3), a proxy that issues certificates on demand is worth far more than a
+per-customer certificate procedure. Caddy:
+
+```caddyfile
+{
+    on_demand_tls {
+        # Caddy asks before issuing, so a stranger pointing their domain at
+        # this server cannot make us request certificates on their behalf.
+        ask http://127.0.0.1:8000/internal/tls-check
+    }
+}
+
+https:// {
+    tls { on_demand }
+    reverse_proxy 127.0.0.1:8000
+}
+```
+
+The `ask` endpoint is not built yet. Until it is, add custom domains to the
+proxy configuration by hand — which is fine at the scale where custom domains
+are a handful of customers, and is the reason to leave it until they are not.
+
+### What a support call about this usually is
+
+In order of how often it is the answer:
+
+1. The TXT record was added at the wrong name. Most DNS panels append the zone
+   automatically, so a customer who pastes the full
+   `_mm-verify.maintenance.deltaapparels.com` ends up with
+   `_mm-verify.maintenance.deltaapparels.com.deltaapparels.com`.
+2. DNS has not propagated. **Check now** says "not visible yet" rather than
+   "wrong" for exactly this reason. Wait, then press it again.
+3. The CNAME is there and the certificate is not — see (3) above.

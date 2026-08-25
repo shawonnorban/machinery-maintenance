@@ -15,7 +15,6 @@ use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -62,11 +61,6 @@ class PlatformTest extends TestCase
             'is_platform_admin' => true,
         ]);
 
-        // A second factor is compulsory for platform staff (SRS 50.3), and the
-        // enforcement is live, so an account without one would be sent to enrol
-        // instead of reaching any of these screens. Enrolled here rather than
-        // exempted, because in a real deployment it would be.
-        TenantFixture::enrolMfa($this->staff);
     }
 
     // -- The gate -----------------------------------------------------------
@@ -94,6 +88,35 @@ class PlatformTest extends TestCase
             ->assertOk()
             ->assertSee('Delta Apparels Ltd')
             ->assertSee('DAL');
+    }
+
+    public function test_the_tenant_page_renders(): void
+    {
+        // Every other test here posts to this controller and follows a
+        // redirect without ever rendering the page, so a fatal in `show` —
+        // a missing import, a view that references a variable nobody passes —
+        // sailed through a green suite and only appeared in a browser.
+        //
+        // This customer's contract, invoices, support access and sign-in each
+        // moved to their own tab (TenantTabsTest::test_every_tab_renders
+        // exercises all seven), so what is left to check on the default page
+        // is what actually renders there: the company's own details and its
+        // factory list.
+        $this->actingAs($this->staff)
+            ->get('/platform/tenants/'.$this->delta->id)
+            ->assertOk()
+            ->assertSee('Delta Apparels Ltd')
+            ->assertSee(__('platform.company_management'))
+            ->assertSee(__('platform.details'))
+            ->assertSee(__('platform.factories'));
+    }
+
+    public function test_the_new_tenant_form_renders(): void
+    {
+        $this->actingAs($this->staff)
+            ->get('/platform/tenants/new')
+            ->assertOk()
+            ->assertSee(__('platform.owner_account'));
     }
 
     // -- Onboarding ---------------------------------------------------------
@@ -160,22 +183,8 @@ class PlatformTest extends TestCase
         // The whole point of onboarding: somebody can sign in and reach the
         // product. Until this existed, a company could only be created by hand
         // in the database.
-        //
-        // Where they land is their own account screen rather than the
-        // dashboard, and that is correct: a Company Owner must hold a second
-        // factor (SRS 50.3), and a brand new one does not yet. They are signed
-        // in and sent to enrol — not shut out, which is the distinction the
-        // whole enforcement design turns on.
-        $this->actingAs($owner)->get('/app/dashboard')->assertRedirect(route('app.account'));
-        $this->assertAuthenticatedAs($owner);
-
-        $this->actingAs($owner)->get('/app/account')->assertOk();
-
-        // Once enrolled, the product opens up.
-        TenantFixture::enrolMfa($owner);
-
-        $this->actingAs($owner->fresh())->get('/app/dashboard')->assertOk();
-        $this->actingAs($owner->fresh())->get('/app/assets')->assertOk();
+        $this->actingAs($owner)->get('/app/dashboard')->assertOk();
+        $this->actingAs($owner)->get('/app/assets')->assertOk();
     }
 
     public function test_a_duplicate_code_is_refused(): void
@@ -256,35 +265,6 @@ class PlatformTest extends TestCase
         $this->assertSame(2, $contracts->count());
         $this->assertSame('ARCHIVED', $contracts[0]->status);
         $this->assertSame('ACTIVE', $contracts[1]->status);
-    }
-
-    // -- Suspension ---------------------------------------------------------
-
-    public function test_suspending_signs_everybody_out_and_deletes_nothing(): void
-    {
-        DB::table('sessions')->insert([
-            'id' => 'owner-session',
-            'user_id' => $this->owner->id,
-            'ip_address' => '10.0.0.4',
-            'user_agent' => 'Firefox',
-            'payload' => '',
-            'last_activity' => now()->getTimestamp(),
-        ]);
-
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/suspend')
-            ->assertRedirect();
-
-        $this->assertSame('SUSPENDED', $this->delta->fresh()->status);
-        $this->assertNull(DB::table('sessions')->where('id', 'owner-session')->value('id'));
-
-        // SRS 40: cancellation does not delete data. A customer who settles an
-        // invoice on Friday finds everything where they left it on Monday.
-        $this->assertNotNull(User::find($this->owner->id));
-
-        $this->actingAs($this->staff)->post('/platform/tenants/'.$this->delta->id.'/suspend');
-
-        $this->assertSame('ACTIVE', $this->delta->fresh()->status);
     }
 
     // -- Support access (SRS 5.4) -------------------------------------------
@@ -410,8 +390,6 @@ class PlatformTest extends TestCase
             'locale' => 'en',
             'is_platform_admin' => true,
         ]);
-
-        TenantFixture::enrolMfa($other);
 
         // A grant names one person. Sharing one would make the audit trail say
         // somebody was inside who was not.

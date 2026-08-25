@@ -9,6 +9,7 @@ use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetStatusHistory;
 use App\Modules\Asset\Services\QrTokenGenerator;
+use App\Modules\Billing\Services\EntitlementGuard;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -25,6 +26,7 @@ class CreateAsset
     public function __construct(
         private readonly TenantContext $context,
         private readonly QrTokenGenerator $qr,
+        private readonly EntitlementGuard $entitlements,
     ) {}
 
     /**
@@ -33,6 +35,10 @@ class CreateAsset
     public function handle(array $data, ?string $userId = null): Asset
     {
         $companyId = $this->context->companyId();
+
+        // Before the work, not after: a customer at their machine limit should
+        // be told so instead of filling in a form that then fails.
+        $this->entitlements->assertCanAdd('ACTIVE_ASSETS');
 
         $this->assertCategoryBelongsToType($data);
         $this->assertLocationMatchesFactory($data);

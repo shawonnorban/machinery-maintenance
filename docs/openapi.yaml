@@ -126,7 +126,6 @@ components:
           enum:
             - VALIDATION_ERROR
             - UNAUTHENTICATED
-            - MFA_REQUIRED
             - ACCOUNT_LOCKED
             - FORBIDDEN
             - TENANT_ACCESS_DENIED
