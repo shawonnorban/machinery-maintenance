@@ -140,6 +140,50 @@ class DemoTenantSeeder extends Seeder
     ];
 
     /**
+     * The sections generated straight from the taxonomy: asset type code =>
+     * department code, department name, asset code prefix, acquisition cost,
+     * criticality, and the manufacturers to cycle through.
+     *
+     * Criticality is set per section rather than varied, because in these
+     * sections it genuinely is: a fire pump is CRITICAL whichever one it is,
+     * and a trolley is LOW. Only the sewing floor has a real mix.
+     *
+     * The manufacturer lists are empty where the taxonomy has no makers for
+     * that section — HVAC, safety, material handling, printing and garment
+     * finishing are bought locally or from names the taxonomy does not carry,
+     * and inventing a brand would be worse than leaving the field blank.
+     *
+     * @var array<string, array{0: string, 1: string, 2: string, 3: string, 4: string, 5: list<string>}>
+     */
+    private const TAXONOMY_SECTIONS = [
+        'DYEING' => ['DYE', 'Dyeing and Finishing Section', 'DYE', '12500000', 'CRITICAL',
+            ['THIES', 'FONGS', 'SCLAVOS', 'DILMENLER', 'THEN', 'BRAZZOLI', 'LORIS_BELLINI', 'MCS']],
+
+        'FABRIC_FINISHING' => ['FFIN', 'Fabric Finishing Section', 'FFN', '7500000', 'HIGH',
+            ['MONFORTS', 'BRUCKNER', 'SANTEX', 'TUBE_TEX', 'LAFER', 'FERRARO', 'CORINO', 'BIANCO']],
+
+        'WET_PROCESS' => ['WASH', 'Garment Washing Section', 'WSH', '2800000', 'HIGH', []],
+
+        'PRINTING' => ['PRN', 'Printing Section', 'PRN', '1650000', 'MEDIUM', []],
+
+        'EMBROIDERY' => ['EMB', 'Embroidery Section', 'EMB', '2200000', 'MEDIUM',
+            ['TAJIMA', 'BARUDAN']],
+
+        'FINISHING' => ['FIN', 'Garment Finishing Section', 'FIN', '450000', 'MEDIUM',
+            ['VEIT', 'HASHIMA']],
+
+        'QUALITY_LAB' => ['LAB', 'Quality Assurance Lab', 'LAB', '380000', 'MEDIUM',
+            ['DATACOLOR', 'X_RITE', 'JAMES_HEAL', 'SDL_ATLAS', 'MATHIS']],
+
+        'HVAC' => ['HVAC', 'HVAC and Utilities', 'HVC', '520000', 'HIGH', []],
+
+        'MATERIAL_HANDLING' => ['MTH', 'Material Handling', 'MTH', '310000', 'LOW', []],
+
+        // A fire pump that does not start is the one failure with a body count.
+        'SAFETY' => ['SAFE', 'Safety and Fire', 'SFT', '95000', 'CRITICAL', []],
+    ];
+
+    /**
      * The machines themselves: section, type, category, manufacturer, asset
      * code prefix, acquisition cost, and the list of units.
      *
@@ -257,6 +301,12 @@ class DemoTenantSeeder extends Seeder
 
         $assets = $this->assets($delta, $dhaka);
         $this->maintenancePlans($delta, $dhaka, $assets, $maintenanceManager);
+
+        // After the plans, and its return value deliberately not merged into
+        // $assets: everything below is staged against the six sewing machines,
+        // and a breakdown written about a lockstitch must not land on a fire
+        // extinguisher.
+        $this->taxonomyMachines($delta, $dhaka);
         // Raised by the engineer so the manager can actually sign them: a
         // requester may never approve their own request, and a demo where the
         // only approver is also the requester shows an empty queue.
@@ -754,6 +804,104 @@ class DemoTenantSeeder extends Seeder
         }
 
         $this->command?->info("Demo: {$created} maintenance plans with schedules.");
+    }
+
+    /**
+     * One machine of every kind the taxonomy knows about, for the sections a
+     * composite mill runs beyond knitting and sewing.
+     *
+     * Generated from the taxonomy rather than written out. Eighty-one machines
+     * hand-listed would be eighty-one names to keep true, and the category
+     * names already *are* the machine names — "Stenter and Heat Setting",
+     * "Crockmeter", "Fire Pump" are what the floor calls them. Reading them
+     * back means a category added to the platform taxonomy next year appears
+     * in the demo without anybody remembering to add it here.
+     *
+     * Categories that already have a machine are skipped, so the hand-staged
+     * dye vessels above are not duplicated by their own category.
+     *
+     * @return list<Asset>
+     */
+    private function taxonomyMachines(Company $company, Factory $factory): array
+    {
+        $create = app(CreateAsset::class);
+        $status = app(ChangeAssetStatus::class);
+        $made = [];
+
+        foreach (self::TAXONOMY_SECTIONS as $typeCode => [$deptCode, $deptName, $prefix, $cost, $criticality, $makers]) {
+            $type = AssetType::whereNull('company_id')->where('code', $typeCode)->first();
+
+            if ($type === null) {
+                $this->command?->warn("Demo: skipped {$typeCode} — not in the platform taxonomy");
+
+                continue;
+            }
+
+            $department = Department::updateOrCreate(
+                ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => $deptCode],
+                ['name' => $deptName],
+            );
+
+            $location = AssetLocation::firstOrCreate(
+                ['factory_id' => $factory->id, 'code' => $factory->code.'-'.$deptCode],
+                [
+                    'name' => $deptName,
+                    'qr_code' => app(QrTokenGenerator::class)->forLocation($company->id),
+                    'full_path' => $factory->name.' › '.$deptName,
+                ],
+            );
+
+            $manufacturers = Manufacturer::whereNull('company_id')
+                ->whereIn('code', $makers)
+                ->pluck('id')
+                ->all();
+
+            $categories = AssetCategory::whereNull('company_id')
+                ->where('asset_type_id', $type->id)
+                ->orderBy('name')
+                ->get();
+
+            $n = 0;
+
+            foreach ($categories as $category) {
+                if (Asset::where('asset_category_id', $category->id)->exists()) {
+                    continue;
+                }
+
+                $code = sprintf('%s-%s-%03d', $prefix, $factory->code, ++$n);
+
+                if (Asset::where('asset_code', $code)->exists()) {
+                    continue;
+                }
+
+                $asset = $create->handle([
+                    'asset_type_id' => $type->id,
+                    'asset_category_id' => $category->id,
+                    'manufacturer_id' => $manufacturers === []
+                        ? null
+                        : $manufacturers[$n % count($manufacturers)],
+                    'asset_code' => $code,
+                    'name' => $category->name,
+                    'criticality' => $criticality,
+                    'current_factory_id' => $factory->id,
+                    'asset_location_id' => $location->id,
+                    'acquisition_cost' => $cost,
+                    'currency' => 'BDT',
+                ]);
+
+                foreach (['PURCHASED', 'INSTALLED', 'COMMISSIONED', 'RUNNING'] as $step) {
+                    $asset = $status->handle($asset, $step);
+                }
+
+                $made[] = $asset;
+            }
+
+            unset($department);
+        }
+
+        $this->command?->info('Demo: '.count($made).' machines across the remaining sections.');
+
+        return $made;
     }
 
     /**
