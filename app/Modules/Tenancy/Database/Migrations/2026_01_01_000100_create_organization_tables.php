@@ -19,14 +19,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('organizations', function (Blueprint $table): void {
-            $table->ulid('id')->primary();
-            $table->string('name');
-            $table->string('code', 32)->unique();
-            $table->string('status', 32)->default('ACTIVE');
-            $table->timestamps();
-        });
-
         Schema::create('companies', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('organization_id')->nullable()
