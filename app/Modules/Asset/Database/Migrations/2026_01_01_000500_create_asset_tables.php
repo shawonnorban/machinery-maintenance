@@ -18,7 +18,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('asset_types', function (Blueprint $table): void {
+        $create = static function (string $table, Closure $definition): void {
+            if (! Schema::hasTable($table)) {
+                Schema::create($table, $definition);
+            }
+        };
+
+        $create('asset_types', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             // null = platform-seeded type, shared by every tenant
             $table->foreignUlid('company_id')->nullable()
@@ -32,7 +38,7 @@ return new class extends Migration
             $table->unique(['company_id', 'code']);
         });
 
-        Schema::create('asset_categories', function (Blueprint $table): void {
+        $create('asset_categories', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->nullable()
                 ->constrained('companies')->cascadeOnDelete();
@@ -45,7 +51,7 @@ return new class extends Migration
             $table->unique(['company_id', 'asset_type_id', 'code'], 'asset_categories_unique');
         });
 
-        Schema::create('manufacturers', function (Blueprint $table): void {
+        $create('manufacturers', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->nullable()
                 ->constrained('companies')->cascadeOnDelete();
@@ -58,7 +64,7 @@ return new class extends Migration
             $table->unique(['company_id', 'code']);
         });
 
-        Schema::create('asset_models', function (Blueprint $table): void {
+        $create('asset_models', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->nullable()
                 ->constrained('companies')->cascadeOnDelete();
@@ -75,7 +81,7 @@ return new class extends Migration
         // The single addressable location entity (ADR-052). Everything above
         // factory is nullable, so a factory that does not model floors is not
         // forced to invent them.
-        Schema::create('asset_locations', function (Blueprint $table): void {
+        $create('asset_locations', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->cascadeOnDelete();
             $table->foreignUlid('factory_id')->constrained('factories')->restrictOnDelete();
@@ -98,7 +104,7 @@ return new class extends Migration
             $table->index(['company_id', 'factory_id']);
         });
 
-        Schema::create('assets', function (Blueprint $table): void {
+        $create('assets', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->cascadeOnDelete();
 
@@ -191,7 +197,7 @@ return new class extends Migration
             $table->index(['company_id', 'criticality', 'status']);
         });
 
-        Schema::create('asset_status_histories', function (Blueprint $table): void {
+        $create('asset_status_histories', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->cascadeOnDelete();
             $table->foreignUlid('asset_id')->constrained('assets')->cascadeOnDelete();
@@ -207,7 +213,7 @@ return new class extends Migration
             $table->index(['company_id', 'asset_id', 'changed_at']);
         });
 
-        Schema::create('asset_transfer_history', function (Blueprint $table): void {
+        $create('asset_transfer_history', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->cascadeOnDelete();
             $table->foreignUlid('asset_id')->constrained('assets')->cascadeOnDelete();
