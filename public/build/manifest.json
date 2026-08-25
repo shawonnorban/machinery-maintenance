@@ -1,0 +1,61 @@
+{
+  "_http-DZiD_SI_.js": {
+    "file": "assets/http-DZiD_SI_.js",
+    "name": "http"
+  },
+  "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.eot": {
+    "file": "assets/CoreUI-Icons-Free-ziUxt3Yn.eot",
+    "src": "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.eot"
+  },
+  "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.svg": {
+    "file": "assets/CoreUI-Icons-Free-DIjtG9Ik.svg",
+    "src": "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.svg"
+  },
+  "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.ttf": {
+    "file": "assets/CoreUI-Icons-Free-D92lvGjJ.ttf",
+    "src": "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.ttf"
+  },
+  "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.woff": {
+    "file": "assets/CoreUI-Icons-Free-DuoZZk8n.woff",
+    "src": "node_modules/@coreui/icons/fonts/CoreUI-Icons-Free.woff"
+  },
+  "resources/js/analytics.js": {
+    "file": "assets/analytics-DwF1zA45.js",
+    "name": "analytics",
+    "src": "resources/js/analytics.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-vspNziiq.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_http-DZiD_SI_.js"
+    ]
+  },
+  "resources/js/mobile.js": {
+    "file": "assets/mobile-C6A4TWZv.js",
+    "name": "mobile",
+    "src": "resources/js/mobile.js",
+    "isEntry": true,
+    "imports": [
+      "_http-DZiD_SI_.js"
+    ]
+  },
+  "resources/sass/app.scss": {
+    "file": "assets/app-DVhZLYP2.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/sass/app.scss",
+    "isEntry": true,
+    "assets": [
+      "assets/CoreUI-Icons-Free-ziUxt3Yn.eot",
+      "assets/CoreUI-Icons-Free-D92lvGjJ.ttf",
+      "assets/CoreUI-Icons-Free-DuoZZk8n.woff",
+      "assets/CoreUI-Icons-Free-DIjtG9Ik.svg"
+    ]
+  }
+}
