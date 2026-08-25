@@ -407,7 +407,7 @@ curl -I https://machinery.example.xyz/.env      # must be 403 or 404, never 200
 ```bash
 cd ~/machinery.example.xyz
 
-git clone <repo> .
+git clone <repo> .      # the trailing dot matters — see below
 composer install --no-dev --optimize-autoloader
 
 cp .env.example .env
@@ -425,6 +425,27 @@ php artisan view:cache
 
 php artisan platform:admin you@example.com --name="Your Name"
 ```
+
+**The trailing dot on `git clone`.** Without it, git creates a folder named
+after the repository and puts everything inside, so `composer.json` ends up one
+level below where the next command looks for it — `Composer could not find a
+composer.json file`. If that has already happened:
+
+```bash
+cd ~/machinery.example.xyz
+shopt -s dotglob                 # or .git and .env.example are left behind
+mv machinery-maintenance/* .
+shopt -u dotglob
+rmdir machinery-maintenance
+```
+
+`dotglob` is the part worth not skipping. `*` does not match dotfiles, so
+without it `.git` stays in the old folder and the first `git pull` on the next
+deployment fails with no obvious cause.
+
+Leaving it in the subfolder works too — point the subdomain's document root at
+`machinery.example.xyz/machinery-maintenance/public` instead. Either is fine as
+long as the document root is a `public` directory and never a project root.
 
 If the host has no SSH, `composer install` has to be done locally and the
 `vendor/` directory uploaded with the rest. Build the front end locally too —
