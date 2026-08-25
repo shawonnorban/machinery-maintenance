@@ -23,6 +23,18 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+document.addEventListener('click', (event) => {
+    const toggler = event.target.closest('[data-sidebar-toggle]');
+    const sidebar = document.querySelector('.sidebar');
+
+    if (!toggler || !sidebar || !window.matchMedia('(max-width: 991.98px)').matches) {
+        return;
+    }
+
+    event.preventDefault();
+    sidebar.classList.toggle('show');
+}, true);
+
 // Sidebar collapse, persisted so a user's choice survives navigation.
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.querySelector('.sidebar');
@@ -36,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         toggler.addEventListener('click', () => {
             if (window.matchMedia('(max-width: 991.98px)').matches) {
-                sidebar.classList.toggle('show');
                 return;
             }
 

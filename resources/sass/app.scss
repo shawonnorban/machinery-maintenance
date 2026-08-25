@@ -192,6 +192,24 @@ $sidebar-nesting-step: 0.75rem;
   }
 }
 
+.mobile-sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  color: var(--cui-header-color, #212631);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+@media (min-width: 992px) {
+  .mobile-sidebar-toggle {
+    display: none;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Notification bell
 //
