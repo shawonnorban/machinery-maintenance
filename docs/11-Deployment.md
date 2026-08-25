@@ -31,9 +31,15 @@ three; it simply asks more of MySQL.
 
 ## 2. Requirements
 
-- PHP 8.3+ with `bcmath`, `pdo_mysql`, `mbstring`, `openssl`, `zip`, `intl`
-  - 8.3 is the floor `composer.json` actually enforces (`php: ^8.3`), which
-    matters because shared hosting rarely offers newer.
+- PHP **8.4.1+** with `bcmath`, `pdo_mysql`, `mbstring`, `openssl`, `zip`, `intl`
+  - `composer.json` says `^8.3`, and that is not the number to check the host
+    against. The lock file pins Symfony 8.1, which requires `>=8.4.1`, and
+    `openspout` requires `~8.4 || ~8.5`. On 8.2 or 8.3, `composer install`
+    refuses with twenty "does not satisfy that requirement" problems.
+  - On cPanel the **CLI** PHP and the **web** PHP are set separately. MultiPHP
+    Manager changes what the web server uses; the shell keeps the system
+    default, which is usually older. Check `php -v` in the shell before
+    believing MultiPHP.
   - `bcmath` is not optional. Money is DECIMAL(18,4) and every arithmetic
     operation on it goes through bcmath (ADR-063). Without the extension the
     application will not boot.
@@ -375,9 +381,41 @@ anything real-time.
 ### What still works
 
 The whole application. Sign-in, machines, work orders, breakdowns, stock,
-approvals, reports, the platform area, invoicing, file uploads. PHP 8.3 is
-enough (`composer.json` requires `^8.3`), and MySQL 8 is the only service the
-request path actually needs.
+approvals, reports, the platform area, invoicing, file uploads. MySQL 8 is the
+only service the request path actually needs.
+
+### 13.0 Check the PHP version before anything else
+
+This is the first thing to check and the one most likely to stop the
+deployment dead.
+
+```bash
+php -v                          # the shell's PHP — often the system default
+ls -d /opt/cpanel/ea-php*       # what the host actually has installed
+```
+
+The floor is **8.4.1**, for the reason section 2 gives: the lock file pins
+Symfony 8.1. On anything older, `composer install` refuses outright.
+
+If the shell's `php` is older but `ea-php84` exists, use its full path for
+every command — Composer, artisan, and both cron entries:
+
+```bash
+PHP=/opt/cpanel/ea-php84/root/usr/bin/php
+
+$PHP -v
+$PHP /usr/local/bin/composer install --no-dev --optimize-autoloader
+$PHP artisan migrate --force
+```
+
+Set the *web* version separately, in cPanel → MultiPHP Manager, for the
+subdomain. The two are independent, and a site can serve pages on 8.4 while
+the shell still runs 8.2.
+
+If the host has nothing newer than 8.3, this application cannot run there.
+Ask the host to enable 8.4 — most cPanel hosts have it available and simply
+default to something older — and if they will not, the answer is a different
+host, not a downgrade of the dependencies.
 
 ### 13.1 Where the code goes
 
@@ -457,13 +495,19 @@ to exist on the server.
 cPanel → Cron Jobs. Two entries, both every minute:
 
 ```
-* * * * * cd ~/machinery.example.xyz && php artisan schedule:run >/dev/null 2>&1
-* * * * * cd ~/machinery.example.xyz && php artisan queue:work --stop-when-empty --max-time=55 >/dev/null 2>&1
+* * * * * cd ~/machinery.example.xyz && /opt/cpanel/ea-php84/root/usr/bin/php artisan schedule:run >/dev/null 2>&1
+* * * * * cd ~/machinery.example.xyz && /opt/cpanel/ea-php84/root/usr/bin/php artisan queue:work --stop-when-empty --max-time=55 >/dev/null 2>&1
 ```
 
 The first runs the eight scheduled commands — maintenance schedules, KPI
 snapshots, escalations, subscription billing, webhook retries. Without it the
 product looks fine and quietly stops doing anything on a timer.
+
+Both use the full path to PHP rather than bare `php`. Cron runs with a minimal
+environment and its `php` is whatever the system default is — which on this
+kind of host is the version that was too old to install the application in the
+first place. A cron entry that fails this way leaves no error page and no
+obvious symptom: the timers simply never do anything.
 
 The second is the queue, and it is a substitute rather than the real thing.
 A supervised `queue:work` picks a job up the moment it is queued; this picks
