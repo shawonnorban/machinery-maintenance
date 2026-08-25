@@ -7,7 +7,7 @@
 
 <header class="header header-sticky mb-4 border-bottom">
     <div class="container-fluid px-4">
-        <button class="header-toggler d-md-none" type="button" data-sidebar-toggle
+        <button class="header-toggler d-lg-none" type="button" data-sidebar-toggle
                 aria-label="{{ __('common.toggle_navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>

@@ -60,7 +60,7 @@
         @endforeach
     </ul>
 
-    <div class="sidebar-footer border-top d-none d-md-flex">
+    <div class="sidebar-footer border-top d-none d-lg-flex">
         <button class="sidebar-toggler" type="button" data-sidebar-toggle
                 aria-label="{{ __('common.toggle_navigation') }}"></button>
     </div>

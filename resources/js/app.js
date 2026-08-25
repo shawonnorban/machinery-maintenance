@@ -29,13 +29,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggler = document.querySelector('[data-sidebar-toggle]');
 
     if (sidebar && toggler) {
-        if (localStorage.getItem('sidebar:narrow') === '1') {
+        if (!window.matchMedia('(max-width: 991.98px)').matches
+            && localStorage.getItem('sidebar:narrow') === '1') {
             sidebar.classList.add('sidebar-narrow');
         }
 
         toggler.addEventListener('click', () => {
+            if (window.matchMedia('(max-width: 991.98px)').matches) {
+                sidebar.classList.toggle('show');
+                return;
+            }
+
             const narrow = sidebar.classList.toggle('sidebar-narrow');
             localStorage.setItem('sidebar:narrow', narrow ? '1' : '0');
+        });
+
+        sidebar.querySelectorAll('a[href]:not([href="#"])').forEach((link) => {
+            link.addEventListener('click', () => {
+                if (window.matchMedia('(max-width: 991.98px)').matches) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                sidebar.classList.remove('show');
+            }
         });
     }
 
