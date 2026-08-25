@@ -22,6 +22,19 @@ class Company extends BaseModel
 {
     use SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $company): void {
+            $company->updateQuietly([
+                'deleted_marker' => 'DELETED_'.$company->getKey(),
+            ]);
+        });
+
+        static::restoring(function (self $company): void {
+            $company->updateQuietly(['deleted_marker' => 'LIVE']);
+        });
+    }
+
     protected $fillable = [
         'organization_id', 'name', 'code', 'legal_name',
         'email', 'phone', 'country', 'address', 'logo_path',

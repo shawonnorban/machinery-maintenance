@@ -19,7 +19,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table): void {
+        $create = static function (string $table, Closure $definition): void {
+            if (! Schema::hasTable($table)) {
+                Schema::create($table, $definition);
+            }
+        };
+
+        $create('companies', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('organization_id')->nullable()
                 ->constrained('organizations')->restrictOnDelete();
@@ -33,17 +39,16 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletesDatetime(precision: 3);
 
-            // See the note in the assets migration: deleted_at cannot appear
-            // directly in a unique index, because MySQL treats NULLs as
-            // distinct and the constraint would enforce nothing.
-            $table->dateTime('deleted_marker', 3)
-                ->storedAs("IFNULL(deleted_at, '1970-01-01 00:00:00.000')");
+            // A regular marker avoids generated-column restrictions on shared
+            // hosting. Live rows use one fixed value; deleted rows receive a
+            // unique value from the model's deleting event.
+            $table->string('deleted_marker', 40)->default('LIVE');
 
             $table->unique(['code', 'deleted_marker']);
             $table->index('status');
         });
 
-        Schema::create('business_units', function (Blueprint $table): void {
+        $create('business_units', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->string('name');
@@ -54,7 +59,7 @@ return new class extends Migration
             $table->unique(['company_id', 'code']);
         });
 
-        Schema::create('factories', function (Blueprint $table): void {
+        $create('factories', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignUlid('business_unit_id')->nullable()
@@ -71,7 +76,7 @@ return new class extends Migration
             $table->index(['company_id', 'status']);
         });
 
-        Schema::create('buildings', function (Blueprint $table): void {
+        $create('buildings', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignUlid('factory_id')->constrained('factories')->restrictOnDelete();
@@ -82,7 +87,7 @@ return new class extends Migration
             $table->unique(['company_id', 'factory_id', 'code']);
         });
 
-        Schema::create('floors', function (Blueprint $table): void {
+        $create('floors', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignUlid('building_id')->constrained('buildings')->restrictOnDelete();
@@ -93,7 +98,7 @@ return new class extends Migration
             $table->unique(['company_id', 'building_id', 'code']);
         });
 
-        Schema::create('departments', function (Blueprint $table): void {
+        $create('departments', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignUlid('factory_id')->constrained('factories')->restrictOnDelete();
@@ -104,7 +109,7 @@ return new class extends Migration
             $table->unique(['company_id', 'factory_id', 'code']);
         });
 
-        Schema::create('sections', function (Blueprint $table): void {
+        $create('sections', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignUlid('department_id')->constrained('departments')->restrictOnDelete();
@@ -115,7 +120,7 @@ return new class extends Migration
             $table->unique(['company_id', 'department_id', 'code']);
         });
 
-        Schema::create('production_lines', function (Blueprint $table): void {
+        $create('production_lines', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignUlid('department_id')->constrained('departments')->restrictOnDelete();
@@ -128,7 +133,7 @@ return new class extends Migration
             $table->unique(['company_id', 'department_id', 'code']);
         });
 
-        Schema::create('workstations', function (Blueprint $table): void {
+        $create('workstations', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignUlid('production_line_id')->constrained('production_lines')->restrictOnDelete();
