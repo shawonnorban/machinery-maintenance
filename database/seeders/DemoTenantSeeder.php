@@ -11,6 +11,7 @@ use App\Modules\Asset\Actions\CreateAsset;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetLocation;
+use App\Modules\Asset\Models\AssetModel;
 use App\Modules\Asset\Models\AssetType;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Asset\Services\QrTokenGenerator;
@@ -42,9 +43,15 @@ use App\Modules\Inventory\Models\SparePartCategory;
 use App\Modules\Inventory\Models\Store;
 use App\Modules\Inventory\Models\Warehouse;
 use App\Modules\Maintenance\Models\ChecklistItem;
+use App\Modules\Maintenance\Models\MaintenancePlan;
+use App\Modules\Maintenance\Models\MaintenancePlanRule;
 use App\Modules\Maintenance\Models\MaintenanceTemplate;
 use App\Modules\Maintenance\Models\MaintenanceTemplateVersion;
 use App\Modules\Maintenance\Models\MaintenanceType;
+use App\Modules\Maintenance\Services\ScheduleGenerator;
+use App\Modules\Metering\Actions\ManageAssetMeter;
+use App\Modules\Metering\Actions\RecordMeterReading;
+use App\Modules\Metering\Models\MeterType;
 use App\Modules\Notification\Models\EscalationRule;
 use App\Modules\Settings\Actions\SetSetting;
 use App\Modules\Tenancy\Models\Building;
@@ -80,6 +87,101 @@ use Illuminate\Database\Seeder;
 class DemoTenantSeeder extends Seeder
 {
     public const PASSWORD = 'password123';
+
+    /**
+     * The sections a knit composite runs, in the order fabric moves through
+     * them. `code` matches the department, and the production lines under each
+     * are named the way the floor names them — a dye house has machines, not
+     * "lines", and calling them lines is the sort of detail that tells a
+     * customer the product was not built for them.
+     *
+     * @var array<string, array{0: string, 1: int, 2: string}>
+     */
+    private const SECTIONS = [
+        'KNIT' => ['Knitting Section', 8, 'Knit M'],
+        'DYE' => ['Dyeing and Finishing Section', 6, 'Dye M'],
+        'CUT' => ['Cutting Section', 4, 'Cutting Table'],
+        'SEW' => ['Sewing Section', 6, 'Line'],
+    ];
+
+    /**
+     * Manufacturer, asset type, model name, code.
+     *
+     * Real machines from each section, because a demo asset list is the first
+     * thing a customer reads closely — and "Machine 1, Machine 2" tells them
+     * nothing about whether this product knows their industry.
+     *
+     * @var list<array{0: string, 1: string, 2: string, 3: string}>
+     */
+    private const MODELS = [
+        ['MAYER_CIE', 'KNITTING', 'Relanit 3.2 II', 'MC-RELANIT-32'],
+        ['MAYER_CIE', 'KNITTING', 'OVJA 2.4 EM', 'MC-OVJA-24'],
+        ['TERROT', 'KNITTING', 'I3P 176', 'TR-I3P-176'],
+        ['FUKUHARA', 'KNITTING', 'V-LEC4BW', 'FK-VLEC4BW'],
+        ['PAILUNG', 'KNITTING', 'LFC-A', 'PL-LFC-A'],
+
+        ['THIES', 'DYEING', 'iMaster H2O', 'TH-IMASTER-H2O'],
+        ['FONGS', 'DYEING', 'ALLFIT ECO-6', 'FG-ALLFIT-ECO6'],
+        ['SCLAVOS', 'DYEING', 'Venus Nova', 'SC-VENUS-NOVA'],
+        ['DILMENLER', 'DYEING', 'DL-HTHP-500', 'DM-HTHP-500'],
+
+        ['GERBER', 'CUTTING', 'Paragon HX', 'GB-PARAGON-HX'],
+        ['GERBER', 'CUTTING', 'XLc7000', 'GB-XLC7000'],
+        ['LECTRA', 'CUTTING', 'Vector iQ', 'LC-VECTOR-IQ'],
+        ['HASHIMA', 'CUTTING', 'HP-450MS', 'HS-HP450MS'],
+
+        ['JUKI', 'SEWING', 'DDL-9000C', 'JK-DDL9000C'],
+        ['JUKI', 'SEWING', 'DDL-8700', 'JK-DDL8700'],
+        ['JUKI', 'SEWING', 'MO-6714S', 'JK-MO6714S'],
+        ['BROTHER', 'SEWING', 'S-7300A', 'BR-S7300A'],
+        ['PEGASUS', 'SEWING', 'M700', 'PG-M700'],
+        ['SIRUBA', 'SEWING', 'F007K', 'SR-F007K'],
+        ['KANSAI', 'SEWING', 'DFB-1404P', 'KS-DFB1404P'],
+    ];
+
+    /**
+     * The machines themselves: section, type, category, manufacturer, asset
+     * code prefix, acquisition cost, and the list of units.
+     *
+     * Sewing is first and stays first. Work orders, breakdowns, costs and
+     * coverage are all staged against the first six entries of the returned
+     * list, and a breakdown written about a lockstitch landing on a dye vessel
+     * would make the demo read as nonsense.
+     *
+     * @var list<array{0: string, 1: string, 2: string, 3: string, 4: string, 5: string, 6: list<array{0: string, 1: string}>}>
+     */
+    private const MACHINES = [
+        ['SEW', 'SEWING', 'LOCKSTITCH', 'JUKI', 'SEW', '285000', [
+            ['Juki DDL-9000C', 'JK-DDL9000C'],
+            ['Juki DDL-8700', 'JK-DDL8700'],
+            ['Brother S-7300A', 'BR-S7300A'],
+            ['Juki MO-6714S', 'JK-MO6714S'],
+            ['Pegasus M700', 'PG-M700'],
+            ['Siruba F007K', 'SR-F007K'],
+        ]],
+
+        ['KNIT', 'KNITTING', 'CIRCULAR_SINGLE_JERSEY', 'MAYER_CIE', 'KNT', '4850000', [
+            ['Mayer & Cie Relanit 3.2 II — 30"', 'MC-RELANIT-32'],
+            ['Mayer & Cie Relanit 3.2 II — 34"', 'MC-RELANIT-32'],
+            ['Terrot I3P 176 — 32"', 'TR-I3P-176'],
+            ['Fukuhara V-LEC4BW — 30"', 'FK-VLEC4BW'],
+            ['Pai Lung LFC-A — 34"', 'PL-LFC-A'],
+        ]],
+
+        ['DYE', 'DYEING', 'SOFT_FLOW_DYEING', 'THIES', 'DYE', '18500000', [
+            ['Thies iMaster H2O — 300 kg', 'TH-IMASTER-H2O'],
+            ['Thies iMaster H2O — 600 kg', 'TH-IMASTER-H2O'],
+            ['Fong\'s ALLFIT ECO-6 — 450 kg', 'FG-ALLFIT-ECO6'],
+            ['Sclavos Venus Nova — 250 kg', 'SC-VENUS-NOVA'],
+        ]],
+
+        ['CUT', 'CUTTING', 'AUTO_CUTTER', 'GERBER', 'CUT', '9200000', [
+            ['Gerber Paragon HX', 'GB-PARAGON-HX'],
+            ['Gerber XLc7000', 'GB-XLC7000'],
+            ['Lectra Vector iQ', 'LC-VECTOR-IQ'],
+            ['Hashima HP-450MS fusing', 'HS-HP450MS'],
+        ]],
+    ];
 
     /**
      * A second company, so cross-tenant behaviour and the company switcher can
@@ -150,7 +252,11 @@ class DemoTenantSeeder extends Seeder
         $this->approvalWorkflow($delta);
         $this->escalationRules($delta);
 
+        // Platform-level, and before the machines that reference them.
+        $this->assetModels();
+
         $assets = $this->assets($delta, $dhaka);
+        $this->maintenancePlans($delta, $dhaka, $assets, $maintenanceManager);
         // Raised by the engineer so the manager can actually sign them: a
         // requester may never approve their own request, and a demo where the
         // only approver is also the requester shows an empty queue.
@@ -216,31 +322,89 @@ class DemoTenantSeeder extends Seeder
         );
     }
 
+    /**
+     * The four sections a knit composite actually runs, in the order fabric
+     * moves through them: knitting, dyeing, cutting, sewing.
+     *
+     * Two buildings rather than one, because the wet processes are physically
+     * separate from the dry ones in every mill of this kind — and a demo where
+     * everything sits in "Building A" teaches somebody the wrong shape.
+     */
     private function locations(Company $company, Factory $factory): void
     {
-        $building = Building::updateOrCreate(
+        $main = Building::updateOrCreate(
             ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'A'],
-            ['name' => 'Building A'],
+            ['name' => 'Building A — Knitting and Garments'],
         );
 
-        $sewing = Department::updateOrCreate(
-            ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'SEW'],
-            ['name' => 'Sewing Department'],
+        Building::updateOrCreate(
+            ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'B'],
+            ['name' => 'Building B — Dyeing and Finishing'],
         );
 
-        Department::updateOrCreate(
-            ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'CUT'],
-            ['name' => 'Cutting Department'],
-        );
-
-        foreach ([1, 2, 3, 4, 5, 6] as $n) {
-            ProductionLine::updateOrCreate(
-                ['company_id' => $company->id, 'department_id' => $sewing->id, 'code' => "L{$n}"],
-                ['name' => "Line {$n}"],
+        foreach (self::SECTIONS as $code => [$name, $lineCount, $linePrefix]) {
+            $department = Department::updateOrCreate(
+                ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => $code],
+                ['name' => $name],
             );
+
+            for ($n = 1; $n <= $lineCount; $n++) {
+                ProductionLine::updateOrCreate(
+                    [
+                        'company_id' => $company->id,
+                        'department_id' => $department->id,
+                        'code' => $linePrefix.$n,
+                    ],
+                    ['name' => $linePrefix.' '.$n],
+                );
+            }
         }
 
-        unset($building);
+        unset($main);
+    }
+
+    /**
+     * The machine models this mill actually owns.
+     *
+     * Nothing seeds asset_models — the platform taxonomy stops at manufacturer
+     * — so a demo without these leaves the model field empty on every machine
+     * and the "which model is this" question unanswerable on screen.
+     *
+     * Platform-level (a null company_id) like the rest of the taxonomy: a Juki
+     * DDL-9000C is the same machine in every mill that owns one.
+     */
+    private function assetModels(): void
+    {
+        foreach (self::MODELS as [$manufacturerCode, $typeCode, $model, $code]) {
+            $manufacturer = Manufacturer::whereNull('company_id')
+                ->where('code', $manufacturerCode)
+                ->first();
+
+            $type = AssetType::whereNull('company_id')->where('code', $typeCode)->first();
+
+            if ($manufacturer === null || $type === null) {
+                // Said out loud rather than skipped. A code that no longer
+                // exists in the platform taxonomy would otherwise produce a
+                // demo with quietly fewer models than the list says, and
+                // nobody would find out until a screen looked thin.
+                $this->command?->warn(
+                    "Demo: skipped model {$model} — unknown ".
+                    ($manufacturer === null ? "manufacturer {$manufacturerCode}" : "asset type {$typeCode}"),
+                );
+
+                continue;
+            }
+
+            AssetModel::updateOrCreate(
+                ['company_id' => null, 'code' => $code],
+                [
+                    'manufacturer_id' => $manufacturer->id,
+                    'asset_type_id' => $type->id,
+                    'model' => $model,
+                    'active' => true,
+                ],
+            );
+        }
     }
 
     /**
@@ -393,60 +557,220 @@ class DemoTenantSeeder extends Seeder
      *
      * @return list<Asset>
      */
+    /**
+     * The mill's machines, across all four sections.
+     *
+     * Every other method here takes the returned list and hangs work orders,
+     * breakdowns, costs and coverage off it, so the sewing machines stay first
+     * in the array — those are the ones the rest of the demo was staged
+     * against, and reordering them would move a breakdown onto a dye vessel
+     * that was written about a lockstitch.
+     *
+     * @return list<Asset>
+     */
     private function assets(Company $company, Factory $factory): array
     {
-        $location = AssetLocation::firstOrCreate(
-            ['factory_id' => $factory->id, 'code' => $factory->code.'-L3'],
-            [
-                'name' => 'Line 3',
-                'qr_code' => app(QrTokenGenerator::class)->forLocation($company->id),
-                'full_path' => $factory->name.' › Building A › Sewing Department › Line 3',
-            ],
-        );
-
-        $type = AssetType::where('code', 'SEWING')->whereNull('company_id')->firstOrFail();
-        $category = AssetCategory::where('code', 'LOCKSTITCH')->whereNull('company_id')->firstOrFail();
-        $juki = Manufacturer::where('code', 'JUKI')->whereNull('company_id')->first();
-
         $create = app(CreateAsset::class);
         $status = app(ChangeAssetStatus::class);
         $assets = [];
 
-        foreach ([
-            'Juki DDL-9000C', 'Juki DDL-8700', 'Brother S-7300A',
-            'Juki MO-6714S', 'Pegasus M700', 'Siruba F007K',
-        ] as $index => $name) {
-            $code = sprintf('SEW-%s-%05d', $factory->code, 412 + $index);
+        foreach (self::MACHINES as [$section, $typeCode, $categoryCode, $manufacturerCode, $prefix, $cost, $items]) {
+            $type = AssetType::whereNull('company_id')->where('code', $typeCode)->first();
+            $category = AssetCategory::whereNull('company_id')->where('code', $categoryCode)->first();
 
-            if (Asset::where('asset_code', $code)->exists()) {
-                $assets[] = Asset::where('asset_code', $code)->firstOrFail();
+            if ($type === null || $category === null) {
+                $this->command?->warn("Demo: skipped {$section} machines — unknown type or category");
 
                 continue;
             }
 
-            $asset = $create->handle([
-                'asset_type_id' => $type->id,
-                'asset_category_id' => $category->id,
-                'manufacturer_id' => $juki?->id,
-                'asset_code' => $code,
-                'name' => $name,
-                // A mix, so the criticality filter and the
-                // verification-required rule both have something to act on.
-                'criticality' => $index % 3 === 0 ? 'HIGH' : 'MEDIUM',
-                'current_factory_id' => $factory->id,
-                'asset_location_id' => $location->id,
-                'acquisition_cost' => '285000',
-                'currency' => 'BDT',
-            ]);
+            $manufacturer = Manufacturer::whereNull('company_id')
+                ->where('code', $manufacturerCode)
+                ->first();
 
-            foreach (['PURCHASED', 'INSTALLED', 'COMMISSIONED', 'RUNNING'] as $step) {
-                $asset = $status->handle($asset, $step);
+            $location = $this->assetLocation($company, $factory, $section);
+
+            foreach ($items as $index => [$name, $modelCode]) {
+                $code = sprintf('%s-%s-%05d', $prefix, $factory->code, 401 + $index);
+
+                if (Asset::where('asset_code', $code)->exists()) {
+                    $assets[] = Asset::where('asset_code', $code)->firstOrFail();
+
+                    continue;
+                }
+
+                $asset = $create->handle([
+                    'asset_type_id' => $type->id,
+                    'asset_category_id' => $category->id,
+                    'manufacturer_id' => $manufacturer?->id,
+                    'asset_model_id' => AssetModel::whereNull('company_id')
+                        ->where('code', $modelCode)
+                        ->value('id'),
+                    'asset_code' => $code,
+                    'name' => $name,
+                    // A mix, so the criticality filter and the
+                    // verification-required rule both have something to act on.
+                    // Dye vessels are CRITICAL throughout: a stopped dye house
+                    // stops everything downstream of it, which is the whole
+                    // reason criticality is a field.
+                    'criticality' => $typeCode === 'DYEING' ? 'CRITICAL' : ($index % 3 === 0 ? 'HIGH' : 'MEDIUM'),
+                    'current_factory_id' => $factory->id,
+                    'asset_location_id' => $location->id,
+                    'acquisition_cost' => $cost,
+                    'currency' => 'BDT',
+                ]);
+
+                foreach (['PURCHASED', 'INSTALLED', 'COMMISSIONED', 'RUNNING'] as $step) {
+                    $asset = $status->handle($asset, $step);
+                }
+
+                $assets[] = $asset;
             }
-
-            $assets[] = $asset;
         }
 
         return $assets;
+    }
+
+    /**
+     * Preventive maintenance plans, and the schedules they generate.
+     *
+     * The demo had none, which left the whole maintenance side of the product
+     * — plans, the schedule board, due and overdue work — showing empty tables
+     * to anybody being shown around. That is the half of the product the name
+     * is about.
+     *
+     * Both trigger kinds are here on purpose. A sewing machine is serviced on
+     * a calendar; a dye vessel is serviced every so many batches and a knitting
+     * machine every so many kilograms off the take-down. A demo with only
+     * calendar plans quietly suggests the meter side does not exist.
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function maintenancePlans(Company $company, Factory $factory, array $assets, User $manager): void
+    {
+        $preventive = MaintenanceType::whereNull('company_id')->where('code', 'PREVENTIVE')->first()
+            ?? MaintenanceType::where('company_id', $company->id)->where('code', 'PREVENTIVE')->first();
+
+        if ($preventive === null || $assets === []) {
+            return;
+        }
+
+        $version = MaintenanceTemplate::whereNull('company_id')
+            ->get()
+            ->map(fn (MaintenanceTemplate $t) => $t->currentVersion())
+            ->filter()
+            ->first();
+
+        $byCode = [];
+
+        foreach ($assets as $asset) {
+            $byCode[substr((string) $asset->asset_code, 0, 3)][] = $asset;
+        }
+
+        // section prefix, plan name, trigger, rule, and the meter it counts.
+        $plans = [
+            ['SEW', 'Lockstitch 500-hour service', 'TIME', ['TIME', '3', 'MONTH', null], 120],
+            ['KNT', 'Knitting machine fabric-weight service', 'METER', ['METER', '25000', 'KG', 'FABRIC_WEIGHT'], 240],
+            ['DYE', 'Dye vessel batch service', 'METER', ['METER', '150', 'BATCH', 'BATCH_COUNT'], 480],
+            ['CUT', 'Cutter blade and rail inspection', 'TIME', ['TIME', '1', 'MONTH', null], 90],
+        ];
+
+        $generator = app(ScheduleGenerator::class);
+        $meters = app(ManageAssetMeter::class);
+        $readings = app(RecordMeterReading::class);
+        $created = 0;
+
+        foreach ($plans as [$prefix, $name, $trigger, [$ruleType, $value, $unit, $meterCode], $minutes]) {
+            foreach (array_slice($byCode[$prefix] ?? [], 0, 2) as $asset) {
+                $plan = MaintenancePlan::updateOrCreate(
+                    ['company_id' => $company->id, 'asset_id' => $asset->id, 'name' => $name],
+                    [
+                        'maintenance_type_id' => $preventive->id,
+                        'template_version_id' => $version?->id,
+                        'trigger_type' => $trigger,
+                        // Rolling: the next one is measured from when the last
+                        // was actually done, not from a fixed calendar. A mill
+                        // that runs late does not want six overdue services
+                        // appearing at once when it catches up.
+                        'schedule_mode' => 'ROLLING',
+                        'rule_logic' => 'ALL',
+                        'priority' => $asset->criticality === 'CRITICAL' ? 'HIGH' : 'NORMAL',
+                        'grace_period_minutes' => 1440,
+                        'lead_time_days' => 7,
+                        'non_working_day_policy' => 'NEXT_WORKING_DAY',
+                        'requires_shutdown' => $trigger === 'METER',
+                        'estimated_duration_minutes' => $minutes,
+                        'start_date' => CarbonImmutable::now()->subMonths(6)->toDateString(),
+                        'active' => true,
+                        'timezone' => $factory->timezone,
+                        'created_by' => $manager->id,
+                    ],
+                );
+
+                $meterTypeId = $meterCode === null
+                    ? null
+                    : MeterType::whereNull('company_id')->where('code', $meterCode)->value('id');
+
+                MaintenancePlanRule::updateOrCreate(
+                    ['company_id' => $company->id, 'maintenance_plan_id' => $plan->id, 'rule_type' => $ruleType],
+                    [
+                        'operator' => 'EVERY',
+                        'value' => $value,
+                        'unit' => $unit,
+                        'meter_type_id' => $meterTypeId,
+                    ],
+                );
+
+                // A meter plan cannot work out when it is next due without
+                // something to count. Without these, the knitting and dyeing
+                // plans exist and generate nothing, which reads on screen as
+                // the meter side of the product being broken rather than as
+                // the demo being thin.
+                if ($meterTypeId !== null) {
+                    $meter = $meters->attach($asset, $meterTypeId, '0');
+
+                    // Three months of running, so there is a history to plot
+                    // and a current value the rule can measure against.
+                    $step = (float) $value / 3;
+
+                    foreach ([90, 60, 30, 1] as $i => $daysAgo) {
+                        $readings->handle(
+                            $meter->fresh(),
+                            (string) round($step * ($i + 1), 4),
+                            CarbonImmutable::now()->subDays($daysAgo),
+                            'MANUAL',
+                            $manager->id,
+                        );
+                    }
+                }
+
+                $created++;
+
+                // Generated here rather than left to the nightly command, so
+                // the schedule board has something on it the moment somebody
+                // opens the demo.
+                $generator->generateForPlan($plan->fresh());
+            }
+        }
+
+        $this->command?->info("Demo: {$created} maintenance plans with schedules.");
+    }
+
+    /**
+     * One location per section, named the way the floor names it.
+     */
+    private function assetLocation(Company $company, Factory $factory, string $section): AssetLocation
+    {
+        [$departmentName, , $linePrefix] = self::SECTIONS[$section];
+
+        return AssetLocation::firstOrCreate(
+            ['factory_id' => $factory->id, 'code' => $factory->code.'-'.$section],
+            [
+                'name' => $linePrefix.' 1',
+                'qr_code' => app(QrTokenGenerator::class)->forLocation($company->id),
+                'full_path' => $factory->name.' › '.$departmentName.' › '.$linePrefix.' 1',
+            ],
+        );
     }
 
     /**
