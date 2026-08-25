@@ -21,6 +21,19 @@ class Asset extends BaseModel
     use BelongsToTenant;
     use SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $asset): void {
+            $asset->updateQuietly([
+                'deleted_marker' => 'DELETED_'.$asset->getKey(),
+            ]);
+        });
+
+        static::restoring(function (self $asset): void {
+            $asset->updateQuietly(['deleted_marker' => 'LIVE']);
+        });
+    }
+
     /** Data Dictionary 2.4. */
     public const STATUSES = [
         'DRAFT', 'PURCHASED', 'INSTALLED', 'COMMISSIONED', 'RUNNING', 'IDLE',

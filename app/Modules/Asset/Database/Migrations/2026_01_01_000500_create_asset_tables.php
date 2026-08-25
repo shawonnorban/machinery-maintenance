@@ -175,15 +175,10 @@ return new class extends Migration
             // would compare unequal and the constraint would enforce nothing
             // at all.
             //
-            // This generated column collapses "not deleted" to a fixed epoch,
-            // which makes live rows comparable, while an archived row keeps
-            // its own timestamp and frees the code for reuse.
-            //
-            // DATETIME rather than TIMESTAMP, and CASE rather than
-            // timezone-dependent functions: MySQL rejects those functions in
-            // a generated column because they are not deterministic.
-            $table->dateTime('deleted_marker', 3)
-                ->storedAs("CASE WHEN deleted_at IS NULL THEN CAST('1970-01-01 00:00:00' AS DATETIME) ELSE deleted_at END");
+            // A regular marker avoids generated-column restrictions on shared
+            // hosting. Live rows use one fixed value; deleted rows receive a
+            // unique value from the model's deleting event.
+            $table->string('deleted_marker', 40)->default('LIVE');
 
             $table->unique(['company_id', 'asset_code', 'deleted_marker'], 'assets_code_unique');
             $table->unique(['company_id', 'serial_number', 'deleted_marker'], 'assets_serial_unique');
