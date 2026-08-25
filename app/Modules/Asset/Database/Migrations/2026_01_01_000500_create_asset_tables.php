@@ -179,11 +179,11 @@ return new class extends Migration
             // which makes live rows comparable, while an archived row keeps
             // its own timestamp and frees the code for reuse.
             //
-            // DATETIME rather than TIMESTAMP, and IFNULL rather than
-            // UNIX_TIMESTAMP: MySQL rejects timezone-dependent functions in a
-            // generated column because they are not deterministic.
+            // DATETIME rather than TIMESTAMP, and CASE rather than
+            // timezone-dependent functions: MySQL rejects those functions in
+            // a generated column because they are not deterministic.
             $table->dateTime('deleted_marker', 3)
-                ->storedAs("IFNULL(deleted_at, '1970-01-01 00:00:00.000')");
+                ->storedAs("CASE WHEN deleted_at IS NULL THEN CAST('1970-01-01 00:00:00' AS DATETIME) ELSE deleted_at END");
 
             $table->unique(['company_id', 'asset_code', 'deleted_marker'], 'assets_code_unique');
             $table->unique(['company_id', 'serial_number', 'deleted_marker'], 'assets_serial_unique');
