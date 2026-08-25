@@ -544,7 +544,28 @@ BROADCAST_CONNECTION=log
 # usable, and the row says plainly it was never checked. Turned on with no
 # scanner installed, every upload stays PENDING and refuses to download.
 VIRUS_SCAN_ENABLED=false
+
+# Mail has to work, and `log` is not working. See below.
+MAIL_MAILER=smtp
+MAIL_HOST=mail.example.xyz
+MAIL_PORT=465
+MAIL_USERNAME=noreply@example.xyz
+MAIL_PASSWORD=…
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS="noreply@example.xyz"
 ```
+
+**`MAIL_MAILER=log` locks people out.** It is the right default in development
+and wrong the moment the site is real: `Password::sendResetLink()` writes the
+reset link into `storage/logs/laravel.log` instead of sending it, so a user who
+forgets their password has no way back in and no error to show for it. The
+platform can reset a company owner's password from the customer's page, but
+nobody can reset their own.
+
+Make a mailbox in cPanel → Email Accounts and use it. `MAIL_MAILER=sendmail`
+also works on most cPanel hosts and needs no credentials, at the cost of worse
+deliverability — messages from a shared IP with no SPF alignment land in spam
+often enough to matter for a password reset.
 
 `SESSION_DRIVER`, `CACHE_STORE` and `QUEUE_CONNECTION` all use the database
 because there is no Redis. That is fine at this size and is the first thing to
