@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -24,6 +25,14 @@ return new class extends Migration
                 Schema::create($table, $definition);
             }
         };
+
+        $create('organizations', function (Blueprint $table): void {
+            $table->ulid('id')->primary();
+            $table->string('name');
+            $table->string('code', 32)->unique();
+            $table->string('status', 32)->default('ACTIVE');
+            $table->timestamps();
+        });
 
         $create('companies', function (Blueprint $table): void {
             $table->ulid('id')->primary();
@@ -47,6 +56,20 @@ return new class extends Migration
             $table->unique(['code', 'deleted_marker']);
             $table->index('status');
         });
+
+        $hasOrganizationForeignKey = DB::table('information_schema.KEY_COLUMN_USAGE')
+            ->whereRaw('TABLE_SCHEMA = DATABASE()')
+            ->where('TABLE_NAME', 'companies')
+            ->where('COLUMN_NAME', 'organization_id')
+            ->where('REFERENCED_TABLE_NAME', 'organizations')
+            ->exists();
+
+        if (! $hasOrganizationForeignKey) {
+            Schema::table('companies', function (Blueprint $table): void {
+                $table->foreign('organization_id', 'companies_organization_id_foreign')
+                    ->references('id')->on('organizations')->restrictOnDelete();
+            });
+        }
 
         $create('business_units', function (Blueprint $table): void {
             $table->ulid('id')->primary();
