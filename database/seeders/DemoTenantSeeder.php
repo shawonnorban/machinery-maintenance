@@ -81,23 +81,54 @@ class DemoTenantSeeder extends Seeder
 {
     public const PASSWORD = 'password123';
 
+    /**
+     * A second company, so cross-tenant behaviour and the company switcher can
+     * be exercised. Turned off by DemoCustomerSeeder, which wants one customer
+     * and nothing else.
+     */
+    protected function seedsSecondCompany(): bool
+    {
+        return true;
+    }
+
+    /**
+     * A second factory, so factory scoping is visible. With one factory there
+     * is nothing for a factory-scoped role to be scoped away from, so the
+     * scoped user is skipped along with it.
+     */
+    protected function seedsSecondFactory(): bool
+    {
+        return true;
+    }
+
     public function run(): void
     {
         $delta = $this->company('Delta Apparels Ltd', 'ডেল্টা অ্যাপারেলস লিমিটেড', 'DAL', 'en');
-        $omega = $this->company('Omega Textiles Ltd', 'ওমেগা টেক্সটাইলস লিমিটেড', 'OTL', 'en');
 
         app(TenantContext::class)->set($delta->id);
 
         $dhaka = $this->factory($delta, 'Dhaka Unit 1', 'DHK');
-        $gazipur = $this->factory($delta, 'Gazipur Unit 2', 'GAZ');
         $this->locations($delta, $dhaka);
         $this->calendar($delta, $dhaka);
-        $this->calendar($delta, $gazipur);
+
+        $gazipur = null;
+
+        if ($this->seedsSecondFactory()) {
+            $gazipur = $this->factory($delta, 'Gazipur Unit 2', 'GAZ');
+            $this->calendar($delta, $gazipur);
+        }
+
         $this->settings($delta, $dhaka);
 
-        app(TenantContext::class)->set($omega->id);
-        $narayanganj = $this->factory($omega, 'Narayanganj Unit', 'NGJ');
-        $this->calendar($omega, $narayanganj);
+        $omega = null;
+
+        if ($this->seedsSecondCompany()) {
+            $omega = $this->company('Omega Textiles Ltd', 'ওমেগা টেক্সটাইলস লিমিটেড', 'OTL', 'en');
+
+            app(TenantContext::class)->set($omega->id);
+            $narayanganj = $this->factory($omega, 'Narayanganj Unit', 'NGJ');
+            $this->calendar($omega, $narayanganj);
+        }
 
         app(TenantContext::class)->set($delta->id);
 
@@ -130,30 +161,37 @@ class DemoTenantSeeder extends Seeder
         $this->coverage($delta, $dhaka, $assets, $maintenanceManager);
         $this->subscription($delta, $owner);
 
-        // A factory-scoped role: this manager reaches Dhaka only, which makes
-        // factory scoping visible in the UI.
-        $this->user($delta, 'MAINTENANCE_MANAGER', 'dhaka-only@delta.test', 'Mizanur Rahman', $dhaka->id);
+        if ($gazipur !== null) {
+            // A factory-scoped role: this manager reaches Dhaka only, which
+            // makes factory scoping visible in the UI. Pointless with a single
+            // factory — there would be nothing it was scoped away from.
+            $this->user($delta, 'MAINTENANCE_MANAGER', 'dhaka-only@delta.test', 'Mizanur Rahman', $dhaka->id);
+        }
 
-        // The owner also belongs to Omega, so the company switcher appears.
-        $this->addMembership($owner, $omega, 'COMPANY_ADMIN');
+        if ($omega !== null) {
+            // The owner also belongs to Omega, so the company switcher appears.
+            $this->addMembership($owner, $omega, 'COMPANY_ADMIN');
+        }
+
+        $accounts = [
+            ['owner@delta.test', 'Company Owner', $omega ? 'Delta + Omega (switcher)' : 'Delta'],
+            ['manager@delta.test', 'Factory Manager', 'Delta, all factories'],
+            ['maintenance@delta.test', 'Maintenance Manager', 'Delta, all factories'],
+            ['engineer@delta.test', 'Maintenance Engineer', 'Delta, all factories'],
+            ['technician@delta.test', 'Technician', 'Delta, all factories'],
+            ['store@delta.test', 'Store Manager', 'Delta, all factories'],
+            ['storekeeper@delta.test', 'Storekeeper', 'Delta, all factories'],
+            ['auditor@delta.test', 'Auditor', 'Delta, read-only'],
+            ['viewer@delta.test', 'Viewer', 'Delta, read-only'],
+        ];
+
+        if ($gazipur !== null) {
+            $accounts[] = ['dhaka-only@delta.test', 'Maintenance Manager', 'Delta, Dhaka factory only'];
+        }
 
         $this->command?->newLine();
         $this->command?->info('Demo tenant ready. Password for every account: '.self::PASSWORD);
-        $this->command?->table(
-            ['Email', 'Role', 'Scope'],
-            [
-                ['owner@delta.test', 'Company Owner', 'Delta + Omega (switcher)'],
-                ['manager@delta.test', 'Factory Manager', 'Delta, all factories'],
-                ['maintenance@delta.test', 'Maintenance Manager', 'Delta, all factories'],
-                ['engineer@delta.test', 'Maintenance Engineer', 'Delta, all factories'],
-                ['technician@delta.test', 'Technician', 'Delta, all factories'],
-                ['store@delta.test', 'Store Manager', 'Delta, all factories'],
-                ['storekeeper@delta.test', 'Storekeeper', 'Delta, all factories'],
-                ['auditor@delta.test', 'Auditor', 'Delta, read-only'],
-                ['viewer@delta.test', 'Viewer', 'Delta, read-only'],
-                ['dhaka-only@delta.test', 'Maintenance Manager', 'Delta, Dhaka factory only'],
-            ],
-        );
+        $this->command?->table(['Email', 'Role', 'Scope'], $accounts);
     }
 
     private function company(string $name, string $nameBn, string $code, string $locale): Company
