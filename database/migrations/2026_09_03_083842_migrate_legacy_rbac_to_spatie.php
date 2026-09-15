@@ -33,17 +33,19 @@ return new class extends Migration
         $roleIdMap = $this->copyRoles();
         $this->copyRolePermissions($roleIdMap, $permissionIdMap);
 
+        // Dropped up front, before role_id changes shape underneath it —
+        // found live on a MariaDB/MySQL build that raises "Key column
+        // 'role_id' doesn't exist in table" the moment dropColumn() below
+        // touches a column still carrying part of a composite unique key,
+        // rather than the silent narrowing another MySQL build does with
+        // the exact same statement. Dropping the index first removes the
+        // ambiguity for every engine instead of depending on which
+        // behaviour a given MySQL/MariaDB version picked.
+        $this->dropUniqueIfPresent('user_roles', 'user_roles_unique');
+
         $this->repointRoleColumn('user_roles', 'role_id', $roleIdMap, nullable: false);
         $this->repointRoleColumn('approval_rules', 'role_id', $roleIdMap, nullable: true);
         $this->repointRoleColumn('escalation_rules', 'escalation_role_id', $roleIdMap, nullable: true);
-
-        // dropColumn('role_id') above takes user_roles_unique down with it —
-        // MySQL narrows the composite index to whichever columns remain
-        // (company_id + user_id + factory_id here) instead of dropping it,
-        // while Postgres drops the whole constraint outright the moment one
-        // of its columns goes. dropUniqueIfPresent() covers both: rebuilt
-        // with role_id back in either way.
-        $this->dropUniqueIfPresent('user_roles', 'user_roles_unique');
 
         Schema::table('user_roles', function (Blueprint $blueprint): void {
             $blueprint->unique(['company_id', 'user_id', 'role_id', 'factory_id'], 'user_roles_unique');
@@ -52,13 +54,11 @@ return new class extends Migration
 
     public function down(): void
     {
+        $this->dropUniqueIfPresent('user_roles', 'user_roles_unique');
+
         $this->revertRoleColumn('user_roles', 'role_id', nullable: false);
         $this->revertRoleColumn('approval_rules', 'role_id', nullable: true);
         $this->revertRoleColumn('escalation_rules', 'escalation_role_id', nullable: true);
-
-        // The same up()-side narrowing-vs-cascade split happens in reverse
-        // inside revertRoleColumn's own dropColumn('role_id') call.
-        $this->dropUniqueIfPresent('user_roles', 'user_roles_unique');
 
         Schema::table('user_roles', function (Blueprint $blueprint): void {
             $blueprint->unique(['company_id', 'user_id', 'role_id', 'factory_id'], 'user_roles_unique');
