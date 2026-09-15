@@ -10,7 +10,9 @@ use App\Modules\Breakdown\Events\BreakdownReported;
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\BreakdownStatusHistory;
 use App\Modules\Breakdown\Models\DowntimeReasonCode;
+use App\Modules\Breakdown\Services\BreakdownScopeGuard;
 use App\Modules\Breakdown\Services\DowntimeCalculator;
+use App\Modules\Identity\Models\User;
 use App\Modules\Notification\Services\MaintenanceNotifier;
 use App\Modules\Settings\Services\NumberSequenceGenerator;
 use App\Modules\Tenancy\Models\Factory;
@@ -54,6 +56,22 @@ class ReportBreakdown
             throw ValidationException::withMessages([
                 'asset_id' => __('breakdown.asset_terminal', ['status' => $asset->status]),
             ])->status(409);
+        }
+
+        // A Line Chief or technician may only report a breakdown on their own
+        // floor — a hard rule chosen deliberately over ADR-065's advisory
+        // stance for this one screen, since the factory's own workflow already
+        // names who owns every line. A manager or engineer is exempt.
+        $reporter = $userId === null ? null : User::find($userId);
+
+        if ($reporter !== null) {
+            $asset->loadMissing('location');
+
+            if (! BreakdownScopeGuard::assertCovers($reporter, $asset->location?->department_id, $asset->location?->production_line_id)) {
+                throw ValidationException::withMessages([
+                    'asset_id' => __('breakdown.asset_outside_coverage'),
+                ])->status(403);
+            }
         }
 
         $now = CarbonImmutable::now();

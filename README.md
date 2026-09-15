@@ -26,6 +26,29 @@ Maintenance labour carries no cost. Technicians are salaried employees, so a wor
 
 ## Core Modules
 
+## Demo Login Accounts
+
+These accounts are created by the demo seeders. Every demo account uses the
+password `password123`.
+
+| Who                        | Email                        | Password      | What they see |
+|----------------------------|------------------------------|---------------|---------------|
+| Platform Admin             | `admin@example.com`          | `password123` | Platform dashboard, companies, billing, and support; tenant data through a support grant |
+| Company Owner              | `owner@delta.test`           | `password123` | All Delta data; Delta/Omega company switcher |
+| Factory Manager            | `manager@delta.test`         | `password123` | Delta factories, assets, maintenance, and work orders |
+| Maintenance Manager        | `maintenance@delta.test`     | `password123` | Maintenance plans, schedules, approvals, and work orders |
+| Maintenance Engineer       | `engineer@delta.test`        | `password123` | Maintenance tasks, work orders, and breakdowns |
+| Technician                 | `technician@delta.test`      | `password123` | Assigned work orders, checklists, and meter readings |
+| Store Manager              | `store@delta.test`           | `password123` | Inventory, stock, spare parts, and stores |
+| Storekeeper                | `storekeeper@delta.test`     | `password123` | Stock receiving, issuing, and bin inventory |
+| Auditor                    | `auditor@delta.test`         | `password123` | Read-only audit logs and company records |
+| Viewer                     | `viewer@delta.test`          | `password123` | Read-only dashboards and company data |
+| Dhaka Maintenance Manager  | `dhaka-only@delta.test`      | `password123` | Maintenance data for Dhaka Unit 1 only |
+
+The platform admin signs in at `/login` and can open `/platform`. These
+credentials are for local demonstrations only and must not be used in a
+production deployment.
+
 1. Multi-Tenant SaaS
 2. Company, Factory & Location Management
 3. User, Role & Permission Management
@@ -226,14 +249,13 @@ The platform requires:
 | `02-Database-ERD.md` | Database entities, relationships, indexes, and integrity rules |
 | `03-API-Specification.md` | REST API, authentication, authorization, WebSocket events, and API standards |
 | `04-Architecture-Decision-Record.md` | Architecture decisions, technology choices, scalability, security, and deployment |
-| `05-Gap-Analysis-and-Traceability.md` | Gaps found in v1.0, how each was closed, requirements traceability, and remaining open items |
 | `06-Data-Dictionary.md` | Every enum value, state machine, exchange-rate rule, QR content spec, and document number format |
 | `07-Permissions-and-Module-Structure.md` | Permission catalog and endpoint mapping, backend and frontend module structure, environment variables, local setup, definition of done |
 | `08-API-Schemas.md` | Request and response schemas, validation rules, and error mapping for the core resources |
-| `openapi.yaml` | Machine-readable API contract, generated from route and request classes; the integration contract for ERP, IoT, and future mobile clients |
 | `09-Seed-Data-Catalog.md` | Garment-industry master data: asset taxonomy, failure codes, downtime reasons, checklist templates, demo tenant |
 | `10-Frontend-Specification.md` | Screen inventory, state management, design system, localization, offline behavior, performance budgets |
 | `11-Deployment.md` | Production runbook: the five processes, first and subsequent deploys, health checks, what to alert on, backups, load testing, scaling order |
+| `12-Stack-Migration-Implementation-Plan.md` | Blade/MySQL → Next.js/PostgreSQL migration: verified phase-by-phase status and the recommended order of remaining work |
 
 ## Development Order
 

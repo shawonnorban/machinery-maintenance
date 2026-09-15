@@ -39,7 +39,7 @@
                                 ]) }}
                             </td>
                             <td class="text-end">{{ $rule->escalation_level }}</td>
-                            <td>{{ $rule->role?->name }}</td>
+                            <td>{{ $rule->role?->description }}</td>
                             <td class="small text-body-secondary">
                                 {{ $rule->factory?->name ?? __('notification.every_factory') }}
                             </td>
@@ -125,7 +125,7 @@
                     <select id="escalation_role_id" name="escalation_role_id" class="form-select form-select-sm" required>
                         <option value="">—</option>
                         @foreach ($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            <option value="{{ $role->id }}">{{ $role->description }}</option>
                         @endforeach
                     </select>
                     @error('escalation_role_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror

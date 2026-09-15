@@ -155,7 +155,7 @@ class AuditTrailTest extends TestCase
         AuditLog::query()->getQuery()->delete();
 
         $role = Role::whereNull('company_id')
-            ->where('code', 'MAINTENANCE_ENGINEER')
+            ->where('name', 'MAINTENANCE_ENGINEER')
             ->firstOrFail();
 
         UserRole::where('user_id', $user->id)
@@ -269,11 +269,15 @@ class AuditTrailTest extends TestCase
     public function test_rows_written_by_one_request_share_a_request_id(): void
     {
         // The store manager holds vendor.vendor.create; the supplier list is
-        // purchasing's.
+        // purchasing's. The web `/app/vendors` screen this used to post to
+        // is gone (Phase D/F) — the API hits the same `CreateVendor` action
+        // (ADR-003), so the audit row it writes is the same row either way.
         $user = TenantFixture::user($this->delta, 'STORE_MANAGER', 'sm@delta.test');
         TenantFixture::actingAsTenant($this->delta);
+        $token = app(\App\Modules\Api\Actions\IssueApiToken::class)
+            ->forUser($user, $this->delta->id, 'Test')['plain'];
 
-        $this->actingAs($user)->post('/app/vendors', [
+        $this->withHeader('Authorization', "Bearer {$token}")->postJson('/api/v1/vendors', [
             'name' => 'Brother Service BD',
             'code' => 'BROTHER-BD',
             'vendor_type' => 'SERVICE',
@@ -298,9 +302,14 @@ class AuditTrailTest extends TestCase
 
         AuditLog::query()->getQuery()->delete();
 
+        // `/app/locale` rather than a decommissioned `/app/*` screen
+        // (Phase D/F) — `ResolveTenantContext` (bootstrap/app.php's global
+        // `web` middleware group) runs ahead of any specific route, so any
+        // route still registered under `/app` proves the same cross-tenant
+        // rejection a decommissioned one used to.
         $this->actingAs($user)
             ->withHeader('X-Company-Id', $other->id)
-            ->get('/app/dashboard')
+            ->post('/app/locale', ['locale' => 'en'])
             ->assertForbidden();
 
         $log = AuditLog::where('action', 'SECURITY_EVENT')->firstOrFail();

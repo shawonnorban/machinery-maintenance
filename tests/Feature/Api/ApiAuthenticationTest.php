@@ -12,7 +12,9 @@ use App\Modules\Tenancy\Models\Company;
 use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -68,16 +70,17 @@ class ApiAuthenticationTest extends TestCase
         $token = $response->json('data.access_token');
 
         $this->assertIsString($token);
-        $this->assertStringStartsWith('mmt_', $token);
+        // A person's token is a Sanctum personal access token now: "{id}|{plaintext}".
+        $this->assertMatchesRegularExpression('/^\d+\|.+$/', $token);
         $this->assertSame($this->delta->id, $response->json('data.company_id'));
 
         // The plain token is never stored. What is kept is a hash, so the
         // table is worth nothing to whoever steals it.
-        $row = ApiToken::withoutGlobalScope(TenantScope::class)->firstOrFail();
+        $row = PersonalAccessToken::firstOrFail();
 
-        $this->assertSame(ApiToken::hash($token), $row->token_hash);
-        $this->assertNotSame($token, $row->token_hash);
+        $this->assertNotSame($token, $row->token);
         $this->assertSame('Dye house tablet', $row->name);
+        $this->assertSame($this->delta->id, $row->company_id);
 
         // No session came back with it. A bearer token is not a login.
         $this->assertGuest();
@@ -115,6 +118,43 @@ class ApiAuthenticationTest extends TestCase
             ->assertJsonPath('data.company_id', $this->delta->id);
     }
 
+    /** Mirrors the web's `PreferenceController::locale` — one of "the two global scope controls in the header" that had no API of its own before this. */
+    public function test_a_person_can_change_their_own_locale(): void
+    {
+        $token = $this->tokenFor('manager@delta.test');
+
+        $this->withToken($token)
+            ->patchJson('/api/v1/auth/locale', ['locale' => 'bn'])
+            ->assertOk()
+            ->assertJsonPath('data.locale', 'bn');
+
+        $this->withToken($token)
+            ->getJson('/api/v1/auth/me')
+            ->assertJsonPath('data.user.locale', 'bn');
+    }
+
+    public function test_an_unsupported_locale_is_refused(): void
+    {
+        $this->withToken($this->tokenFor('manager@delta.test'))
+            ->patchJson('/api/v1/auth/locale', ['locale' => 'fr'])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('locale');
+    }
+
+    public function test_a_machine_caller_cannot_set_a_locale(): void
+    {
+        [$client, $secret] = $this->machineClient(['asset.asset.view']);
+
+        $token = $this->postJson('/api/v1/auth/token', [
+            'client_id' => $client->client_id,
+            'client_secret' => $secret,
+        ])->json('data.access_token');
+
+        $this->withToken($token)
+            ->patchJson('/api/v1/auth/locale', ['locale' => 'bn'])
+            ->assertForbidden();
+    }
+
     public function test_an_unknown_token_is_refused(): void
     {
         $this->withToken('mmt_'.str_repeat('x', 40))
@@ -138,19 +178,16 @@ class ApiAuthenticationTest extends TestCase
 
         $this->withToken($token)->getJson('/api/v1/auth/me')->assertUnauthorized();
 
-        // Revoked, not deleted: a token that stops working leaves a question
-        // behind, and the row is the answer.
-        $row = ApiToken::withoutGlobalScope(TenantScope::class)->firstOrFail();
-
-        $this->assertNotNull($row->revoked_at);
+        // Deleted, not merely marked: Sanctum has no revoked_at, so a
+        // revoked personal access token leaves no row at all.
+        $this->assertSame(0, PersonalAccessToken::count());
     }
 
     public function test_an_expired_token_stops_working(): void
     {
         $token = $this->tokenFor('manager@delta.test');
 
-        ApiToken::withoutGlobalScope(TenantScope::class)
-            ->firstOrFail()
+        PersonalAccessToken::firstOrFail()
             ->forceFill(['expires_at' => now()->subMinute()])
             ->save();
 
@@ -294,6 +331,220 @@ class ApiAuthenticationTest extends TestCase
 
         $this->assertContains('work_order.work_order.view', $permissions);
         $this->assertNotContains('admin.company.manage', $permissions);
+    }
+
+    // -- Sessions -------------------------------------------------------
+
+    public function test_sessions_lists_and_revokes_browser_sessions(): void
+    {
+        config(['session.driver' => 'database']);
+
+        DB::table('sessions')->insert([
+            [
+                'id' => 'session-a',
+                'user_id' => $this->manager->id,
+                'ip_address' => '10.0.0.1',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0) Chrome/120.0',
+                'payload' => '',
+                'last_activity' => now()->getTimestamp(),
+            ],
+            [
+                'id' => 'session-b',
+                'user_id' => $this->manager->id,
+                'ip_address' => '10.0.0.2',
+                'user_agent' => 'Mozilla/5.0 (iPhone) Safari/604.1',
+                'payload' => '',
+                'last_activity' => now()->getTimestamp(),
+            ],
+        ]);
+
+        $token = $this->tokenFor('manager@delta.test');
+
+        $sessions = $this->withToken($token)
+            ->getJson('/api/v1/auth/sessions')
+            ->assertOk()
+            ->json('data');
+
+        $this->assertCount(2, $sessions);
+
+        $this->withToken($token)
+            ->deleteJson('/api/v1/auth/sessions/session-a')
+            ->assertNoContent();
+
+        $this->assertSame(0, DB::table('sessions')->where('id', 'session-a')->count());
+        $this->assertSame(1, DB::table('sessions')->where('id', 'session-b')->count());
+    }
+
+    public function test_revoke_all_sessions_clears_every_one(): void
+    {
+        config(['session.driver' => 'database']);
+
+        DB::table('sessions')->insert([
+            ['id' => 'session-x', 'user_id' => $this->manager->id, 'ip_address' => '10.0.0.1', 'user_agent' => '', 'payload' => '', 'last_activity' => now()->getTimestamp()],
+            ['id' => 'session-y', 'user_id' => $this->manager->id, 'ip_address' => '10.0.0.2', 'user_agent' => '', 'payload' => '', 'last_activity' => now()->getTimestamp()],
+        ]);
+
+        $this->withToken($this->tokenFor('manager@delta.test'))
+            ->postJson('/api/v1/auth/sessions/revoke-all')
+            ->assertNoContent();
+
+        $this->assertSame(0, DB::table('sessions')->where('user_id', $this->manager->id)->count());
+    }
+
+    public function test_a_session_cannot_be_revoked_for_somebody_elses_account(): void
+    {
+        config(['session.driver' => 'database']);
+
+        $stranger = User::where('email', 'owner@rival.test')->firstOrFail();
+
+        DB::table('sessions')->insert([
+            'id' => 'someone-elses-session',
+            'user_id' => $stranger->id,
+            'ip_address' => '10.0.0.9',
+            'user_agent' => '',
+            'payload' => '',
+            'last_activity' => now()->getTimestamp(),
+        ]);
+
+        $this->withToken($this->tokenFor('manager@delta.test'))
+            ->deleteJson('/api/v1/auth/sessions/someone-elses-session')
+            ->assertNoContent();
+
+        // A no-op, not an error: the row simply was not this caller's to
+        // delete, the same non-disclosure every other cross-tenant path uses.
+        $this->assertSame(1, DB::table('sessions')->where('id', 'someone-elses-session')->count());
+    }
+
+    public function test_a_machine_caller_sees_no_sessions_and_cannot_revoke(): void
+    {
+        [$client, $secret] = $this->machineClient(['asset.asset.view']);
+
+        $token = $this->postJson('/api/v1/auth/token', [
+            'client_id' => $client->client_id,
+            'client_secret' => $secret,
+        ])->json('data.access_token');
+
+        $this->withToken($token)
+            ->getJson('/api/v1/auth/sessions')
+            ->assertOk()
+            ->assertJsonPath('data', []);
+
+        $this->withToken($token)
+            ->postJson('/api/v1/auth/sessions/revoke-all')
+            ->assertForbidden();
+    }
+
+    // -- API tokens -----------------------------------------------------------
+
+    public function test_tokens_lists_every_live_one_and_revokes_by_id(): void
+    {
+        $current = $this->tokenFor('manager@delta.test');
+
+        $other = $this->postJson('/api/v1/auth/login', [
+            'email' => 'manager@delta.test',
+            'password' => 'correct-horse-battery',
+            'device_name' => 'Second device',
+        ])->json('data.access_token');
+
+        $list = $this->withToken($current)
+            ->getJson('/api/v1/auth/tokens')
+            ->assertOk()
+            ->json('data');
+
+        $this->assertCount(2, $list);
+        $otherId = (string) explode('|', $other)[0];
+        $row = collect($list)->firstWhere('id', $otherId);
+        $this->assertNotNull($row, 'the second device\'s token id should be listed');
+        $this->assertFalse($row['is_current']);
+
+        $currentId = (string) explode('|', $current)[0];
+        $currentRow = collect($list)->firstWhere('id', $currentId);
+        // Revoking the token that authenticated this very request would
+        // end the caller's own session mid-click — the frontend relies on
+        // this flag to hide that row's own revoke control.
+        $this->assertTrue($currentRow['is_current']);
+
+        $this->withToken($current)
+            ->deleteJson("/api/v1/auth/tokens/{$row['id']}")
+            ->assertNoContent();
+
+        $this->withToken($other)
+            ->getJson('/api/v1/auth/me')
+            ->assertUnauthorized();
+
+        // The token used to revoke the other one is untouched.
+        $this->withToken($current)->getJson('/api/v1/auth/me')->assertOk();
+    }
+
+    public function test_a_token_cannot_be_revoked_for_somebody_elses_account(): void
+    {
+        $strangerToken = $this->postJson('/api/v1/auth/login', [
+            'email' => 'owner@rival.test',
+            'password' => 'correct-horse-battery',
+        ])->json('data.access_token');
+        $strangerTokenId = explode('|', $strangerToken)[0];
+
+        $this->withToken($this->tokenFor('manager@delta.test'))
+            ->deleteJson("/api/v1/auth/tokens/{$strangerTokenId}")
+            ->assertStatus(404);
+
+        // Untouched: the stranger's token still works.
+        $this->withToken($strangerToken)->getJson('/api/v1/auth/me')->assertOk();
+    }
+
+    // -- Password -------------------------------------------------------------
+
+    public function test_the_current_password_must_be_correct(): void
+    {
+        $this->withToken($this->tokenFor('manager@delta.test'))
+            ->postJson('/api/v1/auth/password', [
+                'current_password' => 'not-the-password',
+                'password' => 'a-genuinely-long-new-passphrase',
+                'password_confirmation' => 'a-genuinely-long-new-passphrase',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('current_password');
+    }
+
+    public function test_changing_the_password_revokes_every_other_token_but_keeps_this_one(): void
+    {
+        $current = $this->tokenFor('manager@delta.test');
+        $other = $this->postJson('/api/v1/auth/login', [
+            'email' => 'manager@delta.test',
+            'password' => 'correct-horse-battery',
+            'device_name' => 'Second device',
+        ])->json('data.access_token');
+
+        config(['session.driver' => 'database']);
+        DB::table('sessions')->insert([
+            'id' => 'a-web-session', 'user_id' => $this->manager->id, 'ip_address' => '10.0.0.1',
+            'user_agent' => '', 'payload' => '', 'last_activity' => now()->getTimestamp(),
+        ]);
+
+        $this->withToken($current)
+            ->postJson('/api/v1/auth/password', [
+                'current_password' => 'correct-horse-battery',
+                'password' => 'a-genuinely-long-new-passphrase',
+                'password_confirmation' => 'a-genuinely-long-new-passphrase',
+            ])
+            ->assertOk();
+
+        // The token this very request used still works afterward.
+        $this->withToken($current)->getJson('/api/v1/auth/me')->assertOk();
+
+        // Every other token and web session are gone.
+        $this->withToken($other)->getJson('/api/v1/auth/me')->assertUnauthorized();
+        $this->assertSame(0, DB::table('sessions')->where('user_id', $this->manager->id)->count());
+
+        // The new password actually works; the old one no longer does.
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'manager@delta.test',
+            'password' => 'a-genuinely-long-new-passphrase',
+        ])->assertCreated();
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'manager@delta.test',
+            'password' => 'correct-horse-battery',
+        ])->assertStatus(422);
     }
 
     // -- Health -------------------------------------------------------------

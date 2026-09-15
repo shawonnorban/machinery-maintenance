@@ -8,6 +8,7 @@ use App\Modules\Asset\Models\Asset;
 use App\Modules\Tenancy\Models\Factory;
 use App\Modules\Tenancy\Models\ProductionLine;
 use App\Modules\WorkOrder\Models\Technician;
+use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Shared\Concerns\BelongsToTenant;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -173,6 +174,21 @@ class Breakdown extends BaseModel
     public function recurrences(): HasMany
     {
         return $this->hasMany(self::class, 'is_recurrence_of_breakdown_id');
+    }
+
+    /** One breakdown may generate many work orders (`RaiseBreakdownWorkOrder`'s own docblock, ERD Section 10). */
+    public function workOrders(): HasMany
+    {
+        return $this->hasMany(WorkOrder::class);
+    }
+
+    /** The one a technician is actually meant to be working from right now. */
+    public function activeWorkOrder(): ?WorkOrder
+    {
+        return $this->workOrders()
+            ->whereNotIn('status', ['CANCELLED'])
+            ->orderByDesc('created_at')
+            ->first();
     }
 
     public function canTransitionTo(string $status): bool

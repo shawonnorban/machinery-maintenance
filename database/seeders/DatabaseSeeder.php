@@ -14,6 +14,7 @@ use App\Modules\Inventory\Database\Seeders\SparePartCategorySeeder;
 use App\Modules\Maintenance\Database\Seeders\ChecklistTemplateSeeder;
 use App\Modules\Maintenance\Database\Seeders\MaintenanceTypeSeeder;
 use App\Modules\Metering\Database\Seeders\MeterTypeSeeder;
+use App\Modules\Platform\Database\Seeders\PlatformAdminSeeder;
 use App\Modules\Settings\Database\Seeders\SettingDefinitionSeeder;
 use Illuminate\Database\Seeder;
 
@@ -42,6 +43,7 @@ class DatabaseSeeder extends Seeder
             MeterTypeSeeder::class,
             SparePartCategorySeeder::class,
             CostCategorySeeder::class,
+            PlatformAdminSeeder::class,
         ]);
     }
 }

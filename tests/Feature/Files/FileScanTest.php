@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Files;
 
+use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
@@ -55,6 +56,20 @@ class FileScanTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
     }
 
+    /**
+     * `GET /app/attachments/{id}` is gone (Phase D/F, docs/12-Stack-
+     * Migration-Implementation-Plan.md) — its Next.js-facing replacement is
+     * `GET /api/v1/files/{id}/download`, the same `assertDownloadable()`
+     * check either way.
+     */
+    private function download(FileAttachment $attachment)
+    {
+        $token = app(IssueApiToken::class)->forUser($this->owner, $this->delta->id, 'Test')['plain'];
+
+        return $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson("/api/v1/files/{$attachment->id}/download");
+    }
+
     public function test_with_scanning_off_a_file_is_recorded_as_never_checked_and_stays_usable(): void
     {
         config()->set('files.scan.enabled', false);
@@ -68,9 +83,9 @@ class FileScanTest extends TestCase
         $this->assertNotNull($attachment->scanned_at);
         $this->assertTrue($attachment->isDownloadable());
 
-        $this->actingAs($this->owner)
-            ->get('/app/attachments/'.$attachment->id)
-            ->assertOk();
+        // A redirect to the signed URL that serves the actual bytes, not the
+        // bytes themselves — downloadable, not blocked.
+        $this->download($attachment)->assertRedirect();
     }
 
     public function test_a_file_nothing_has_looked_at_refuses_to_download(): void
@@ -85,9 +100,7 @@ class FileScanTest extends TestCase
 
         // 409, not 404: the file exists and this person may see it. "Come back
         // in a moment" is a different answer from "no such file".
-        $this->actingAs($this->owner)
-            ->get('/app/attachments/'.$attachment->id)
-            ->assertStatus(409);
+        $this->download($attachment)->assertStatus(409);
     }
 
     public function test_an_infected_file_refuses_for_the_opposite_reason(): void
@@ -101,9 +114,7 @@ class FileScanTest extends TestCase
             'scan_result' => 'Eicar-Test-Signature FOUND',
         ])->save();
 
-        $this->actingAs($this->owner)
-            ->get('/app/attachments/'.$attachment->id)
-            ->assertStatus(409);
+        $this->download($attachment)->assertStatus(409);
 
         // Both refuse, and they are not the same thing: one has not been
         // looked at, the other has.
@@ -126,9 +137,7 @@ class FileScanTest extends TestCase
         $this->assertSame('PENDING', $attachment->scan_status);
         $this->assertFalse($attachment->isDownloadable());
 
-        $this->actingAs($this->owner)
-            ->get('/app/attachments/'.$attachment->id)
-            ->assertStatus(409);
+        $this->download($attachment)->assertStatus(409);
     }
 
     public function test_the_upload_survives_a_broken_scanner(): void

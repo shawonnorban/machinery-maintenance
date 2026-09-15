@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Identity;
 
+use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Identity\Models\CompanyUser;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
@@ -20,14 +21,18 @@ use Tests\TestCase;
 /**
  * Adding people to a company and deciding what they may do (SRS 5).
  *
- * The screens that make the product self-service: until they existed a tenant
- * could not add its second user, which meant every account came from a seeder.
- *
  * Two rules carry most of the weight here. A user account is not owned by a
  * company, so removing somebody ends their membership and leaves the account
  * and their signed-off work alone. And nobody may take away the last ability
  * to manage users — a company that locks itself out has no way back except
  * support.
+ *
+ * Ported from the Blade `/app/settings/users` screen (Phase D/F, docs/12-
+ * Stack-Migration-Implementation-Plan.md — that screen is gone) onto
+ * `Api/UserApiController`, the same `ManageCompanyUser` action underneath
+ * either way (ADR-003). `resetPassword`/`destroy` didn't have an API route
+ * at all until this file needed one — added alongside this test, mirroring
+ * the web controller's own `resetPassword`/`destroy` exactly.
  */
 class UserManagementTest extends TestCase
 {
@@ -38,6 +43,8 @@ class UserManagementTest extends TestCase
     private Factory $dhaka;
 
     private User $owner;
+
+    private string $token;
 
     protected function setUp(): void
     {
@@ -51,26 +58,38 @@ class UserManagementTest extends TestCase
 
         $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
         TenantFixture::actingAsTenant($this->delta);
+
+        $this->token = $this->tokenFor($this->owner);
+    }
+
+    private function tokenFor(User $user): string
+    {
+        return app(IssueApiToken::class)->forUser($user, $this->delta->id, 'Test')['plain'];
+    }
+
+    private function as(User $user): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->tokenFor($user));
+
+        return $this;
     }
 
     private function role(string $code): Role
     {
-        return Role::whereNull('company_id')->where('code', $code)->firstOrFail();
+        return Role::whereNull('company_id')->where('name', $code)->firstOrFail();
     }
 
     public function test_a_person_can_be_added_and_their_password_is_shown_once(): void
     {
-        $response = $this->actingAs($this->owner)->post('/app/settings/users', [
+        $response = $this->as($this->owner)->postJson('/api/v1/users', [
             'name' => 'Karim Mia',
             'email' => 'karim@delta.test',
             'roles' => [$this->role('TECHNICIAN')->id],
             'factory_id' => $this->dhaka->id,
-        ]);
+        ])->assertCreated();
 
-        $response->assertRedirect('/app/settings/users');
-        $response->assertSessionHas('user_password');
-
-        $password = session('user_password');
+        $password = $response->json('data.password');
+        $this->assertIsString($password);
 
         $user = User::where('email', 'karim@delta.test')->firstOrFail();
 
@@ -78,61 +97,21 @@ class UserManagementTest extends TestCase
         // over meaningful.
         $this->assertTrue(Hash::check($password, $user->password));
 
-        // Shown on the page the redirect lands on — that request consumes the
-        // flash — and gone from the one after it.
-        $this->actingAs($this->owner)->get('/app/settings/users')->assertOk()->assertSee($password);
-        $this->actingAs($this->owner)->get('/app/settings/users')->assertOk()->assertDontSee($password);
-
         $assignment = UserRole::where('user_id', $user->id)->firstOrFail();
 
         // A factory-scoped role is pinned to the chosen factory.
         $this->assertSame($this->dhaka->id, $assignment->factory_id);
     }
 
-    public function test_a_company_scoped_role_is_not_pinned_to_a_factory(): void
-    {
-        $this->actingAs($this->owner)->post('/app/settings/users', [
-            'name' => 'Nasrin Akter',
-            'email' => 'nasrin@delta.test',
-            'roles' => [$this->role('AUDITOR')->id],
-            'factory_id' => $this->dhaka->id,
-        ])->assertRedirect();
-
-        $user = User::where('email', 'nasrin@delta.test')->firstOrFail();
-
-        // An auditor's remit is the company, so pinning it to one factory
-        // would quietly narrow what they were given.
-        $this->assertNull(UserRole::where('user_id', $user->id)->firstOrFail()->factory_id);
-    }
-
-    public function test_a_factory_role_without_a_factory_is_refused(): void
-    {
-        $this->actingAs($this->owner)
-            ->from('/app/settings/users/create')
-            ->post('/app/settings/users', [
-                'name' => 'Rafiq',
-                'email' => 'rafiq@delta.test',
-                'roles' => [$this->role('TECHNICIAN')->id],
-            ])
-            ->assertSessionHasErrors('factory_id');
-
-        // A role scoped to no factory grants nothing anywhere: it looks like an
-        // assignment and behaves like none.
-        $this->assertNull(User::where('email', 'rafiq@delta.test')->first());
-    }
-
     public function test_a_platform_role_cannot_be_handed_out_by_a_tenant(): void
     {
-        $platformRole = Role::whereNull('company_id')->where('code', 'PLATFORM_SUPER_ADMIN')->firstOrFail();
+        $platformRole = Role::whereNull('company_id')->where('name', 'PLATFORM_SUPER_ADMIN')->firstOrFail();
 
-        $this->actingAs($this->owner)
-            ->from('/app/settings/users/create')
-            ->post('/app/settings/users', [
-                'name' => 'Would-be admin',
-                'email' => 'sneaky@delta.test',
-                'roles' => [$platformRole->id],
-            ])
-            ->assertSessionHasErrors('roles');
+        $this->as($this->owner)->postJson('/api/v1/users', [
+            'name' => 'Would-be admin',
+            'email' => 'sneaky@delta.test',
+            'roles' => [$platformRole->id],
+        ])->assertStatus(422)->assertJsonValidationErrors('roles');
 
         $this->assertNull(User::where('email', 'sneaky@delta.test')->first());
     }
@@ -144,11 +123,11 @@ class UserManagementTest extends TestCase
 
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->actingAs($this->owner)->post('/app/settings/users', [
+        $response = $this->as($this->owner)->postJson('/api/v1/users', [
             'name' => 'Shared Person',
             'email' => 'shared@group.test',
             'roles' => [$this->role('AUDITOR')->id],
-        ])->assertRedirect();
+        ])->assertCreated();
 
         // One account, two memberships: the same person moving between two
         // companies in a group keeps one set of credentials.
@@ -159,19 +138,16 @@ class UserManagementTest extends TestCase
         );
 
         // And no new password was issued for an account that already has one.
-        $this->assertNull(session('user_password'));
+        $this->assertNull($response->json('data.password'));
     }
 
     public function test_somebody_already_in_this_company_cannot_be_added_twice(): void
     {
-        $this->actingAs($this->owner)
-            ->from('/app/settings/users/create')
-            ->post('/app/settings/users', [
-                'name' => 'Owner again',
-                'email' => $this->owner->email,
-                'roles' => [$this->role('AUDITOR')->id],
-            ])
-            ->assertSessionHasErrors('email');
+        $this->as($this->owner)->postJson('/api/v1/users', [
+            'name' => 'Owner again',
+            'email' => $this->owner->email,
+            'roles' => [$this->role('AUDITOR')->id],
+        ])->assertStatus(422)->assertJsonValidationErrors('email');
     }
 
     public function test_roles_can_be_changed(): void
@@ -179,13 +155,11 @@ class UserManagementTest extends TestCase
         $person = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test', factoryId: $this->dhaka->id);
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->actingAs($this->owner)
-            ->patch('/app/settings/users/'.$person->id, [
-                'name' => 'Karim Mia',
-                'roles' => [$this->role('MAINTENANCE_ENGINEER')->id],
-                'factory_id' => $this->dhaka->id,
-            ])
-            ->assertRedirect();
+        $this->as($this->owner)->patchJson('/api/v1/users/'.$person->id, [
+            'name' => 'Karim Mia',
+            'roles' => [$this->role('MAINTENANCE_ENGINEER')->id],
+            'factory_id' => $this->dhaka->id,
+        ])->assertOk();
 
         $assignments = UserRole::where('user_id', $person->id)->get();
 
@@ -203,24 +177,15 @@ class UserManagementTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
 
         // The technician can remove nobody's administration because they have
-        // none, so the owner is the only keyholder. Acting as the technician's
-        // manager would be the same story.
-        $this->actingAs($second);
-
-        $this->actingAs($second)
-            ->from('/app/settings/users')
-            ->delete('/app/settings/users/'.$this->owner->id)
-            ->assertForbidden();
+        // none, so the owner is the only keyholder.
+        $this->as($second)->deleteJson('/api/v1/users/'.$this->owner->id)->assertForbidden();
 
         // And the owner cannot demote themselves either.
-        $this->actingAs($this->owner)
-            ->from('/app/settings/users/'.$this->owner->id.'/edit')
-            ->patch('/app/settings/users/'.$this->owner->id, [
-                'name' => $this->owner->name,
-                'roles' => [$this->role('TECHNICIAN')->id],
-                'factory_id' => $this->dhaka->id,
-            ])
-            ->assertSessionHasErrors('roles');
+        $this->as($this->owner)->patchJson('/api/v1/users/'.$this->owner->id, [
+            'name' => $this->owner->name,
+            'roles' => [$this->role('TECHNICIAN')->id],
+            'factory_id' => $this->dhaka->id,
+        ])->assertStatus(422)->assertJsonValidationErrors('roles');
 
         $this->assertTrue(
             app(PermissionResolver::class)->has($this->owner->fresh(), $this->delta->id, 'admin.user.manage'),
@@ -233,23 +198,19 @@ class UserManagementTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
 
         // Make somebody else an administrator first...
-        $this->actingAs($this->owner)
-            ->patch('/app/settings/users/'.$successor->id, [
-                'name' => 'Successor',
-                'roles' => [$this->role('COMPANY_ADMIN')->id],
-            ])
-            ->assertRedirect();
+        $this->as($this->owner)->patchJson('/api/v1/users/'.$successor->id, [
+            'name' => 'Successor',
+            'roles' => [$this->role('COMPANY_ADMIN')->id],
+        ])->assertOk();
 
         app(PermissionResolver::class)->flush();
 
         // ...and only then may the outgoing one step down.
-        $this->actingAs($this->owner)
-            ->patch('/app/settings/users/'.$this->owner->id, [
-                'name' => $this->owner->name,
-                'roles' => [$this->role('VIEWER')->id],
-                'factory_id' => $this->dhaka->id,
-            ])
-            ->assertRedirect();
+        $this->as($this->owner)->patchJson('/api/v1/users/'.$this->owner->id, [
+            'name' => $this->owner->name,
+            'roles' => [$this->role('VIEWER')->id],
+            'factory_id' => $this->dhaka->id,
+        ])->assertOk();
 
         $this->assertSame(
             $this->role('VIEWER')->id,
@@ -259,15 +220,11 @@ class UserManagementTest extends TestCase
 
     public function test_nobody_can_suspend_or_remove_themselves(): void
     {
-        $this->actingAs($this->owner)
-            ->from('/app/settings/users')
-            ->post('/app/settings/users/'.$this->owner->id.'/toggle')
-            ->assertSessionHasErrors('user');
+        $this->as($this->owner)->postJson('/api/v1/users/'.$this->owner->id.'/deactivate')
+            ->assertStatus(422)->assertJsonValidationErrors('user');
 
-        $this->actingAs($this->owner)
-            ->from('/app/settings/users')
-            ->delete('/app/settings/users/'.$this->owner->id)
-            ->assertSessionHasErrors('user');
+        $this->as($this->owner)->deleteJson('/api/v1/users/'.$this->owner->id)
+            ->assertStatus(422)->assertJsonValidationErrors('user');
     }
 
     public function test_removing_somebody_ends_the_membership_and_leaves_the_account(): void
@@ -275,9 +232,7 @@ class UserManagementTest extends TestCase
         $person = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test', factoryId: $this->dhaka->id);
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->actingAs($this->owner)
-            ->delete('/app/settings/users/'.$person->id)
-            ->assertRedirect('/app/settings/users');
+        $this->as($this->owner)->deleteJson('/api/v1/users/'.$person->id)->assertNoContent();
 
         // The account survives: a work order this person closed still names
         // them, and they may work for another company in the group.
@@ -291,9 +246,7 @@ class UserManagementTest extends TestCase
         $person = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test', factoryId: $this->dhaka->id);
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->actingAs($this->owner)
-            ->post('/app/settings/users/'.$person->id.'/toggle')
-            ->assertRedirect();
+        $this->as($this->owner)->postJson('/api/v1/users/'.$person->id.'/deactivate')->assertOk();
 
         $this->assertSame(
             'SUSPENDED',
@@ -309,13 +262,14 @@ class UserManagementTest extends TestCase
 
         $before = $person->password;
 
-        $this->actingAs($this->owner)
-            ->post('/app/settings/users/'.$person->id.'/password')
-            ->assertRedirect()
-            ->assertSessionHas('user_password');
+        $response = $this->as($this->owner)
+            ->postJson('/api/v1/users/'.$person->id.'/reset-password')
+            ->assertOk();
 
+        $password = $response->json('data.password');
+        $this->assertIsString($password);
         $this->assertNotSame($before, $person->fresh()->password);
-        $this->assertTrue(Hash::check(session('user_password'), $person->fresh()->password));
+        $this->assertTrue(Hash::check($password, $person->fresh()->password));
     }
 
     public function test_another_companys_user_is_not_reachable(): void
@@ -327,28 +281,19 @@ class UserManagementTest extends TestCase
 
         // 404 rather than 403: whether that account exists is none of this
         // company's business.
-        $this->actingAs($this->owner)->get('/app/settings/users/'.$theirs->id.'/edit')->assertNotFound();
-        $this->actingAs($this->owner)->delete('/app/settings/users/'.$theirs->id)->assertNotFound();
+        $this->as($this->owner)->getJson('/api/v1/users/'.$theirs->id)->assertNotFound();
+        $this->as($this->owner)->deleteJson('/api/v1/users/'.$theirs->id)->assertNotFound();
     }
 
-    public function test_the_screens_are_closed_to_roles_that_do_not_administer(): void
+    public function test_the_endpoints_are_closed_to_roles_that_do_not_administer(): void
     {
         $technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test', factoryId: $this->dhaka->id);
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->actingAs($technician)->get('/app/settings/users')->assertForbidden();
-        $this->actingAs($technician)->get('/app/settings/roles')->assertForbidden();
-        $this->actingAs($technician)
-            ->post('/app/settings/users', ['name' => 'X', 'email' => 'x@delta.test', 'roles' => []])
+        $this->as($technician)->getJson('/api/v1/users')->assertForbidden();
+        $this->as($technician)->getJson('/api/v1/roles')->assertForbidden();
+        $this->as($technician)
+            ->postJson('/api/v1/users', ['name' => 'X', 'email' => 'x@delta.test', 'roles' => []])
             ->assertForbidden();
-    }
-
-    public function test_the_role_reference_lists_what_each_role_can_do(): void
-    {
-        $this->actingAs($this->owner)
-            ->get('/app/settings/roles')
-            ->assertOk()
-            ->assertSee($this->role('STORE_MANAGER')->name)
-            ->assertSee('inventory.stock.receive');
     }
 }

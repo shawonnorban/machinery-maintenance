@@ -4,58 +4,42 @@ declare(strict_types=1);
 
 namespace App\Modules\Asset\Http\Controllers\Web;
 
-use App\Modules\Asset\Models\Asset;
-use App\Modules\Asset\Services\ScanResolver;
 use App\Shared\Http\Controllers\Controller;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 /**
- * The QR landing route (Data Dictionary 5.2, Frontend 4.9).
+ * The QR landing route (Data Dictionary 5.2, Frontend 4.9) — kept alive as
+ * a redirect, not a page, so a label printed before this route was ported
+ * still scans to somewhere real. A freshly generated label
+ * (`AssetLabelApiController`) skips this hop and encodes the Next.js URL
+ * directly.
  *
- * A scanned label carries a URL, so any phone camera opens it without the app
- * installed. Resolution still requires an authenticated session: the `auth`
- * middleware sends a guest to login and returns them here afterwards, which is
- * what a supervisor scanning a machine for the first time will hit.
+ * No auth check happens here on purpose: resolving the code, authorising
+ * the viewer, and sending a guest to sign in and back are all now the
+ * Next.js scan page's own job (`app/(app)/scan/[code]/page.js`) — doing it
+ * twice, once on each side of the redirect, would mean a Blade session and
+ * a Next.js session both have to be live for this to work, which is
+ * exactly the double-login trap the old Blade landing page used to fall
+ * into once "Report breakdown" sent a technician across the origin boundary.
  */
 class ScanController extends Controller
 {
-    public function __construct(private readonly ScanResolver $resolver) {}
-
-    public function asset(string $code, ScanResolver $resolver): View
+    public function asset(string $code): RedirectResponse
     {
-        $asset = $this->resolver->asset($code);
-
-        // 404 whether the token never existed or belongs to another tenant.
-        // A scanned label must not be usable to probe for foreign assets.
-        abort_if($asset === null, 404);
-
-        $this->authorize('view', $asset);
-
-        return view('asset::scan.asset', [
-            'asset' => $asset,
-            'actions' => $this->resolver->actionsFor($asset),
-        ]);
+        return redirect($this->frontendPath('/scan/'.$code));
     }
 
     /**
-     * Scanning a location lists what is currently standing there, which is how
-     * a stock-take or an audit walk is performed (Data Dictionary 5.3).
+     * Scanning a location lists what is currently standing there, which is
+     * how a stock-take or an audit walk is performed (Data Dictionary 5.3).
      */
-    public function location(string $code): View
+    public function location(string $code): RedirectResponse
     {
-        $location = $this->resolver->location($code);
+        return redirect($this->frontendPath('/scan/location/'.$code));
+    }
 
-        abort_if($location === null, 404);
-
-        $this->authorize('viewAny', Asset::class);
-
-        return view('asset::scan.location', [
-            'location' => $location,
-            'assets' => Asset::query()
-                ->with(['type:id,name'])
-                ->where('asset_location_id', $location->id)
-                ->orderBy('asset_code')
-                ->get(),
-        ]);
+    private function frontendPath(string $path): string
+    {
+        return rtrim((string) config('tenancy.frontend_url'), '/').$path;
     }
 }

@@ -53,6 +53,20 @@ class EnforceSubscriptionState
         'app/reports/*/export',
         'app/imports/*/export',
         'broadcasting/auth',
+
+        // The API's equivalents. Housekeeping and "pay the bill" are the
+        // same two exceptions as the web list above; a lapsed contract must
+        // not be able to lock a caller out of its own logout or the one
+        // endpoint that settles the account (ERD Section 19, SRS 49.3).
+        'api/v1/auth/logout',
+        'api/v1/auth/switch-company',
+        'api/v1/subscription/invoices/*/pay',
+        // The API's report/export surface is shaped differently from the
+        // web routes above (job resources rather than a per-report/per-type
+        // export action), but the exception is the same one: a customer in
+        // arrears can still retrieve their own data.
+        'api/v1/report-jobs',
+        'api/v1/exports',
     ];
 
     public function __construct(private readonly TenantContext $context) {}

@@ -119,8 +119,12 @@ return new class extends Migration
             $table->unsignedSmallInteger('visits_per_year')->nullable();
             $table->unsignedSmallInteger('response_time_hours')->nullable();
             $table->string('status', 16)->default('ACTIVE'); // ACTIVE | EXPIRED | CANCELLED | RENEWED
-            $table->foreignUlid('renewed_from_contract_id')->nullable()
-                ->constrained('service_contracts')->nullOnDelete();
+            // Not ->constrained() here: a self-referencing foreign key inside
+            // the same Schema::create() fails on Postgres, which adds the
+            // primary key as the create's last statement, after every foreign
+            // key. Added separately below instead, once the primary key
+            // exists.
+            $table->foreignUlid('renewed_from_contract_id')->nullable();
             $table->text('notes')->nullable();
 
             $table->foreignUlid('created_by')->nullable();
@@ -130,6 +134,15 @@ return new class extends Migration
             $table->index(['company_id', 'end_date'], 'service_contracts_expiry_index');
             $table->index(['company_id', 'vendor_id'], 'service_contracts_vendor_index');
         });
+
+        $hasRenewedFromForeignKey = collect(Schema::getForeignKeys('service_contracts'))
+            ->contains(fn (array $fk): bool => in_array('renewed_from_contract_id', $fk['columns'], true));
+
+        if (! $hasRenewedFromForeignKey) {
+            Schema::table('service_contracts', function (Blueprint $table): void {
+                $table->foreign('renewed_from_contract_id')->references('id')->on('service_contracts')->nullOnDelete();
+            });
+        }
 
         // Which assets a fleet-level contract covers. Without it, a contract
         // over "all sewing machines in Dhaka" cannot answer the only question

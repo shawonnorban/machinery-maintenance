@@ -9,7 +9,9 @@ use App\Modules\Identity\Models\CompanyUser;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserRole;
+use App\Modules\Tenancy\Models\Department;
 use App\Modules\Tenancy\Models\Factory;
+use App\Modules\Tenancy\Models\ProductionLine;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -40,7 +42,10 @@ class UserController extends Controller
             ->whereHas('memberships', fn ($q) => $q->where('company_id', $companyId))
             ->with([
                 'memberships' => fn ($q) => $q->where('company_id', $companyId),
-                'roleAssignments.role:id,name,code,scope',
+                // Spatie's `name` is the machine code; `description` carries
+                // the human-readable label — see the migration that
+                // introduced Spatie's role/permission tables.
+                'roleAssignments.role:id,name,description,scope',
                 'roleAssignments.factory:id,name',
             ])
             ->when($request->string('search')->trim()->toString(), function ($q, string $term): void {
@@ -62,6 +67,8 @@ class UserController extends Controller
             'user' => null,
             'assignedRoleIds' => [],
             'assignedFactoryId' => null,
+            'assignedDepartmentId' => null,
+            'assignedProductionLineId' => null,
         ]);
     }
 
@@ -90,6 +97,8 @@ class UserController extends Controller
             'user' => $user,
             'assignedRoleIds' => $this->assignments($user)->pluck('role_id')->all(),
             'assignedFactoryId' => $this->assignments($user)->pluck('factory_id')->filter()->first(),
+            'assignedDepartmentId' => $user->department_id,
+            'assignedProductionLineId' => $user->production_line_id,
         ]);
     }
 
@@ -162,8 +171,14 @@ class UserController extends Controller
             'phone' => ['nullable', 'string', 'max:32'],
             'locale' => ['nullable', Rule::in(['en', 'bn'])],
             'roles' => ['required', 'array', 'min:1'],
-            'roles.*' => ['string', 'size:26'],
+            // Spatie role ids — bigint, not this schema's usual ULID.
+            'roles.*' => ['integer'],
             'factory_id' => ['nullable', 'string', 'size:26'],
+            // Only meaningful for a role like Line Chief, which reports
+            // breakdowns without a technician row of its own — see
+            // `BreakdownScopeGuard`. Harmless to hold for anyone else.
+            'department_id' => ['nullable', 'string', 'size:26'],
+            'production_line_id' => ['nullable', 'string', 'size:26'],
         ]);
     }
 
@@ -174,16 +189,22 @@ class UserController extends Controller
     {
         return [
             // Platform roles are never offered: a company that could assign one
-            // could grant itself the run of the platform.
+            // could grant itself the run of the platform. Spatie's `name` is
+            // the machine code now; `description` carries the human-readable
+            // label — see the migration that introduced Spatie's tables.
             'roles' => Role::query()
                 ->whereIn('scope', ['COMPANY', 'FACTORY'])
-                ->with('permissions:id,code')
+                ->with('permissions:id,name')
                 ->orderBy('scope')
-                ->orderBy('name')
+                ->orderBy('description')
                 ->get(),
             'factories' => Factory::whereIn('id', $this->context->accessibleFactoryIds())
                 ->orderBy('name')
                 ->get(),
+            'departments' => Department::whereIn('factory_id', $this->context->accessibleFactoryIds())
+                ->orderBy('name')
+                ->get(),
+            'productionLines' => ProductionLine::orderBy('name')->get(),
         ];
     }
 

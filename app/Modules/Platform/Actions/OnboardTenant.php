@@ -105,9 +105,11 @@ class OnboardTenant
                 'is_default' => true,
             ]);
 
-            $role = Role::withoutGlobalScope(TenantScope::class)
-                ->whereNull('company_id')
-                ->where('code', 'COMPANY_OWNER')
+            // Spatie's Role carries no TenantScope to lift — it's not one of
+            // this application's tenant-owned models — and its `name` is
+            // the machine code now (COMPANY_OWNER), not a `code` column.
+            $role = Role::whereNull('company_id')
+                ->where('name', 'COMPANY_OWNER')
                 ->firstOrFail();
 
             UserRole::withoutGlobalScope(TenantScope::class)->create([

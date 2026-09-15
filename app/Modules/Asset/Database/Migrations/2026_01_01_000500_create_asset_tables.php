@@ -112,7 +112,13 @@ return new class extends Migration
             $table->foreignUlid('asset_category_id')->constrained('asset_categories')->restrictOnDelete();
             $table->foreignUlid('manufacturer_id')->nullable()->constrained('manufacturers')->nullOnDelete();
             $table->foreignUlid('asset_model_id')->nullable()->constrained('asset_models')->nullOnDelete();
-            $table->foreignUlid('parent_asset_id')->nullable()->constrained('assets')->nullOnDelete();
+            // Not ->constrained() here: a self-referencing foreign key inside
+            // the same Schema::create() fails on Postgres (which adds the
+            // primary key as the last statement of the create, after every
+            // foreign key — so this one would reference a constraint that
+            // doesn't exist yet). Added separately below instead, once the
+            // table's own primary key is committed.
+            $table->foreignUlid('parent_asset_id')->nullable();
 
             $table->string('asset_code', 64);
             $table->string('serial_number', 128)->nullable();
@@ -191,6 +197,15 @@ return new class extends Migration
             $table->index(['company_id', 'parent_asset_id']);
             $table->index(['company_id', 'criticality', 'status']);
         });
+
+        $hasParentAssetForeignKey = collect(Schema::getForeignKeys('assets'))
+            ->contains(fn (array $fk): bool => in_array('parent_asset_id', $fk['columns'], true));
+
+        if (! $hasParentAssetForeignKey) {
+            Schema::table('assets', function (Blueprint $table): void {
+                $table->foreign('parent_asset_id')->references('id')->on('assets')->nullOnDelete();
+            });
+        }
 
         $create('asset_status_histories', function (Blueprint $table): void {
             $table->ulid('id')->primary();

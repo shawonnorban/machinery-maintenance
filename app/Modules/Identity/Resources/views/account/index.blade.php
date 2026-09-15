@@ -149,7 +149,7 @@
                                 <td class="small">@dt($token->expires_at)</td>
                                 <td class="text-end">
                                     <form method="POST"
-                                          action="{{ route('app.account.tokens.revoke', $token) }}">
+                                          action="{{ route('app.account.tokens.revoke', $token->id) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-sm btn-outline-danger">{{ __('account.revoke') }}</button>

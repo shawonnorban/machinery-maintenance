@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace App\Modules\Identity\Models;
 
 use App\Modules\Tenancy\Models\Company;
+use App\Modules\Tenancy\Models\Department;
+use App\Modules\Tenancy\Models\ProductionLine;
+use App\Modules\WorkOrder\Models\Technician;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * A user is not tenant-owned. They may belong to several companies through
@@ -20,6 +26,7 @@ use Illuminate\Support\Collection;
  */
 class User extends Authenticatable
 {
+    use HasApiTokens;
     use HasUlids;
     use Notifiable;
     use SoftDeletes;
@@ -31,6 +38,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'email', 'phone', 'password', 'status',
         'timezone', 'locale', 'is_platform_admin',
+        'department_id', 'production_line_id',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -60,6 +68,23 @@ class User extends Authenticatable
     public function roleAssignments(): HasMany
     {
         return $this->hasMany(UserRole::class);
+    }
+
+    /** Set for a role like Line Chief that reports breakdowns without a technician row of its own. */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function productionLine(): BelongsTo
+    {
+        return $this->belongsTo(ProductionLine::class);
+    }
+
+    /** Not every user is a technician, and not every technician has a login — hence `HasOne`, not a guaranteed relation. */
+    public function technician(): HasOne
+    {
+        return $this->hasOne(Technician::class);
     }
 
     public function isActive(): bool

@@ -6,6 +6,7 @@ namespace App\Modules\Maintenance\Actions;
 
 use App\Modules\Maintenance\Models\MaintenancePlan;
 use App\Modules\Maintenance\Models\MaintenancePlanRule;
+use App\Modules\Maintenance\Models\MaintenanceSchedule;
 use App\Modules\Maintenance\Models\MaintenanceTemplateVersion;
 use App\Modules\Maintenance\Services\ScheduleGenerator;
 use Illuminate\Support\Facades\DB;
@@ -103,6 +104,33 @@ class SaveMaintenancePlan
         // Occurrences already generated are left alone. Cancelling them would
         // erase work a technician may already be part-way through.
         return $plan->fresh();
+    }
+
+    /**
+     * Remove a plan that should never have existed.
+     *
+     * Deliberately narrow. A plan that has generated occurrences is the
+     * reason those jobs exist, and deleting it would leave a maintenance
+     * history nobody can explain — those are deactivated instead, which
+     * stops new occurrences and leaves every past one readable. What is left
+     * is the plan typed in twice this morning.
+     */
+    public function delete(MaintenancePlan $plan): void
+    {
+        $occurrences = MaintenanceSchedule::where('maintenance_plan_id', $plan->id)->count();
+
+        if ($occurrences > 0) {
+            throw ValidationException::withMessages([
+                'plan' => __('maintenance.plan_has_occurrences', ['count' => $occurrences]),
+            ])->status(409);
+        }
+
+        DB::transaction(function () use ($plan): void {
+            // The rules are the plan's own definition and have no meaning
+            // without it; nothing else points at them.
+            $plan->rules()->delete();
+            $plan->delete();
+        });
     }
 
     /**

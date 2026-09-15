@@ -47,10 +47,11 @@ class AuthorizationTest extends TestCase
     {
         $technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
 
-        $this->actingAs($technician)->get('/app/dashboard')->assertOk();
-
         $this->assertTrue(Gate::forUser($technician)->allows('work_order.work_order.complete'));
-        $this->assertTrue(Gate::forUser($technician)->allows('breakdown.breakdown.create'));
+        // Reporting a breakdown is the Line Chief's job now (`RoleSeeder`) —
+        // the floor supervisor standing at the machine, not the repair
+        // technician.
+        $this->assertFalse(Gate::forUser($technician)->allows('breakdown.breakdown.create'));
 
         // A technician must not create assets, approve, or touch billing.
         $this->assertFalse(Gate::forUser($technician)->allows('asset.asset.create'));
@@ -58,44 +59,13 @@ class AuthorizationTest extends TestCase
         $this->assertFalse(Gate::forUser($technician)->allows('inventory.adjustment.create'));
     }
 
-    /**
-     * Against controls that do something, not markers placed for the test.
-     *
-     * These assertions used to run against two inert buttons on the placeholder
-     * dashboard. A gate proven only over a button that does nothing proves
-     * nothing: the check has to sit on the real link a user would click.
-     */
-    public function test_the_ui_hides_controls_the_user_cannot_use(): void
-    {
-        $technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
-
-        // Both screens a technician can legitimately open, each carrying a
-        // control they must not be offered.
-        $this->actingAs($technician)
-            ->get('/app/assets')
-            ->assertOk()
-            ->assertDontSee(route('app.assets.create'), false);
-
-        $this->actingAs($technician)
-            ->get('/app/inventory/parts')
-            ->assertOk()
-            ->assertDontSee(route('app.inventory.parts.create'), false);
-    }
-
-    public function test_an_owner_sees_the_controls_a_technician_does_not(): void
-    {
-        $owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
-
-        $this->actingAs($owner)
-            ->get('/app/assets')
-            ->assertOk()
-            ->assertSee(route('app.assets.create'), false);
-
-        $this->actingAs($owner)
-            ->get('/app/inventory/parts')
-            ->assertOk()
-            ->assertSee(route('app.inventory.parts.create'), false);
-    }
+    // `test_the_ui_hides_controls_the_user_cannot_use` and `test_an_owner_
+    // sees_the_controls_a_technician_does_not` lived here — proving a gate
+    // by whether a Blade screen printed a button's own route(). Both the
+    // screens and the mechanism are gone (Phase D/F): Next.js decides its
+    // own control visibility from `/auth/permissions` rather than from
+    // markup the server chose to print, so there's no server-rendered HTML
+    // left for an equivalent assertion to inspect.
 
     public function test_a_factory_scoped_role_grants_only_that_factory(): void
     {
@@ -105,8 +75,6 @@ class AuthorizationTest extends TestCase
             'dhk-manager@delta.test',
             factoryId: $this->dhaka->id,
         );
-
-        $this->actingAs($manager)->get('/app/dashboard');
 
         $resolver = app(PermissionResolver::class);
 

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Models;
 
+use App\Modules\Identity\Models\User;
 use App\Shared\Concerns\BelongsToTenant;
 use App\Shared\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /** Append-only (ERD rule 19). */
 class WorkOrderStatusHistory extends BaseModel
@@ -30,5 +32,10 @@ class WorkOrderStatusHistory extends BaseModel
     protected function casts(): array
     {
         return ['changed_at' => 'datetime'];
+    }
+
+    public function changedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'changed_by');
     }
 }

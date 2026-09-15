@@ -49,6 +49,7 @@ class MaintenanceNotifier
             $this->dispatcher->sendToMany(
                 recipients: $this->holdersOf('MAINTENANCE_MANAGER', $breakdown->factory_id)
                     ->merge($this->holdersOf('MAINTENANCE_ENGINEER', $breakdown->factory_id))
+                    ->merge($this->coveringTechnicianUsers($breakdown, $asset))
                     ->unique('id'),
                 eventType: $isCritical ? 'BREAKDOWN_CRITICAL' : 'BREAKDOWN_REPORTED',
                 data: [
@@ -60,7 +61,9 @@ class MaintenanceNotifier
                 factoryId: $breakdown->factory_id,
                 entityType: 'breakdown',
                 entityId: $breakdown->id,
-                actionUrl: route('app.breakdowns.show', $breakdown->id),
+                // A tenant user's own screens are the Next.js app now (Phase
+                // D/F), not this module's own (decommissioned) `/app` routes.
+                actionUrl: config('tenancy.frontend_url').'/breakdowns/'.$breakdown->id,
             );
         });
     }
@@ -97,7 +100,7 @@ class MaintenanceNotifier
                 factoryId: $workOrder->factory_id,
                 entityType: 'work_order',
                 entityId: $workOrder->id,
-                actionUrl: route('app.work-orders.show', $workOrder->id),
+                actionUrl: config('tenancy.frontend_url').'/work-orders/'.$workOrder->id,
             );
         });
     }
@@ -123,7 +126,7 @@ class MaintenanceNotifier
                 factoryId: $workOrder->factory_id,
                 entityType: 'work_order',
                 entityId: $workOrder->id,
-                actionUrl: route('app.approvals'),
+                actionUrl: config('tenancy.frontend_url').'/approvals',
             );
         });
     }
@@ -151,9 +154,37 @@ class MaintenanceNotifier
                 severity: $part->is_critical_spare ? 'CRITICAL' : 'WARNING',
                 entityType: 'spare_part',
                 entityId: $part->id,
-                actionUrl: route('app.inventory.parts.show', $part->id),
+                actionUrl: config('tenancy.frontend_url').'/inventory/parts/'.$part->id,
             );
         });
+    }
+
+    /**
+     * The technician(s) whose floor this breakdown happened on, not just
+     * maintenance management. Nobody is assigned yet at report time (see
+     * `BreakdownScopeGuard`), so this is every active, logged-in technician
+     * this factory has whose own coverage area matches the machine's line or
+     * department — the same people the hard restriction would later let
+     * report or repair it.
+     *
+     * @return Collection<int, User>
+     */
+    private function coveringTechnicianUsers(Breakdown $breakdown, ?Asset $asset): Collection
+    {
+        $location = $asset?->asset_location_id === null ? null : $asset->location;
+
+        $technicians = Technician::where('factory_id', $breakdown->factory_id)
+            ->where('status', 'ACTIVE')
+            ->whereNotNull('user_id')
+            ->get()
+            ->filter(fn (Technician $t): bool => $t->coversLocation($location?->department_id, $location?->production_line_id)
+                // A factory-wide technician (no area named at all) is not
+                // "covering" this one machine any more than any other — that
+                // breadth is for sorting an assignment list, not for deciding
+                // who gets woken up by every single report.
+                && ($t->department_id !== null || $t->production_line_id !== null));
+
+        return User::whereIn('id', $technicians->pluck('user_id'))->where('status', 'ACTIVE')->get();
     }
 
     /**
@@ -168,8 +199,9 @@ class MaintenanceNotifier
      */
     private function holdersOf(string $roleCode, ?string $factoryId = null): Collection
     {
+        // Spatie's `name` is the machine code now (COMPANY_OWNER, ...).
         $role = Role::whereNull('company_id')
-            ->where('code', $roleCode)
+            ->where('name', $roleCode)
             ->first();
 
         if ($role === null) {

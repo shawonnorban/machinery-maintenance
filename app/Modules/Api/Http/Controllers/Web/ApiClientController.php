@@ -7,11 +7,11 @@ namespace App\Modules\Api\Http\Controllers\Web;
 use App\Modules\Api\Actions\ManageApiClient;
 use App\Modules\Api\Models\ApiClient;
 use App\Modules\Api\Models\ApiToken;
-use App\Modules\Identity\Models\Permission;
 use App\Shared\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
 
 /**
  * Where a person mints a machine's credentials (API 4.2).
@@ -34,9 +34,11 @@ class ApiClientController extends Controller
                 ->orderBy('name')
                 ->get(),
             // Grouped by module so a list of two hundred codes is navigable.
+            // Spatie's `name` is the machine code; `description` carries the
+            // human-readable label.
             'permissions' => Permission::query()
-                ->orderBy('code')
-                ->get(['code', 'name', 'module'])
+                ->orderBy('name')
+                ->get(['name', 'description', 'module'])
                 ->groupBy('module'),
         ]);
     }

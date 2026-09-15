@@ -8,16 +8,26 @@ use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Api\Models\ApiClient;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Support\ApiCaller;
+use App\Modules\Api\Support\SanctumTokenHandle;
+use App\Modules\Audit\Services\AuditRecorder;
 use App\Modules\Identity\Actions\AttemptLogin;
 use App\Modules\Identity\Models\CompanyUser;
-use App\Modules\Identity\Models\Permission;
+use App\Modules\Identity\Models\User;
+use App\Modules\Tenancy\Models\Company;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiException;
 use App\Shared\Http\Api\ApiResponse;
 use App\Shared\Http\Api\ErrorCode;
 use App\Shared\Scopes\TenantScope;
+use App\Shared\Support\UserAgent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Permission;
 
 /**
  * How a caller gets in (API 3).
@@ -29,6 +39,8 @@ use Illuminate\Http\Request;
  */
 class AuthController extends ApiController
 {
+    public function __construct(private readonly AuditRecorder $audit) {}
+
     /**
      * A person's token.
      *
@@ -123,8 +135,17 @@ class AuthController extends ApiController
      */
     public function me(ApiCaller $caller): JsonResponse
     {
+        $company = Company::find($caller->companyId);
+
         return ApiResponse::ok([
             'company_id' => $caller->companyId,
+            // The sidebar's own logo mark reads this — a machine caller has
+            // no sidebar to draw, but the field costs nothing to include.
+            'company' => $company === null ? null : [
+                'id' => $company->id,
+                'name' => $company->name,
+                'logo_url' => $company->logoUrl(),
+            ],
             'kind' => $caller->isMachine() ? 'CLIENT' : 'USER',
             'name' => $caller->label(),
             'user' => $caller->user === null ? null : [
@@ -138,9 +159,9 @@ class AuthController extends ApiController
                 'client_id' => $caller->client->client_id,
             ],
             'token' => [
-                'id' => $caller->token->id,
-                'name' => $caller->token->name,
-                'expires_at' => $caller->token->expires_at?->toIso8601String(),
+                'id' => $caller->token->id(),
+                'name' => $caller->token->name(),
+                'expires_at' => $caller->token->expiresAt()?->toIso8601String(),
             ],
         ]);
     }
@@ -155,7 +176,8 @@ class AuthController extends ApiController
      */
     public function permissions(ApiCaller $caller): JsonResponse
     {
-        $all = Permission::query()->orderBy('code')->pluck('code')->all();
+        // Spatie's `name` is the machine code (asset.asset.view_any, ...).
+        $all = Permission::query()->orderBy('name')->pluck('name')->all();
 
         return ApiResponse::ok([
             'permissions' => $caller->permissionCodes($all),
@@ -173,6 +195,268 @@ class AuthController extends ApiController
         $caller->token->revoke();
 
         return ApiResponse::noContent();
+    }
+
+    /**
+     * Everywhere this account is signed in — a browser session included,
+     * this bearer token's own request has none of its own to name.
+     *
+     * Same source and shape as the account screen's device list (ADR-003):
+     * a person switching between the app and an integration should not see
+     * two different answers to "where am I signed in".
+     */
+    public function sessions(ApiCaller $caller): JsonResponse
+    {
+        if ($caller->user === null) {
+            return ApiResponse::ok([]);
+        }
+
+        return ApiResponse::ok($this->sessionsFor($caller->user->id));
+    }
+
+    public function revokeSession(ApiCaller $caller, string $session): JsonResponse
+    {
+        if ($caller->user === null) {
+            throw ApiException::of(ErrorCode::FORBIDDEN);
+        }
+
+        // Scoped to the asker: without this, one bearer token could sign
+        // out any session by guessing its id.
+        DB::table('sessions')
+            ->where('id', $session)
+            ->where('user_id', $caller->user->id)
+            ->delete();
+
+        return ApiResponse::noContent();
+    }
+
+    /**
+     * Every browser session this account holds, gone in one call.
+     *
+     * A bearer token carries no session of its own to spare, unlike the
+     * account screen's equivalent — a person sitting in that screen keeps
+     * the tab they are looking at. An integration calling this has nothing
+     * to exempt.
+     */
+    public function revokeAllSessions(ApiCaller $caller): JsonResponse
+    {
+        if ($caller->user === null) {
+            throw ApiException::of(ErrorCode::FORBIDDEN);
+        }
+
+        DB::table('sessions')->where('user_id', $caller->user->id)->delete();
+
+        return ApiResponse::noContent();
+    }
+
+    /**
+     * Every live bearer token this person holds, from both schemes live
+     * during the Sanctum migration — mirrors `AccountController::tokens()`,
+     * plus one thing the web list has no equivalent for: `is_current` on
+     * whichever row is the very token this request authenticated with.
+     * The web page never lists the session it was requested from as one of
+     * its own rows (a Blade session and an API token are different
+     * things), but here that token genuinely is one of these rows, and
+     * revoking it would end this Next.js session mid-click — the frontend
+     * uses this flag to disable that one row's own revoke button rather
+     * than let it be revoked by accident.
+     */
+    public function tokens(ApiCaller $caller): JsonResponse
+    {
+        if ($caller->user === null) {
+            throw ApiException::of(ErrorCode::FORBIDDEN);
+        }
+
+        $isSanctumCaller = $caller->token instanceof SanctumTokenHandle;
+        $currentId = (string) $caller->token->id();
+        $currentSource = $isSanctumCaller ? 'sanctum' : 'legacy';
+
+        $tokens = $this->tokensFor($caller->user)->map(fn (array $t): array => $t + [
+            'is_current' => $t['source'] === $currentSource && $t['id'] === $currentId,
+        ]);
+
+        return ApiResponse::ok($tokens->all());
+    }
+
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function tokensFor(User $user): Collection
+    {
+        $sanctum = $user->tokens->map(fn ($t): array => [
+            'source' => 'sanctum',
+            'id' => (string) $t->id,
+            'name' => $t->name,
+            'last_four' => $t->last_four,
+            'last_used_at' => $t->last_used_at?->toIso8601String(),
+            'expires_at' => $t->expires_at?->toIso8601String(),
+        ]);
+
+        $legacy = ApiToken::withoutGlobalScope(TenantScope::class)
+            ->where('user_id', $user->id)
+            ->whereNull('revoked_at')
+            ->get()
+            ->map(fn (ApiToken $t): array => [
+                'source' => 'legacy',
+                'id' => $t->id,
+                'name' => $t->name,
+                'last_four' => $t->last_four,
+                'last_used_at' => $t->last_used_at?->toIso8601String(),
+                'expires_at' => $t->expires_at?->toIso8601String(),
+            ]);
+
+        return $sanctum->merge($legacy)->sortByDesc('last_used_at')->values();
+    }
+
+    /**
+     * Give up one token that isn't necessarily this request's own — mirrors
+     * `AccountController::revokeToken()`'s "try Sanctum, fall back to
+     * legacy" lookup, both scoped to the asker rather than a company: a
+     * person in three companies holds a token for each, and being able to
+     * see one but not stop it would be worse than showing neither.
+     */
+    public function revokeToken(ApiCaller $caller, string $token): JsonResponse
+    {
+        if ($caller->user === null) {
+            throw ApiException::of(ErrorCode::FORBIDDEN);
+        }
+
+        $sanctum = $caller->user->tokens()->find($token);
+
+        if ($sanctum !== null) {
+            $sanctum->delete();
+
+            return ApiResponse::noContent();
+        }
+
+        $row = ApiToken::withoutGlobalScope(TenantScope::class)
+            ->whereKey($token)
+            ->where('user_id', $caller->user->id)
+            ->first();
+
+        if ($row === null) {
+            throw ApiException::of(ErrorCode::RESOURCE_NOT_FOUND);
+        }
+
+        $row->revoke();
+
+        return ApiResponse::noContent();
+    }
+
+    /**
+     * Mirrors `AccountController::changePassword()`, adapted for a
+     * bearer-token-only client: the web keeps the *session* the request
+     * arrived on and revokes every API token unconditionally, because a
+     * session cookie and a bearer token are different things there. Here,
+     * the bearer token *is* what authenticated this very request, so the
+     * equivalent of "don't sign yourself out doing this" is excluding the
+     * current token from revocation instead — revoking it too would end
+     * this Next.js session mid-flow, immediately after the password it
+     * just changed. Every *other* token (both schemes) and every web
+     * session are still cleared: a password changed because it may have
+     * leaked is a password whose other sign-ins may have leaked with it.
+     */
+    public function changePassword(Request $request, ApiCaller $caller): JsonResponse
+    {
+        if ($caller->user === null) {
+            throw ApiException::of(ErrorCode::FORBIDDEN);
+        }
+
+        $user = $caller->user;
+
+        $data = $request->validate([
+            'current_password' => ['required', 'string'],
+            // SRS 50.1: at least 10 characters and checked against a
+            // known-breached list. No forced periodic rotation.
+            'password' => ['required', 'confirmed', PasswordRule::min(10)->uncompromised()],
+        ]);
+
+        if (! Hash::check($data['current_password'], $user->password)) {
+            // Asked for even though the caller already holds a valid
+            // token: this is the check that stops a leaked/borrowed token
+            // from becoming a permanent password change.
+            throw ValidationException::withMessages([
+                'current_password' => __('account.current_password_wrong'),
+            ]);
+        }
+
+        $user->forceFill(['password' => $data['password']])->save();
+
+        $isSanctumCaller = $caller->token instanceof SanctumTokenHandle;
+        $currentTokenId = (string) $caller->token->id();
+
+        $user->tokens()
+            ->when($isSanctumCaller, fn ($q) => $q->where('id', '!=', $currentTokenId))
+            ->delete();
+
+        ApiToken::withoutGlobalScope(TenantScope::class)
+            ->where('user_id', $user->id)
+            ->whereNull('revoked_at')
+            ->when(! $isSanctumCaller, fn ($q) => $q->where('id', '!=', $currentTokenId))
+            ->get()
+            ->each(fn (ApiToken $t) => $t->revoke());
+
+        DB::table('sessions')->where('user_id', $user->id)->delete();
+
+        $this->audit->event(
+            'SECURITY_EVENT',
+            ['reason' => 'PASSWORD_CHANGED'],
+            userId: $user->id,
+            label: 'PASSWORD_CHANGED',
+        );
+
+        return ApiResponse::ok(['status' => 'changed']);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function sessionsFor(string $userId): array
+    {
+        if (config('session.driver') !== 'database') {
+            // Nothing to list. A file or cookie driver keeps no index of who
+            // is signed in where, and inventing an empty list that looks
+            // authoritative would be worse than saying so.
+            return [];
+        }
+
+        return DB::table('sessions')
+            ->where('user_id', $userId)
+            ->orderByDesc('last_activity')
+            ->get()
+            ->map(fn ($row): array => [
+                'id' => $row->id,
+                'ip_address' => $row->ip_address,
+                'agent' => UserAgent::describe((string) ($row->user_agent ?? '')),
+                // Every other timestamp this API returns is ISO 8601; the
+                // `sessions` table's own column is a bare Unix integer
+                // (Laravel's session driver, not this app's convention), so
+                // it's converted here rather than left for the frontend to
+                // special-case one field.
+                'last_activity' => \Carbon\CarbonImmutable::createFromTimestamp($row->last_activity)->toIso8601String(),
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Which language this person reads the product in — mirrors the web's
+     * own `PreferenceController::locale`, one of "the two global scope
+     * controls in the header" that never got an API of its own before now.
+     */
+    public function setLocale(Request $request, ApiCaller $caller): JsonResponse
+    {
+        if ($caller->user === null) {
+            throw ApiException::of(ErrorCode::FORBIDDEN);
+        }
+
+        $data = $request->validate([
+            'locale' => ['required', 'string', 'in:en,bn'],
+        ]);
+
+        $caller->user->forceFill(['locale' => $data['locale']])->save();
+
+        return ApiResponse::ok(['locale' => $data['locale']]);
     }
 
     /**
@@ -197,7 +481,7 @@ class AuthController extends ApiController
         ['token' => $token, 'plain' => $plain] = $tokens->forUser(
             $caller->user,
             $data['company_id'],
-            $caller->token->name,
+            $caller->token->name(),
         );
 
         return ApiResponse::created([

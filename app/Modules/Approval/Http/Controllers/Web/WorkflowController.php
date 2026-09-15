@@ -36,8 +36,11 @@ class WorkflowController extends Controller
     {
         $this->authorizeWorkflows($request);
 
+        // Spatie's `name` is the machine code; the human-readable label
+        // lives in `description` — see the migration that introduced
+        // Spatie's role/permission tables.
         $workflows = ApprovalWorkflow::query()
-            ->with(['rules' => fn ($q) => $q->orderBy('sequence'), 'rules.role:id,name'])
+            ->with(['rules' => fn ($q) => $q->orderBy('sequence'), 'rules.role:id,description'])
             ->orderBy('entity_type')
             ->get();
 
@@ -51,7 +54,7 @@ class WorkflowController extends Controller
                 $w->id => $action->requestCount($w),
             ]),
             'entityTypes' => ApprovalWorkflow::ENTITY_TYPES,
-            'roles' => Role::availableTo($this->context->companyId())->orderBy('name')->get(['id', 'name']),
+            'roles' => Role::availableTo($this->context->companyId())->orderBy('description')->get(['id', 'description']),
             'factories' => Factory::whereIn('id', $this->context->accessibleFactoryIds())->orderBy('name')->get(),
             'criticalities' => Asset::CRITICALITIES,
         ]);
@@ -84,7 +87,8 @@ class WorkflowController extends Controller
 
         $action->addRule($workflow, $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'role_id' => ['required', 'string', 'size:26'],
+            // A Spatie role id — bigint, not this schema's usual ULID.
+            'role_id' => ['required', 'integer'],
             'min_cost' => ['nullable', 'numeric', 'min:0'],
             'max_cost' => ['nullable', 'numeric', 'min:0'],
             'criticality' => ['nullable', 'array'],

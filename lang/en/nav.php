@@ -30,6 +30,7 @@ return [
     'transfers' => 'Transfers',
     'low_stock' => 'Low Stock',
     'part_requests' => 'Part requests',
+    'workforce' => 'Workforce',
     'technicians' => 'Technicians',
     'teams' => 'Teams',
     'vendors' => 'Vendors',

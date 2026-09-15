@@ -35,7 +35,11 @@ class ManageTechnician
      */
     public function create(array $data): Technician
     {
-        return Technician::create($this->values($data) + [
+        $values = $this->values($data);
+
+        $this->assertLoginAvailable($values['user_id']);
+
+        return Technician::create($values + [
             'company_id' => $this->context->companyId(),
             'status' => 'ACTIVE',
         ]);
@@ -46,7 +50,11 @@ class ManageTechnician
      */
     public function update(Technician $technician, array $data): Technician
     {
-        $technician->update($this->values($data));
+        $values = $this->values($data);
+
+        $this->assertLoginAvailable($values['user_id'], $technician->id);
+
+        $technician->update($values);
 
         return $technician->fresh();
     }
@@ -123,6 +131,29 @@ class ManageTechnician
             'joining_date' => $data['joining_date'] ?? null,
             'max_concurrent_work_orders' => $data['max_concurrent_work_orders'] ?? null,
         ];
+    }
+
+    /**
+     * One login, one technician (`technicians_user_unique`) — a shared login
+     * across several technicians is exactly what makes individual work
+     * history unrecoverable, so this is refused here with a field-specific
+     * message rather than surfacing as a raw database constraint error.
+     */
+    private function assertLoginAvailable(?string $userId, ?string $excludingTechnicianId = null): void
+    {
+        if ($userId === null) {
+            return;
+        }
+
+        $alreadyLinked = Technician::where('user_id', $userId)
+            ->when($excludingTechnicianId !== null, fn ($q) => $q->where('id', '!=', $excludingTechnicianId))
+            ->first();
+
+        if ($alreadyLinked !== null) {
+            throw ValidationException::withMessages([
+                'user_id' => __('technician.login_already_linked', ['name' => $alreadyLinked->name]),
+            ])->status(409);
+        }
     }
 
     /**

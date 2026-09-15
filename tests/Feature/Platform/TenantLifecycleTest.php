@@ -93,8 +93,15 @@ class TenantLifecycleTest extends TestCase
         // The trap: a soft-deleted company resolves to null, and a null company
         // used to skip the suspension check entirely and let the owner in with
         // a context pointing at nothing.
-        $this->actingAs($this->owner)->get('/app/dashboard')->assertForbidden();
-        $this->actingAs($this->owner)->get('/app/assets')->assertForbidden();
+        //
+        // `/app/dashboard`/`/app/assets` are gone — fully replaced by the
+        // Next.js app (Phase D/F). `/app/support/tickets` stands in: it's
+        // the one Blade screen this module keeps alive (Platform's own
+        // tenant-facing "my support tickets", not yet ported), needs no
+        // permission beyond company membership, and isn't in
+        // `ResolveTenantContext::isAlwaysAllowed()`'s exemption list the
+        // way `/app/locale`/`/app/switch-company` are.
+        $this->actingAs($this->owner)->get('/app/support/tickets')->assertForbidden();
     }
 
     public function test_they_are_told_the_account_is_closed_not_suspended(): void
@@ -104,7 +111,7 @@ class TenantLifecycleTest extends TestCase
         $this->signOut();
 
         $this->actingAs($this->owner)
-            ->get('/app/dashboard')
+            ->get('/app/support/tickets')
             ->assertForbidden()
             ->assertSee(__('tenancy.closed_title'))
             // Not the suspension screen: a suspension lifts this afternoon and
@@ -119,7 +126,7 @@ class TenantLifecycleTest extends TestCase
         $this->signOut();
 
         $this->actingAs($this->owner)
-            ->getJson('/app/dashboard')
+            ->getJson('/app/support/tickets')
             ->assertForbidden()
             ->assertJsonPath('code', 'TENANT_CLOSED');
     }
@@ -187,7 +194,7 @@ class TenantLifecycleTest extends TestCase
 
         $this->signOut();
 
-        $this->actingAs($this->owner)->get('/app/dashboard')->assertOk();
+        $this->actingAs($this->owner)->get('/app/support/tickets')->assertOk();
     }
 
     public function test_a_working_customer_cannot_be_erased(): void
@@ -277,7 +284,7 @@ class TenantLifecycleTest extends TestCase
         $this->assertNotNull(User::find($this->owner->id));
 
         $this->signOut();
-        $this->actingAs($this->owner)->get('/app/dashboard')->assertForbidden();
+        $this->actingAs($this->owner)->get('/app/support/tickets')->assertForbidden();
     }
 
     private function tenantUrl(): string

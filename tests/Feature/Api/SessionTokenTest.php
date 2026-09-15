@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api;
 
-use App\Modules\Api\Models\ApiToken;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
-use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\PersonalAccessToken;
 use Tests\Support\TenantFixture;
 use Tests\Support\WorkOrderFixture;
 use Tests\TestCase;
@@ -67,7 +66,12 @@ class SessionTokenTest extends TestCase
     {
         $asset = WorkOrderFixture::runningAsset($this->delta, $this->dhaka);
 
-        $token = $this->actingAs($this->technician)->postJson('/app/session-token')->json('token');
+        // Reporting is the Line Chief's job now (`RoleSeeder`) — the floor
+        // supervisor standing at the machine, not the repair technician —
+        // so this is who the scan page's offline queue actually mints a
+        // token for when reporting a breakdown.
+        $lineChief = TenantFixture::user($this->delta, 'LINE_CHIEF', 'chief@delta.test');
+        $token = $this->actingAs($lineChief)->postJson('/app/session-token')->json('token');
 
         $this->flushSession();
 
@@ -101,10 +105,9 @@ class SessionTokenTest extends TestCase
         $this->withToken($first)->getJson('/api/v1/auth/me')->assertUnauthorized();
         $this->withToken($second)->getJson('/api/v1/auth/me')->assertOk();
 
-        $live = ApiToken::withoutGlobalScope(TenantScope::class)
-            ->where('user_id', $this->technician->id)
-            ->whereNull('revoked_at')
-            ->count();
+        // Deleted, not merely marked: Sanctum has no revoked_at, so retiring
+        // the first token leaves exactly one row behind, not two.
+        $live = PersonalAccessToken::where('tokenable_id', $this->technician->id)->count();
 
         $this->assertSame(1, $live);
     }
@@ -113,9 +116,7 @@ class SessionTokenTest extends TestCase
     {
         $this->actingAs($this->technician)->postJson('/app/session-token')->assertOk();
 
-        $token = ApiToken::withoutGlobalScope(TenantScope::class)
-            ->whereNull('revoked_at')
-            ->firstOrFail();
+        $token = PersonalAccessToken::firstOrFail();
 
         // The tab it lives in is open for a shift, not a month.
         $this->assertTrue($token->expires_at->lessThanOrEqualTo(now()->addDay()->addMinute()));
@@ -126,7 +127,7 @@ class SessionTokenTest extends TestCase
     {
         $this->postJson('/app/session-token')->assertUnauthorized();
 
-        $this->assertSame(0, ApiToken::withoutGlobalScope(TenantScope::class)->count());
+        $this->assertSame(0, PersonalAccessToken::count());
     }
 
     public function test_a_person_with_no_membership_in_the_named_company_cannot_mint_for_it(): void

@@ -33,24 +33,9 @@ trait ParsesLocalDateTimes
             return null;
         }
 
-        $value = (string) $value;
-
-        if ($this->carriesTimezone($value)) {
-            return CarbonImmutable::parse($value)->setTimezone('UTC');
-        }
-
-        return app(TenantTimezone::class)->toUtc($value);
-    }
-
-    /**
-     * Trailing Z, or a +HH:MM / -HH:MM offset after the time part. The date's
-     * own hyphens must not be mistaken for a negative offset, so only the
-     * portion after "T" or the first space is examined.
-     */
-    private function carriesTimezone(string $value): bool
-    {
-        $timePart = preg_split('/[T ]/', trim($value), 2)[1] ?? '';
-
-        return (bool) preg_match('/(Z|[+-]\d{2}:?\d{2})$/i', $timePart);
+        // Delegates to TenantTimezone::parseFlexible() — the same boundary,
+        // exposed there too for a plain API controller that has no
+        // $this->input() to read from.
+        return app(TenantTimezone::class)->parseFlexible((string) $value);
     }
 }

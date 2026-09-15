@@ -101,7 +101,8 @@
                          somebody looks for their own settings — not from the
                          Settings menu, which is where they administer other
                          people's. --}}
-                    <a class="dropdown-item" href="{{ route('app.account') }}">
+                    {{-- The account screen is the Next.js app now (Phase D/F). --}}
+                    <a class="dropdown-item" href="{{ config('tenancy.frontend_url').'/account' }}">
                         {{ __('account.your_account') }}
                     </a>
 

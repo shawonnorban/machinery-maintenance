@@ -15,8 +15,10 @@ class CompanySwitchController extends Controller
     {
         $company = $switch->handle($request->user(), $request->string('company_id')->toString());
 
-        return redirect()
-            ->route('app.dashboard')
-            ->with('status', __('auth.company_switched', ['company' => $company->name]));
+        // The tenant dashboard this used to send someone back to is the
+        // Next.js app now (Phase D/F) — there's no Blade page left to return
+        // the flash message to, so it's dropped rather than set somewhere
+        // nothing will ever read it.
+        return redirect(config('tenancy.frontend_url'));
     }
 }

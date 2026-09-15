@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Models;
 
+use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Department;
 use App\Modules\Tenancy\Models\Factory;
 use App\Modules\Tenancy\Models\ProductionLine;
@@ -40,6 +41,18 @@ class Technician extends BaseModel
     public function factory(): BelongsTo
     {
         return $this->belongsTo(Factory::class);
+    }
+
+    /** Not every technician has one — plenty of floor staff never sign in (`technicians_user_unique` still holds when it's null). */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /** The technician row behind whoever is logged in right now, or null if they aren't one. */
+    public static function forUser(User $user): ?self
+    {
+        return self::where('user_id', $user->id)->first();
     }
 
     /** The section they are responsible for: dyeing, knitting, sewing. */

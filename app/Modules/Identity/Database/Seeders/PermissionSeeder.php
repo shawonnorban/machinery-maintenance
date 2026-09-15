@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Database\Seeders;
 
-use App\Modules\Identity\Models\Permission;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 
 /**
  * The permission catalog: Handbook Section 2.
@@ -160,13 +160,16 @@ class PermissionSeeder extends Seeder
 
     public function run(): void
     {
+        // Spatie's `name` is the permission code (its own uniqueness key);
+        // the human-readable label lives in `description` instead — see the
+        // migration note in 2026_09_03_083841_create_permission_tables.php.
         foreach (self::catalog() as $module => $permissions) {
             foreach ($permissions as $code => $definition) {
                 Permission::updateOrCreate(
-                    ['code' => $code],
+                    ['name' => $code, 'guard_name' => 'web'],
                     [
                         'module' => $module,
-                        'name' => $definition[0],
+                        'description' => $definition[0],
                         'is_elevated' => $definition[1] ?? false,
                     ],
                 );

@@ -18,6 +18,7 @@ return [
         'FORBIDDEN' => 'Your account is not permitted to do this.',
         'TENANT_ACCESS_DENIED' => 'You are not a member of the company named in this request.',
         'TENANT_CONTEXT_REQUIRED' => 'No active company could be determined for this request.',
+        'TENANT_SUSPENDED' => 'This company has been suspended by the platform.',
         'ACCOUNT_LOCKED' => 'This account is locked. An administrator can unlock it.',
         'PASSWORD_POLICY_VIOLATION' => 'The password does not meet the policy for this company.',
 

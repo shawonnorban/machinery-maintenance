@@ -95,3 +95,9 @@ Schedule::command(PruneWebhookPayloads::class)
     ->dailyAt('02:45')
     ->withoutOverlapping()
     ->runInBackground();
+
+/*
+ * Horizon's own metrics graph (queue throughput/runtime) has no data until
+ * something takes a snapshot on a schedule — this is that schedule.
+ */
+Schedule::command('horizon:snapshot')->everyFiveMinutes();

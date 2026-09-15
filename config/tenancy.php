@@ -53,4 +53,21 @@ return [
 
     'verification_label' => env('TENANCY_VERIFICATION_LABEL', 'mm-verify'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | The tenant-facing Next.js app
+    |--------------------------------------------------------------------------
+    |
+    | Where a tenant user's own screens actually live now (docs/12-Stack-
+    | Migration-Implementation-Plan.md Phase D/F). A handful of Blade-side
+    | call sites still have to send someone to "the app" even though their
+    | own `/app/*` routes are gone: a login redirect, a company-switch
+    | redirect, a notification's action link, and Platform's own "enter as
+    | this customer" support-session redirect. All of them build off this
+    | one value rather than each guessing at a URL.
+    |
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3010'),
+
 ];

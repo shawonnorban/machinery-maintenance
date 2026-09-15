@@ -33,13 +33,16 @@ class EscalationRuleController extends Controller
 
         return view('notification::escalations.index', [
             'rules' => EscalationRule::query()
-                ->with(['role:id,name', 'factory:id,name'])
+                // Spatie's `name` is the machine code; the human-readable
+                // label lives in `description` — see the migration that
+                // introduced Spatie's role/permission tables.
+                ->with(['role:id,description', 'factory:id,name'])
                 ->orderBy('event_type')
                 ->orderBy('escalation_level')
                 ->get(),
             'eventTypes' => Notification::EVENT_TYPES,
             'severities' => Notification::SEVERITIES,
-            'roles' => Role::availableTo($this->context->companyId())->orderBy('name')->get(['id', 'name']),
+            'roles' => Role::availableTo($this->context->companyId())->orderBy('description')->get(['id', 'description']),
             'factories' => Factory::whereIn('id', $this->context->accessibleFactoryIds())->orderBy('name')->get(),
         ]);
     }
@@ -54,7 +57,8 @@ class EscalationRuleController extends Controller
             'factory_id' => ['nullable', 'string', 'size:26'],
             'delay_minutes' => ['required', 'integer', 'min:1', 'max:10080'],
             'escalation_level' => ['required', 'integer', 'min:1', 'max:5'],
-            'escalation_role_id' => ['required', 'string', 'size:26'],
+            // A Spatie role id — bigint, not this schema's usual ULID.
+            'escalation_role_id' => ['required', 'integer'],
             'max_escalations' => ['nullable', 'integer', 'min:1', 'max:10'],
             'stop_on_acknowledge' => ['sometimes', 'boolean'],
         ]) + ['stop_on_acknowledge' => $request->boolean('stop_on_acknowledge', true)]);

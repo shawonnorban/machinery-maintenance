@@ -14,6 +14,7 @@ use App\Modules\Maintenance\Models\MaintenanceSchedule;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderAssignment;
+use App\Shared\Support\Sql;
 use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
@@ -68,9 +69,20 @@ class DashboardData
     public function management(CarbonImmutable $from, CarbonImmutable $to, ?string $factoryId = null): array
     {
         $kpis = $this->kpis($from, $to, $factoryId);
+        [$previousFrom, $previousTo] = $this->previousWindow($from, $to);
+        $previous = $this->kpis($previousFrom, $previousTo, $factoryId);
 
         return [
-            'kpis' => $kpis,
+            'kpis' => $kpis + [
+                'availability_trend' => $this->percentChange($kpis['availability_percent'], $previous['availability_percent']),
+                'mtbf_trend' => $this->percentChange($kpis['mtbf_minutes'], $previous['mtbf_minutes']),
+                // Lower is better for both of these, so the arrow the frontend
+                // draws from a positive/negative sign would read backwards —
+                // the sign is inverted here so "trend > 0" always means
+                // "improved," the same convention every other trend uses.
+                'mttr_trend' => $this->percentChange($kpis['mttr_minutes'], $previous['mttr_minutes'], invert: true),
+                'mtta_trend' => $this->percentChange($kpis['mtta_minutes'], $previous['mtta_minutes'], invert: true),
+            ],
             'assets' => $this->assetStatusCounts($factoryId),
             'overdue_maintenance' => $this->overdueMaintenanceCount($factoryId),
             'cost' => $this->costBreakdown($from, $to, $factoryId),
@@ -110,7 +122,60 @@ class DashboardData
             // Through the same reader as every other KPI, so the compliance
             // figure here and the one in a report are the same number.
             'pm_compliance_percent' => $this->kpis($from, $to, $factoryId)['pm_compliance_percent'],
+            'active_breakdowns_trend' => $this->percentChange(
+                Breakdown::whereIn('factory_id', $factoryIds)->whereBetween('reported_at', [$from, $to])->count(),
+                $this->countInWindow(Breakdown::class, 'reported_at', $this->previousWindow($from, $to), $factoryIds),
+                invert: true,
+            ),
+            'completed_work_orders_trend' => $this->percentChange(
+                WorkOrder::whereIn('factory_id', $factoryIds)->whereBetween('completed_at', [$from, $to])->count(),
+                $this->countInWindow(WorkOrder::class, 'completed_at', $this->previousWindow($from, $to), $factoryIds),
+            ),
         ];
+    }
+
+    /**
+     * A daily count of breakdowns reported and work orders completed, for
+     * the trend chart every dashboard shares — the same two figures the
+     * stat cards above summarise for the whole period, broken out by day so
+     * the shape of the period (a bad week buried in an otherwise fine
+     * month) is visible rather than averaged away.
+     *
+     * @return list<array{date: string, breakdowns: int, completed_work_orders: int}>
+     */
+    public function trend(CarbonImmutable $from, CarbonImmutable $to, ?string $factoryId = null): array
+    {
+        $factoryIds = $factoryId !== null ? [$factoryId] : $this->context->accessibleFactoryIds();
+
+        $breakdownsByDay = Breakdown::whereIn('factory_id', $factoryIds)
+            ->whereBetween('reported_at', [$from, $to])
+            ->selectRaw(Sql::dayBucket('reported_at').', COUNT(*) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        $completedByDay = WorkOrder::whereIn('factory_id', $factoryIds)
+            ->whereBetween('completed_at', [$from, $to])
+            ->selectRaw(Sql::dayBucket('completed_at').', COUNT(*) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        $days = [];
+        $cursor = $from->startOfDay();
+        $last = $to->startOfDay();
+
+        while ($cursor->lessThanOrEqualTo($last)) {
+            $key = $cursor->toDateString();
+
+            $days[] = [
+                'date' => $key,
+                'breakdowns' => (int) ($breakdownsByDay[$key] ?? 0),
+                'completed_work_orders' => (int) ($completedByDay[$key] ?? 0),
+            ];
+
+            $cursor = $cursor->addDay();
+        }
+
+        return $days;
     }
 
     /**
@@ -136,6 +201,7 @@ class DashboardData
 
         return [
             'stock_value' => $value,
+            'total_parts' => $parts->count(),
             'reserved_quantity' => $reserved,
             // Below the reorder level, which is the actionable signal. By the
             // time stock is out the lead time has already been lost.
@@ -275,6 +341,54 @@ class DashboardData
                 'at_capacity' => $t->max_concurrent_work_orders !== null
                     && (int) ($counts[$t->id] ?? 0) >= $t->max_concurrent_work_orders,
             ]);
+    }
+
+    /**
+     * The equal-length period immediately before this one, for "vs last
+     * period" trend badges. A 30-day window compares against the 30 days
+     * before it, not a calendar month — the two windows always match in
+     * length, so a shorter reference period doesn't inflate the percentage.
+     *
+     * @return array{0: CarbonImmutable, 1: CarbonImmutable}
+     */
+    private function previousWindow(CarbonImmutable $from, CarbonImmutable $to): array
+    {
+        $length = $from->diffInSeconds($to);
+
+        return [$from->subSeconds($length), $from];
+    }
+
+    /**
+     * @param  class-string  $model
+     * @param  array{0: CarbonImmutable, 1: CarbonImmutable}  $window
+     * @param  list<string>  $factoryIds
+     */
+    private function countInWindow(string $model, string $column, array $window, array $factoryIds): int
+    {
+        return $model::whereIn('factory_id', $factoryIds)
+            ->whereBetween($column, $window)
+            ->count();
+    }
+
+    /**
+     * Percentage change from `$previous` to `$current`, or null when there
+     * is nothing to compare against — a "+400%" badge off a previous value
+     * of zero is noise, not a signal.
+     *
+     * @param  bool  $invert  set for a figure where lower is better (MTTR,
+     *                        MTTA, breakdown count), so a positive trend
+     *                        always means "improved" regardless of which
+     *                        direction the raw number actually moved.
+     */
+    private function percentChange(?float $current, ?float $previous, bool $invert = false): ?float
+    {
+        if ($current === null || $previous === null || $previous == 0.0) {
+            return null;
+        }
+
+        $change = round((($current - $previous) / $previous) * 100, 1);
+
+        return $invert ? -$change : $change;
     }
 
     private function partsCostInPeriod(CarbonImmutable $from, CarbonImmutable $to): string

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          colors="true"
 >
     <testsuites>
@@ -34,9 +34,29 @@
         <env name="REVERB_APP_KEY" value="testing-key"/>
         <env name="REVERB_APP_SECRET" value="testing-secret"/>
         <env name="CACHE_STORE" value="array"/>
-        <!-- Tests run against real MySQL: the schema depends on InnoDB, utf8mb4 and DECIMAL semantics that SQLite does not reproduce. -->
+        <!--
+            Tests run against a real database — MySQL's InnoDB/utf8mb4/DECIMAL
+            semantics natively, Postgres inside Docker — never SQLite. Only
+            DB_DATABASE matters here: connection/host/credentials are left to
+            whichever real environment is running (native WAMP's mysql on
+            127.0.0.1, or the Docker container's own pgsql on the `postgres`
+            service), so this file works under both without hardcoding either.
+
+            DB_DATABASE's own force="true" looks load-bearing but is NOT, in
+            the Docker container: Laravel's env() reads $_SERVER ahead of the
+            $_ENV/putenv() values this <env> block actually sets, and PHP has
+            already populated $_SERVER from the container's real environment
+            before PHPUnit's bootstrap runs — so this override is silently
+            lost there. tests/bootstrap.php sets $_SERVER directly before
+            Laravel's autoloader loads and is what actually protects the dev
+            database; this line is kept only for native WAMP, where no
+            container env pre-populates $_SERVER with a conflicting value.
+            Confirmed reproduced 2026-09-08 in Docker — two feature-test runs
+            quietly wiped the dev database, one even after this force="true"
+            was already in place, until tests/bootstrap.php's fix.
+        -->
         <env name="DB_CONNECTION" value="mysql"/>
-        <env name="DB_DATABASE" value="machinery_maintenance_test"/>
+        <env name="DB_DATABASE" value="machinery_maintenance_test" force="true"/>
         <env name="DB_HOST" value="127.0.0.1"/>
         <env name="DB_USERNAME" value="root"/>
         <env name="DB_PASSWORD" value=""/>

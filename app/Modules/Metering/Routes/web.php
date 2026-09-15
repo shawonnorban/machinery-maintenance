@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Metering\Http\Controllers\Web\MeterController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +14,18 @@ use Illuminate\Support\Facades\Route;
  * can never come due.
  */
 Route::middleware('auth')->group(function (): void {
-    Route::get('/meters', [MeterController::class, 'index'])->name('meters.index');
-    Route::get('/meters/{meter}', [MeterController::class, 'show'])->name('meters.show');
+    // Superseded by the Next.js screens at /metering (docs/12-Stack-
+    // Migration-Implementation-Plan.md Phase H) — full parity confirmed
+    // (record reading, replace/reset, reading history all present there).
+    // Redirecting rather than deleting keeps old bookmarks/links working
+    // during the module's soak period; the POST action routes below stay
+    // as-is since nothing links to them directly, only forms submit to them.
+    Route::get('/meters', function (Request $request) {
+        $assetId = $request->query('asset_id');
+
+        return redirect('/metering'.($assetId ? '?'.http_build_query(['asset_id' => $assetId]) : ''));
+    })->name('meters.index');
+    Route::get('/meters/{meter}', fn ($meter) => redirect("/metering/{$meter}"))->name('meters.show');
 
     // Recording is the technician's job and needs only their permission;
     // fitting and resetting a meter are configuration.

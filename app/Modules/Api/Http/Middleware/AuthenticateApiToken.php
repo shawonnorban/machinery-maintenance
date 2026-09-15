@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace App\Modules\Api\Http\Middleware;
 
+use App\Modules\Api\Models\ApiClient;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Support\ApiCaller;
+use App\Modules\Api\Support\LegacyTokenHandle;
+use App\Modules\Api\Support\SanctumTokenHandle;
+use App\Modules\Api\Support\TokenHandle;
 use App\Modules\Audit\Services\AuditRecorder;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Services\PermissionResolver;
+use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Http\Api\ApiException;
 use App\Shared\Http\Api\ErrorCode;
@@ -16,6 +21,7 @@ use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -31,6 +37,13 @@ use Symfony\Component\HttpFoundation\Response;
  * ignored. Silently overriding a client's explicit instruction is how a caller
  * ends up writing last month's readings into the wrong factory and believing
  * it worked.
+ *
+ * Two token schemes are live during the Sanctum migration: a bearer token is
+ * tried as a Sanctum personal access token first (the scheme person callers
+ * are issued going forward), and falls back to the legacy `ApiToken` table
+ * (still the only scheme for machine/client-credential callers, and for any
+ * person's token minted before the cutover). `TokenHandle` is what lets
+ * everything past this point stop caring which scheme answered.
  */
 class AuthenticateApiToken
 {
@@ -43,9 +56,11 @@ class AuthenticateApiToken
     {
         $token = $this->resolveToken($request);
 
-        $caller = $token->api_client_id !== null
+        $caller = $token->apiClientId() !== null
             ? $this->machineCaller($token)
             : $this->personCaller($token);
+
+        $this->assertCompanyUsable($caller->companyId);
 
         $requested = $request->header('X-Company-Id');
 
@@ -77,17 +92,28 @@ class AuthenticateApiToken
 
         $token->touchUsage();
 
-        return $next($request);
+        $response = $next($request);
+
+        if ($token instanceof LegacyTokenHandle) {
+            // Not an error — a nudge. The legacy scheme still works, but a
+            // caller minting new tokens against /auth/token or /auth/login
+            // now receives Sanctum ones; this header is how an integration
+            // still holding an old one notices before the scheme is retired.
+            $response->headers->set('Deprecation', 'true');
+        }
+
+        return $response;
     }
 
     /**
-     * The bearer token, or a refusal.
+     * The bearer token, resolved against whichever of the two schemes issued
+     * it, or a refusal.
      *
      * Every failure here is the same 401 with the same message. Telling a
      * caller whether a token was unknown, revoked or merely expired hands an
      * attacker a way to sort stolen strings into "worth trying again later".
      */
-    private function resolveToken(Request $request): ApiToken
+    private function resolveToken(Request $request): TokenHandle
     {
         $bearer = $request->bearerToken();
 
@@ -95,20 +121,39 @@ class AuthenticateApiToken
             throw ApiException::of(ErrorCode::UNAUTHENTICATED);
         }
 
-        $token = ApiToken::withoutGlobalScope(TenantScope::class)
+        $sanctum = PersonalAccessToken::findToken($bearer);
+
+        if ($sanctum !== null) {
+            if (! $sanctum->tokenable instanceof User) {
+                // Sanctum is issued only to User in this application; a token
+                // pointed at anything else cannot be a caller this API knows.
+                throw ApiException::of(ErrorCode::UNAUTHENTICATED);
+            }
+
+            $handle = new SanctumTokenHandle($sanctum);
+
+            if (! $handle->isUsable()) {
+                throw ApiException::of(ErrorCode::UNAUTHENTICATED);
+            }
+
+            return $handle;
+        }
+
+        $legacy = ApiToken::withoutGlobalScope(TenantScope::class)
             ->where('token_hash', ApiToken::hash($bearer))
             ->first();
 
-        if ($token === null || ! $token->isUsable()) {
+        if ($legacy === null || ! $legacy->isUsable()) {
             throw ApiException::of(ErrorCode::UNAUTHENTICATED);
         }
 
-        return $token;
+        return new LegacyTokenHandle($legacy);
     }
 
-    private function personCaller(ApiToken $token): ApiCaller
+    private function personCaller(TokenHandle $token): ApiCaller
     {
-        $user = User::find($token->user_id);
+        $userId = $token->userId();
+        $user = $userId === null ? null : User::find($userId);
 
         if ($user === null || ! $user->isActive()) {
             throw ApiException::of(ErrorCode::UNAUTHENTICATED);
@@ -117,22 +162,48 @@ class AuthenticateApiToken
         // Membership is re-checked on every request, not trusted from minting
         // time. Somebody removed from a company this morning must stop being
         // able to read it this morning, whatever they are still holding.
-        if (! $user->belongsToCompany((string) $token->company_id)) {
+        if (! $user->belongsToCompany($token->companyId())) {
             throw ApiException::of(ErrorCode::TENANT_ACCESS_DENIED);
         }
 
         return ApiCaller::forUser($token, $user);
     }
 
-    private function machineCaller(ApiToken $token): ApiCaller
+    private function machineCaller(TokenHandle $token): ApiCaller
     {
-        $client = $token->client()->withoutGlobalScope(TenantScope::class)->first();
+        $client = ApiClient::withoutGlobalScope(TenantScope::class)->find($token->apiClientId());
 
         if ($client === null || ! $client->isUsable()) {
             throw ApiException::of(ErrorCode::UNAUTHENTICATED);
         }
 
         return ApiCaller::forClient($token, $client);
+    }
+
+    /**
+     * The web equivalent of this check (`ResolveTenantContext`) runs on
+     * every request; this one has to as well, not only at suspend time —
+     * a token minted before a suspension keeps working until something
+     * checks the company itself, not just the token's own validity.
+     *
+     * withTrashed(), deliberately: a closed company resolves to null
+     * otherwise, and a token surviving its company's closure is exactly
+     * the case this exists to catch.
+     */
+    private function assertCompanyUsable(string $companyId): void
+    {
+        $company = Company::withTrashed()->find($companyId);
+
+        if ($company === null || $company->trashed()) {
+            throw ApiException::of(ErrorCode::TENANT_ACCESS_DENIED);
+        }
+
+        if ($company->isSuspended()) {
+            throw ApiException::of(ErrorCode::TENANT_SUSPENDED, __('tenancy.suspended_body', [
+                'company' => $company->name,
+                'reason' => $company->suspension_reason ?? __('tenancy.suspended_no_reason'),
+            ]));
+        }
     }
 
     /**

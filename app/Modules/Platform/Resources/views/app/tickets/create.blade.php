@@ -2,7 +2,7 @@
 @section('title', __('platform.ticket_new'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">{{ __('nav.dashboard') }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ config('tenancy.frontend_url') }}">{{ __('nav.dashboard') }}</a></li>
     <li class="breadcrumb-item">
         <a href="{{ route('app.support.tickets.index') }}">{{ __('platform.support_ticket') }}</a>
     </li>

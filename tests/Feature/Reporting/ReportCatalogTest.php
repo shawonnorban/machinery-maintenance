@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Reporting;
 
-use App\Modules\Identity\Models\Permission;
 use App\Modules\Reporting\Reports\Report;
 use App\Modules\Reporting\Reports\ReportQuery;
 use App\Modules\Reporting\Reports\ReportRegistry;
@@ -14,6 +13,7 @@ use Carbon\CarbonImmutable;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Lang;
+use Spatie\Permission\Models\Permission;
 use Tests\Support\TenantFixture;
 use Tests\Support\WorkOrderFixture;
 use Tests\TestCase;
@@ -90,7 +90,8 @@ class ReportCatalogTest extends TestCase
 
     public function test_every_report_names_a_permission_that_exists(): void
     {
-        $known = Permission::pluck('code')->all();
+        // Spatie's `name` is the machine code now (asset.asset.view_any, ...).
+        $known = Permission::pluck('name')->all();
 
         foreach ($this->registry->all() as $key => $report) {
             // A typo here does not fail loudly: it hides the report from every

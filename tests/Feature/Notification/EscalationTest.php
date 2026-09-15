@@ -80,7 +80,7 @@ class EscalationTest extends TestCase
                 'event_type' => 'BREAKDOWN_CRITICAL',
                 'delay_minutes' => $delay,
                 'escalation_level' => $level,
-                'escalation_role_id' => Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail()->id,
+                'escalation_role_id' => Role::whereNull('company_id')->where('name',$roleCode)->firstOrFail()->id,
                 'max_escalations' => 3,
                 'stop_on_acknowledge' => true,
                 'active' => true,
@@ -203,7 +203,7 @@ class EscalationTest extends TestCase
             'delay_minutes' => 30,
             'escalation_level' => 1,
             // A role nobody in this company holds.
-            'escalation_role_id' => Role::whereNull('company_id')->where('code', 'AUDITOR')->firstOrFail()->id,
+            'escalation_role_id' => Role::whereNull('company_id')->where('name','AUDITOR')->firstOrFail()->id,
             'active' => true,
         ]);
 
@@ -211,7 +211,7 @@ class EscalationTest extends TestCase
             'event_type' => 'BREAKDOWN_CRITICAL',
             'delay_minutes' => 60,
             'escalation_level' => 2,
-            'escalation_role_id' => Role::whereNull('company_id')->where('code', 'FACTORY_MANAGER')->firstOrFail()->id,
+            'escalation_role_id' => Role::whereNull('company_id')->where('name','FACTORY_MANAGER')->firstOrFail()->id,
             'active' => true,
         ]);
 
@@ -232,7 +232,7 @@ class EscalationTest extends TestCase
             'event_type' => 'WORK_ORDER_ASSIGNED',
             'delay_minutes' => 30,
             'escalation_level' => 1,
-            'escalation_role_id' => Role::whereNull('company_id')->where('code', 'MAINTENANCE_MANAGER')->firstOrFail()->id,
+            'escalation_role_id' => Role::whereNull('company_id')->where('name','MAINTENANCE_MANAGER')->firstOrFail()->id,
             'active' => true,
         ]);
 
@@ -259,7 +259,7 @@ class EscalationTest extends TestCase
             'factory_id' => $gazipur->id,
             'delay_minutes' => 30,
             'escalation_level' => 1,
-            'escalation_role_id' => Role::whereNull('company_id')->where('code', 'MAINTENANCE_MANAGER')->firstOrFail()->id,
+            'escalation_role_id' => Role::whereNull('company_id')->where('name','MAINTENANCE_MANAGER')->firstOrFail()->id,
             'active' => true,
         ]);
 
@@ -330,7 +330,7 @@ class EscalationTest extends TestCase
             'event_type' => 'BREAKDOWN_CRITICAL',
             'delay_minutes' => 30,
             'escalation_level' => 1,
-            'escalation_role_id' => Role::whereNull('company_id')->where('code', 'MAINTENANCE_MANAGER')->firstOrFail()->id,
+            'escalation_role_id' => Role::whereNull('company_id')->where('name','MAINTENANCE_MANAGER')->firstOrFail()->id,
             'active' => false,
         ]);
 

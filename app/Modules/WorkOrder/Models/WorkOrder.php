@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\WorkOrder\Models;
 
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Maintenance\Models\MaintenanceTemplateVersion;
 use App\Modules\Maintenance\Models\MaintenanceType;
 use App\Modules\Tenancy\Models\Factory;
@@ -146,6 +147,12 @@ class WorkOrder extends BaseModel
     public function checklistResults(): HasMany
     {
         return $this->hasMany(WorkOrderChecklistResult::class);
+    }
+
+    /** Set only when this job was raised from a breakdown (`source: 'BREAKDOWN'`) rather than a plan or manually. */
+    public function breakdown(): BelongsTo
+    {
+        return $this->belongsTo(Breakdown::class);
     }
 
     public function canTransitionTo(string $status): bool

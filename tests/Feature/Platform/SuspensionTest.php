@@ -65,11 +65,17 @@ class SuspensionTest extends TestCase
 
         $this->signOut();
 
-        // The bug this exists for: before the check, an owner signed straight
+        // Every tenant screen this used to check (`/app/dashboard`, `/app/
+        // assets`, `/app/breakdowns`) is gone — fully replaced by the
+        // Next.js app (Phase D/F). `/app/support/tickets` stands in: it's
+        // the one Blade screen this module keeps alive (Platform's own
+        // tenant-facing "my support tickets", not yet ported), needs no
+        // permission beyond company membership, and isn't in
+        // `ResolveTenantContext::isAlwaysAllowed()`'s exemption list the way
+        // `/app/locale`/`/app/switch-company` are — so it still proves the
+        // exact bug this guards: before the check, an owner signed straight
         // back in and carried on working.
-        $this->actingAs($this->owner)->get('/app/dashboard')->assertForbidden();
-        $this->actingAs($this->owner)->get('/app/assets')->assertForbidden();
-        $this->actingAs($this->owner)->get('/app/breakdowns')->assertForbidden();
+        $this->actingAs($this->owner)->get('/app/support/tickets')->assertForbidden();
     }
 
     public function test_they_are_told_why_and_that_nothing_is_lost(): void
@@ -79,7 +85,7 @@ class SuspensionTest extends TestCase
         $this->signOut();
 
         $this->actingAs($this->owner)
-            ->get('/app/dashboard')
+            ->get('/app/support/tickets')
             ->assertForbidden()
             ->assertSee(__('tenancy.suspended_title'))
             // Verbatim, because "policy" answers nothing for somebody whose
@@ -111,7 +117,7 @@ class SuspensionTest extends TestCase
             ->assertOk();
 
         $this->actingAs($this->owner)
-            ->getJson('/app/dashboard')
+            ->getJson('/app/support/tickets')
             ->assertForbidden()
             ->assertJsonPath('code', 'TENANT_SUSPENDED');
     }
@@ -173,7 +179,7 @@ class SuspensionTest extends TestCase
 
         $this->signOut();
 
-        $this->actingAs($this->owner)->get('/app/dashboard')->assertOk();
+        $this->actingAs($this->owner)->get('/app/support/tickets')->assertOk();
     }
 
     public function test_both_ends_are_audited(): void

@@ -33,11 +33,22 @@ class FailureTaxonomySeeder extends Seeder
         foreach ([
             ['MECHANICAL', 'Mechanical', 'যান্ত্রিক', $this->mechanical()],
             ['KNITTING', 'Knitting', 'নিটিং', $this->knitting()],
+            ['CUTTING', 'Cutting and spreading', 'কাটিং ও স্প্রেডিং', $this->cutting()],
             ['DYEING_FINISHING', 'Dyeing and finishing', 'ডাইং ও ফিনিশিং', $this->dyeingAndFinishing()],
+            // The garment floor's own washing/ironing/packing equipment —
+            // kept apart from DYEING_FINISHING, which is the fabric-level
+            // wet-processing line (stenter, compactor, dye vessels), not
+            // this one's washers, irons and packing lines.
+            ['GARMENT_FINISHING', 'Garment washing, finishing and packing', 'গার্মেন্টস ওয়াশিং, ফিনিশিং ও প্যাকিং', $this->garmentFinishing()],
             ['ELECTRICAL', 'Electrical', 'বৈদ্যুতিক', $this->electrical()],
             ['PROCESS_CONTROL', 'Process and instrumentation', 'প্রসেস ও ইনস্ট্রুমেন্টেশন', $this->processControl()],
             ['PNEUMATIC_HYDRAULIC', 'Pneumatic and hydraulic', 'নিউম্যাটিক ও হাইড্রলিক', $this->pneumatic()],
             ['UTILITY_STEAM', 'Utility and steam', 'ইউটিলিটি ও স্টিম', $this->utility()],
+            // Fire pumps, trolleys, forklifts and lifts — the taxonomy's own
+            // MATERIAL_HANDLING and SAFETY sections already seed real
+            // machines of these kinds (`DemoTenantSeeder::taxonomyMachines`);
+            // this is the first failure vocabulary written for them.
+            ['MATERIAL_HANDLING_SAFETY', 'Material handling and safety', 'ম্যাটেরিয়াল হ্যান্ডলিং ও সেফটি', $this->materialHandlingSafety()],
             ['OPERATIONAL', 'Operational and other', 'পরিচালনাগত ও অন্যান্য', $this->operational()],
         ] as [$code, $name, $nameBn, $codes]) {
             $category = FailureCategory::updateOrCreate(
@@ -80,6 +91,59 @@ class FailureTaxonomySeeder extends Seeder
             ['BLADE_BLUNT', 'Cutting blade blunt or chipped', 'ব্লেড ভোঁতা'],
             ['LUBRICATION_FAILURE', 'Lubrication failure or oil leak', 'তেল সমস্যা'],
             ['VIBRATION_ABNORMAL', 'Abnormal vibration or noise', 'অস্বাভাবিক কম্পন'],
+            ['CHAIN_WORN', 'Drive chain worn or stretched', 'চেইন ক্ষয়'],
+            ['COUPLING_FAILURE', 'Shaft coupling failure', 'কাপলিং নষ্ট'],
+            ['ROLLER_BEARING_SEIZED', 'Roller bearing seized', 'রোলার বেয়ারিং জ্যাম'],
+        ];
+    }
+
+    /**
+     * The cutting floor's own vocabulary — spreading, cutting, fusing and
+     * marker-making (Seed Catalog 3), kept apart from the general mechanical
+     * list the same way knitting's own is.
+     *
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function cutting(): array
+    {
+        return [
+            ['BAND_KNIFE_SNAP', 'Band knife blade snapped', 'ব্যান্ড নাইফ ভাঙা'],
+            ['STRAIGHT_KNIFE_DULL', 'Straight knife blade dull', 'স্ট্রেইট নাইফ ভোঁতা'],
+            ['SPREADER_CARRIAGE_FAULT', 'Spreading machine carriage fault', 'স্প্রেডার ক্যারেজ সমস্যা'],
+            ['CUTTER_VACUUM_LEAK', 'Cutting table vacuum leak', 'ভ্যাকুয়াম টেবিল লিক'],
+            ['SHARPENING_STONE_WORN', 'Knife sharpening stone worn', 'শার্পনিং স্টোন ক্ষয়'],
+            ['DRILL_BIT_BROKEN', 'Marking drill bit broken', 'ড্রিল বিট ভাঙা'],
+            ['CUTTER_CONVEYOR_FAULT', 'Cutting conveyor belt fault', 'কাটিং কনভেয়র বেল্ট সমস্যা'],
+            ['NUMBERING_MACHINE_JAM', 'Numbering or bundling machine jam', 'নাম্বারিং মেশিন জ্যাম'],
+            ['FUSING_PRESS_TEMP_FAULT', 'Fusing press temperature fault', 'ফিউজিং প্রেস তাপমাত্রা সমস্যা'],
+            ['FUSING_BELT_MISALIGN', 'Fusing machine belt misaligned', 'ফিউজিং বেল্ট মিসঅ্যালাইন'],
+            ['CAD_PLOTTER_FAULT', 'CAD plotter or marker-maker fault', 'ক্যাড প্লটার সমস্যা'],
+        ];
+    }
+
+    /**
+     * Garment-floor washing, ironing and packing equipment — a different
+     * failure vocabulary from the fabric-level `dyeingAndFinishing()` list
+     * (a stenter and a tumble dryer break in different ways).
+     *
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function garmentFinishing(): array
+    {
+        return [
+            ['WASHER_DRUM_BEARING', 'Washing machine drum bearing fault', 'ওয়াশার ড্রাম বেয়ারিং সমস্যা'],
+            ['WASHER_DOOR_SEAL', 'Washing machine door seal leak', 'ওয়াশার ডোর সিল লিক'],
+            ['DRYER_HEATING_FAULT', 'Tumble dryer heating fault', 'ড্রায়ার হিটিং সমস্যা'],
+            ['DRYER_LINT_FILTER_CLOG', 'Dryer lint filter clogged', 'ড্রায়ার লিন্ট ফিল্টার আটকানো'],
+            ['HYDRO_EXTRACTOR_FAULT', 'Hydro extractor fault', 'হাইড্রো এক্সট্র্যাক্টর সমস্যা'],
+            ['IRON_STEAM_LEAK', 'Ironing table steam leak', 'ইস্ত্রি স্টিম লিক'],
+            ['IRON_SOLEPLATE_DAMAGE', 'Iron soleplate damaged or scorched', 'ইস্ত্রি সোলপ্লেট ক্ষতি'],
+            ['VACUUM_BOARD_FAULT', 'Ironing vacuum board fault', 'ভ্যাকুয়াম বোর্ড সমস্যা'],
+            ['METAL_DETECTOR_FAULT', 'Metal detector false reject or fault', 'মেটাল ডিটেক্টর ত্রুটি'],
+            ['POLY_SEALER_FAULT', 'Poly bag sealing machine fault', 'পলি সিলার সমস্যা'],
+            ['CARTON_STRAPPING_FAULT', 'Carton strapping machine fault', 'কার্টন স্ট্র্যাপিং সমস্যা'],
+            ['PACKING_CONVEYOR_JAM', 'Packing line conveyor jam', 'প্যাকিং কনভেয়র জ্যাম'],
+            ['BUTTON_STUD_MACHINE_FAULT', 'Button or stud attaching machine fault', 'বাটন মেশিন সমস্যা'],
         ];
     }
 
@@ -151,6 +215,9 @@ class FailureTaxonomySeeder extends Seeder
             ['DISPLAY_FAULT', 'Display or panel fault', 'ডিসপ্লে সমস্যা'],
             ['OVERHEATING', 'Overheating', 'অতিরিক্ত গরম'],
             ['POWER_FLUCTUATION_DAMAGE', 'Damage from voltage fluctuation', 'ভোল্টেজ সমস্যায় ক্ষতি'],
+            ['INVERTER_FAULT', 'Inverter or VFD fault', 'ইনভার্টার সমস্যা'],
+            ['EARTHING_FAULT', 'Earthing or grounding fault', 'আর্থিং সমস্যা'],
+            ['CABLE_INSULATION_FAILURE', 'Cable insulation failure', 'ক্যাবল ইনসুলেশন নষ্ট'],
         ];
     }
 
@@ -177,6 +244,13 @@ class FailureTaxonomySeeder extends Seeder
             ['PLC_FAULT', 'PLC or process controller fault', 'পিএলসি সমস্যা'],
             ['RECIPE_DISPENSING_ERROR', 'Recipe or dispensing error', 'রেসিপি/ডিসপেন্সিং ভুল'],
             ['CALIBRATION_OVERDUE', 'Instrument out of calibration', 'ক্যালিব্রেশন মেয়াদোত্তীর্ণ'],
+            // Lab instruments are process-control equipment too — a
+            // crockmeter or tensile tester going out of calibration is the
+            // same kind of failure as a probe drifting on the dye floor.
+            ['CROCKMETER_FAULT', 'Crockmeter fault', 'ক্রকমিটার সমস্যা'],
+            ['GSM_CUTTER_FAULT', 'GSM cutter fault', 'জিএসএম কাটার সমস্যা'],
+            ['SPECTROPHOTOMETER_FAULT', 'Spectrophotometer fault or calibration drift', 'স্পেকট্রোফটোমিটার সমস্যা'],
+            ['TENSILE_TESTER_FAULT', 'Tensile strength tester fault', 'টেনসাইল টেস্টার সমস্যা'],
         ];
     }
 
@@ -220,6 +294,28 @@ class FailureTaxonomySeeder extends Seeder
     }
 
     /**
+     * Trolleys, forklifts, lifts and the factory's own fire-safety
+     * equipment — the taxonomy's MATERIAL_HANDLING and SAFETY sections
+     * already seed real assets of these kinds, with no failure vocabulary
+     * of their own until now.
+     *
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function materialHandlingSafety(): array
+    {
+        return [
+            ['FORKLIFT_HYDRAULIC_FAULT', 'Forklift hydraulic fault', 'ফর্কলিফট হাইড্রলিক সমস্যা'],
+            ['TROLLEY_WHEEL_DAMAGE', 'Trolley wheel or caster damaged', 'ট্রলি চাকা ক্ষতি'],
+            ['HANDLING_CONVEYOR_TRIP', 'Material handling conveyor motor trip', 'হ্যান্ডলিং কনভেয়র মোটর ট্রিপ'],
+            ['LIFT_ELEVATOR_FAULT', 'Lift or elevator fault', 'লিফট সমস্যা'],
+            ['FIRE_PUMP_START_FAILURE', 'Fire pump fails to start', 'ফায়ার পাম্প চালু হয় না'],
+            ['FIRE_ALARM_FAULT', 'Fire alarm system fault', 'ফায়ার অ্যালার্ম সমস্যা'],
+            ['EXTINGUISHER_PRESSURE_LOW', 'Fire extinguisher pressure low', 'অগ্নিনির্বাপক প্রেসার কম'],
+            ['SPRINKLER_VALVE_FAULT', 'Sprinkler valve fault', 'স্প্রিংকলার ভালভ সমস্যা'],
+        ];
+    }
+
+    /**
      * @return list<array{0: string, 1: string, 2: string}>
      */
     private function operational(): array
@@ -231,6 +327,8 @@ class FailureTaxonomySeeder extends Seeder
             ['WRONG_SPARE_USED', 'Incorrect spare part fitted', 'ভুল পার্টস ব্যবহার'],
             ['MATERIAL_JAM', 'Fabric or material jam', 'কাপড় আটকে যাওয়া'],
             ['AGING', 'End of service life', 'মেয়াদ শেষ'],
+            ['SAFETY_INTERLOCK_TRIPPED', 'Safety interlock or guard tripped', 'সেফটি ইন্টারলক ট্রিপ'],
+            ['FOREIGN_OBJECT', 'Foreign object caused stoppage', 'বাইরের বস্তু ঢুকে যাওয়া'],
             // Seeded deliberately. Without an honest option a technician under
             // pressure picks a wrong code, and wrong data is worse than absent
             // data. The share of UNKNOWN closures is itself a reportable
@@ -305,6 +403,18 @@ class FailureTaxonomySeeder extends Seeder
             ['EFFLUENT_LIMIT', 'EXTERNAL', false, 'Stopped for effluent limit', 'বর্জ্য সীমার কারণে বন্ধ'],
             ['SHIFT_BREAK', 'NON_OPERATING', false, 'Break or shift end', 'বিরতি বা শিফট শেষ'],
             ['HOLIDAY', 'NON_OPERATING', false, 'Factory holiday', 'কারখানা ছুটি'],
+            ['QUALITY_HOLD', 'UNPLANNED', true, 'Held for a quality issue', 'কোয়ালিটি সমস্যায় বন্ধ'],
+            ['SAFETY_STOP', 'UNPLANNED', true, 'Stopped for a safety concern', 'নিরাপত্তার কারণে বন্ধ'],
+            ['WAITING_QC_APPROVAL', 'UNPLANNED', true, 'Waiting for QC approval', 'কিউসি অনুমোদনের অপেক্ষা'],
+            ['CALIBRATION_DUE', 'PLANNED', false, 'Instrument calibration due', 'ক্যালিব্রেশনের সময়'],
+            ['TRIAL_RUN', 'PLANNED', false, 'Trial or sample run', 'ট্রায়াল/স্যাম্পল রান'],
+            ['CHANGEOVER_CLEANING', 'EXTERNAL', false, 'Machine cleaning for changeover', 'পরিবর্তনের জন্য পরিষ্কার'],
+            // Distinct from POWER_OUTAGE — a grid failure is unplanned; a
+            // published load-shedding schedule is one everyone already
+            // knows about, and conflating the two hides which is which.
+            ['LOAD_SHEDDING', 'EXTERNAL', false, 'Scheduled load shedding', 'লোড শেডিং'],
+            ['BUYER_AUDIT', 'EXTERNAL', false, 'Buyer or compliance audit', 'বায়ার/কমপ্লায়েন্স অডিট'],
+            ['FIRE_DRILL', 'NON_OPERATING', false, 'Fire drill', 'ফায়ার ড্রিল'],
         ] as [$code, $class, $counts, $name, $nameBn]) {
             DowntimeReasonCode::updateOrCreate(
                 ['company_id' => null, 'code' => $code],

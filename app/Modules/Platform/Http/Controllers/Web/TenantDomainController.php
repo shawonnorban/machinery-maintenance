@@ -120,8 +120,13 @@ class TenantDomainController extends Controller
             return back()->withErrors(['host' => __('platform.domain_verify_first')]);
         }
 
+        // Excludes $target: a bulk update after loading it would leave its
+        // in-memory `original` stale, and the forceFill below would then see
+        // is_primary unchanged (true to true) and skip writing it — quietly
+        // leaving every domain, including this one, false in the database.
         CompanyDomain::withoutGlobalScope(TenantScope::class)
             ->where('company_id', $target->company_id)
+            ->where('id', '!=', $target->id)
             ->update(['is_primary' => false]);
 
         $target->forceFill(['is_primary' => true])->save();

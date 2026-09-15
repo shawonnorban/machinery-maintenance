@@ -347,7 +347,12 @@ class BreakdownLifecycleTest extends TestCase
             ['IN_REPAIR', 'ACKNOWLEDGED', 'REPORTED'],
             $history->pluck('to_status')->all(),
         );
-        $this->assertSame('user-b', $history->firstWhere('to_status', 'ACKNOWLEDGED')->changed_by);
+        // `changed_by` is a fixed-width `char(26)` ulid column. Postgres's
+        // bpchar keeps the blank-padding on retrieval (unlike MySQL, which
+        // strips it) — real actor ids are always full 26-character ULIDs and
+        // never hit this, but this test's short placeholder id does, so the
+        // comparison trims it rather than asserting on the padding.
+        $this->assertSame('user-b', trim($history->firstWhere('to_status', 'ACKNOWLEDGED')->changed_by));
     }
 
     public function test_starting_repair_stamps_arrival_when_it_was_not_recorded(): void

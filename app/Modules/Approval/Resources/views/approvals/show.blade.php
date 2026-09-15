@@ -112,7 +112,7 @@
 
                         <div class="list-group-item d-flex align-items-center gap-2">
                             <span class="{{ $step < $request->current_step ? 'text-success' : '' }}">
-                                {{ $step }}. {{ $rule->name ?? $rule->role?->name ?? '—' }}
+                                {{ $step }}. {{ $rule->name ?? $rule->role?->description ?? '—' }}
                             </span>
 
                             @if ($step < $request->current_step)

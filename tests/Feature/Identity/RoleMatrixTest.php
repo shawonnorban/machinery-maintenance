@@ -6,10 +6,10 @@ namespace Tests\Feature\Identity;
 
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
-use App\Modules\Identity\Models\Permission;
 use App\Modules\Identity\Models\Role;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 /**
@@ -29,9 +29,10 @@ class RoleMatrixTest extends TestCase
 
     public function test_every_permission_is_granted_to_at_least_one_role(): void
     {
+        // Spatie's `name` is the machine code now (asset.asset.view_any, ...).
         $granted = Permission::query()
             ->whereHas('roles')
-            ->pluck('code')
+            ->pluck('name')
             ->all();
 
         $orphans = array_diff(PermissionSeeder::allCodes(), $granted);
@@ -80,10 +81,10 @@ class RoleMatrixTest extends TestCase
     {
         $reachable = Role::query()
             ->whereNull('company_id')
-            ->whereNotIn('code', ['COMPANY_OWNER', 'COMPANY_ADMIN', 'PLATFORM_SUPER_ADMIN'])
+            ->whereNotIn('name', ['COMPANY_OWNER', 'COMPANY_ADMIN', 'PLATFORM_SUPER_ADMIN'])
             ->with('permissions')
             ->get()
-            ->flatMap(fn (Role $role) => $role->permissions->pluck('code'))
+            ->flatMap(fn (Role $role) => $role->permissions->pluck('name'))
             ->unique()
             ->all();
 
@@ -108,10 +109,10 @@ class RoleMatrixTest extends TestCase
         // stale exemption quietly weakening the check above.
         $reachable = Role::query()
             ->whereNull('company_id')
-            ->whereNotIn('code', ['COMPANY_OWNER', 'COMPANY_ADMIN', 'PLATFORM_SUPER_ADMIN'])
+            ->whereNotIn('name', ['COMPANY_OWNER', 'COMPANY_ADMIN', 'PLATFORM_SUPER_ADMIN'])
             ->with('permissions')
             ->get()
-            ->flatMap(fn (Role $role) => $role->permissions->pluck('code'))
+            ->flatMap(fn (Role $role) => $role->permissions->pluck('name'))
             ->unique()
             ->all();
 
@@ -125,10 +126,10 @@ class RoleMatrixTest extends TestCase
     public function test_viewer_and_auditor_hold_no_write_permission(): void
     {
         foreach (['VIEWER', 'AUDITOR'] as $code) {
-            $role = Role::where('code', $code)->whereNull('company_id')->firstOrFail();
+            $role = Role::where('name', $code)->whereNull('company_id')->firstOrFail();
 
             $writes = $role->permissions
-                ->pluck('code')
+                ->pluck('name')
                 ->filter(function (string $permission): bool {
                     $action = substr($permission, strrpos($permission, '.') + 1);
 
@@ -164,17 +165,19 @@ class RoleMatrixTest extends TestCase
     {
         $roles = Role::whereNull('company_id')->get();
 
-        $this->assertCount(12, $roles, 'Expected the 12 roles defined in SRS 5.');
+        // 12 from SRS 5 plus Line Chief, added for the breakdown line/department
+        // restriction (SRS 15 "Line/Department Restriction").
+        $this->assertCount(13, $roles, 'Expected the 13 roles defined in SRS 5.');
 
         foreach ($roles as $role) {
-            $this->assertTrue($role->is_system, "{$role->code} must be a system role.");
-            $this->assertFalse($role->isEditable(), "{$role->code} must not be editable.");
+            $this->assertTrue($role->is_system, "{$role->name} must be a system role.");
+            $this->assertFalse($role->isEditable(), "{$role->name} must not be editable.");
         }
     }
 
     public function test_platform_super_admin_has_no_tenant_data_access_by_default(): void
     {
-        $role = Role::where('code', 'PLATFORM_SUPER_ADMIN')->firstOrFail();
+        $role = Role::where('name', 'PLATFORM_SUPER_ADMIN')->firstOrFail();
 
         $this->assertCount(
             0,

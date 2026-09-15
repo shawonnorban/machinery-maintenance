@@ -58,7 +58,9 @@ use App\Modules\Tenancy\Models\Building;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Department;
 use App\Modules\Tenancy\Models\Factory;
+use App\Modules\Tenancy\Models\Floor;
 use App\Modules\Tenancy\Models\ProductionLine;
+use App\Modules\Tenancy\Models\Section;
 use App\Modules\Vendor\Actions\ManageServiceContract;
 use App\Modules\Vendor\Actions\RecordWarranty;
 use App\Modules\Vendor\Models\Vendor;
@@ -87,22 +89,6 @@ use Illuminate\Database\Seeder;
 class DemoTenantSeeder extends Seeder
 {
     public const PASSWORD = 'password123';
-
-    /**
-     * The sections a knit composite runs, in the order fabric moves through
-     * them. `code` matches the department, and the production lines under each
-     * are named the way the floor names them — a dye house has machines, not
-     * "lines", and calling them lines is the sort of detail that tells a
-     * customer the product was not built for them.
-     *
-     * @var array<string, array{0: string, 1: int, 2: string}>
-     */
-    private const SECTIONS = [
-        'KNIT' => ['Knitting Section', 8, 'Knit M'],
-        'DYE' => ['Dyeing and Finishing Section', 6, 'Dye M'],
-        'CUT' => ['Cutting Section', 4, 'Cutting Table'],
-        'SEW' => ['Sewing Section', 6, 'Line'],
-    ];
 
     /**
      * The sections generated straight from the taxonomy: asset type code =>
@@ -347,19 +333,112 @@ class DemoTenantSeeder extends Seeder
      * separate from the dry ones in every mill of this kind — and a demo where
      * everything sits in "Building A" teaches somebody the wrong shape.
      */
+    /**
+     * Two floors per building — a ground floor and a first floor, the
+     * shape every multi-storey composite mill actually has, not a flat
+     * single-storey fiction.
+     */
+    private const FLOORS = [
+        'GF' => 'Ground Floor',
+        '1F' => '1st Floor',
+    ];
+
+    /**
+     * The company's real, full organisational chart — every department a
+     * garment manufacturer actually runs, not just the four that happen to
+     * carry machinery. Found live: the seeder previously modelled only
+     * Knitting/Dyeing/Cutting/Sewing, under generic section names invented
+     * for the demo — this data reaches production, not just a demo tenant,
+     * so it has to match the real thing.
+     *
+     * Shape: code => [department name, [section names...], production line
+     * count, line name prefix]. A `0` line count means exactly that — most
+     * departments here (Merchandising, HR, Accounts, IT, ...) are office or
+     * single-location functions with no assembly-line floor to number, and
+     * `RaiseBreakdownWorkOrder::assignRoster()`/`BreakdownScopeGuard` have
+     * nothing to match a "line" against there regardless.
+     *
+     * Codes DYE, FFIN, WASH and FIN are shared with `self::TAXONOMY_
+     * SECTIONS` below deliberately — that's the same real department this
+     * one is, just reached from the machine-taxonomy side; two codes for
+     * one department would eventually disagree (the wrong lesson from
+     * `RaiseBreakdownWorkOrder`'s own docblock about `work_orders.
+     * breakdown_id` vs. a pivot table, applied here instead).
+     *
+     * @var array<string, array{0: string, 1: list<string>, 2: int, 3: ?string}>
+     */
+    private const DEPARTMENTS = [
+        'MERCH' => ['Merchandising Department', ['Merchandising', 'Order Management', 'Costing', 'T&A / Order Follow-up'], 0, null],
+        'DESIGN' => ['Design & Product Development', ['Design', 'Product Development', 'Sample Development', 'Sample Room'], 0, null],
+        'PPC' => ['PPC / Planning Department', ['Production Planning', 'PPC', 'Capacity Planning', 'Production Scheduling'], 0, null],
+        'PROC' => ['Procurement Department', ['Yarn Procurement', 'Fabric Procurement', 'Dyes & Chemicals Procurement', 'Trims & Accessories Procurement'], 0, null],
+        'YARN' => ['Yarn / Yarn Store Department', ['Yarn Store', 'Yarn Inspection', 'Yarn Preparation'], 0, null],
+        'KNIT' => ['Knitting Department', ['Knitting', 'Knitting Production', 'Knitting Quality'], 8, 'Knit M'],
+        'DYE' => ['Dyeing Department', ['Dyeing', 'Dyeing Lab', 'Color Matching', 'Dyeing Quality'], 6, 'Dye M'],
+        'FFIN' => ['Fabric Finishing Department', ['Fabric Finishing', 'Compacting', 'Raising / Brushing', 'Calendaring', 'Fabric Inspection'], 2, 'Fabric Finish Line'],
+        'FABSTORE' => ['Fabric Store Department', ['Grey Fabric Store', 'Finished Fabric Store', 'Fabric Inspection', 'Fabric Dispatch'], 0, null],
+        'CADPAT' => ['CAD & Pattern Department', ['CAD', 'Pattern', 'Grading', 'Marker Making'], 0, null],
+        'CUT' => ['Cutting Department', ['Fabric Spreading', 'Cutting', 'Numbering', 'Bundling', 'Fusing'], 4, 'Cutting Table'],
+        'SEW' => ['Sewing / Production Department', ['Sewing Production', 'Line Production', 'Sewing Input', 'End Line', 'Rework / Alter'], 6, 'Line'],
+        'WASH' => ['Washing / Laundry Department', ['Garment Washing', 'Laundry', 'Wet Process', 'Dry Process'], 3, 'Washing Line'],
+        'FIN' => ['Finishing Department', ['Finishing', 'Thread Trimming', 'Spot Removing', 'Pressing / Ironing', 'Measurement', 'Folding'], 3, 'Finishing Line'],
+        'PACK' => ['Packing Department', ['Poly Packing', 'Assortment', 'Metal Detection', 'Carton Packing', 'Carton Inspection'], 3, 'Packing Line'],
+        'FGSTORE' => ['Finished Goods Store', ['Finished Goods Receiving', 'Finished Goods Storage', 'Shipment Preparation'], 0, null],
+        // Shares its code with `TAXONOMY_SECTIONS`' own `QUALITY_LAB` entry
+        // ('LAB') — same reasoning as DYE/FFIN/WASH/FIN above.
+        'LAB' => ['Quality Assurance / Quality Control', [
+            'Yarn Quality', 'Knitting Quality', 'Dyeing Quality', 'Fabric Quality', 'Cutting Quality',
+            'Sewing / Inline Quality', 'End Line Quality', 'Finishing Quality', 'Final Inspection', 'AQL Inspection',
+        ], 0, null],
+        'IE' => ['Industrial Engineering (IE)', ['Time Study', 'SMV', 'Line Balancing', 'Capacity Study', 'Efficiency', 'Productivity'], 0, null],
+        'MAINT' => ['Maintenance Department', [
+            'Knitting Machine Maintenance', 'Dyeing Machine Maintenance', 'Sewing Machine Maintenance',
+            'Cutting Machine Maintenance', 'Finishing Machine Maintenance', 'Electrical Maintenance', 'Mechanical Maintenance',
+        ], 0, null],
+        // Shares its code with `TAXONOMY_SECTIONS`' own `HVAC` entry — this
+        // is the same Utility department, seen from the org-chart side
+        // rather than the machine-taxonomy side.
+        'HVAC' => ['Utility Department', ['Boiler', 'Generator', 'Compressor', 'Chiller', 'HVAC', 'Water Treatment', 'ETP'], 0, null],
+        'CHEM' => ['Chemical Management', ['Chemical Store', 'Chemical Management', 'Chemical Preparation', 'Chemical Safety'], 0, null],
+        'STORE' => ['Store Department', [
+            'Yarn Store', 'Grey Fabric Store', 'Finished Fabric Store', 'Dyes & Chemicals Store',
+            'Accessories Store', 'General Store', 'Finished Goods Store',
+        ], 0, null],
+        'SCM' => ['Supply Chain / Logistics', ['Material Planning', 'Warehouse', 'Inventory Control', 'Internal Logistics', 'Transport'], 0, null],
+        'COMM' => ['Commercial Department', ['Import', 'Export', 'LC Management', 'Customs', 'Commercial Documentation'], 0, null],
+        'SHIP' => ['Shipping Department', ['Shipment Planning', 'Container Management', 'Shipping Documentation', 'Shipment'], 0, null],
+        'HR' => ['HR & Administration', ['HR', 'Recruitment', 'Attendance & Payroll', 'Training', 'Employee Welfare', 'Administration'], 0, null],
+        'ACCT' => ['Accounts & Finance', ['Accounts', 'Finance', 'Costing', 'Budget & Control', 'Payroll'], 0, null],
+        'COMPL' => ['Compliance', ['Social Compliance', 'Buyer Compliance', 'Ethical Compliance'], 0, null],
+        // Shares its code with `TAXONOMY_SECTIONS`' own `SAFETY` entry
+        // ('SAFE') — the fire pumps and safety equipment that entry seeds
+        // machines for belong to this same department.
+        'SAFE' => ['EHS', ['Environment', 'Health & Safety', 'Fire & Safety', 'Waste Management'], 0, null],
+        'IT' => ['IT', ['IT Support', 'Network', 'ERP', 'System Administration'], 0, null],
+    ];
+
     private function locations(Company $company, Factory $factory): void
     {
-        $main = Building::updateOrCreate(
+        $buildingA = Building::updateOrCreate(
             ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'A'],
             ['name' => 'Building A — Knitting and Garments'],
         );
 
-        Building::updateOrCreate(
+        $buildingB = Building::updateOrCreate(
             ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'B'],
             ['name' => 'Building B — Dyeing and Finishing'],
         );
 
-        foreach (self::SECTIONS as $code => [$name, $lineCount, $linePrefix]) {
+        foreach ([$buildingA, $buildingB] as $building) {
+            foreach (self::FLOORS as $floorCode => $floorName) {
+                Floor::updateOrCreate(
+                    ['company_id' => $company->id, 'building_id' => $building->id, 'code' => "{$building->code}-{$floorCode}"],
+                    ['name' => $floorName],
+                );
+            }
+        }
+
+        foreach (self::DEPARTMENTS as $code => [$name, $sections, $lineCount, $linePrefix]) {
             $department = Department::updateOrCreate(
                 ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => $code],
                 ['name' => $name],
@@ -375,9 +454,14 @@ class DemoTenantSeeder extends Seeder
                     ['name' => $linePrefix.' '.$n],
                 );
             }
-        }
 
-        unset($main);
+            foreach ($sections as $i => $sectionName) {
+                Section::updateOrCreate(
+                    ['company_id' => $company->id, 'department_id' => $department->id, 'code' => sprintf('%s-%02d', $code, $i + 1)],
+                    ['name' => $sectionName],
+                );
+            }
+        }
     }
 
     /**
@@ -491,7 +575,7 @@ class DemoTenantSeeder extends Seeder
             ['status' => 'ACTIVE', 'is_default' => true],
         );
 
-        $role = Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail();
+        $role = Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail();
 
         UserRole::withoutGlobalScope(TenantScope::class)->updateOrCreate(
             [
@@ -513,7 +597,7 @@ class DemoTenantSeeder extends Seeder
             ['status' => 'ACTIVE', 'is_default' => false],
         );
 
-        $role = Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail();
+        $role = Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail();
 
         UserRole::withoutGlobalScope(TenantScope::class)->updateOrCreate(
             ['company_id' => $company->id, 'user_id' => $user->id, 'role_id' => $role->id, 'factory_id' => null],
@@ -557,10 +641,20 @@ class DemoTenantSeeder extends Seeder
                 continue;
             }
 
-            $location = $this->assetLocation($company, $factory, $section);
+            [, , $lineCount] = self::DEPARTMENTS[$section];
 
             foreach ($items as $index => [$name, $makerCode, $modelName]) {
                 $code = sprintf('%s-%s-%05d', $prefix, $factory->code, 401 + $index);
+
+                // One machine, one line — not every machine in a section
+                // sharing "line 1" while the section's other real
+                // production lines sit with nothing placeable on them
+                // (found live: this data is going to production, not just
+                // staying demo-only, so it has to reflect a real factory
+                // layout). Wraps if a section ever gets more machines than
+                // lines, rather than erroring — a machine still needs
+                // somewhere to be.
+                $location = $this->assetLocation($company, $factory, $section, ($index % $lineCount) + 1);
 
                 if (Asset::where('asset_code', $code)->exists()) {
                     $assets[] = Asset::where('asset_code', $code)->firstOrFail();
@@ -767,15 +861,25 @@ class DemoTenantSeeder extends Seeder
                 continue;
             }
 
+            // `$deptName` is `TAXONOMY_SECTIONS`'s own label, kept only for
+            // codes `locations()`/`self::DEPARTMENTS` doesn't already own —
+            // for the ones it does (DYE, FFIN, WASH, FIN, LAB, HVAC, SAFE),
+            // the department already exists with the organisation chart's
+            // name, and `updateOrCreate` matching on code alone must not
+            // stomp it back to the taxonomy's own older label.
             $department = Department::updateOrCreate(
                 ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => $deptCode],
-                ['name' => $deptName],
+                ['name' => self::DEPARTMENTS[$deptCode][0] ?? $deptName],
             );
 
-            $location = AssetLocation::firstOrCreate(
+            // No `production_line_id` here — this is one location shared by
+            // a whole department's worth of generic machines (fire pumps,
+            // trolleys, ...), not any one line's own equipment.
+            $location = AssetLocation::updateOrCreate(
                 ['factory_id' => $factory->id, 'code' => $factory->code.'-'.$deptCode],
                 [
                     'name' => $deptName,
+                    'department_id' => $department->id,
                     'qr_code' => app(QrTokenGenerator::class)->forLocation($company->id),
                     'full_path' => $factory->name.' › '.$deptName,
                 ],
@@ -835,18 +939,41 @@ class DemoTenantSeeder extends Seeder
     }
 
     /**
-     * One location per section, named the way the floor names it.
+     * One location per production line, named and numbered to match it — on
+     * the actual `ProductionLine` row `locations()` already created,
+     * not just a display-only `full_path` string that looks like one.
+     * Without the real `department_id`/`production_line_id` foreign keys, a
+     * machine placed here has no line as far as the Breakdown module's own
+     * line-restriction and roster auto-assign are concerned
+     * (`BreakdownScopeGuard`, `RaiseBreakdownWorkOrder::assignRoster()`) —
+     * found live: the demo's own "Line 1", "Cutting Table 1" etc. locations
+     * carried none of this, so nothing in the roster feature had anything
+     * to match against. This data reaches production, not just a demo
+     * tenant, so it has to be right.
      */
-    private function assetLocation(Company $company, Factory $factory, string $section): AssetLocation
+    private function assetLocation(Company $company, Factory $factory, string $section, int $lineNumber): AssetLocation
     {
-        [$departmentName, , $linePrefix] = self::SECTIONS[$section];
+        [$departmentName, , , $linePrefix] = self::DEPARTMENTS[$section];
+        $lineName = $linePrefix.' '.$lineNumber;
 
-        return AssetLocation::firstOrCreate(
-            ['factory_id' => $factory->id, 'code' => $factory->code.'-'.$section],
+        $department = Department::where('company_id', $company->id)
+            ->where('factory_id', $factory->id)
+            ->where('code', $section)
+            ->first();
+
+        $line = $department === null ? null : ProductionLine::where('company_id', $company->id)
+            ->where('department_id', $department->id)
+            ->where('code', $linePrefix.$lineNumber)
+            ->first();
+
+        return AssetLocation::updateOrCreate(
+            ['factory_id' => $factory->id, 'code' => $factory->code.'-'.$section.'-'.$lineNumber],
             [
-                'name' => $linePrefix.' 1',
+                'name' => $lineName,
+                'department_id' => $department?->id,
+                'production_line_id' => $line?->id,
                 'qr_code' => app(QrTokenGenerator::class)->forLocation($company->id),
-                'full_path' => $factory->name.' › '.$departmentName.' › '.$linePrefix.' 1',
+                'full_path' => $factory->name.' › '.$departmentName.' › '.$lineName,
             ],
         );
     }
@@ -1222,7 +1349,7 @@ class DemoTenantSeeder extends Seeder
                 'company_id' => $company->id,
                 'workflow_id' => $workflow->id,
                 'sequence' => $sequence,
-                'role_id' => Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail()->id,
+                'role_id' => Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail()->id,
                 'name' => $name,
                 'condition_json' => $condition,
             ]);
@@ -1290,7 +1417,7 @@ class DemoTenantSeeder extends Seeder
                 // drift.
                 'delay_minutes' => $delay,
                 'escalation_level' => $level,
-                'escalation_role_id' => Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail()->id,
+                'escalation_role_id' => Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail()->id,
                 'max_escalations' => 3,
                 'stop_on_acknowledge' => true,
                 'active' => true,

@@ -49,7 +49,13 @@ class SidebarMenu
                     ['label' => 'nav.plans', 'route' => 'app.maintenance.plans', 'permission' => 'maintenance.plan.view_any'],
                     ['label' => 'nav.schedule', 'route' => 'app.maintenance.schedule', 'permission' => 'maintenance.schedule.view_any'],
                     ['label' => 'nav.templates', 'route' => 'app.maintenance.templates', 'permission' => 'maintenance.template.view_any'],
-                    ['label' => 'nav.meters', 'route' => 'app.meters.index', 'permission' => 'meter.reading.view_any'],
+                    // Points straight at the Next.js screen through the
+                    // coexistence proxy (`/metering` in docker/nginx/
+                    // default.conf) rather than the old `app.meters.index`
+                    // route, now that the Next.js side has full parity —
+                    // one destination, not a route that immediately
+                    // redirects there.
+                    ['label' => 'nav.meters', 'url' => '/metering', 'permission' => 'meter.reading.view_any'],
                 ],
             ],
             [

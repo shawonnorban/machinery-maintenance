@@ -304,41 +304,35 @@ Filters:
 
 ### PATCH `/factories/{factory}`
 
+### PATCH `/factories/{factory}/active`
+
+Closes or reopens a factory. Never a delete while it has ever run anything — it still owns the work orders, costs and breakdowns filed against it.
+
 ### DELETE `/factories/{factory}`
+
+Rejected with `409 CONFLICT` while any asset currently stands in the factory.
 
 ### GET `/factories/{factory}/locations`
 
-### POST `/locations`
-
-### PATCH `/locations/{location}`
-
-### GET `/departments`
-
-### GET `/production-lines`
-
-### GET `/workstations`
-
 ### GET `/locations`
+
+Filters: `factory_id`, `search`.
+
+### POST `/locations`
 
 ### GET `/locations/{location}`
 
+### PATCH `/locations/{location}`
+
+### PATCH `/locations/{location}/active`
+
 ### DELETE `/locations/{location}`
 
-Rejected with `409 CONFLICT` while any asset points at the location.
+Rejected with `409 CONFLICT` while any asset points at the location, or any transfer names it.
 
-### GET `/buildings` / `POST` / `PATCH` / `DELETE`
+### Buildings, floors, departments, sections, production lines, workstations
 
-### GET `/floors` / `POST` / `PATCH` / `DELETE`
-
-### POST `/departments` / `PATCH` / `DELETE`
-
-### GET `/sections` / `POST` / `PATCH` / `DELETE`
-
-### POST `/production-lines` / `PATCH` / `DELETE`
-
-### POST `/workstations` / `PATCH` / `DELETE`
-
-Every location-hierarchy endpoint follows the same shape: list, show, create, update, delete, with delete rejected while dependents exist.
+Not a separate set of endpoints. All six are `MasterDataRegistry` entries (SRS 6) and are already served by the Master Data API (§5.2) under the same names: `GET/POST /master-data/buildings`, `/floors`, `/departments`, `/sections`, `/production-lines`, `/workstations`, plus `/{row}`, `/{row}/active`, and delete — one generic controller rather than six near-identical ones, exactly as `AssetLocation` above references them.
 
 ---
 
@@ -822,19 +816,32 @@ The system exposes no endpoint that accepts or returns a salary, a wage, an hour
 
 v1.0 required private storage and signed URLs but exposed no upload or download endpoint.
 
-### POST `/files`
+Uploading is scoped to the resource a file is evidence for, rather than a
+bare `POST /files` taking an arbitrary owner in the body: what a file may be
+attached to, and who may attach one, differs by owner, and that permission
+check belongs to the resource's own controller.
 
-Multipart upload. Returns a file id.
+### POST `/assets/{asset}/documents`
 
-Validation:
-1. Allowed MIME types are an explicit allowlist, checked by content sniffing, not by the client-supplied `Content-Type` or the file extension.
-2. Maximum size is 25 MB per file by default, configurable per company.
-3. Uploads are virus-scanned before the file is marked usable; an unscanned file returns `409` on download.
+Multipart upload of a machine's papers (manual, wiring diagram, calibration
+certificate). Requires `asset.asset.view` and `asset.document.manage`.
+
+### GET `/assets/{asset}/documents`
+
+### POST `/work-orders/{workOrder}/attachments`
+
+Multipart upload of evidence attached directly to a work order, as opposed to
+a photo answering one checklist item (`POST
+/work-orders/{workOrder}/checklist`, which stores its own photo inline).
+Requires `work_order.work_order.view` and `work_order.work_order.update`.
+
+### GET `/work-orders/{workOrder}/attachments`
+
+Both uploads share the same validation:
+1. Allowed MIME types are an explicit allowlist, checked by content sniffing, not by the client-supplied `Content-Type` or the file extension. Returns `415 UNSUPPORTED_FILE_TYPE`.
+2. Maximum size is 10 MB per file. Returns `413 FILE_TOO_LARGE`.
+3. Uploads are virus-scanned before the file is marked usable; an unscanned file returns `409 FILE_SCAN_PENDING` on download.
 4. The stored path is server-generated. A client-supplied filename is never used as a path segment.
-
-### POST `/files/presign`
-
-Returns a short-lived direct-to-storage upload URL for large files, plus the id to reference afterwards.
 
 ### GET `/files/{file}`
 
@@ -842,17 +849,18 @@ Returns metadata, never the bytes.
 
 ### GET `/files/{file}/download`
 
-Returns `302` to a signed URL valid for 5 minutes. The signed URL is bound to the file and does not grant listing or directory access.
+Returns `302` to a signed URL valid for 5 minutes. The signed URL is bound to the file and does not grant listing or directory access. Unsigned and outside bearer auth by construction — it exists for handing to something with no Authorization header, like a browser tab.
 
 ### DELETE `/files/{file}`
 
-Rejected while the file is referenced by an asset document, attachment, or invoice.
+Rejected with `409 DEPENDENT_RECORDS_EXIST` while a work order checklist result still names the file.
 
-### GET `/files/{file}/versions`
+### Not built: `POST /files/presign`, `GET/POST /files/{file}/versions`
 
-### POST `/files/{file}/versions`
+Deliberately out of scope, not silently dropped:
 
-Document versioning per SRS 37. The previous version stays retrievable so a historical work order still resolves the manual revision that was current when it ran.
+- **`POST /files/presign`** presumes direct-to-storage upload against an S3-compatible bucket. This deployment writes to local disk; there is no storage endpoint to presign a URL against, and returning one anyway would be a client-visible lie.
+- **`/files/{file}/versions`** presumes document versioning per SRS 37. `file_attachments` has no previous-version column, and no screen or Action in this codebase creates one — building the endpoint without the data model would be a version history that is always empty. Both wait for the object-storage workstream ADR-066 deferred.
 
 ---
 
@@ -948,47 +956,51 @@ Dashboard results may be cached.
 
 ## 22. Report APIs
 
-### GET `/reports/assets`
+### GET `/reports`
 
-### GET `/reports/maintenance`
+Every report the caller may run (both `report.report.view` and the report's own permission), grouped as the run screen groups them.
 
-### GET `/reports/breakdowns`
+### GET `/reports/{key}`
 
-### GET `/reports/downtime`
+The same capped, on-screen preview the run screen shows — up to 200 rows plus a `truncated` flag — never the full file.
 
-### GET `/reports/costs`
+One generic endpoint per report rather than one route per name. v1.0 sketched a handful as `/reports/assets`, `/reports/costs` and so on, but `ReportRegistry` (SRS 32) already keys its eighteen reports by a stable identifier — `asset_register`, `maintenance_cost`, `mtbf_mttr` — and that identifier is the `{key}` here, exactly as `master-data`'s two dozen lists share one controller (§5.2).
 
-### GET `/reports/inventory`
-
-### GET `/reports/technicians`
-
-### GET `/reports/vendors`
-
-### GET `/reports/mtbf-mttr`
-
-Large reports:
+Large reports, where the full unbounded file is wanted:
 
 ### POST `/report-jobs`
+
+Body: `report` (the key), `format` (`CSV`/`XLSX`/`PDF`), plus the same `from`/`to`/`factory_id`/`asset_id`/`status` filters `GET /reports/{key}` takes. Requires `report.report.view`, `report.report.export`, and the report's own permission — all three, not any (SRS 33: reading a figure on screen and walking out with the spreadsheet are different rights). Answers `200` immediately for a small result or `202` with a job resource once the row count crosses the queueing threshold — the same decision `ReportRunner` makes for the web export button.
 
 ### GET `/report-jobs/{job}`
 
 ### GET `/report-jobs/{job}/download`
 
+A caller only ever sees their own jobs. A report carries whatever the person who asked for it was allowed to see, so handing the file to anyone else would be a permission check that ran once and then stopped applying.
+
 ---
 
 ## 23. Import APIs
 
-### POST `/imports/assets`
+### GET `/imports`
 
-### POST `/imports/spare-parts`
+Every import type this caller may use.
 
-### POST `/imports/vendors`
+### POST `/imports/{type}` — `assets`, `spare-parts`, `vendors`, `maintenance-history`, `locations`
 
-### POST `/imports/maintenance-history`
+Upload and validate in one step (writes nothing). `{type}` is hyphenated to match this API's convention; `ImporterRegistry`'s own keys underneath (`spare_parts`, `maintenance_history`) are unchanged, since they are also the stored `import_jobs.type` value.
 
 ### GET `/imports/{job}`
 
+Status, counts, and a preview of the prepared rows.
+
 ### GET `/imports/{job}/errors`
+
+### POST `/imports/{job}/confirm`
+
+Writes the rows that passed validation. Refused with `409 CONFLICT` on a job with nothing valid, or a second confirm of one already run — an import is not idempotent from the caller's side, and the job's own status is the guard.
+
+### POST `/imports/{job}/cancel`
 
 Import flow:
 Upload → Validate → Preview → Confirm.
@@ -997,7 +1009,11 @@ Upload → Validate → Preview → Confirm.
 
 ## 24. Export APIs
 
+Raw current data in an importer's own column shape — the round trip a person or an integration uses to pull a register out, fix rows, and load it back in. Different from a report job, which is a view shaped for reading rather than for re-import.
+
 ### POST `/exports`
+
+Body: `type` (an importer type, hyphenated as above) and `format`. Rejected with `422` for a type with nothing to export (`supportsExport()` false — `maintenance-history` is derived from work orders and has no round trip). Requires `export.job.create` and the importer's own permission.
 
 ### GET `/exports/{job}`
 
@@ -1042,6 +1058,29 @@ Filters:
 - date range
 
 Audit logs are read-only.
+
+---
+
+## 26.1 Support Ticket APIs
+
+A tenant's own side of a conversation with the platform (SRS 5). No admin
+gate beyond being signed in — asking the platform for help is not an
+administrative act. The platform's side of the same ticket is
+`/platform/tickets/*`, under `platform.admin`; see `docs/03-Platform-API-Specification.md` §7.
+
+### GET `/support/tickets`
+
+List this company's tickets, most recently active first.
+
+### POST `/support/tickets`
+
+Body: `subject`, `body`. Opens a ticket and notifies platform staff.
+
+### GET `/support/tickets/{ticket}`
+
+### POST `/support/tickets/{ticket}/reply`
+
+Body: `body`. Reopens a `RESOLVED` ticket; refused on a `CLOSED` one.
 
 ---
 

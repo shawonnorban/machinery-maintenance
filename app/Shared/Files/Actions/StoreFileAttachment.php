@@ -46,9 +46,12 @@ class StoreFileAttachment
         }
 
         if ($file->getSize() > self::MAX_BYTES) {
+            // 413 over the wire (API 19.1), same as the enum already promises
+            // for FILE_TOO_LARGE. The web flow ignores this status and reads
+            // the message as usual.
             throw ValidationException::withMessages([
                 'file' => __('file.too_large', ['limit' => '10 MB']),
-            ]);
+            ])->status(413);
         }
 
         // getMimeType() sniffs the contents; getClientMimeType() repeats what
@@ -58,7 +61,7 @@ class StoreFileAttachment
         if (! in_array($mime, self::ALLOWED_MIME_TYPES, true)) {
             throw ValidationException::withMessages([
                 'file' => __('file.type_not_allowed', ['type' => $mime]),
-            ]);
+            ])->status(415);
         }
 
         $companyId = $this->context->companyId();

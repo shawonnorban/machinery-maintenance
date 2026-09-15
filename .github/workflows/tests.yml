@@ -1,0 +1,102 @@
+name: Tests
+
+# Runs the Feature/Unit suite against both MySQL and PostgreSQL. The pgsql
+# leg exists for the duration of the Postgres migration (see
+# docs/04-Architecture-Decision-Record.md and the machinery-maintenance ->
+# Annotech stack migration plan): every raw-SQL call site that used to be
+# MySQL-only now has to prove itself on both engines before MySQL support
+# is dropped.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        db: [mysql, pgsql]
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: machinery_maintenance_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: machinery_maintenance_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, bcmath, pdo_mysql, pdo_pgsql, zip, gd
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Node dependencies and build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Point the app at MySQL
+        if: matrix.db == 'mysql'
+        run: |
+          {
+            echo "DB_CONNECTION=mysql"
+            echo "DB_HOST=127.0.0.1"
+            echo "DB_PORT=3306"
+            echo "DB_DATABASE=machinery_maintenance_test"
+            echo "DB_USERNAME=root"
+            echo "DB_PASSWORD="
+          } >> "$GITHUB_ENV"
+
+      - name: Point the app at PostgreSQL
+        if: matrix.db == 'pgsql'
+        run: |
+          {
+            echo "DB_CONNECTION=pgsql"
+            echo "DB_HOST=127.0.0.1"
+            echo "DB_PORT=5432"
+            echo "DB_DATABASE=machinery_maintenance_test"
+            echo "DB_USERNAME=postgres"
+            echo "DB_PASSWORD=postgres"
+          } >> "$GITHUB_ENV"
+
+      # phpunit.xml's <env> entries only apply when the variable isn't
+      # already set (force="false" is the default), so the values exported
+      # above to $GITHUB_ENV take priority over phpunit.xml's hardcoded
+      # MySQL defaults for the pgsql leg.
+      - name: Run test suite
+        run: php artisan test --testsuite=Feature

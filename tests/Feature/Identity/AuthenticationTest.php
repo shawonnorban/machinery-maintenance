@@ -44,7 +44,8 @@ class AuthenticationTest extends TestCase
             'password' => 'correct-horse-battery',
         ]);
 
-        $response->assertRedirect(route('app.dashboard'));
+        // A tenant user's own screens are the Next.js app now (Phase D/F).
+        $response->assertRedirect(config('tenancy.frontend_url'));
         $this->assertAuthenticatedAs($this->user);
 
         $this->assertDatabaseHas('login_attempts', [
@@ -140,7 +141,7 @@ class AuthenticationTest extends TestCase
         $this->post('/login', [
             'email' => 'manager@delta.test',
             'password' => 'correct-horse-battery',
-        ])->assertRedirect(route('app.dashboard'));
+        ])->assertRedirect(config('tenancy.frontend_url'));
 
         $this->assertAuthenticated();
 
@@ -156,7 +157,7 @@ class AuthenticationTest extends TestCase
         $this->post('/login', [
             'email' => 'manager@delta.test',
             'password' => 'correct-horse-battery',
-        ])->assertRedirect(route('app.dashboard'));
+        ])->assertRedirect(config('tenancy.frontend_url'));
 
         // Session fixation: the pre-login id must not remain valid.
         $this->assertNotSame($before, $this->app['session']->getId());
@@ -169,10 +170,11 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_a_guest_is_redirected_to_login(): void
-    {
-        $this->get('/app/dashboard')->assertRedirect(route('login'));
-    }
+    // A guest hitting a protected screen and being sent to login (and back
+    // afterward) is proven at QrScanTest::test_a_guest_is_sent_to_login_and_
+    // returned_after — the same `auth` middleware behaviour, exercised
+    // against `/s/{code}` since every `/app/*` screen this test used is gone
+    // (Phase D/F).
 
     public function test_login_attempts_are_recorded_for_every_outcome(): void
     {

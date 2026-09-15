@@ -16,6 +16,21 @@ use Tests\TestCase;
  * The X-Company-Id header and the company switcher select among memberships.
  * Neither may ever grant access to a company the user does not belong to
  * (SRS 4, API 1).
+ *
+ * Every test here used to prove which company `ResolveTenantContext`
+ * resolved by GETting the Blade dashboard and looking for a
+ * `data-company-id="..."` marker in the rendered HTML. That screen is gone
+ * (Phase D/F, docs/12-Stack-Migration-Implementation-Plan.md), and no
+ * Next.js API response echoes the resolved company id the same way — but
+ * the middleware itself still writes it into the session
+ * (`ResolveTenantContext::SESSION_KEY`) on every request that passes
+ * through it, which is a more direct proof of what the middleware actually
+ * did than scraping a view ever was. `/app/locale` stands in as the probe
+ * route: it's the one screen-less route this module keeps alive (Phase F —
+ * `Tenancy/Routes/web.php`'s own comment explains why), and it passes
+ * through the exact same global `web` middleware group
+ * (`SetLocale`/`ResolveTenantContext`/`EnforceSubscriptionState`,
+ * bootstrap/app.php) any decommissioned `/app/*` route did.
  */
 class CompanyContextTest extends TestCase
 {
@@ -42,20 +57,13 @@ class CompanyContextTest extends TestCase
         TenantFixture::factory($this->rival, 'Rival Plant', 'RVP');
     }
 
-    /** The active company, as opposed to one merely listed in the switcher. */
-    private function activeCompany(Company $company): string
-    {
-        return 'data-company-id="'.$company->id.'"';
-    }
-
     public function test_context_defaults_to_the_users_default_membership(): void
     {
         $user = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
 
-        $this->actingAs($user)
-            ->get('/app/dashboard')
-            ->assertOk()
-            ->assertSee($this->activeCompany($this->delta), false);
+        $this->actingAs($user)->post('/app/locale', ['locale' => 'en']);
+
+        $this->assertSame($this->delta->id, session(ResolveTenantContext::SESSION_KEY));
     }
 
     public function test_a_multi_company_user_can_switch(): void
@@ -65,13 +73,11 @@ class CompanyContextTest extends TestCase
 
         $this->actingAs($user)
             ->post('/app/switch-company', ['company_id' => $this->omega->id])
-            ->assertRedirect(route('app.dashboard'));
+            ->assertRedirect(config('tenancy.frontend_url'));
 
-        $this->actingAs($user)
-            ->get('/app/dashboard')
-            ->assertOk()
-            ->assertSee($this->activeCompany($this->omega), false)
-            ->assertDontSee($this->activeCompany($this->delta), false);
+        $this->actingAs($user)->post('/app/locale', ['locale' => 'en']);
+
+        $this->assertSame($this->omega->id, session(ResolveTenantContext::SESSION_KEY));
     }
 
     public function test_switching_to_a_company_the_user_does_not_belong_to_is_refused(): void
@@ -83,11 +89,9 @@ class CompanyContextTest extends TestCase
             ->assertSessionHasErrors('company_id');
 
         // Context must be unchanged after a refused switch.
-        $this->actingAs($user)
-            ->get('/app/dashboard')
-            ->assertOk()
-            ->assertSee($this->activeCompany($this->delta), false)
-            ->assertDontSee($this->activeCompany($this->rival), false);
+        $this->actingAs($user)->post('/app/locale', ['locale' => 'en']);
+
+        $this->assertSame($this->delta->id, session(ResolveTenantContext::SESSION_KEY));
     }
 
     public function test_a_company_id_header_naming_a_non_membership_is_forbidden(): void
@@ -98,7 +102,7 @@ class CompanyContextTest extends TestCase
         // to conceal (API 2).
         $this->actingAs($user)
             ->withHeader('X-Company-Id', $this->rival->id)
-            ->get('/app/dashboard')
+            ->post('/app/locale', ['locale' => 'en'])
             ->assertForbidden();
     }
 
@@ -109,9 +113,10 @@ class CompanyContextTest extends TestCase
 
         $this->actingAs($user)
             ->withHeader('X-Company-Id', $this->omega->id)
-            ->get('/app/dashboard')
-            ->assertOk()
-            ->assertSee($this->activeCompany($this->omega), false);
+            ->post('/app/locale', ['locale' => 'en'])
+            ->assertStatus(302);
+
+        $this->assertSame($this->omega->id, session(ResolveTenantContext::SESSION_KEY));
     }
 
     public function test_a_user_with_no_active_membership_is_refused(): void
@@ -120,7 +125,9 @@ class CompanyContextTest extends TestCase
 
         CompanyUser::where('user_id', $user->id)->update(['status' => 'SUSPENDED']);
 
-        $this->actingAs($user)->get('/app/dashboard')->assertForbidden();
+        $this->actingAs($user)
+            ->post('/app/locale', ['locale' => 'en'])
+            ->assertForbidden();
     }
 
     public function test_a_suspended_membership_cannot_be_selected_by_header(): void
@@ -134,7 +141,7 @@ class CompanyContextTest extends TestCase
 
         $this->actingAs($user)
             ->withHeader('X-Company-Id', $this->omega->id)
-            ->get('/app/dashboard')
+            ->post('/app/locale', ['locale' => 'en'])
             ->assertForbidden();
     }
 
@@ -159,7 +166,7 @@ class CompanyContextTest extends TestCase
     {
         $user = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
 
-        $response = $this->actingAs($user)->get('/app/dashboard');
+        $response = $this->actingAs($user)->post('/app/locale', ['locale' => 'en']);
 
         $this->assertNotEmpty($response->headers->get('X-Request-Id'));
     }
@@ -170,7 +177,7 @@ class CompanyContextTest extends TestCase
 
         $response = $this->actingAs($user)
             ->withHeader('X-Request-Id', 'support-ticket-4821')
-            ->get('/app/dashboard');
+            ->post('/app/locale', ['locale' => 'en']);
 
         $this->assertSame('support-ticket-4821', $response->headers->get('X-Request-Id'));
     }

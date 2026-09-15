@@ -18,7 +18,9 @@
                     // the reader no idea where they are, so the parent carries
                     // the state too and the group opens on it.
                     $childActive = collect($item['children'])
-                        ->contains(fn (array $child) => request()->routeIs($child['route']));
+                        ->contains(fn (array $child) => isset($child['url'])
+                            ? request()->is(ltrim($child['url'], '/').'*')
+                            : request()->routeIs($child['route']));
                 @endphp
 
                 <li class="nav-group {{ $childActive ? 'show' : '' }}">
@@ -33,9 +35,21 @@
                     </a>
                     <ul class="nav-group-items">
                         @foreach ($item['children'] as $child)
+                            @php
+                                // A `url` item points somewhere outside this
+                                // route table entirely — the Next.js side of a
+                                // dark-launched module (docs/12-Stack-Migration-
+                                // Implementation-Plan.md Phase H), reached
+                                // through the coexistence proxy rather than a
+                                // named Laravel route.
+                                $childHref = $child['url'] ?? route($child['route']);
+                                $childIsActive = isset($child['url'])
+                                    ? request()->is(ltrim($child['url'], '/').'*')
+                                    : request()->routeIs($child['route']);
+                            @endphp
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs($child['route']) ? 'active' : '' }}"
-                                   href="{{ route($child['route']) }}">
+                                <a class="nav-link {{ $childIsActive ? 'active' : '' }}"
+                                   href="{{ $childHref }}">
                                     {{-- A dot rather than a second icon: a child
                                          list of eight distinct icons is harder to
                                          scan than eight aligned labels. --}}

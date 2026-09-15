@@ -57,6 +57,7 @@ return [
     'factory_unavailable' => 'That factory is not available to you.',
     'area_unavailable' => 'That selection is not available to your company.',
     'line_needs_department' => 'A production line needs its department named too, otherwise the roster has nothing to widen to when that line is quiet.',
+    'login_already_linked' => 'That login is already :name\'s — one account cannot be shared between technicians, since it would make their work history unrecoverable.',
     'no_technicians' => 'Nobody on the roster yet.',
     'no_technicians_hint' => 'Add the people who do the work. Without them a work order can be raised but not assigned.',
 ];

@@ -335,6 +335,31 @@ class ScheduleGeneratorTest extends TestCase
         $this->assertCount(1, $this->schedules($plan)->where('status', '!=', 'SKIPPED'));
     }
 
+    public function test_skipping_a_long_overdue_plans_only_occurrence_does_not_collide_with_itself(): void
+    {
+        // A plan whose start_date is many intervals in the past has no
+        // COMPLETED row to measure from, so its first occurrence is
+        // generated at "now" (the "do not backfill everything missed"
+        // rule) rather than at the anchor. `CompleteSchedule::skip()`
+        // regenerates internally with the real current time too (no
+        // explicit $now passed) — so without considering the just-skipped
+        // row, `firstDueAt()` recomputed that exact same "now" a second
+        // time and the (plan, asset, due_at) unique constraint refused it
+        // as a duplicate.
+        $plan = $this->plan(['start_date' => '2020-01-01']);
+
+        $this->generator->generateForPlan($plan);
+        $first = $this->schedules($plan)->first();
+
+        app(CompleteSchedule::class)->skip($first, 'Machine unavailable, order running');
+
+        $this->assertSame('SKIPPED', $first->fresh()->status);
+
+        $next = $this->schedules($plan)->where('status', '!=', 'SKIPPED')->first();
+        $this->assertNotNull($next);
+        $this->assertTrue($next->due_at->greaterThan($first->fresh()->due_at));
+    }
+
     public function test_a_type_wide_plan_covers_every_asset_of_that_type(): void
     {
         $location = AssetLocation::where('code', 'DHK-L3')->firstOrFail();

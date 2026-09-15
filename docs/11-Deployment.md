@@ -372,6 +372,17 @@ In order of how often it is the answer:
 
 ## 13. Shared hosting (cPanel), and what it cannot run
 
+> **This section predates the Next.js split** (Phase D/F of the Annotech RMG
+> stack migration) and describes deploying the application as a single
+> Blade-rendering PHP app — accurate for the API half, incomplete for the
+> product as a whole now that the frontend is a separate Next.js app with its
+> own Node.js process. **For a deployment that includes the frontend, use
+> [`DEPLOYMENT-GUIDE.md`](../DEPLOYMENT-GUIDE.md) at the repository root
+> instead** — it covers both halves on the same kind of host. The PHP-version
+> check (13.0), the `.env` mail/queue/broadcast guidance (13.4–13.5), and the
+> cron entries (13.3) below are still accurate and are cross-referenced from
+> there rather than repeated.
+
 Everything above assumes a machine you control: a process supervisor, a
 reverse proxy, a Redis you can start. Shared hosting gives you none of those,
 and the product runs there anyway — but three things change, and one of them
@@ -623,3 +634,96 @@ setting definition that has not been seeded takes down every page with
 - **Wildcard subdomains for customers** (section 12) generally are not
   available on shared hosting. Every customer uses the one address until you
   move.
+
+---
+
+## 14. Migrating to PostgreSQL
+
+The application is being moved from MySQL to PostgreSQL as part of the wider
+migration to the Annotech RMG stack (Laravel API + Next.js). This section is
+the runbook for that cutover; it is separate from — and comes before — the
+frontend work, because the schema and the application's raw-SQL call sites
+have to be proven on Postgres regardless of what consumes the API.
+
+### 14.0 Why this is safe to attempt
+
+The schema was built almost entirely driver-agnostic already: ULID/UUID
+primary keys throughout, no native `enum()` columns, no storage-engine
+dependency, no generated columns, no fulltext indexes, no JSON-path querying.
+The only places that assumed MySQL were a handful of raw-SQL call sites
+(`DATE_FORMAT`, `FIELD()`, an implicit boolean sort, and one `MODIFY COLUMN`
+DDL statement) — all now rewritten to branch on `DB::getDriverName()` or to
+use ANSI-portable `CASE` expressions instead (see `app/Shared/Support/Sql.php`
+and the migration in `app/Modules/Notification/Database/Migrations/`). CI
+(`.github/workflows/tests.yml`) runs the full Feature suite against both
+`mysql` and `pgsql` on every push, specifically to catch a missed call site
+before it reaches a real cutover rather than after.
+
+### 14.1 Before migrating any real data
+
+1. Confirm the CI matrix is green on `pgsql` for the commit being deployed.
+2. Stand up a Postgres instance sized like production (`config/database.php`
+   already has a working `pgsql` connection block — set `DB_CONNECTION=pgsql`
+   and the matching `DB_HOST`/`DB_PORT`/`DB_DATABASE`/`DB_USERNAME`/
+   `DB_PASSWORD` to point at it).
+3. Run `php artisan migrate --force` against the empty Postgres database to
+   confirm every migration applies cleanly with no data involved yet.
+
+### 14.2 Moving existing data
+
+Use [`pgloader`](https://pgloader.io/) rather than a hand-rolled export/import
+script — it understands MySQL's `utf8mb4` and `CHAR(26)` ULID columns natively
+and converts them without a manual type-mapping pass. Always run this against
+a **staging clone** of production first, never production data directly on
+the first attempt:
+
+```bash
+pgloader mysql://user:password@mysql-host/machinery_maintenance \
+         postgresql://user:password@pg-host/machinery_maintenance
+```
+
+After it finishes:
+
+1. **Row counts.** For every table, `SELECT COUNT(*)` on both sides must
+   match exactly. A silent drop here is the most common `pgloader` failure
+   mode and the easiest to miss if you only spot-check a few tables.
+2. **Financial and audit tables.** These are append-only by design (ADR-057) —
+   `subscription_invoices`, `subscription_payments`, `refunds`,
+   `platform_expenses`, audit log tables. Checksum a sample of rows (e.g. hash
+   the concatenation of amount/currency/created_at columns) on both databases
+   and compare, not just the count, since a truncation or encoding change can
+   preserve row count while corrupting a value.
+3. **Decimal precision.** Money columns are `DECIMAL(18,4)` (ADR-063) and all
+   arithmetic on them goes through `bcmath` — verify a handful of stored
+   amounts round-trip through `pgloader` with no precision loss.
+4. Run the full Feature suite one more time with `DB_CONNECTION=pgsql`
+   pointed at the migrated staging database (not a fresh one) to catch
+   anything that only shows up with real data shapes — a NULL pattern a fresh
+   migration never produces, for instance.
+
+### 14.3 Cutover
+
+1. Put the application in maintenance mode (`php artisan down`).
+2. Run a final `pgloader` pass to catch anything written since the staging
+   copy was taken.
+3. Re-run the row-count and checksum checks from 14.2 against production
+   data, not just staging.
+4. Flip `DB_CONNECTION` to `pgsql` (and the connection details) in the
+   production `.env`.
+5. `php artisan up`.
+6. Keep the MySQL database intact and reachable, untouched, for a defined
+   rollback window — cutting back is changing one `.env` value and bringing
+   the app back up, which only stays true if MySQL was never decommissioned
+   early.
+
+### 14.4 After the rollback window closes
+
+Once the team is confident the Postgres cutover holds:
+
+- Drop the MySQL-only keys (`utf8mb4_unicode_ci` collation, `strict`,
+  `engine`) from the `mysql` connection block in `config/database.php` — they
+  don't apply to `pgsql` and are dead weight once `mysql` is no longer used.
+- Remove the `mysql` leg from `.github/workflows/tests.yml`'s matrix.
+- Update section 2's requirements above from "MySQL 8.4+" to "PostgreSQL 16+"
+  and drop `pdo_mysql` from the required extension list.
+- Decommission the MySQL instance itself.

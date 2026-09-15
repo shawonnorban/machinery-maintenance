@@ -18,6 +18,7 @@ use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Shared\Files\Models\FileAttachment;
 use App\Shared\Http\Controllers\Controller;
+use App\Shared\Support\Sql;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class WorkOrderController extends Controller
             ->when(filled($request->query('priority')), fn ($q) => $q->where('priority', $request->query('priority')))
             // Critical work first, then oldest promise first: a job scheduled
             // for last Tuesday is more urgent than one scheduled for tomorrow.
-            ->orderByRaw("FIELD(priority, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW')")
+            ->orderByRaw(Sql::orderByList('priority', ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']))
             ->orderByRaw('scheduled_start IS NULL, scheduled_start ASC')
             ->paginate($this->perPage($request))
             ->withQueryString();

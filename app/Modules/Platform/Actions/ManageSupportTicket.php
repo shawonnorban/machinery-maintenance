@@ -216,7 +216,10 @@ class ManageSupportTicket
                 $event,
                 $data + ['company' => $ticket->company?->name ?? '—'],
                 'INFO',
-                actionUrl: route('app.support.tickets.show', $ticket),
+                // The customer's own ticket view is the Next.js app now
+                // (Phase D/F), not this module's own (decommissioned) `/app`
+                // routes.
+                actionUrl: config('tenancy.frontend_url').'/support/tickets/'.$ticket->id,
             );
         } finally {
             $this->context->forget();

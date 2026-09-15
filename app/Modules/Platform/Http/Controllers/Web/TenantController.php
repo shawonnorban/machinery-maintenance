@@ -23,11 +23,13 @@ use App\Modules\Tenancy\Models\CompanyDomain;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Scopes\TenantScope;
+use App\Shared\Support\Sql;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 /**
@@ -116,7 +118,7 @@ class TenantController extends Controller
 
         $counted = Company::withoutGlobalScope(TenantScope::class)
             ->where('created_at', '>=', $since)
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, count(*) as total")
+            ->selectRaw(Sql::monthBucket('created_at').', count(*) as total')
             ->groupBy('ym')
             ->pluck('total', 'ym');
 
@@ -270,7 +272,7 @@ class TenantController extends Controller
             $data['tickets'] = SupportTicket::withoutGlobalScope(TenantScope::class)
                 ->where('company_id', $company->id)
                 ->with(['opener:id,name', 'assignee:id,name'])
-                ->orderByRaw("status = 'CLOSED'")
+                ->orderByRaw(Sql::sortMatchLast('status', 'CLOSED'))
                 ->orderByDesc('last_message_at')
                 ->get();
         }
@@ -629,29 +631,32 @@ class TenantController extends Controller
      */
     private function eraseTenantData(string $companyId): void
     {
-        $tables = DB::table('information_schema.COLUMNS')
-            ->where('TABLE_SCHEMA', DB::getDatabaseName())
-            ->where('COLUMN_NAME', 'company_id')
-            ->pluck('TABLE_NAME')
+        // Driver-agnostic table/column introspection (Schema::getTables()/
+        // getColumns()) rather than a raw information_schema query: Postgres's
+        // TABLE_SCHEMA names the namespace ('public'), not the database, so a
+        // MySQL-style `TABLE_SCHEMA = DATABASE()` filter would silently match
+        // no tables there.
+        $tables = collect(Schema::getTables())
+            ->pluck('name')
+            ->filter(fn (string $table): bool => collect(Schema::getColumns($table))
+                ->contains(fn (array $column): bool => $column['name'] === 'company_id'))
             // The one deliberate survivor. Its key is nullOnDelete so that what
             // was done, by whom and when outlives the data it describes.
-            ->reject(fn (string $table): bool => $table === 'audit_logs');
+            ->reject(fn (string $table): bool => $table === 'audit_logs')
+            ->values();
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        Sql::withoutForeignKeyChecks(
+            [...$tables, 'audit_logs', 'companies'],
+            function () use ($tables, $companyId): void {
+                DB::table('audit_logs')->where('company_id', $companyId)->update(['company_id' => null]);
 
-        try {
-            DB::table('audit_logs')->where('company_id', $companyId)->update(['company_id' => null]);
+                foreach ($tables as $table) {
+                    DB::table($table)->where('company_id', $companyId)->delete();
+                }
 
-            foreach ($tables as $table) {
-                DB::table($table)->where('company_id', $companyId)->delete();
-            }
-
-            DB::table('companies')->where('id', $companyId)->delete();
-        } finally {
-            // In a finally because leaving a connection with its constraints
-            // switched off is worse than the failure that got us here.
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
-        }
+                DB::table('companies')->where('id', $companyId)->delete();
+            },
+        );
     }
 
     /**
@@ -801,7 +806,16 @@ class TenantController extends Controller
         $request->session()->put(ManageSupportAccess::GRANT_KEY, $grant->id);
         $request->session()->put('active_company_id', $grant->company_id);
 
-        return redirect()->route('app.dashboard');
+        // KNOWN GAP (Phase D/F): a tenant's own screens are the separately-
+        // authenticated Next.js app now, which does not recognise this
+        // Blade session cookie — landing here signs `$asUser` in on this
+        // app's session (so `leave()` above still has something to leave),
+        // but does not itself sign them into the Next.js session Next.js
+        // would check. Finishing this needs a real cross-app handoff (a
+        // short-lived, single-use token this app mints and a Next.js route
+        // that exchanges it for its own session), not a redirect — flagged
+        // rather than silently left half-working.
+        return redirect(config('tenancy.frontend_url'));
     }
 
     /**
@@ -813,9 +827,8 @@ class TenantController extends Controller
      */
     private function owner(Company $company): ?User
     {
-        $roleId = Role::withoutGlobalScope(TenantScope::class)
-            ->whereNull('company_id')
-            ->where('code', 'COMPANY_OWNER')
+        $roleId = Role::whereNull('company_id')
+            ->where('name', 'COMPANY_OWNER')
             ->value('id');
 
         $userId = UserRole::withoutGlobalScope(TenantScope::class)

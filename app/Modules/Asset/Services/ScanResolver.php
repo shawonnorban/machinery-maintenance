@@ -6,9 +6,9 @@ namespace App\Modules\Asset\Services;
 
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetLocation;
+use App\Modules\Identity\Models\User;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 
 /**
  * Resolves a scanned QR token to a record plus the actions the scanner is
@@ -54,56 +54,78 @@ class ScanResolver
     /**
      * Role-aware actions for the scanned asset (SRS 8).
      *
-     * Returned as data rather than decided in Blade, so the mobile scan
-     * screen and the future API return the same set.
+     * Returned as data rather than decided in a view, so the Next.js scan
+     * screen (`app/(app)/scan/[code]/page.js`) and any future consumer
+     * return the same set. Routes are relative Next.js paths, not absolute
+     * URLs — the scan landing page itself now lives in Next.js too (Phase
+     * F completion), so there is no cross-origin hand-off left to build
+     * these against, and being relative is what lets each one carry the
+     * scanned asset as a query param instead of making the technician pick
+     * the machine again a second time.
+     *
+     * `$actor` is passed in explicitly (`Gate::forUser()`, never the
+     * ambient `Gate::allows()`) because this is called from an API-token
+     * context as often as a session one, and only the token's own
+     * `AuthenticateApiToken` middleware resolver knows who that is — the
+     * same guard-agnostic-caller fix applied earlier to
+     * `ManageCompanyUser::assertNotSelf()`. A null actor (a machine-client
+     * token, which cannot meaningfully scan a physical label) gets no
+     * actions at all rather than a Gate call that would silently deny
+     * everything anyway.
      *
      * @return list<array{key: string, label: string, route: string, tone: string}>
      */
-    public function actionsFor(Asset $asset): array
+    public function actionsFor(Asset $asset, ?User $actor): array
     {
+        if ($actor === null) {
+            return [];
+        }
+
+        $gate = Gate::forUser($actor);
         $actions = [];
 
-        if (Gate::allows('view', $asset)) {
+        if ($gate->allows('view', $asset)) {
             $actions[] = [
                 'key' => 'view',
                 'label' => __('scan.view_asset'),
-                'route' => route('app.assets.show', $asset),
+                'route' => '/assets/'.$asset->id,
                 'tone' => 'primary',
             ];
         }
 
         // Reporting a breakdown is the most time-critical action on this
         // screen: a line has stopped and someone is standing at the machine.
-        if (Gate::allows('breakdown.breakdown.create') && ! $asset->isTerminal()) {
+        // `asset_id` preselects the machine on arrival — the technician
+        // scanned it, so making them pick it again from a list is exactly
+        // the one extra step this page exists to remove.
+        if ($gate->allows('breakdown.breakdown.create') && ! $asset->isTerminal()) {
             $actions[] = [
                 'key' => 'report_breakdown',
                 'label' => __('scan.report_breakdown'),
-                // The breakdown module lands at build order step 17. Until
-                // then the action is listed but not linked, rather than
-                // pointing at a route that would 404.
-                'route' => Route::has('app.breakdowns.create')
-                    ? route('app.breakdowns.create', ['asset' => $asset->id])
-                    : '',
+                'route' => '/breakdowns/create?asset_id='.$asset->id,
                 'tone' => 'danger',
             ];
         }
 
-        if (Gate::allows('meter.reading.create') && ! $asset->isTerminal()) {
+        if ($gate->allows('meter.reading.create') && ! $asset->isTerminal()) {
             $actions[] = [
                 'key' => 'log_meter',
                 'label' => __('scan.log_meter_reading'),
-                'route' => Route::has('app.meters.create')
-                    ? route('app.meters.create', ['asset' => $asset->id])
-                    : '',
+                // Meters live on the asset's own detail page, as a tab —
+                // `?tab=metering` opens straight to it instead of landing
+                // on the Overview tab and making the technician find it.
+                'route' => '/assets/'.$asset->id.'?tab=metering',
                 'tone' => 'secondary',
             ];
         }
 
-        if (Gate::allows('transfer', $asset)) {
+        if ($gate->allows('transfer', $asset)) {
             $actions[] = [
                 'key' => 'transfer',
                 'label' => __('scan.transfer'),
-                'route' => route('app.assets.transfer.create', $asset),
+                // The "Request transfer" button already sits in this page's
+                // own header, always visible — no tab needed to reach it.
+                'route' => '/assets/'.$asset->id,
                 'tone' => 'secondary',
             ];
         }

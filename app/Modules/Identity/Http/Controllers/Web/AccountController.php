@@ -7,10 +7,13 @@ namespace App\Modules\Identity\Http\Controllers\Web;
 use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Audit\Services\AuditRecorder;
+use App\Modules\Identity\Models\User;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Scopes\TenantScope;
+use App\Shared\Support\UserAgent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -38,12 +41,45 @@ class AccountController extends Controller
         return view('identity::account.index', [
             'user' => $user,
             'sessions' => $this->sessions($request),
-            'tokens' => ApiToken::withoutGlobalScope(TenantScope::class)
-                ->where('user_id', $user->id)
-                ->whereNull('revoked_at')
-                ->orderByDesc('last_used_at')
-                ->get(),
+            'tokens' => $this->tokens($user),
         ]);
+    }
+
+    /**
+     * Every live token this person holds, from both schemes live during the
+     * Sanctum migration — a person's tokens minted after the cutover are
+     * Sanctum's, but one minted before it keeps working (and showing up
+     * here) until it expires or is revoked.
+     *
+     * @return Collection<int, object{source: string, id: string, name: string, last_four: ?string, last_used_at: ?\Illuminate\Support\Carbon, expires_at: ?\Illuminate\Support\Carbon}>
+     */
+    private function tokens(User $user): Collection
+    {
+        $sanctum = $user->tokens->map(fn ($t): object => (object) [
+            'source' => 'sanctum',
+            'id' => (string) $t->id,
+            'name' => $t->name,
+            'last_four' => $t->last_four,
+            'last_used_at' => $t->last_used_at,
+            'expires_at' => $t->expires_at,
+        ]);
+
+        $legacy = ApiToken::withoutGlobalScope(TenantScope::class)
+            ->where('user_id', $user->id)
+            ->whereNull('revoked_at')
+            ->get()
+            ->map(fn (ApiToken $t): object => (object) [
+                'source' => 'legacy',
+                'id' => $t->id,
+                'name' => $t->name,
+                'last_four' => $t->last_four,
+                'last_used_at' => $t->last_used_at,
+                'expires_at' => $t->expires_at,
+            ]);
+
+        return $sanctum->merge($legacy)
+            ->sortByDesc(fn (object $t) => $t->last_used_at)
+            ->values();
     }
 
     public function changePassword(Request $request, IssueApiToken $tokens): RedirectResponse
@@ -110,10 +146,20 @@ class AccountController extends Controller
 
     public function revokeToken(Request $request, string $token): RedirectResponse
     {
-        // Resolved without the tenant scope, because this list is not scoped
-        // to a company either: a person in three companies holds a token for
-        // each, and being able to see one but not stop it would be worse than
-        // showing neither. The ownership check is what makes that safe.
+        // Tried as a Sanctum token first (what this list mostly shows going
+        // forward), falling back to the legacy scheme for a token minted
+        // before the cutover. Both lookups are scoped to the asker rather
+        // than a company: a person in three companies holds a token for
+        // each, and being able to see one but not stop it would be worse
+        // than showing neither.
+        $sanctum = $request->user()->tokens()->find($token);
+
+        if ($sanctum !== null) {
+            $sanctum->delete();
+
+            return back()->with('status', __('account.token_revoked'));
+        }
+
         $row = ApiToken::withoutGlobalScope(TenantScope::class)
             ->whereKey($token)
             ->where('user_id', $request->user()->id)
@@ -152,40 +198,10 @@ class AccountController extends Controller
                 'id' => $row->id,
                 'is_current' => $row->id === $current,
                 'ip_address' => $row->ip_address,
-                'agent' => $this->describeAgent((string) ($row->user_agent ?? '')),
+                'agent' => UserAgent::describe((string) ($row->user_agent ?? '')),
                 'last_activity' => $row->last_activity,
             ])
             ->values()
             ->all();
-    }
-
-    /**
-     * A user agent string, reduced to something a person can recognise.
-     *
-     * Not parsing: recognising. Somebody deciding whether to sign a device out
-     * needs "Chrome on Android", not a hundred characters of version tokens
-     * they will skip over.
-     */
-    private function describeAgent(string $agent): string
-    {
-        $browser = match (true) {
-            str_contains($agent, 'Edg/') => 'Edge',
-            str_contains($agent, 'OPR/') => 'Opera',
-            str_contains($agent, 'Chrome/') => 'Chrome',
-            str_contains($agent, 'Firefox/') => 'Firefox',
-            str_contains($agent, 'Safari/') => 'Safari',
-            default => __('account.unknown_browser'),
-        };
-
-        $platform = match (true) {
-            str_contains($agent, 'Android') => 'Android',
-            str_contains($agent, 'iPhone'), str_contains($agent, 'iPad') => 'iOS',
-            str_contains($agent, 'Windows') => 'Windows',
-            str_contains($agent, 'Mac OS') => 'macOS',
-            str_contains($agent, 'Linux') => 'Linux',
-            default => __('account.unknown_platform'),
-        };
-
-        return $browser.' · '.$platform;
     }
 }

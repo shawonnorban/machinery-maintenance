@@ -26,6 +26,16 @@ use Tests\TestCase;
  *
  * The verifier is faked because the real one asks the network, and a test that
  * depends on DNS is a test that fails on a train.
+ *
+ * Every case probes `/app/support/tickets` rather than the `/app/dashboard`
+ * this used to check — that screen is gone (Phase D/F, docs/12-Stack-
+ * Migration-Implementation-Plan.md), fully replaced by the Next.js app.
+ * `/app/support/tickets` is the one Blade screen this module keeps alive
+ * (Platform's own tenant-facing "my support tickets", not yet ported),
+ * needs no permission beyond company membership, and — unlike `/app/
+ * locale`/`/app/switch-company` — isn't exempt from `ResolveTenantContext`'s
+ * own checks, so it still proves exactly which company the host/session
+ * resolved to.
  */
 class CustomDomainTest extends TestCase
 {
@@ -102,7 +112,7 @@ class CustomDomainTest extends TestCase
         // address is refused — see the test below. That difference is the
         // whole of what verification buys.
         $this->actingAs($stranger)
-            ->get('http://maintenance.deltaapparels.com/app/dashboard')
+            ->get('http://maintenance.deltaapparels.com/app/support/tickets')
             ->assertOk();
 
         $this->assertFalse($this->domain()->isVerified());
@@ -120,7 +130,7 @@ class CustomDomainTest extends TestCase
         $this->assertTrue($this->domain()->isVerified());
 
         $this->actingAs($this->owner)
-            ->get('http://maintenance.deltaapparels.com/app/dashboard')
+            ->get('http://maintenance.deltaapparels.com/app/support/tickets')
             ->assertOk();
     }
 
@@ -167,7 +177,7 @@ class CustomDomainTest extends TestCase
         // The host names a company they do not belong to. The address decides
         // which tenant, membership still decides whether they get in.
         $this->actingAs($stranger)
-            ->get('http://maintenance.deltaapparels.com/app/dashboard')
+            ->get('http://maintenance.deltaapparels.com/app/support/tickets')
             ->assertForbidden();
     }
 
@@ -183,7 +193,7 @@ class CustomDomainTest extends TestCase
         // one they had open in another tab an hour ago.
         $this->actingAs($this->owner)
             ->withSession(['active_company_id' => $this->omega->id])
-            ->get('http://maintenance.deltaapparels.com/app/dashboard')
+            ->get('http://maintenance.deltaapparels.com/app/support/tickets')
             ->assertOk();
     }
 
@@ -223,7 +233,7 @@ class CustomDomainTest extends TestCase
 
         // Refused while the address belongs to Delta.
         $this->actingAs($stranger)
-            ->get('http://maintenance.deltaapparels.com/app/dashboard')
+            ->get('http://maintenance.deltaapparels.com/app/support/tickets')
             ->assertForbidden();
 
         // The stranger's request left an active company in the session, and
@@ -247,7 +257,7 @@ class CustomDomainTest extends TestCase
         // And no longer refused once it belongs to nobody: the host has gone
         // back to being an ordinary name with no say in the matter.
         $this->actingAs($stranger)
-            ->get('http://maintenance.deltaapparels.com/app/dashboard')
+            ->get('http://maintenance.deltaapparels.com/app/support/tickets')
             ->assertOk();
     }
 

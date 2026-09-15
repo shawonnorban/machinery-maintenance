@@ -12,6 +12,7 @@ use App\Modules\Billing\Models\SubscriptionPayment;
 use App\Modules\Tenancy\Models\Company;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Scopes\TenantScope;
+use App\Shared\Support\Sql;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -277,13 +278,13 @@ class PlatformFinanceController extends Controller
         $received = SubscriptionPayment::withoutGlobalScope(TenantScope::class)
             ->where('status', 'RECEIVED')
             ->where('paid_at', '>=', $since)
-            ->selectRaw("DATE_FORMAT(paid_at, '%Y-%m') as ym, SUM(amount) as total")
+            ->selectRaw(Sql::monthBucket('paid_at').', SUM(amount) as total')
             ->groupBy('ym')
             ->pluck('total', 'ym');
 
         $spent = PlatformExpense::query()
             ->where('spent_on', '>=', $since)
-            ->selectRaw("DATE_FORMAT(spent_on, '%Y-%m') as ym, SUM(amount) as total")
+            ->selectRaw(Sql::monthBucket('spent_on').', SUM(amount) as total')
             ->groupBy('ym')
             ->pluck('total', 'ym');
 

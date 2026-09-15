@@ -51,6 +51,33 @@ class FileAttachment extends BaseModel
     }
 
     /**
+     * The one shape every API endpoint returns this file as (API 19.1).
+     *
+     * Lives here, not repeated in three controllers, because the asset
+     * document list, the work order attachment list, and the generic
+     * `/files/{file}` endpoint all describe the same row the same way.
+     *
+     * @return array<string, mixed>
+     */
+    public function toApiSummary(): array
+    {
+        return [
+            'id' => $this->id,
+            'attachable_type' => $this->attachable_type,
+            'attachable_id' => $this->attachable_id,
+            'original_name' => $this->original_name,
+            'mime_type' => $this->mime_type,
+            'size_bytes' => $this->size_bytes,
+            'human_size' => $this->humanSize(),
+            'is_image' => $this->isImage(),
+            'scan_status' => $this->scan_status,
+            'downloadable' => $this->isDownloadable(),
+            'uploaded_by' => $this->uploaded_by,
+            'created_at' => $this->created_at?->toIso8601String(),
+        ];
+    }
+
+    /**
      * Human-readable size for a listing. A technician deciding whether to open
      * an attachment on a factory-floor connection wants to know it is 4 MB.
      */

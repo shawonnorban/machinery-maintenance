@@ -70,10 +70,10 @@ class QueryBudgetTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
     }
 
-    public function test_the_asset_list_does_not_query_once_per_machine(): void
-    {
-        $this->assertDoesNotGrowWithData('/app/assets', fn (int $n) => $this->makeAssets($n));
-    }
+    // `test_the_asset_list_does_not_query_once_per_machine` lived here,
+    // against the now-decommissioned `/app/assets` (Phase D/F) — its own
+    // `test_the_asset_api_does_not_query_once_per_machine` below already
+    // proves the same thing against the screen's actual replacement.
 
     public function test_the_asset_api_does_not_query_once_per_machine(): void
     {
@@ -86,9 +86,11 @@ class QueryBudgetTest extends TestCase
         );
     }
 
-    public function test_the_breakdown_list_does_not_query_once_per_breakdown(): void
+    public function test_the_breakdown_api_does_not_query_once_per_breakdown(): void
     {
-        $this->assertDoesNotGrowWithData('/app/breakdowns', function (int $n): void {
+        $token = $this->apiToken();
+
+        $this->assertDoesNotGrowWithData('/api/v1/breakdowns?per_page=100', function (int $n): void {
             $assets = $this->makeAssets($n);
 
             foreach ($assets as $asset) {
@@ -97,7 +99,7 @@ class QueryBudgetTest extends TestCase
                     'problem_description' => 'Stopped',
                 ], $this->owner->id);
             }
-        });
+        }, $token);
     }
 
     /**

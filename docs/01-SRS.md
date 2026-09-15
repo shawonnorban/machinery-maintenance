@@ -153,6 +153,7 @@ A user must never access another company's data through direct IDs, filters, exp
 - Maintenance Manager
 - Maintenance Engineer
 - Technician
+- Line Chief
 - Store Manager
 - Storekeeper
 - Viewer
@@ -189,6 +190,7 @@ Every role assignment carries a scope. A role is either company-wide or bound to
 | Maintenance Manager | Factory | Plans, work orders, approvals below threshold |
 | Maintenance Engineer | Factory | Plans, work orders, root cause, verification |
 | Technician | Factory | Assigned work orders, checklists, part requests |
+| Line Chief | Factory | Reports breakdowns only, restricted to their own line/department (no repair, no work order access) |
 | Store Manager | Factory | Inventory, transfers, adjustments |
 | Storekeeper | Factory / Store | Issue, receive, return |
 | Viewer | Company or Factory | Read-only |
@@ -226,6 +228,7 @@ The seeded default matrix is a deliverable of the User/Role module. Rules:
 3. `Technician` write permissions are limited to work orders where the technician is assigned.
 4. Permission changes are audited (see Section 34).
 5. Customers may clone a seeded role and edit the clone; seeded roles are not editable.
+6. `Line Chief` and `Technician` may only report or repair a breakdown on the machine's own line or department — a hard restriction, not merely a sort order (see Section 15). Factory-level roles (`Maintenance Engineer` and above) are exempt.
 
 ### 5.4 Platform Support Access
 
@@ -568,6 +571,14 @@ A breakdown report must capture:
 - Low
 
 Breakdown and preventive work orders may coexist. If a breakdown repair is active, conflicting preventive maintenance must be blocked or rescheduled according to configured rules.
+
+Once a technician is assigned, the repair work order this breakdown calls for is raised automatically and put on their plate — reporting, acknowledging, repairing and closing all happen from the one breakdown screen, never requiring a separate manual "raise work order" step before labor, parts or a checklist can be recorded (Section 13 and 13.4 still govern that work order's own record once it exists; only the *creation and assignment* step is automatic here).
+
+### Line/Department Restriction
+
+A `Line Chief` or `Technician` may report a breakdown only for the machine's own production line or department — whichever of the two is the narrower area they are personally responsible for — and the same restriction gates every repair-lifecycle transition on a breakdown nobody has assigned them to. This is a hard restriction, not merely a preference for who is offered first. `Maintenance Engineer`, `Maintenance Manager`, `Factory Manager`, `Factory Admin`, `Company Admin` and `Company Owner` are exempt from reporting/acting outside their own area.
+
+Once a manager or engineer has explicitly assigned a specific technician to a specific breakdown, that assignment is itself the authorization to work it — including a deliberate cross-line override (the "someone at two in the morning sends whoever is awake" case). The restriction is not re-checked against that technician's home line for the breakdown they were actually assigned to; it only stops them from acting, unassigned, on somebody else's.
 
 ---
 

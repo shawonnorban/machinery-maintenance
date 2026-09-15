@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Metering;
 
+use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Identity\Models\User;
 use App\Modules\Maintenance\Models\MaintenancePlan;
@@ -11,8 +12,6 @@ use App\Modules\Maintenance\Models\MaintenancePlanRule;
 use App\Modules\Maintenance\Models\MaintenanceSchedule;
 use App\Modules\Maintenance\Models\MaintenanceType;
 use App\Modules\Metering\Models\AssetMeter;
-use App\Modules\Metering\Models\MeterReading;
-use App\Modules\Metering\Models\MeterResetEvent;
 use App\Modules\Metering\Models\MeterType;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
@@ -23,12 +22,14 @@ use Tests\Support\WorkOrderFixture;
 use Tests\TestCase;
 
 /**
- * Meter readings (SRS 11, ADR-013).
- *
- * The half of usage-based maintenance that had no way in. A plan can say
- * "service every 500 running hours", but until somebody records the hours it
- * can never come due — and until this screen existed, nothing in the product
- * could record them.
+ * Meter readings (SRS 11, ADR-013) — the two cases here with no coverage
+ * anywhere else once `/app/meters` was decommissioned (Phase D/F, docs/12-
+ * Stack-Migration-Implementation-Plan.md). Everything else this file used
+ * to test (fitting a meter, the same-kind-twice guard, recording a reading,
+ * the cumulative-can't-go-backwards rule, a replacement's own baseline
+ * reading, the technician-reads-but-doesn't-fit-or-reset boundary, both
+ * `GET` redirect stubs) is already proven at `Api/MeterApiTest.php` and
+ * `Api/ApiResourceTest.php`.
  */
 class MeterReadingTest extends TestCase
 {
@@ -40,11 +41,7 @@ class MeterReadingTest extends TestCase
 
     private Asset $asset;
 
-    private User $engineer;
-
     private User $technician;
-
-    private User $factoryAdmin;
 
     protected function setUp(): void
     {
@@ -57,12 +54,7 @@ class MeterReadingTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
 
         $this->asset = WorkOrderFixture::runningAsset($this->delta, $this->dhaka);
-
-        $this->engineer = TenantFixture::user($this->delta, 'MAINTENANCE_ENGINEER', 'eng@delta.test');
         $this->technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
-        // Replacing a meter rewrites what every past reading meant, so it sits
-        // with the factory administrator rather than the engineer.
-        $this->factoryAdmin = TenantFixture::user($this->delta, 'FACTORY_ADMIN', 'fa@delta.test');
         TenantFixture::actingAsTenant($this->delta);
     }
 
@@ -73,95 +65,20 @@ class MeterReadingTest extends TestCase
 
     private function meter(string $initial = '0'): AssetMeter
     {
-        $this->actingAs($this->engineer)->post('/app/assets/'.$this->asset->id.'/meters', [
+        return AssetMeter::create([
+            'company_id' => $this->delta->id,
+            'asset_id' => $this->asset->id,
             'meter_type_id' => $this->hours()->id,
-            'initial_value' => $initial,
+            'current_value' => $initial,
         ]);
-
-        return AssetMeter::where('asset_id', $this->asset->id)->firstOrFail();
     }
 
-    public function test_a_meter_can_be_fitted_to_a_machine(): void
+    private function api(): self
     {
-        $meter = $this->meter('1200');
+        $token = app(IssueApiToken::class)->forUser($this->technician, $this->delta->id, 'Test')['plain'];
+        $this->withHeader('Authorization', 'Bearer '.$token);
 
-        $this->assertSame($this->hours()->id, $meter->meter_type_id);
-        $this->assertSame('1200.0000', $meter->current_value);
-        $this->assertSame('ACTIVE', $meter->status);
-    }
-
-    public function test_the_same_kind_of_meter_cannot_be_fitted_twice(): void
-    {
-        $this->meter();
-
-        $this->actingAs($this->engineer)
-            ->from('/app/assets/'.$this->asset->id)
-            ->post('/app/assets/'.$this->asset->id.'/meters', ['meter_type_id' => $this->hours()->id])
-            ->assertSessionHasErrors('meter_type_id');
-
-        // Two of the same kind would give every usage-based due date two
-        // answers.
-        $this->assertSame(1, AssetMeter::where('asset_id', $this->asset->id)->count());
-    }
-
-    public function test_a_technician_can_record_a_reading(): void
-    {
-        $meter = $this->meter('1200');
-
-        $this->actingAs($this->technician)
-            ->post('/app/meters/'.$meter->id.'/readings', ['value' => '1450'])
-            ->assertRedirect();
-
-        $this->assertSame('1450.0000', $meter->fresh()->current_value);
-        $this->assertNotNull($meter->fresh()->last_reading_at);
-
-        $reading = MeterReading::where('meter_id', $meter->id)->firstOrFail();
-
-        // The consumption since the last reading, which is what a usage-based
-        // interval is measured in.
-        $this->assertSame('250.0000', (string) $reading->delta);
-    }
-
-    /**
-     * The rule that keeps every hours-based due date from jumping backwards.
-     */
-    public function test_a_cumulative_meter_cannot_go_backwards(): void
-    {
-        $meter = $this->meter('1200');
-
-        $this->actingAs($this->technician)
-            ->from('/app/meters/'.$meter->id)
-            ->post('/app/meters/'.$meter->id.'/readings', ['value' => '900'])
-            ->assertSessionHasErrors('value');
-
-        $this->assertSame('1200.0000', $meter->fresh()->current_value);
-    }
-
-    public function test_a_replaced_meter_is_recorded_as_its_own_event(): void
-    {
-        $meter = $this->meter('1200');
-
-        $this->actingAs($this->factoryAdmin)
-            ->post('/app/meters/'.$meter->id.'/reset', [
-                'new_value' => '0',
-                'reason' => 'Hour counter replaced',
-            ])
-            ->assertRedirect();
-
-        $this->assertSame('0.0000', $meter->fresh()->current_value);
-
-        // The drop has an explanation, so consumption reporting can bridge it
-        // instead of reading it as 1200 hours of negative use.
-        $event = MeterResetEvent::where('meter_id', $meter->id)->firstOrFail();
-
-        $this->assertSame('1200.0000', (string) $event->old_value);
-        $this->assertSame('Hour counter replaced', $event->reason);
-
-        $baseline = MeterReading::where('meter_id', $meter->id)
-            ->where('is_reset_baseline', true)
-            ->firstOrFail();
-
-        $this->assertNotNull($baseline);
+        return $this;
     }
 
     /**
@@ -194,16 +111,15 @@ class MeterReadingTest extends TestCase
         ]);
 
         // Below the threshold: nothing comes due.
-        $this->actingAs($this->technician)
-            ->post('/app/meters/'.$meter->id.'/readings', ['value' => '300']);
+        $this->api()->postJson('/api/v1/meters/'.$meter->id.'/readings', ['value' => '300']);
 
         $this->assertSame(0, MaintenanceSchedule::where('asset_id', $this->asset->id)->count());
 
         // Past it: the job appears, and the person holding the clipboard is
         // told rather than finding out overnight.
-        $this->actingAs($this->technician)
-            ->post('/app/meters/'.$meter->id.'/readings', ['value' => '520'])
-            ->assertRedirect();
+        $this->api()
+            ->postJson('/api/v1/meters/'.$meter->id.'/readings', ['value' => '520'])
+            ->assertCreated();
 
         $this->assertGreaterThanOrEqual(
             1,
@@ -215,56 +131,14 @@ class MeterReadingTest extends TestCase
     {
         $meter = $this->meter('100');
 
-        $this->actingAs($this->technician)
-            ->from('/app/meters/'.$meter->id)
-            ->post('/app/meters/'.$meter->id.'/readings', [
+        $this->api()
+            ->postJson('/api/v1/meters/'.$meter->id.'/readings', [
                 'value' => '200',
-                'reading_at' => now()->addDays(2)->format('Y-m-d\TH:i'),
+                'reading_at' => now()->addDays(2)->toIso8601String(),
             ])
-            ->assertSessionHasErrors('reading_at');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reading_at');
 
         $this->assertSame('100.0000', $meter->fresh()->current_value);
-    }
-
-    public function test_a_technician_may_read_but_not_fit_or_reset(): void
-    {
-        $meter = $this->meter('100');
-
-        $this->actingAs($this->technician)
-            ->post('/app/assets/'.$this->asset->id.'/meters', ['meter_type_id' => $this->hours()->id])
-            ->assertForbidden();
-
-        $this->actingAs($this->technician)
-            ->post('/app/meters/'.$meter->id.'/reset', ['new_value' => '0', 'reason' => 'Trying it on'])
-            ->assertForbidden();
-
-        $this->assertSame('100.0000', $meter->fresh()->current_value);
-    }
-
-    public function test_another_companys_meter_is_not_reachable(): void
-    {
-        $meter = $this->meter('100');
-
-        $other = TenantFixture::company('Beta Textiles Ltd', 'BTL');
-        TenantFixture::factory($other, 'Their Unit', 'BTU');
-        TenantFixture::actingAsTenant($other);
-        $theirs = TenantFixture::user($other, 'MAINTENANCE_ENGINEER', 'eng@btl.test');
-
-        $this->flushSession();
-
-        $this->actingAs($theirs)->get('/app/meters/'.$meter->id)->assertNotFound();
-    }
-
-    public function test_the_list_shows_a_meter_nobody_has_read(): void
-    {
-        $this->meter('100');
-
-        $this->actingAs($this->engineer)
-            ->get('/app/meters')
-            ->assertOk()
-            ->assertSee($this->asset->asset_code)
-            // A meter nobody has touched is the one quietly making a
-            // usage-based plan wrong.
-            ->assertSee(__('metering.never_read'));
     }
 }

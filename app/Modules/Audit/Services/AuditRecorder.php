@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Audit\Services;
 
+use App\Modules\Api\Support\ApiCaller;
 use App\Modules\Audit\Jobs\WriteAuditEntry;
+use App\Shared\Http\Api\ApiException;
 use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -92,7 +94,7 @@ class AuditRecorder
             'user_agent' => Str::limit((string) request()?->userAgent(), 500, ''),
             'request_id' => request()?->attributes?->get('request_id'),
             'context' => $this->context(),
-            'impersonated_by' => session('impersonated_by'),
+            'impersonated_by' => $this->impersonatedBy(),
             'created_at' => CarbonImmutable::now(),
         ])->afterCommit();
     }
@@ -247,5 +249,36 @@ class AuditRecorder
         }
 
         return request()?->is('api/*') ? 'API' : 'UI';
+    }
+
+    /**
+     * The platform staff member really behind this write, if any.
+     *
+     * Two sources for the same fact, depending on which door the request
+     * came through: the web flow's impersonated session carries it in
+     * `session('impersonated_by')`; an API request carries no session at
+     * all, so it is read off the bearer token itself instead (Platform API
+     * §6) — set only on a token minted by entering a support grant.
+     * `ApiCaller` is bound only inside an authenticated API request, so a
+     * console job or an unauthenticated request simply has neither.
+     */
+    private function impersonatedBy(): ?string
+    {
+        $fromSession = session('impersonated_by');
+
+        if ($fromSession !== null) {
+            return $fromSession;
+        }
+
+        // `bound()` is true from boot onward — `ApiServiceProvider` registers
+        // a factory binding that throws for exactly this "no request" case
+        // (App\Modules\Api\Providers\ApiServiceProvider::register()) rather
+        // than an instance binding, so it can't be used to detect one. Only
+        // resolving it and catching that throw tells the two apart.
+        try {
+            return app(ApiCaller::class)->token->impersonatedBy();
+        } catch (ApiException) {
+            return null;
+        }
     }
 }

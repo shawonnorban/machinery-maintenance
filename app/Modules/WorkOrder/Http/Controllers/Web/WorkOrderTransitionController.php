@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Http\Controllers\Web;
 
+use App\Modules\Breakdown\Actions\TransitionBreakdown;
+use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\WorkOrder\Actions\AssignTechnicians;
 use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Shared\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -24,6 +27,7 @@ class WorkOrderTransitionController extends Controller
     public function __construct(
         private readonly TransitionWorkOrder $transition,
         private readonly AssignTechnicians $assign,
+        private readonly TransitionBreakdown $breakdownTransition,
     ) {}
 
     public function schedule(Request $request, WorkOrder $workOrder): RedirectResponse
@@ -63,11 +67,28 @@ class WorkOrderTransitionController extends Controller
         return back()->with('status', __('work_order.unassigned'));
     }
 
+    /**
+     * Mirrors the API's own `WorkOrderApiController::start` — a breakdown's
+     * repair chain is driven from here now, not from a separate "Start
+     * repair" button on the breakdown itself. See that method's docblock.
+     */
     public function start(Request $request, WorkOrder $workOrder): RedirectResponse
     {
         $this->authorize('work_order.work_order.start');
 
-        $this->transition->start($workOrder, $request->user()->id);
+        $userId = $request->user()->id;
+
+        DB::transaction(function () use ($workOrder, $userId): void {
+            $workOrder = $this->transition->start($workOrder, $userId);
+
+            if ($workOrder->breakdown_id !== null) {
+                $breakdown = Breakdown::find($workOrder->breakdown_id);
+
+                if ($breakdown !== null && $breakdown->canTransitionTo('IN_REPAIR')) {
+                    $this->breakdownTransition->startRepair($breakdown, $userId);
+                }
+            }
+        });
 
         return back()->with('status', __('work_order.started'));
     }

@@ -25,13 +25,15 @@ class Company extends BaseModel
     protected static function booted(): void
     {
         static::deleting(function (self $company): void {
-            $company->updateQuietly([
-                'deleted_marker' => 'DELETED_'.$company->getKey(),
-            ]);
+            // forceFill, not updateQuietly: deleted_marker is deliberately
+            // absent from $fillable — nothing external should ever set it —
+            // so a mass-assignment guard would otherwise silently discard
+            // this internal bookkeeping write (or throw, under strict mode).
+            $company->forceFill(['deleted_marker' => 'DELETED_'.$company->getKey()])->saveQuietly();
         });
 
         static::restoring(function (self $company): void {
-            $company->updateQuietly(['deleted_marker' => 'LIVE']);
+            $company->forceFill(['deleted_marker' => 'LIVE'])->saveQuietly();
         });
     }
 

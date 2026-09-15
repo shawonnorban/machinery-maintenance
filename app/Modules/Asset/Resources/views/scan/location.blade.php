@@ -23,7 +23,8 @@
     @else
         <div class="list-group">
             @foreach ($assets as $asset)
-                <a href="{{ route('app.assets.show', $asset) }}"
+                {{-- The asset detail screen is the Next.js app now (Phase D/F). --}}
+                <a href="{{ rtrim(config('tenancy.frontend_url'), '/').'/assets/'.$asset->id }}"
                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
                     <span>
                         <span class="fw-semibold d-block">{{ $asset->asset_code }}</span>

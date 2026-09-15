@@ -6,11 +6,11 @@ namespace App\Modules\Api\Actions;
 
 use App\Modules\Api\Models\ApiClient;
 use App\Modules\Api\Models\ApiToken;
-use App\Modules\Identity\Models\Permission;
 use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Permission;
 
 /**
  * Minting and withdrawing a machine's credentials (API 4.2).
@@ -123,7 +123,8 @@ class ManageApiClient
             ]);
         }
 
-        $known = Permission::query()->pluck('code')->all();
+        // Spatie's `name` is the machine code (asset.asset.view_any, ...).
+        $known = Permission::query()->pluck('name')->all();
         $unknown = array_diff($scopes, $known);
 
         if ($unknown !== []) {

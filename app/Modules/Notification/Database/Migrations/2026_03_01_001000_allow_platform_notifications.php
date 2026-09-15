@@ -20,13 +20,19 @@ use Illuminate\Support\Facades\DB;
  *
  * Raw SQL rather than ->change(): the column carries a foreign key, and
  * Laravel's column change drops and rebuilds the definition it was given
- * without it. MODIFY leaves the constraint alone.
+ * without it. MySQL's MODIFY leaves the constraint alone; Postgres never
+ * touches a foreign key when altering nullability in the first place, so
+ * ALTER COLUMN ... SET/DROP NOT NULL is the equivalent there.
  */
 return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement('ALTER TABLE notifications MODIFY company_id CHAR(26) NULL');
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE notifications ALTER COLUMN company_id DROP NOT NULL');
+        } else {
+            DB::statement('ALTER TABLE notifications MODIFY company_id CHAR(26) NULL');
+        }
     }
 
     public function down(): void
@@ -36,6 +42,10 @@ return new class extends Migration
         // NULL constraint, which is a worse outcome than losing read messages.
         DB::table('notifications')->whereNull('company_id')->delete();
 
-        DB::statement('ALTER TABLE notifications MODIFY company_id CHAR(26) NOT NULL');
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE notifications ALTER COLUMN company_id SET NOT NULL');
+        } else {
+            DB::statement('ALTER TABLE notifications MODIFY company_id CHAR(26) NOT NULL');
+        }
     }
 };

@@ -9,6 +9,7 @@ use App\Modules\Platform\Models\SupportGrant;
 use App\Modules\Platform\Models\SupportTicket;
 use App\Shared\Http\Controllers\Controller;
 use App\Shared\Scopes\TenantScope;
+use App\Shared\Support\Sql;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -45,7 +46,7 @@ class PlatformDeskController extends Controller
     {
         $tickets = SupportTicket::withoutGlobalScope(TenantScope::class)
             ->with(['company:id,name,code', 'opener:id,name', 'assignee:id,name'])
-            ->orderByRaw("status = 'CLOSED'")
+            ->orderByRaw(Sql::sortMatchLast('status', 'CLOSED'))
             ->orderByDesc('last_message_at')
             ->limit(200)
             ->get();

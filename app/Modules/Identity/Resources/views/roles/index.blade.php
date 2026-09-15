@@ -22,29 +22,28 @@
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>
-                            <span class="fw-semibold">{{ $role->name }}</span>
+                            {{-- Spatie's `name` is the machine code (COMPANY_OWNER); the
+                                 human-readable label ("Company Owner") lives in
+                                 `description` instead. --}}
+                            <span class="fw-semibold">{{ $role->description }}</span>
                             <span class="badge bg-secondary ms-1">
                                 {{ $role->scope === 'FACTORY' ? __('user.factory_scope') : __('user.company_scope') }}
                             </span>
                         </span>
-                        <span class="badge bg-info text-white rounded-pill">
+                        <span class="badge bg-info text-white rounded-smsmsmpill">
                             {{ trans_choice('user.holder_count', $assigned[$role->id] ?? 0, ['count' => $assigned[$role->id] ?? 0]) }}
                         </span>
                     </div>
 
                     <div class="card-body">
-                        @if ($role->description)
-                            <p class="small text-body-secondary">{{ $role->description }}</p>
-                        @endif
-
                         <details>
                             <summary class="small">
                                 {{ trans_choice('user.permission_count', $role->permissions->count(), ['count' => $role->permissions->count()]) }}
                             </summary>
 
                             <ul class="small mt-2 mb-0 ps-3">
-                                @foreach ($role->permissions->sortBy('code') as $permission)
-                                    <li><code>{{ $permission->code }}</code></li>
+                                @foreach ($role->permissions->sortBy('name') as $permission)
+                                    <li><code>{{ $permission->name }}</code></li>
                                 @endforeach
                             </ul>
                         </details>

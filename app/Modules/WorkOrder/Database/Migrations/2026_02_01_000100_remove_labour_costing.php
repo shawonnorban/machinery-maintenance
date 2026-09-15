@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -111,18 +110,15 @@ return new class extends Migration
 
     private function dropForeignKeyIfPresent(string $table, string $column): void
     {
-        $constraint = DB::selectOne(
-            'SELECT CONSTRAINT_NAME AS name
-             FROM information_schema.KEY_COLUMN_USAGE
-             WHERE TABLE_SCHEMA = DATABASE()
-               AND TABLE_NAME = ?
-               AND COLUMN_NAME = ?
-               AND REFERENCED_TABLE_NAME IS NOT NULL',
-            [$table, $column],
-        );
+        // Schema::getForeignKeys() rather than a raw information_schema query
+        // — see the note in the 2026_01_01_000100 organization-tables migration
+        // for why a MySQL-style TABLE_SCHEMA = DATABASE() filter doesn't
+        // translate to Postgres.
+        $foreignKey = collect(Schema::getForeignKeys($table))
+            ->first(fn (array $fk): bool => in_array($column, $fk['columns'], true));
 
-        if ($constraint !== null) {
-            Schema::table($table, fn (Blueprint $t) => $t->dropForeign($constraint->name));
+        if ($foreignKey !== null) {
+            Schema::table($table, fn (Blueprint $t) => $t->dropForeign($foreignKey['name']));
         }
     }
 

@@ -94,7 +94,7 @@ class ApprovalWorkflowTest extends TestCase
         ApprovalRule::create([
             'workflow_id' => $workflow->id,
             'sequence' => 1,
-            'role_id' => Role::whereNull('company_id')->where('code', 'MAINTENANCE_MANAGER')->firstOrFail()->id,
+            'role_id' => Role::whereNull('company_id')->where('name','MAINTENANCE_MANAGER')->firstOrFail()->id,
             'name' => 'Maintenance manager',
             // Anything at or above 20,000 needs a signature. Below that the
             // rule does not apply and the job goes straight through.
@@ -104,7 +104,7 @@ class ApprovalWorkflowTest extends TestCase
         ApprovalRule::create([
             'workflow_id' => $workflow->id,
             'sequence' => 2,
-            'role_id' => Role::whereNull('company_id')->where('code', 'FACTORY_MANAGER')->firstOrFail()->id,
+            'role_id' => Role::whereNull('company_id')->where('name','FACTORY_MANAGER')->firstOrFail()->id,
             'name' => 'Factory manager',
             'condition_json' => ['min_cost' => '100000'],
         ]);

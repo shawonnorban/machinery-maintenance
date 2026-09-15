@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Modules\Api\Http\Middleware\AuthenticateApiToken;
 use App\Modules\Api\Http\Middleware\EnforceIdempotency;
 use App\Modules\Billing\Http\Middleware\EnforceSubscriptionState;
+use App\Modules\Platform\Http\Middleware\AuthenticatePlatformToken;
 use App\Modules\Platform\Http\Middleware\EnsurePlatformAdmin;
 use App\Modules\Tenancy\Http\Middleware\ResolveTenantContext;
 use App\Shared\Exceptions\TenantContextMissingException;
@@ -68,6 +69,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('api.auth', [
             AuthenticateApiToken::class,
             EnforceSubscriptionState::class,
+        ]);
+
+        // Platform API routes (Platform API §1) run this instead of
+        // api.auth: they authenticate a platform-admin token rather than a
+        // tenant one, and resolve no tenant context at all.
+        $middleware->group('platform.auth', [
+            AuthenticatePlatformToken::class,
         ]);
 
         $middleware->alias([

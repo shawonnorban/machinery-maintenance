@@ -72,6 +72,10 @@ class ManageCompanyUser
                 'password' => $password,
                 'status' => 'ACTIVE',
                 'locale' => $data['locale'] ?? 'bn',
+                // Set for a role like Line Chief that reports breakdowns
+                // without a technician row of its own (`BreakdownScopeGuard`).
+                'department_id' => $data['department_id'] ?? null,
+                'production_line_id' => $data['production_line_id'] ?? null,
             ]);
 
             $membership = CompanyUser::withoutGlobalScope(TenantScope::class)
@@ -112,6 +116,8 @@ class ManageCompanyUser
                 'name' => $data['name'],
                 'phone' => $data['phone'] ?? null,
                 'locale' => $data['locale'] ?? $user->locale,
+                'department_id' => $data['department_id'] ?? null,
+                'production_line_id' => $data['production_line_id'] ?? null,
             ]);
 
             $this->syncRoles($user, $roleIds, $factoryId);
@@ -160,6 +166,70 @@ class ManageCompanyUser
     }
 
     /**
+     * Add one role to a person, alongside whatever they already hold.
+     *
+     * Unlike syncRoles (the form behind the web screen, which replaces the
+     * whole set), this adds a single assignment — the shape the API's
+     * `POST /users/{user}/roles` actually asks for.
+     */
+    public function addRole(User $user, string $roleId, ?string $factoryId): UserRole
+    {
+        $role = Role::whereIn('scope', ['COMPANY', 'FACTORY'])->find($roleId);
+
+        if ($role === null) {
+            throw ValidationException::withMessages(['role_id' => __('user.roles_required')]);
+        }
+
+        $companyId = $this->context->companyId();
+        $factoryId = $role->scope === 'FACTORY' ? $this->requiredFactory($factoryId) : null;
+
+        // A plain find-then-create rather than firstOrCreate: the latter's
+        // insert-first strategy needs a real UniqueConstraintViolationException
+        // to fall back cleanly, and inside RefreshDatabase's own transaction
+        // that fallback re-query can come back empty, turning an ordinary
+        // "already assigned" into an unhandled duplicate-key error.
+        $assignment = UserRole::where('company_id', $companyId)
+            ->where('user_id', $user->id)
+            ->where('role_id', $role->id)
+            ->where('factory_id', $factoryId)
+            ->first();
+
+        $assignment ??= UserRole::create([
+            'company_id' => $companyId,
+            'user_id' => $user->id,
+            'role_id' => $role->id,
+            'factory_id' => $factoryId,
+        ]);
+
+        $this->permissions->flush();
+
+        return $assignment;
+    }
+
+    /**
+     * Remove one role assignment, refusing it if the person is the company's
+     * last keyholder once it is gone — the same rule syncRoles enforces for
+     * a full replacement, applied to a single row instead.
+     */
+    public function removeRoleAssignment(User $user, UserRole $assignment): void
+    {
+        if ($assignment->user_id !== $user->id) {
+            abort(404);
+        }
+
+        $remaining = UserRole::where('user_id', $user->id)
+            ->where('id', '!=', $assignment->id)
+            ->pluck('role_id')
+            ->all();
+
+        $this->assertStillHasAKeyholder($user, $remaining);
+
+        $assignment->delete();
+
+        $this->permissions->flush();
+    }
+
+    /**
      * Issue a new password, shown once.
      *
      * Most people on a factory floor have no working email address, so a reset
@@ -176,7 +246,7 @@ class ManageCompanyUser
     }
 
     /**
-     * @param  list<string>  $roleIds
+     * @param  list<int|string>  $roleIds  Spatie role ids (bigint), as submitted by the form
      */
     private function syncRoles(User $user, array $roleIds, ?string $factoryId): void
     {
@@ -236,9 +306,20 @@ class ManageCompanyUser
         return $membership ?? abort(404);
     }
 
+    /**
+     * `auth()->id()` only resolves the session guard — null for an API
+     * caller, since `AuthenticateApiToken` identifies one with `Request::
+     * setUserResolver()` rather than `Auth::login()` (deliberately: an API
+     * caller may be a machine with no session at all). That silently
+     * disabled this guard for every API request rather than refusing them,
+     * since `null === $user->id` is never true. `request()->user()` reads
+     * whichever resolver is actually active — Laravel's normal guard
+     * resolution for a web session, the custom one for an API token — and
+     * is correct either way.
+     */
     private function assertNotSelf(User $user, string $message): void
     {
-        if (auth()->id() === $user->id) {
+        if (request()->user()?->id === $user->id) {
             throw ValidationException::withMessages(['user' => $message])->status(422);
         }
     }
@@ -281,8 +362,9 @@ class ManageCompanyUser
      */
     private function rolesInclude(array $roleIds, string $permission): bool
     {
+        // Spatie's `name` is the machine code now (asset.asset.view_any, ...).
         return Role::whereIn('id', $roleIds)
-            ->whereHas('permissions', fn ($q) => $q->where('code', $permission))
+            ->whereHas('permissions', fn ($q) => $q->where('name', $permission))
             ->exists();
     }
 

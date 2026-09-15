@@ -132,6 +132,8 @@ return [
     'asset' => 'Machine',
     'asset_not_found' => 'The selected machine does not exist.',
     'asset_terminal' => 'A :status machine cannot have a breakdown reported against it.',
+    'asset_outside_coverage' => 'That machine is outside the line or department you cover.',
+    'outside_coverage' => 'This breakdown is outside the line or department you cover.',
     'problem_description' => 'What happened',
     'problem_description_hint' => 'Describe what the machine is doing. The failure code and root cause are filled in by maintenance later.',
     'priority' => 'Priority',
@@ -168,6 +170,7 @@ return [
     'work_order_raised' => 'Work order :number raised.',
     'raise_work_order' => 'Raise repair work order',
     'work_order_after_close' => 'A closed breakdown cannot raise new work.',
+    'work_order_already_open' => 'Work order :number is still open — close or cancel it before raising another.',
     'no_work_orders' => 'No repair work raised yet.',
     'no_maintenance_type' => 'No maintenance type is configured, so repair work cannot be raised.',
 

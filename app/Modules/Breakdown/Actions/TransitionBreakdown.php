@@ -8,10 +8,15 @@ use App\Modules\Asset\Actions\ChangeAssetStatus;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\BreakdownStatusHistory;
+use App\Modules\Breakdown\Services\BreakdownScopeGuard;
 use App\Modules\Breakdown\Services\DowntimeCalculator;
+use App\Modules\Identity\Models\User;
+use App\Modules\WorkOrder\Actions\AssignTechnicians;
+use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
 use App\Modules\WorkOrder\Models\Technician;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -27,10 +32,15 @@ class TransitionBreakdown
     public function __construct(
         private readonly ChangeAssetStatus $assetStatus,
         private readonly DowntimeCalculator $downtime,
+        private readonly RaiseBreakdownWorkOrder $raiseWorkOrder,
+        private readonly AssignTechnicians $assignTechnicians,
+        private readonly TransitionWorkOrder $workOrderTransition,
     ) {}
 
     public function acknowledge(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
     {
+        $this->assertCoverage($breakdown, $userId);
+
         $at ??= CarbonImmutable::now();
 
         return $this->stamp($breakdown, 'ACKNOWLEDGED', $userId, [
@@ -57,10 +67,19 @@ class TransitionBreakdown
             ]);
         }
 
-        return $this->stamp($breakdown, 'ASSIGNED', $userId, [
+        $breakdown = $this->stamp($breakdown, 'ASSIGNED', $userId, [
             'assigned_technician_id' => $technician->id,
             'assigned_at' => CarbonImmutable::now(),
         ]);
+
+        // From here the technician works from one screen: the repair work
+        // this assignment calls for is raised and put on their plate
+        // automatically, rather than making them (or a manager) click a
+        // separate "raise work order" button before labor, parts or a
+        // checklist can be recorded against it.
+        $this->syncWorkOrderOnAssign($breakdown, $technician, $userId);
+
+        return $breakdown->fresh();
     }
 
     /**
@@ -71,6 +90,8 @@ class TransitionBreakdown
      */
     public function recordArrival(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
     {
+        $this->assertCoverage($breakdown, $userId);
+
         $at ??= CarbonImmutable::now();
 
         $this->assertChain($breakdown, ['technician_arrival_at' => $at]);
@@ -85,6 +106,8 @@ class TransitionBreakdown
 
     public function startRepair(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
     {
+        $this->assertCoverage($breakdown, $userId);
+
         $at ??= CarbonImmutable::now();
 
         // Arriving is implied by starting work. Requiring a separate tap for it
@@ -93,6 +116,24 @@ class TransitionBreakdown
 
         if ($breakdown->technician_arrival_at === null) {
             $fields['technician_arrival_at'] = $at;
+        }
+
+        // This is normally reached by the technician who just started the
+        // linked *work order* (see the sync in `WorkOrderApiController::
+        // start()`/`WorkOrderController::start()`, which calls back into
+        // this method) — the line's whole roster was already put on the
+        // work order when it was raised (`RaiseBreakdownWorkOrder::
+        // assignRoster()`), so nobody has picked *one* name for the
+        // breakdown itself yet. Whoever's start actually landed becomes
+        // that name, the same field a manager's explicit `assign()` sets.
+        if ($breakdown->assigned_technician_id === null) {
+            $actor = User::find($userId);
+            $technician = $actor === null ? null : Technician::forUser($actor);
+
+            if ($technician !== null) {
+                $fields['assigned_technician_id'] = $technician->id;
+                $fields['assigned_at'] = $at;
+            }
         }
 
         $breakdown = $this->stamp($breakdown, 'IN_REPAIR', $userId, $fields);
@@ -107,11 +148,20 @@ class TransitionBreakdown
             );
         }
 
+        // The linked work order is what's actually driving this call in the
+        // normal case (see the docblock above) — already IN_PROGRESS by the
+        // time we're here, so this is a no-op — but `assign()`'s manager-
+        // override path can also reach `startRepair()` with the work order
+        // still sitting on ASSIGNED, so this still needs to move it along.
+        $this->syncWorkOrderOnStartRepair($breakdown->fresh(), $userId);
+
         return $breakdown->fresh();
     }
 
     public function hold(Breakdown $breakdown, string $reasonCode, string $userId, ?string $notes = null): Breakdown
     {
+        $this->assertCoverage($breakdown, $userId);
+
         if (! in_array($reasonCode, Breakdown::HOLD_REASONS, true)) {
             throw ValidationException::withMessages([
                 'reason_code' => __('breakdown.hold_reason_unknown'),
@@ -128,6 +178,8 @@ class TransitionBreakdown
 
     public function resume(Breakdown $breakdown, string $userId): Breakdown
     {
+        $this->assertCoverage($breakdown, $userId);
+
         $now = CarbonImmutable::now();
         $minutes = 0;
 
@@ -145,6 +197,8 @@ class TransitionBreakdown
 
     public function completeRepair(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
     {
+        $this->assertCoverage($breakdown, $userId);
+
         $at ??= CarbonImmutable::now();
 
         if ($breakdown->repair_started_at === null) {
@@ -163,6 +217,8 @@ class TransitionBreakdown
      */
     public function resumeProduction(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
     {
+        $this->assertCoverage($breakdown, $userId);
+
         $at ??= CarbonImmutable::now();
 
         $breakdown = $this->stamp($breakdown, 'PRODUCTION_RESUMED', $userId, [
@@ -330,6 +386,90 @@ class TransitionBreakdown
 
             return $breakdown->fresh();
         });
+    }
+
+    /**
+     * The hard line/department restriction (see `BreakdownScopeGuard`'s own
+     * docblock). Checked against the breakdown's asset location, not the
+     * technician's assignment on the breakdown itself — a Line Chief acting
+     * on a report before anyone is assigned still has no technician row to
+     * check against.
+     */
+    private function assertCoverage(Breakdown $breakdown, string $userId): void
+    {
+        $actor = User::find($userId);
+
+        if ($actor === null) {
+            return;
+        }
+
+        // A manager assigning someone outside their normal line is a
+        // deliberate override (the 2am "send whoever is awake" case) — once
+        // made, it IS the authorization. The line/department check below
+        // only gates the default case: acting on a breakdown nobody has
+        // assigned this technician to at all.
+        $technician = Technician::forUser($actor);
+
+        if ($technician !== null && $breakdown->assigned_technician_id === $technician->id) {
+            return;
+        }
+
+        $location = $breakdown->asset?->location;
+
+        if (! BreakdownScopeGuard::assertCovers($actor, $location?->department_id, $location?->production_line_id)) {
+            throw ValidationException::withMessages([
+                'breakdown' => __('breakdown.outside_coverage'),
+            ])->status(403);
+        }
+    }
+
+    /**
+     * Raises the repair work this assignment calls for and puts the assigned
+     * technician on it, so a screen showing this breakdown can also show its
+     * labor/parts/checklist without anyone manually raising a work order
+     * first (SRS 13.4 already treats a breakdown's attachments as first-class
+     * in their own right; this extends the same idea to the rest of the job).
+     *
+     * Guarded like `MaintenanceNotifier`'s dispatches: a failure here (no
+     * maintenance type configured, an approval workflow rejecting the draft,
+     * whatever) must not undo an assignment that already succeeded. The
+     * existing manual "raise work order" action remains as the fallback.
+     */
+    private function syncWorkOrderOnAssign(Breakdown $breakdown, Technician $technician, string $userId): void
+    {
+        try {
+            $workOrder = $breakdown->activeWorkOrder() ?? $this->raiseWorkOrder->handle($breakdown, $userId);
+
+            if ($workOrder->status === 'DRAFT') {
+                $workOrder = $this->workOrderTransition->schedule($workOrder, $userId);
+            }
+
+            if ($workOrder->activeAssignments()->where('technician_id', $technician->id)->doesntExist()) {
+                $this->assignTechnicians->handle($workOrder, [$technician->id], $userId);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Auto-raising a breakdown work order failed', [
+                'breakdown_id' => $breakdown->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /** Moves the linked work order to IN_PROGRESS alongside the breakdown, guarded the same way. */
+    private function syncWorkOrderOnStartRepair(Breakdown $breakdown, string $userId): void
+    {
+        try {
+            $workOrder = $breakdown->activeWorkOrder();
+
+            if ($workOrder !== null && $workOrder->status === 'ASSIGNED') {
+                $this->workOrderTransition->start($workOrder, $userId);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Auto-starting a breakdown work order failed', [
+                'breakdown_id' => $breakdown->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

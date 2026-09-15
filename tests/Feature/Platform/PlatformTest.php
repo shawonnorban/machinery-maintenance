@@ -175,16 +175,18 @@ class PlatformTest extends TestCase
             'owner_email' => 'nusrat@rival.test',
         ]);
 
-        $owner = User::where('email', 'nusrat@rival.test')->firstOrFail();
-
-        $this->flushSession();
-        $this->app['auth']->forgetGuards();
+        User::where('email', 'nusrat@rival.test')->firstOrFail();
+        $password = session('owner_password');
 
         // The whole point of onboarding: somebody can sign in and reach the
-        // product. Until this existed, a company could only be created by hand
-        // in the database.
-        $this->actingAs($owner)->get('/app/dashboard')->assertOk();
-        $this->actingAs($owner)->get('/app/assets')->assertOk();
+        // product. Until this existed, a company could only be created by
+        // hand in the database. "Reach the product" is the Next.js app now
+        // (Phase D/F) — proven the same way it signs in for real, by
+        // exchanging the generated password this form flashed for a token.
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'nusrat@rival.test',
+            'password' => $password,
+        ])->assertCreated();
     }
 
     public function test_a_duplicate_code_is_refused(): void
@@ -305,33 +307,33 @@ class PlatformTest extends TestCase
         $this->assertStringContainsString('Ticket 4471', $notification->body);
     }
 
-    public function test_a_grant_alone_shows_nobody_anything(): void
-    {
-        $this->openGrant();
-
-        // Permission to enter is not entry. The platform administrator still
-        // cannot open a single screen of the customer's application.
-        $this->actingAs($this->staff)->get('/app/assets')->assertForbidden();
-    }
+    // `test_a_grant_alone_shows_nobody_anything` lived here — proving
+    // permission-to-enter isn't entry by having the staff member (still
+    // logged in as themselves, grant or not) try to open a customer `/app/*`
+    // screen and get refused. Every such screen is gone now (Phase D/F);
+    // the mechanism it actually exercised was `TenantContext` refusing a
+    // platform admin with no requested company, not anything about the
+    // grant, so there's no meaningful live route left to repoint it at.
 
     public function test_entering_acts_as_a_named_user_and_is_audited(): void
     {
         $grant = $this->openGrant();
 
+        // KNOWN GAP (see `TenantController::enterSupport`'s own comment): a
+        // tenant user's own screens are the separately-authenticated
+        // Next.js app now, which this Blade-session login does not itself
+        // sign into — so this only proves the *Blade-side* half of
+        // impersonation (the session becomes the customer's user here, and
+        // the audit row is written), not that Next.js actually shows the
+        // staff member the customer's screens end to end.
         $this->actingAs($this->staff)
             ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
-            ->assertRedirect(route('app.dashboard'));
+            ->assertRedirect(config('tenancy.frontend_url'));
 
         $this->assertAuthenticatedAs($this->owner);
 
         $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
             ->where('entity_label', 'SUPPORT_SESSION_STARTED')->count());
-
-        // Every page says so, unmissably. The failure this prevents is
-        // somebody forgetting whose account they are in.
-        $this->get('/app/dashboard')
-            ->assertOk()
-            ->assertSee(__('platform.support_session_banner'));
     }
 
     public function test_work_done_during_support_records_who_was_really_behind_it(): void
@@ -341,15 +343,28 @@ class PlatformTest extends TestCase
         $this->actingAs($this->staff)
             ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $this->owner->id]);
 
+        // KNOWN GAP (see `TenantController::enterSupport`'s own comment):
+        // there is no HTTP write left that carries this Blade session at
+        // all — every `/app/*` screen that used to make one is gone (Phase
+        // D/F), and an API request authenticates from a bearer token, never
+        // from this session (`AuditRecorder::impersonatedBy`'s own
+        // docblock: "an API request carries no session at all"). Calling
+        // the action directly still proves the one thing this test is
+        // actually about — that `AuditRecorder` reads `impersonated_by`
+        // out of *whatever* session is active or writes without one, same
+        // reasoning `ManageSupportAccess::SESSION_KEY`'s own docblock gives
+        // — without depending on an HTTP route this session can no longer
+        // reach at all.
+        //
         // A spare part, because it is one of the models the audit observer
         // watches. The point is not the part; it is that an ordinary write
         // made during a support session carries the trail on its own, with
         // nothing in the inventory module knowing support exists.
-        $this->post('/app/inventory/parts', [
+        app(\App\Modules\Inventory\Actions\SaveSparePart::class)->create([
             'part_number' => 'JK-DDL9000-HOOK',
             'name' => 'Rotary hook',
             'unit' => 'PCS',
-        ])->assertRedirect();
+        ]);
 
         // The column the audit screen has always shown in red, finally
         // populated by something. Until now it described a feature that did

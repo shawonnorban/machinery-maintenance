@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Api\Support;
 
 use App\Modules\Api\Models\ApiClient;
-use App\Modules\Api\Models\ApiToken;
 use App\Modules\Identity\Models\User;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
@@ -30,20 +29,20 @@ use Illuminate\Support\Facades\Gate;
 class ApiCaller
 {
     private function __construct(
-        public readonly ApiToken $token,
+        public readonly TokenHandle $token,
         public readonly string $companyId,
         public readonly ?User $user,
         public readonly ?ApiClient $client,
     ) {}
 
-    public static function forUser(ApiToken $token, User $user): self
+    public static function forUser(TokenHandle $token, User $user): self
     {
-        return new self($token, (string) $token->company_id, $user, null);
+        return new self($token, $token->companyId(), $user, null);
     }
 
-    public static function forClient(ApiToken $token, ApiClient $client): self
+    public static function forClient(TokenHandle $token, ApiClient $client): self
     {
-        return new self($token, (string) $token->company_id, null, $client);
+        return new self($token, $token->companyId(), null, $client);
     }
 
     public function isMachine(): bool

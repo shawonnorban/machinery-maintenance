@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\Api\Http\Controllers\Web;
 
 use App\Modules\Api\Actions\IssueApiToken;
-use App\Modules\Api\Models\ApiToken;
 use App\Shared\Http\Controllers\Controller;
-use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 /**
  * A token for the page the technician is already looking at (SRS 38).
@@ -60,12 +57,12 @@ class SessionTokenController extends Controller
         $user = $request->user();
         $companyId = $this->context->companyId();
 
-        ApiToken::withoutGlobalScope(TenantScope::class)
-            ->where('user_id', $user->id)
+        // A person's token is a Sanctum personal access token, which has no
+        // revoked_at — retiring the previous one means deleting its row.
+        $user->tokens()
             ->where('company_id', $companyId)
             ->where('name', self::NAME)
-            ->whereNull('revoked_at')
-            ->update(['revoked_at' => Carbon::now()]);
+            ->delete();
 
         ['token' => $token, 'plain' => $plain] = $tokens->forUser(
             $user,

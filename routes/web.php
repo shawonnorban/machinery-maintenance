@@ -144,10 +144,12 @@ Route::middleware(['auth', 'platform'])
 
 /*
  * The QR landing routes (Data Dictionary 5.2). Outside the /app prefix so a
- * printed label stays short, and behind auth so a scanned token alone grants
- * nothing: a guest is sent to login and returned here afterwards.
+ * printed label stays short. No `auth` gate here any more — `ScanController`
+ * is a bare redirect into the Next.js scan page now, which does its own
+ * auth (and its own "send a guest to login and back") on the other side;
+ * gating here too would mean both a Blade and a Next.js session have to be
+ * live at once, which is the double-login trap this redirect exists to
+ * avoid (see `ScanController`'s own docblock).
  */
-Route::middleware('auth')->group(function (): void {
-    Route::get('/s/l/{code}', [ScanController::class, 'location'])->name('scan.location');
-    Route::get('/s/{code}', [ScanController::class, 'asset'])->name('scan.asset');
-});
+Route::get('/s/l/{code}', [ScanController::class, 'location'])->name('scan.location');
+Route::get('/s/{code}', [ScanController::class, 'asset'])->name('scan.asset');

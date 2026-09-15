@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Modules\Metering\Http\Controllers\Api;
 
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Metering\Actions\ManageAssetMeter;
 use App\Modules\Metering\Actions\RecordMeterReading;
 use App\Modules\Metering\Models\AssetMeter;
 use App\Modules\Metering\Models\MeterReading;
 use App\Shared\Http\Api\ApiController;
+use App\Shared\Http\Api\ApiException;
 use App\Shared\Http\Api\ApiResponse;
+use App\Shared\Http\Api\ErrorCode;
 use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Meters and their readings (API 10).
@@ -49,6 +53,82 @@ class MeterApiController extends ApiController
         return ApiResponse::ok(
             $meters->map(fn (AssetMeter $meter): array => $this->meter($meter))->all(),
         );
+    }
+
+    /**
+     * Every meter across the factories this caller can reach (mirrors the
+     * web `MeterController::index`, which this delegates to unchanged per
+     * ADR-003 — same factory scoping, same asset_id/status filters, same
+     * oldest-reading-first ordering so a meter nobody has touched surfaces
+     * first). Added for the Next.js migration: no equivalent existed on
+     * the API before, only the per-asset listing above.
+     */
+    public function all(Request $request): JsonResponse
+    {
+        $this->allow('meter.reading.view_any');
+
+        $meters = AssetMeter::query()
+            ->with(['asset:id,asset_code,name,current_factory_id', 'type:id,name,unit,is_cumulative'])
+            ->whereHas('asset', fn ($q) => $q->whereIn('current_factory_id', $this->context->accessibleFactoryIds()))
+            ->when($request->query('asset_id'), fn ($q, $id) => $q->where('asset_id', $id))
+            ->when($request->query('status', 'ACTIVE'), fn ($q, $status) => $q->where('status', $status))
+            ->orderBy('last_reading_at')
+            ->paginate($this->perPage($request));
+
+        return ApiResponse::paginated($meters, fn (AssetMeter $meter): array => [
+            ...$this->meter($meter),
+            'asset' => [
+                'id' => $meter->asset?->id,
+                'asset_code' => $meter->asset?->asset_code,
+                'name' => $meter->asset?->name,
+            ],
+        ]);
+    }
+
+    /**
+     * One meter's own summary (mirrors the web `MeterController::show`'s
+     * meter half — the reading history is `readings()` below, cursor-
+     * paginated separately since it can grow without bound).
+     */
+    public function show(AssetMeter $meter): JsonResponse
+    {
+        $this->allow('meter.reading.view_any');
+        $this->assertMeterReachable($meter);
+
+        $meter->load(['asset:id,asset_code,name', 'type:id,name,unit,is_cumulative']);
+
+        return ApiResponse::ok([
+            ...$this->meter($meter),
+            'asset' => [
+                'id' => $meter->asset?->id,
+                'asset_code' => $meter->asset?->asset_code,
+                'name' => $meter->asset?->name,
+            ],
+        ]);
+    }
+
+    /**
+     * Fit a meter to a machine (mirrors the web `MeterController::attach`,
+     * which this delegates to unchanged per ADR-003 — `ManageAssetMeter`
+     * carries the one-meter-per-type rule).
+     */
+    public function attach(Request $request, Asset $asset, ManageAssetMeter $action): JsonResponse
+    {
+        $this->allow('meter.meter.manage');
+        $this->assertReachable($asset);
+
+        $data = $request->validate([
+            'meter_type_id' => ['required', 'string', 'size:26'],
+            'initial_value' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        try {
+            $meter = $action->attach($asset, $data['meter_type_id'], $data['initial_value'] ?? '0');
+        } catch (ValidationException $e) {
+            throw ApiException::of(ErrorCode::VALIDATION_ERROR, implode(' ', $e->validator->errors()->all()), $e->errors());
+        }
+
+        return ApiResponse::created($this->meter($meter->load('type:id,name,unit,is_cumulative')));
     }
 
     /**
@@ -121,6 +201,32 @@ class MeterApiController extends ApiController
             'reading_at' => $result['reading']->reading_at?->toIso8601String(),
             'meter' => $this->meter($meter->fresh()),
             'triggered_maintenance' => count($result['triggered']),
+        ]);
+    }
+
+    /**
+     * A meter replacement or rollover — the one legitimate way a cumulative
+     * reading goes down (mirrors the web `MeterController::reset`, which
+     * this delegates to unchanged per ADR-003). Elevated permission and a
+     * reason are both required, per the spec.
+     */
+    public function reset(Request $request, AssetMeter $meter, RecordMeterReading $action): JsonResponse
+    {
+        $this->allow('meter.meter.reset');
+        $this->assertMeterReachable($meter);
+
+        $data = $request->validate([
+            'new_value' => ['required', 'numeric', 'min:0'],
+            'reason' => ['required', 'string', 'max:500'],
+        ]);
+
+        $reading = $action->reset($meter, $data['new_value'], $data['reason'], $this->caller()->auditUserId());
+
+        return ApiResponse::ok([
+            'reading_id' => $reading->id,
+            'value' => $reading->value,
+            'reading_at' => $reading->reading_at?->toIso8601String(),
+            'meter' => $this->meter($meter->fresh(['type:id,name,unit,is_cumulative'])),
         ]);
     }
 

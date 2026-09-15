@@ -43,9 +43,14 @@ class LoginController extends Controller
         // Platform staff have no company, so the tenant dashboard has nothing
         // to show them and would refuse to resolve a tenant. Their home is the
         // customer list (SRS 5).
+        //
+        // A tenant user's own screens are the Next.js app now (Phase D/F) —
+        // this Blade login page still exists only because platform staff sign
+        // in through it too, gated the same way, so it can't simply redirect
+        // there unconditionally.
         return redirect()->intended($user->is_platform_admin
             ? route('platform.tenants')
-            : route('app.dashboard'));
+            : config('tenancy.frontend_url'));
     }
 
     public function destroy(Request $request): RedirectResponse

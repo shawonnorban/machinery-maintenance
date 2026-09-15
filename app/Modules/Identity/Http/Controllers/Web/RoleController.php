@@ -27,11 +27,14 @@ class RoleController extends Controller
             abort(403);
         }
 
+        // Spatie's `name` is the machine code now; `description` carries the
+        // human-readable label the old catalog kept in its own `name`
+        // column — see 2026_09_03_083841_create_permission_tables.php.
         $roles = Role::query()
             ->whereIn('scope', ['COMPANY', 'FACTORY'])
-            ->with('permissions:id,code,name')
+            ->with('permissions:id,name,description')
             ->orderBy('scope')
-            ->orderBy('name')
+            ->orderBy('description')
             ->get();
 
         $assigned = UserRole::query()

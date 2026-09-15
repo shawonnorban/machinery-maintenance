@@ -98,12 +98,17 @@ class PermissionResolver
             return $this->cache[$key] = ['permissions' => [], 'factories' => []];
         }
 
+        // role_has_permissions and permissions are Spatie Laravel Permission's
+        // tables: Spatie owns the role -> permission catalog, while
+        // user_roles (with its factory_id scoping) stays this application's
+        // own assignment table, its role_id simply pointing at a Spatie role
+        // now instead of the retired custom one.
         $rows = UserRole::withoutGlobalScope(TenantScope::class)
             ->where('user_roles.company_id', $companyId)
             ->where('user_roles.user_id', $user->id)
-            ->join('role_permissions', 'role_permissions.role_id', '=', 'user_roles.role_id')
-            ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
-            ->get(['permissions.code as code', 'user_roles.factory_id as factory_id']);
+            ->join('role_has_permissions', 'role_has_permissions.role_id', '=', 'user_roles.role_id')
+            ->join('permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
+            ->get(['permissions.name as code', 'user_roles.factory_id as factory_id']);
 
         $permissions = [];
         $hasCompanyWideRole = false;

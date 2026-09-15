@@ -69,7 +69,8 @@ class TenantFixture
             'is_default' => true,
         ]);
 
-        $role = Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail();
+        // Spatie's `name` is the machine code now (COMPANY_OWNER, ...).
+        $role = Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail();
 
         UserRole::withoutGlobalScope(TenantScope::class)->create([
             'company_id' => $company->id,
@@ -92,7 +93,8 @@ class TenantFixture
             'is_default' => false,
         ]);
 
-        $role = Role::whereNull('company_id')->where('code', $roleCode)->firstOrFail();
+        // Spatie's `name` is the machine code now (COMPANY_OWNER, ...).
+        $role = Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail();
 
         UserRole::withoutGlobalScope(TenantScope::class)->create([
             'company_id' => $company->id,

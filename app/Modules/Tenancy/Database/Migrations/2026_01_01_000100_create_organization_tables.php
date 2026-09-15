@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -57,12 +56,14 @@ return new class extends Migration
             $table->index('status');
         });
 
-        $hasOrganizationForeignKey = DB::table('information_schema.KEY_COLUMN_USAGE')
-            ->whereRaw('TABLE_SCHEMA = DATABASE()')
-            ->where('TABLE_NAME', 'companies')
-            ->where('COLUMN_NAME', 'organization_id')
-            ->where('REFERENCED_TABLE_NAME', 'organizations')
-            ->exists();
+        // Schema::getForeignKeys() rather than a raw information_schema query:
+        // Postgres's KEY_COLUMN_USAGE has no REFERENCED_TABLE_NAME column (the
+        // FK target lives in a separate view there) and TABLE_SCHEMA names the
+        // namespace, not the database DATABASE() returns — Laravel's own
+        // introspection already normalises both engines to the same shape.
+        $hasOrganizationForeignKey = collect(Schema::getForeignKeys('companies'))
+            ->contains(fn (array $foreignKey): bool => $foreignKey['columns'] === ['organization_id']
+                && $foreignKey['foreign_table'] === 'organizations');
 
         if (! $hasOrganizationForeignKey) {
             Schema::table('companies', function (Blueprint $table): void {

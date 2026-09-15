@@ -24,6 +24,53 @@ class ModuleServiceProvider extends ServiceProvider
      */
     private const FOUNDATION = ['Tenancy', 'Identity', 'Settings', 'Calendar'];
 
+    /**
+     * Web *screens* fully replaced by the Next.js app (Phase D/F, docs/12-
+     * Stack-Migration-Implementation-Plan.md). Left in place rather than
+     * deleted — the whole point of gating this in one array instead of
+     * removing files is that undoing it is a one-line revert, not a code
+     * recovery, if a gap turns up later.
+     *
+     * Deliberately NOT here:
+     * - Platform: its admin screens (`/platform/*`) are registered directly
+     *   in the root `routes/web.php`, untouched by this list either way —
+     *   but Platform also has its own `Routes/web.php` (the tenant-facing
+     *   "my support tickets" screens), which this list doesn't touch out
+     *   of caution even though Next.js's own `/support/tickets` already
+     *   covers it — a smaller, separate call to make later.
+     * - Tenancy: its actual screens (dashboard, factory admin) are gone,
+     *   but that was done by editing `Tenancy/Routes/web.php` directly
+     *   rather than by listing it here, because two of its routes have no
+     *   screen of their own (`/locale`, `/factory-scope`) and the
+     *   still-Blade Platform admin layout's language switcher posts to one
+     *   of them directly — skipping this whole module here would have
+     *   taken that down for no reason.
+     * - Identity: same reasoning, same treatment — `/switch-company` has
+     *   no screen of its own, and `Tenancy/Resources/views/{suspended,
+     *   closed}.blade.php` (rendered by `ResolveTenantContext` middleware
+     *   on every web request, independent of which module's own routes
+     *   are registered) post to it directly. Edited directly in
+     *   `Identity/Routes/web.php` rather than listed here.
+     * - Api: same reasoning again — `/session-token` has no screen of its
+     *   own, and is what the still-Blade technician mobile pages
+     *   (`layouts.mobile`, the QR scan landing pages) use to mint the
+     *   bearer token their own offline queue posts with (SRS 38). Edited
+     *   directly in `Api/Routes/web.php` rather than listed here.
+     *
+     * Every module below was checked for exactly that kind of external
+     * dependency before being added — `route('app.*')` calls reaching in
+     * from outside the module's own views (Blade's shared header, the
+     * Platform support-ticket notifier, `MaintenanceNotifier`, the QR
+     * scan-to-action links in `ScanResolver`) were repointed at the
+     * Next.js app (`config('tenancy.frontend_url')`) rather than left to
+     * 404 once the route they named stopped existing.
+     */
+    private const WEB_DECOMMISSIONED = [
+        'Analytics', 'Approval', 'Asset', 'Audit', 'Billing', 'Breakdown',
+        'Calendar', 'Costing', 'Inventory', 'Maintenance', 'Metering',
+        'Notification', 'Reporting', 'Settings', 'Vendor', 'Webhook', 'WorkOrder',
+    ];
+
     public function register(): void
     {
         foreach ($this->modules() as $module => $path) {
@@ -156,7 +203,7 @@ class ModuleServiceProvider extends ServiceProvider
     {
         $web = $path.'/Routes/web.php';
 
-        if (is_file($web)) {
+        if (is_file($web) && ! in_array($module, self::WEB_DECOMMISSIONED, true)) {
             Route::middleware('web')
                 ->prefix('app')
                 ->name('app.')

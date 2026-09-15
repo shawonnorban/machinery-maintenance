@@ -67,7 +67,7 @@
                                         </span>
                                     @endforeach
                                 </td>
-                                <td>{{ $rule->role?->name }}</td>
+                                <td>{{ $rule->role?->description }}</td>
                                 <td class="text-end">
                                     <form method="POST"
                                           action="{{ route('app.settings.approval-workflows.rules.destroy', [$workflow, $rule]) }}"
@@ -132,7 +132,7 @@
                         <select id="role_{{ $workflow->id }}" name="role_id" class="form-select form-select-sm" required>
                             <option value="">—</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                <option value="{{ $role->id }}">{{ $role->description }}</option>
                             @endforeach
                         </select>
                         @error('role_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror

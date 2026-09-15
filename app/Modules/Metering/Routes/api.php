@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::middleware(['api.auth', 'throttle:api'])->group(function (): void {
+    Route::get('/meters', [MeterApiController::class, 'all'])->name('meters.index');
+    Route::get('/meters/{meter}', [MeterApiController::class, 'show'])->name('meters.show');
     Route::get('/assets/{asset}/meters', [MeterApiController::class, 'index'])->name('assets.meters');
+    Route::post('/assets/{asset}/meters', [MeterApiController::class, 'attach'])->name('assets.meters.attach');
     Route::get('/meters/{meter}/readings', [MeterApiController::class, 'readings'])->name('meters.readings');
+    Route::post('/meters/{meter}/reset', [MeterApiController::class, 'reset'])->name('meters.reset');
 });
 
 Route::middleware(['api.auth', 'throttle:api-ingest', 'idempotent'])->group(function (): void {

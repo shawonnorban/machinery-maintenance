@@ -54,6 +54,39 @@ class TenantTimezone
     }
 
     /**
+     * Either half of the same boundary `ParsesLocalDateTimes` handles for a
+     * `FormRequest`, exposed here for a plain API controller that has no
+     * `$this->input()` to read from and validates the field with `Request::
+     * validate()` directly instead. A `datetime-local` field (what this
+     * app's own `DateTimeField.js` sends — see frontend/src/components/ui/
+     * date-time-field.jsx) carries no timezone at all: "2026-08-18T21:50"
+     * means 21:50 on whichever clock the caller is on, not UTC. An input
+     * that already carries an offset (an ISO-8601 string with a trailing Z
+     * or +HH:MM) already names an instant and is left alone — reinterpreting
+     * it as local wall time would corrupt a value that was already correct.
+     */
+    public function parseFlexible(string $value): CarbonImmutable
+    {
+        if ($this->carriesTimezone($value)) {
+            return CarbonImmutable::parse($value)->setTimezone('UTC');
+        }
+
+        return $this->toUtc($value);
+    }
+
+    /**
+     * Trailing Z, or a +HH:MM / -HH:MM offset after the time part. The date's
+     * own hyphens must not be mistaken for a negative offset, so only the
+     * portion after "T" or the first space is examined.
+     */
+    private function carriesTimezone(string $value): bool
+    {
+        $timePart = preg_split('/[T ]/', trim($value), 2)[1] ?? '';
+
+        return (bool) preg_match('/(Z|[+-]\d{2}:?\d{2})$/i', $timePart);
+    }
+
+    /**
      * A stored instant rendered on the reader's clock.
      */
     public function toLocal(CarbonInterface $utc, ?string $timezone = null): CarbonImmutable

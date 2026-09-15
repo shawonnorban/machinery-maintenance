@@ -68,7 +68,7 @@
                             </td>
                             <td>
                                 @foreach ($person->roleAssignments as $assignment)
-                                    <span class="badge bg-secondary">{{ $assignment->role?->name }}</span>
+                                    <span class="badge bg-secondary">{{ $assignment->role?->description }}</span>
                                 @endforeach
                             </td>
                             <td class="small">

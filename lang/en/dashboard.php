@@ -71,6 +71,22 @@ return [
     'active_reservations' => 'Active reservations',
     'parts_issued' => 'Parts issued',
 
+    // --- trend chart & donuts (shared across panels) ---
+    'trend_title' => 'Breakdowns & completions',
+    'trend_hint' => 'Reported breakdowns against completed work orders, day by day for this period.',
+    'breakdowns_reported' => 'Breakdowns reported',
+    'work_orders_completed' => 'Work orders completed',
+    'asset_status' => 'Machine status',
+    'part_health' => 'Spare parts health',
+    'total_parts' => 'Parts',
+    'healthy' => 'Healthy',
+    'on_duty' => 'On duty',
+    'on_duty_count' => ':count of :total on duty',
+    'no_technicians_on_duty' => 'No active technicians on this factory.',
+    'on_track' => 'On track',
+    'needs_attention' => 'Needs attention',
+    'at_risk' => 'At risk',
+
     // --- shared ---
     'minutes' => 'min',
     'hours' => 'h',

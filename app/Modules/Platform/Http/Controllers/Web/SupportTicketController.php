@@ -8,6 +8,7 @@ use App\Modules\Platform\Actions\ManageSupportTicket;
 use App\Modules\Platform\Models\SupportTicket;
 use App\Modules\Tenancy\Models\Company;
 use App\Shared\Http\Controllers\Controller;
+use App\Shared\Support\Sql;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class SupportTicketController extends Controller
     public function index(): View
     {
         $tickets = SupportTicket::with('opener:id,name')
-            ->orderByRaw("status = 'CLOSED'")
+            ->orderByRaw(Sql::sortMatchLast('status', 'CLOSED'))
             ->orderByDesc('last_message_at')
             ->get();
 

@@ -12,10 +12,12 @@ use App\Modules\Breakdown\Models\DowntimeReasonCode;
 use App\Modules\Breakdown\Models\FailureCategory;
 use App\Modules\Breakdown\Models\FailureCode;
 use App\Modules\Breakdown\Models\RootCause;
+use App\Modules\Breakdown\Services\BreakdownScopeGuard;
 use App\Modules\Tenancy\Models\ProductionLine;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Shared\Http\Controllers\Controller;
+use App\Shared\Support\Sql;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -49,7 +51,7 @@ class BreakdownController extends Controller
             ->when(filled($request->query('priority')), fn ($q) => $q->where('priority', $request->query('priority')))
             // Critical first, then longest down. A machine stopped since
             // yesterday morning outranks one that stopped ten minutes ago.
-            ->orderByRaw("FIELD(priority, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW')")
+            ->orderByRaw(Sql::orderByList('priority', ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']))
             ->orderBy('failure_at')
             ->paginate(min(max((int) $request->query('per_page', 25), 10), 100))
             ->withQueryString();
@@ -147,11 +149,32 @@ class BreakdownController extends Controller
         $companyId = $this->context->companyId();
         $factoryIds = $this->context->accessibleFactoryIds();
 
+        $assets = Asset::query()
+            ->whereIn('current_factory_id', $factoryIds)
+            ->whereNotIn('status', ['SCRAPPED', 'RETIRED', 'LOST', 'DRAFT']);
+
+        // A Line Chief (or a technician restricted to their own line) should
+        // never see a machine they'd then be refused for reporting on
+        // submit — the dropdown reflects the same coverage `ReportBreakdown`
+        // enforces, not a wider list. Mirrors the API's own
+        // `createFormOptions()` exactly.
+        $user = auth()->user();
+        $coverage = $user === null || BreakdownScopeGuard::isExempt($user)
+            ? null
+            : BreakdownScopeGuard::coverageFor($user);
+
+        if ($coverage !== null) {
+            $assets->whereHas('location', function ($query) use ($coverage): void {
+                if ($coverage['production_line_id'] !== null) {
+                    $query->where('production_line_id', $coverage['production_line_id']);
+                } elseif ($coverage['department_id'] !== null) {
+                    $query->where('department_id', $coverage['department_id']);
+                }
+            });
+        }
+
         return [
-            'assets' => Asset::query()
-                ->whereIn('current_factory_id', $factoryIds)
-                ->whereNotIn('status', ['SCRAPPED', 'RETIRED', 'LOST', 'DRAFT'])
-                ->orderBy('asset_code')
+            'assets' => $assets->orderBy('asset_code')
                 ->get(['id', 'asset_code', 'name', 'current_factory_id']),
             'productionLines' => ProductionLine::orderBy('name')->get(['id', 'name']),
             'failureCategories' => FailureCategory::availableTo($companyId)

@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Http\Controllers\Web;
 
-use App\Modules\Breakdown\Models\Breakdown;
+use App\Modules\Identity\Actions\ManageTeam;
 use App\Modules\Identity\Models\Team;
-use App\Modules\Maintenance\Models\MaintenancePlan;
 use App\Modules\Tenancy\Models\Factory;
-use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Shared\Http\Controllers\Controller;
-use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 /**
@@ -25,6 +21,9 @@ use Illuminate\View\View;
  * night shift electricians, the dye house crew. Work orders, breakdowns,
  * maintenance plans, approval steps and escalation rules can all name one, and
  * until now none of them could, because nothing in the product created a team.
+ *
+ * The rules themselves live in ManageTeam (ADR-003), so the API builds and
+ * retires a team under exactly the same rules as this screen.
  */
 class TeamController extends Controller
 {
@@ -46,73 +45,40 @@ class TeamController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ManageTeam $teams): RedirectResponse
     {
         $this->authorizeTeams($request);
 
-        $data = $this->validated($request, null);
-
-        Team::create($data + [
-            'company_id' => $this->context->companyId(),
-            'status' => 'ACTIVE',
-        ]);
+        $teams->create($this->validated($request, null));
 
         return back()->with('status', __('team.created'));
     }
 
-    public function update(Request $request, Team $team): RedirectResponse
+    public function update(Request $request, Team $team, ManageTeam $teams): RedirectResponse
     {
         $this->authorizeTeams($request);
-        $this->assertReachable($team);
 
-        $team->update($this->validated($request, $team));
+        $teams->update($team, $this->validated($request, $team));
 
         return back()->with('status', __('team.updated'));
     }
 
-    public function toggle(Request $request, Team $team): RedirectResponse
+    public function toggle(Request $request, Team $team, ManageTeam $teams): RedirectResponse
     {
         $this->authorizeTeams($request);
-        $this->assertReachable($team);
 
-        $team->forceFill(['status' => $team->status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'])->save();
+        $teams->setActive($team, $team->status !== 'ACTIVE');
 
         return back()->with('status', __('team.updated'));
     }
 
-    public function destroy(Request $request, Team $team): RedirectResponse
+    public function destroy(Request $request, Team $team, ManageTeam $teams): RedirectResponse
     {
         $this->authorizeTeams($request);
-        $this->assertReachable($team);
 
-        $assigned = $this->assignmentCount($team);
-
-        if ($assigned > 0) {
-            throw ValidationException::withMessages([
-                'name' => __('team.in_use', ['count' => $assigned]),
-            ])->status(409);
-        }
-
-        $team->delete();
+        $teams->delete($team);
 
         return back()->with('status', __('team.deleted'));
-    }
-
-    /**
-     * Everything that can name a team. A job still has to say who it went to.
-     */
-    private function assignmentCount(Team $team): int
-    {
-        $total = 0;
-
-        foreach ([WorkOrder::class, Breakdown::class, MaintenancePlan::class] as $model) {
-            $total += $model::query()
-                ->withoutGlobalScope(TenantScope::class)
-                ->where('assigned_team_id', $team->id)
-                ->count();
-        }
-
-        return $total;
     }
 
     /**
@@ -127,29 +93,14 @@ class TeamController extends Controller
             $unique = $unique->ignore($team->id);
         }
 
-        $data = $request->validate([
+        // Factory reachability is asserted inside ManageTeam itself, so both
+        // this screen and the API refuse an unreachable factory the same way.
+        return $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:32', 'regex:/^[A-Za-z0-9][A-Za-z0-9._-]*$/', $unique],
             'factory_id' => ['required', 'string', 'size:26'],
             'specialization' => ['nullable', 'string', 'max:255'],
         ]);
-
-        if (! $this->context->canAccessFactory($data['factory_id'])) {
-            throw ValidationException::withMessages([
-                'factory_id' => __('team.factory_unavailable'),
-            ]);
-        }
-
-        $data['code'] = strtoupper(trim($data['code']));
-
-        return $data;
-    }
-
-    private function assertReachable(Team $team): void
-    {
-        if (! $this->context->canAccessFactory((string) $team->factory_id)) {
-            abort(404);
-        }
     }
 
     private function authorizeTeams(Request $request): void

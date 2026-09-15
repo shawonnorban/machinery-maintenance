@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Billing;
 
+use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Billing\Models\SubscriptionContract;
 use App\Modules\Billing\Models\SubscriptionInvoice;
 use App\Modules\Identity\Models\User;
-use App\Modules\Reporting\Models\ReportJob;
+use App\Modules\Reporting\Models\ExportJob;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
 use App\Modules\Vendor\Models\Vendor;
@@ -27,6 +28,17 @@ use Tests\TestCase;
  * still open every screen, run every report and take their data with them —
  * the data is theirs — they simply cannot add to it until the account is
  * settled.
+ *
+ * Every case here used to exercise this through the web session and the
+ * Blade `/app/*` screens (a redirect-with-flash on refusal, `assertOk` on a
+ * page load). Those screens are gone (Phase D/F, docs/12-Stack-Migration-
+ * Implementation-Plan.md) — the customer's own surface is the Next.js app
+ * now, which only ever talks to the API — so every case is proven here
+ * against the API instead, which `EnforceSubscriptionState` already lists
+ * its own api/v1 exceptions for (auth/logout, auth/switch-company,
+ * subscription-invoices-pay, report-jobs, exports) alongside the web ones,
+ * confirming the API path was always meant to carry this rule too, not
+ * just the Blade one.
  */
 class ReadOnlySubscriptionTest extends TestCase
 {
@@ -39,6 +51,8 @@ class ReadOnlySubscriptionTest extends TestCase
     private Asset $asset;
 
     private User $owner;
+
+    private string $token;
 
     protected function setUp(): void
     {
@@ -54,6 +68,16 @@ class ReadOnlySubscriptionTest extends TestCase
 
         $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
         TenantFixture::actingAsTenant($this->delta);
+
+        $this->token = app(IssueApiToken::class)
+            ->forUser($this->owner, $this->delta->id, 'Test')['plain'];
+    }
+
+    private function api(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->token);
+
+        return $this;
     }
 
     private function contract(string $status): SubscriptionContract
@@ -69,48 +93,37 @@ class ReadOnlySubscriptionTest extends TestCase
         ]);
     }
 
+    private function createVendorPayload(): array
+    {
+        return [
+            'name' => 'Juki Bangladesh Ltd',
+            'code' => 'JUKI-BD',
+            'vendor_type' => 'BOTH',
+            'status' => 'ACTIVE',
+        ];
+    }
+
     public function test_with_no_contract_nothing_is_restricted(): void
     {
         // A company being onboarded, or a self-hosted deployment with no
         // billing at all, must not be locked out by the absence of a row.
-        $this->actingAs($this->owner)
-            ->post('/app/vendors', [
-                'name' => 'Juki Bangladesh Ltd',
-                'code' => 'JUKI-BD',
-                'vendor_type' => 'BOTH',
-                'status' => 'ACTIVE',
-            ])
-            ->assertRedirect();
+        $this->api()->postJson('/api/v1/vendors', $this->createVendorPayload())->assertCreated();
     }
 
     public function test_an_active_subscription_allows_writing(): void
     {
         $this->contract('ACTIVE');
 
-        $this->actingAs($this->owner)
-            ->post('/app/vendors', [
-                'name' => 'Juki Bangladesh Ltd',
-                'code' => 'JUKI-BD',
-                'vendor_type' => 'BOTH',
-                'status' => 'ACTIVE',
-            ])
-            ->assertRedirect();
+        $this->api()->postJson('/api/v1/vendors', $this->createVendorPayload())->assertCreated();
     }
 
     public function test_a_read_only_subscription_refuses_a_write(): void
     {
         $this->contract('READ_ONLY');
 
-        $this->actingAs($this->owner)
-            ->from('/app/vendors')
-            ->post('/app/vendors', [
-                'name' => 'Juki Bangladesh Ltd',
-                'code' => 'JUKI-BD',
-                'vendor_type' => 'BOTH',
-                'status' => 'ACTIVE',
-            ])
-            ->assertRedirect('/app/vendors')
-            ->assertSessionHas('error');
+        $this->api()->postJson('/api/v1/vendors', $this->createVendorPayload())
+            ->assertStatus(402)
+            ->assertJsonPath('code', 'SUBSCRIPTION_READ_ONLY');
 
         $this->assertSame(0, Vendor::count());
     }
@@ -119,10 +132,10 @@ class ReadOnlySubscriptionTest extends TestCase
     {
         $this->contract('READ_ONLY');
 
-        foreach (['/app/dashboard', '/app/assets', '/app/work-orders', '/app/reports', '/app/billing'] as $path) {
+        foreach (['/api/v1/assets', '/api/v1/work-orders', '/api/v1/report-jobs', '/api/v1/subscription/invoices'] as $path) {
             // The data belongs to the customer (ADR-030). Being in arrears is
             // not a reason to hide it from them.
-            $this->actingAs($this->owner)->get($path)->assertOk();
+            $this->api()->getJson($path)->assertOk();
         }
     }
 
@@ -130,13 +143,14 @@ class ReadOnlySubscriptionTest extends TestCase
     {
         $this->contract('READ_ONLY');
 
-        // Explicitly: a customer must always be able to retrieve their own data
-        // (SRS 49.3), and an export is a POST.
-        $this->actingAs($this->owner)
-            ->post('/app/reports/asset_register/export', ['format' => 'CSV'])
-            ->assertRedirect(route('app.reports.jobs'));
+        // Explicitly: a customer must always be able to retrieve their own
+        // data (SRS 49.3), and an export is a POST.
+        $this->api()->postJson('/api/v1/exports', [
+            'type' => 'assets',
+            'format' => 'CSV',
+        ])->assertCreated();
 
-        $this->assertSame(1, ReportJob::count());
+        $this->assertSame(1, ExportJob::count());
     }
 
     public function test_a_read_only_subscription_still_allows_paying_the_bill(): void
@@ -155,15 +169,13 @@ class ReadOnlySubscriptionTest extends TestCase
             'status' => 'ISSUED',
         ]);
 
-        // Locking a customer out of the page where they would settle the
+        // Locking a customer out of the endpoint where they would settle the
         // account would be a remarkable way to not get paid.
-        $this->actingAs($this->owner)
-            ->post(route('app.billing.invoice.pay', $invoice), [
-                'amount' => '25000',
-                'method' => 'BANK_TRANSFER',
-                'payment_reference' => 'TRF-1',
-            ])
-            ->assertRedirect(route('app.billing.invoice', $invoice));
+        $this->api()->postJson("/api/v1/subscription/invoices/{$invoice->id}/pay", [
+            'amount' => '25000',
+            'method' => 'BANK_TRANSFER',
+            'payment_reference' => 'TRF-1',
+        ])->assertCreated();
 
         $this->assertSame('PAID', $invoice->fresh()->status);
     }
@@ -172,24 +184,7 @@ class ReadOnlySubscriptionTest extends TestCase
     {
         $this->contract('READ_ONLY');
 
-        $this->actingAs($this->owner)->post('/logout')->assertRedirect();
-    }
-
-    public function test_the_api_is_refused_with_a_named_code_not_a_bare_403(): void
-    {
-        $this->contract('READ_ONLY');
-
-        $response = $this->actingAs($this->owner)
-            ->postJson('/app/vendors', [
-                'name' => 'Juki Bangladesh Ltd',
-                'code' => 'JUKI-BD',
-                'vendor_type' => 'BOTH',
-                'status' => 'ACTIVE',
-            ]);
-
-        // A billing state and a permission problem are fixed by different
-        // people, so the answer says which one this is.
-        $response->assertStatus(402)->assertJsonPath('code', 'SUBSCRIPTION_READ_ONLY');
+        $this->api()->postJson('/api/v1/auth/logout')->assertNoContent();
     }
 
     public function test_a_past_due_subscription_still_allows_writing(): void
@@ -198,14 +193,7 @@ class ReadOnlySubscriptionTest extends TestCase
 
         // Being late is not the same as being locked out. The grace period
         // exists so a customer has time to pay without work stopping.
-        $this->actingAs($this->owner)
-            ->post('/app/vendors', [
-                'name' => 'Juki Bangladesh Ltd',
-                'code' => 'JUKI-BD',
-                'vendor_type' => 'BOTH',
-                'status' => 'ACTIVE',
-            ])
-            ->assertRedirect();
+        $this->api()->postJson('/api/v1/vendors', $this->createVendorPayload())->assertCreated();
     }
 
     public function test_another_companys_contract_does_not_restrict_this_one(): void
@@ -223,13 +211,6 @@ class ReadOnlySubscriptionTest extends TestCase
 
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->actingAs($this->owner)
-            ->post('/app/vendors', [
-                'name' => 'Juki Bangladesh Ltd',
-                'code' => 'JUKI-BD',
-                'vendor_type' => 'BOTH',
-                'status' => 'ACTIVE',
-            ])
-            ->assertRedirect();
+        $this->api()->postJson('/api/v1/vendors', $this->createVendorPayload())->assertCreated();
     }
 }

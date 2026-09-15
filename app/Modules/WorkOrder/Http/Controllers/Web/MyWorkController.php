@@ -8,6 +8,7 @@ use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Modules\WorkOrder\Models\WorkOrderAssignment;
 use App\Shared\Http\Controllers\Controller;
+use App\Shared\Support\Sql;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -39,8 +40,8 @@ class MyWorkController extends Controller
                 ->whereIn('status', WorkOrder::OPEN_STATUSES)
                 // In-progress work first: it is the job in their hands right
                 // now, and it should not be below tomorrow's list.
-                ->orderByRaw("FIELD(status, 'IN_PROGRESS', 'ON_HOLD', 'ASSIGNED', 'SCHEDULED')")
-                ->orderByRaw("FIELD(priority, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW')")
+                ->orderByRaw(Sql::orderByList('status', ['IN_PROGRESS', 'ON_HOLD', 'ASSIGNED', 'SCHEDULED']))
+                ->orderByRaw(Sql::orderByList('priority', ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']))
                 ->orderByRaw('scheduled_start IS NULL, scheduled_start ASC')
                 ->get();
         }

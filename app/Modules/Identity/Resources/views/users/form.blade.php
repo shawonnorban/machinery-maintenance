@@ -105,6 +105,38 @@
                             @error('factory_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                         </div>
 
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label for="department_id" class="form-label">{{ __('user.department') }}</label>
+                                <select id="department_id" name="department_id" class="form-select">
+                                    <option value="">{{ __('user.whole_factory') }}</option>
+                                    @foreach ($departments as $department)
+                                        <option value="{{ $department->id }}"
+                                                @selected(old('department_id', $assignedDepartmentId) === $department->id)>
+                                            {{ $department->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="production_line_id" class="form-label">{{ __('user.production_line') }}</label>
+                                <select id="production_line_id" name="production_line_id" class="form-select">
+                                    <option value="">{{ __('user.whole_department') }}</option>
+                                    @foreach ($productionLines as $line)
+                                        <option value="{{ $line->id }}"
+                                                @selected(old('production_line_id', $assignedProductionLineId) === $line->id)>
+                                            {{ $line->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('production_line_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+                            {{-- Only used by a role like Line Chief, which reports
+                                 breakdowns without a technician row of its own. --}}
+                            <div class="form-text">{{ __('user.coverage_hint') }}</div>
+                        </div>
+
                         <div class="row g-2">
                             @foreach ($roles as $role)
                                 <div class="col-md-6">
@@ -113,7 +145,7 @@
                                                id="role-{{ $role->id }}" value="{{ $role->id }}"
                                                @checked(in_array($role->id, old('roles', $assignedRoleIds), true))>
                                         <label class="form-check-label d-block" for="role-{{ $role->id }}">
-                                            <span class="fw-semibold">{{ $role->name }}</span>
+                                            <span class="fw-semibold">{{ $role->description }}</span>
                                             <span class="badge bg-secondary ms-1">
                                                 {{ $role->scope === 'FACTORY' ? __('user.factory_scope') : __('user.company_scope') }}
                                             </span>

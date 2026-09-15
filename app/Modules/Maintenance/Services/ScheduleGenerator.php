@@ -141,18 +141,38 @@ class ScheduleGenerator
 
         $anchor = CarbonImmutable::parse($plan->start_date)->startOfDay();
 
-        $last = MaintenanceSchedule::where('maintenance_plan_id', $plan->id)
+        // A skip settles the occurrence just as finally as a completion does
+        // (`CompleteSchedule::skip()`'s own "still advances the cycle" rule)
+        // — considering only COMPLETED here left a skipped-with-nothing-ever-
+        // completed plan recomputing the exact same due date it just skipped,
+        // which the (plan, asset, due_at) unique constraint then refused as a
+        // duplicate. A skip has no `completed_at` to measure from, so its own
+        // `due_at` stands in for it: the cycle resumes from when it *would*
+        // have happened, not from whenever this generator next happens to run.
+        $lastCompleted = MaintenanceSchedule::where('maintenance_plan_id', $plan->id)
             ->where('asset_id', $asset->id)
             ->where('status', 'COMPLETED')
             ->orderByDesc('completed_at')
             ->first();
 
+        $lastSkipped = MaintenanceSchedule::where('maintenance_plan_id', $plan->id)
+            ->where('asset_id', $asset->id)
+            ->where('status', 'SKIPPED')
+            ->orderByDesc('due_at')
+            ->first();
+
+        $last = $lastCompleted;
+        $lastAt = $lastCompleted?->completed_at !== null ? CarbonImmutable::parse($lastCompleted->completed_at) : null;
+
+        if ($lastSkipped !== null && ($lastAt === null || CarbonImmutable::parse($lastSkipped->due_at)->greaterThan($lastAt))) {
+            $last = $lastSkipped;
+            $lastAt = CarbonImmutable::parse($lastSkipped->due_at);
+        }
+
         if ($plan->isRolling()) {
-            // Measured from completion. A service done a week late pushes the
-            // next one a week out.
-            $from = $last?->completed_at !== null
-                ? CarbonImmutable::parse($last->completed_at)
-                : $anchor;
+            // Measured from completion (or, per above, from a skip). A
+            // service done a week late pushes the next one a week out.
+            $from = $lastAt ?? $anchor;
 
             $due = $last === null ? $anchor : $this->addInterval($from, $timeRule);
 
@@ -164,16 +184,15 @@ class ScheduleGenerator
         // FIXED: the grid is anchor + n × interval and never shifts. Walk it
         // forward to the first slot still ahead of the floor.
         //
-        // The floor is the last completion, or one interval before now when
-        // nothing has been done. Using "now" itself would drop the current
-        // period's occurrence, so a plan activated on its own start date
-        // would silently skip that day; using the raw anchor would backfill
-        // every occurrence since the plan was nominally supposed to start.
+        // The floor is the last completion (or skip), or one interval before
+        // now when nothing has been done. Using "now" itself would drop the
+        // current period's occurrence, so a plan activated on its own start
+        // date would silently skip that day; using the raw anchor would
+        // backfill every occurrence since the plan was nominally supposed to
+        // start.
         $due = $anchor;
 
-        $floor = $last?->completed_at !== null
-            ? CarbonImmutable::parse($last->completed_at)
-            : $this->subtractInterval($now, $timeRule);
+        $floor = $lastAt ?? $this->subtractInterval($now, $timeRule);
 
         $guard = 0;
 

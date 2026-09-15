@@ -76,6 +76,8 @@ class ApiExceptionRenderer
         $code = match ($e->status) {
             409 => ErrorCode::CONFLICT,
             403 => ErrorCode::FORBIDDEN,
+            413 => ErrorCode::FILE_TOO_LARGE,
+            415 => ErrorCode::UNSUPPORTED_FILE_TYPE,
             default => ErrorCode::VALIDATION_ERROR,
         };
 

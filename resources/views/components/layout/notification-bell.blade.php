@@ -46,8 +46,9 @@
                 };
             @endphp
 
+            {{-- The notifications screen is the Next.js app now (Phase D/F). --}}
             <a class="dropdown-item notification-dropdown-item {{ $notification->read_at === null ? 'unread' : '' }}"
-               href="{{ $notification->action_url ?? route('app.notifications') }}">
+               href="{{ $notification->action_url ?? config('tenancy.frontend_url').'/notifications' }}">
                 <div class="d-flex align-items-start gap-2">
                     <span class="notification-dot bg-{{ $tone }}" aria-hidden="true"></span>
 
@@ -76,7 +77,7 @@
 
         <div class="dropdown-divider"></div>
 
-        <a class="dropdown-item text-center fw-semibold" href="{{ route('app.notifications') }}">
+        <a class="dropdown-item text-center fw-semibold" href="{{ config('tenancy.frontend_url').'/notifications' }}">
             {{ __('notification.view_all') }}
         </a>
     </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Breakdown;
 
+use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Identity\Models\User;
@@ -56,6 +57,22 @@ class TenantTimezoneTest extends TestCase
         $this->manager = TenantFixture::user($this->delta, 'MAINTENANCE_MANAGER', 'mm@delta.test');
     }
 
+    /**
+     * `/app/breakdowns` and `/app/work-orders` are gone (Phase D/F, docs/12-
+     * Stack-Migration-Implementation-Plan.md) — every case below is proven
+     * against their Next.js-facing API replacements instead, which needed
+     * this exact same naive-local-time handling added alongside this test
+     * (`BreakdownApiController::store()`, `WorkOrderApiController::store()`
+     * previously assumed every date carried its own offset).
+     */
+    private function api(): self
+    {
+        $token = app(IssueApiToken::class)->forUser($this->manager, $this->delta->id, 'Test')['plain'];
+        $this->withHeader('Authorization', 'Bearer '.$token);
+
+        return $this;
+    }
+
     public function test_storage_is_always_utc(): void
     {
         // Non-negotiable: a company with factories in two zones cannot have one
@@ -66,15 +83,15 @@ class TenantTimezoneTest extends TestCase
 
     public function test_a_wall_time_typed_in_dhaka_is_stored_as_the_instant_it_names(): void
     {
-        $this->actingAs($this->manager)
-            ->post('/app/breakdowns', [
+        $this->api()
+            ->postJson('/api/v1/breakdowns', [
                 'asset_id' => $this->asset->id,
                 'problem_description' => 'Motor tripped at end of shift',
                 // Exactly what a datetime-local input sends: no offset at all.
                 'failure_at' => '2026-08-18T21:50',
                 'reported_at' => '2026-08-18T21:55',
             ])
-            ->assertRedirect();
+            ->assertCreated();
 
         $breakdown = Breakdown::withoutGlobalScopes()->firstOrFail();
 
@@ -86,7 +103,7 @@ class TenantTimezoneTest extends TestCase
 
     public function test_the_stored_instant_is_read_back_on_the_same_clock(): void
     {
-        $this->actingAs($this->manager)->post('/app/breakdowns', [
+        $this->api()->postJson('/api/v1/breakdowns', [
             'asset_id' => $this->asset->id,
             'problem_description' => 'Motor tripped',
             'failure_at' => '2026-08-18T21:50',
@@ -95,19 +112,17 @@ class TenantTimezoneTest extends TestCase
 
         $breakdown = Breakdown::withoutGlobalScopes()->firstOrFail();
 
-        // Round trip: what was typed is what is shown. Anything else and the
-        // technician who entered it cannot recognise their own record.
-        $this->actingAs($this->manager)
-            ->get("/app/breakdowns/{$breakdown->id}")
-            ->assertOk()
-            ->assertSee('2026-08-18 21:50');
+        // Round trip: what was typed is what got stored, in UTC — the
+        // client (Next.js) is the one that renders it on the reader's own
+        // clock, same as it renders every other timestamp.
+        $this->assertSame('2026-08-18 15:50:00', $breakdown->failure_at->utc()->toDateTimeString());
     }
 
     public function test_an_input_carrying_its_own_offset_is_not_reinterpreted(): void
     {
         // An API client sending ISO-8601 already names an instant. Treating it
         // as local wall time would corrupt a value that was correct.
-        $this->actingAs($this->manager)->post('/app/breakdowns', [
+        $this->api()->postJson('/api/v1/breakdowns', [
             'asset_id' => $this->asset->id,
             'problem_description' => 'Reported through the API',
             'failure_at' => '2026-08-18T21:50:00+00:00',
@@ -154,7 +169,7 @@ class TenantTimezoneTest extends TestCase
 
     public function test_a_backdated_correction_is_read_on_the_factory_clock(): void
     {
-        $this->actingAs($this->manager)->post('/app/breakdowns', [
+        $this->api()->postJson('/api/v1/breakdowns', [
             'asset_id' => $this->asset->id,
             'problem_description' => 'Stopped earlier than reported',
             'failure_at' => '2026-08-18T22:00',
@@ -163,17 +178,20 @@ class TenantTimezoneTest extends TestCase
 
         $breakdown = Breakdown::withoutGlobalScopes()->firstOrFail();
 
-        $this->actingAs($this->manager)
-            ->post("/app/breakdowns/{$breakdown->id}/timestamp", [
+        // Unlike report-time fields, the correction endpoint expects a real
+        // instant already (`BreakdownApiController::update()`'s own
+        // docblock) — the Next.js correction modal converts client-side
+        // before sending, same reasoning as `ApiResourceTest`'s own
+        // coverage of this endpoint.
+        $this->api()
+            ->patchJson("/api/v1/breakdowns/{$breakdown->id}", [
                 'field' => 'failure_at',
-                'value' => '2026-08-18T21:50',
+                'value' => '2026-08-18T15:50:00Z',
             ])
-            ->assertRedirect();
+            ->assertOk();
 
         // 21:50 Dhaka = 15:50 UTC, and still before the 16:00 UTC report, so the
-        // chain stays in order. Parsed as UTC it would be 21:50 — five hours
-        // after the report — and the correction would have been refused for a
-        // reason that has nothing to do with what the user did.
+        // chain stays in order.
         $this->assertSame(
             '2026-08-18 15:50:00',
             $breakdown->fresh()->failure_at->utc()->toDateTimeString(),
@@ -182,8 +200,8 @@ class TenantTimezoneTest extends TestCase
 
     public function test_a_work_order_schedule_is_stored_on_the_instant_it_names(): void
     {
-        $this->actingAs($this->manager)
-            ->post('/app/work-orders', [
+        $this->api()
+            ->postJson('/api/v1/work-orders', [
                 'asset_id' => $this->asset->id,
                 'maintenance_type_id' => MaintenanceType::where('code', 'PREVENTIVE')
                     ->firstOrFail()->id,
@@ -191,7 +209,7 @@ class TenantTimezoneTest extends TestCase
                 'priority' => 'MEDIUM',
                 'scheduled_start' => '2026-08-20T08:00',
             ])
-            ->assertRedirect();
+            ->assertCreated();
 
         $workOrder = WorkOrder::withoutGlobalScopes()->firstOrFail();
 

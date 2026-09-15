@@ -28,8 +28,9 @@ class SupportSessionController extends Controller
 
         if (! is_string($staffId)) {
             // Not in a support session. Nothing to leave, and pretending
-            // otherwise would sign somebody out of their own account.
-            return redirect()->route('app.dashboard');
+            // otherwise would sign somebody out of their own account. A
+            // tenant's own screens are the Next.js app now (Phase D/F).
+            return redirect(config('tenancy.frontend_url'));
         }
 
         $staff = User::find($staffId);

@@ -30,6 +30,7 @@ return [
     'transfers' => 'স্থানান্তর',
     'low_stock' => 'কম মজুদ',
     'part_requests' => 'পার্টসের চাহিদা',
+    'workforce' => 'জনবল',
     'technicians' => 'টেকনিশিয়ান',
     'teams' => 'টিম',
     'vendors' => 'সরবরাহকারী',

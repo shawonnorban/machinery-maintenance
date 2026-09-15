@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Database\Seeders;
 
-use App\Modules\Identity\Models\Permission;
-use App\Modules\Identity\Models\Role;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 /**
  * The seeded role matrix: SRS 5.1 and 5.3.
@@ -50,9 +50,26 @@ class RoleSeeder extends Seeder
             'work_order.work_order.start', 'work_order.work_order.complete',
             'work_order.labor.manage', 'work_order.part.request',
             'breakdown.breakdown.view_any', 'breakdown.breakdown.view',
-            'breakdown.breakdown.create', 'breakdown.breakdown.acknowledge',
+            // Deliberately no `.create` — reporting is Line Chief's job now
+            // (a floor supervisor is the one standing next to the machine
+            // when it stops), not the repair technician's. A technician
+            // still self-claims repair work straight off an acknowledged
+            // report via `.repair` below; they just don't originate one.
+            'breakdown.breakdown.acknowledge',
             'breakdown.breakdown.repair',
             'inventory.part.view_any', 'inventory.stock.view',
+        ];
+
+        // Reports a breakdown when they spot one; never repairs it themselves.
+        // Deliberately narrower than $technician — no acknowledge/repair
+        // permissions, and `BreakdownScopeGuard` restricts *which* machines
+        // they may even report against to their own line/department.
+        $lineChief = [
+            'asset.asset.view_any', 'asset.asset.view',
+            'breakdown.breakdown.view_any', 'breakdown.breakdown.view',
+            'breakdown.breakdown.create',
+            'work_order.work_order.view_any', 'work_order.work_order.view',
+            'dashboard.maintenance.view',
         ];
 
         $engineer = array_merge($technician, [
@@ -71,6 +88,10 @@ class RoleSeeder extends Seeder
             'work_order.work_order.create', 'work_order.work_order.update',
             'work_order.work_order.assign', 'work_order.work_order.verify',
             'work_order.cost.view',
+            // Re-added here (not just inherited) — engineers and above keep
+            // the ability to report a breakdown themselves; only the plain
+            // `$technician` tier lost it.
+            'breakdown.breakdown.create',
             'breakdown.breakdown.assign', 'breakdown.breakdown.close',
             'inventory.reservation.manage',
             'cost.entry.view',
@@ -187,6 +208,11 @@ class RoleSeeder extends Seeder
                 'scope' => 'FACTORY',
                 'permissions' => $technician,
             ],
+            'LINE_CHIEF' => [
+                'name' => 'Line Chief',
+                'scope' => 'FACTORY',
+                'permissions' => $lineChief,
+            ],
             'STORE_MANAGER' => [
                 'name' => 'Store Manager',
                 'scope' => 'FACTORY',
@@ -214,13 +240,16 @@ class RoleSeeder extends Seeder
 
     public function run(): void
     {
-        $permissionIds = Permission::pluck('id', 'code');
+        // As with PermissionSeeder: Spatie's `name` is the machine code
+        // (its own uniqueness key), the human-readable label goes in
+        // `description`.
+        $permissionIds = Permission::pluck('id', 'name');
 
         foreach (self::matrix() as $code => $definition) {
             $role = Role::updateOrCreate(
-                ['company_id' => null, 'code' => $code],
+                ['company_id' => null, 'name' => $code, 'guard_name' => 'web'],
                 [
-                    'name' => $definition['name'],
+                    'description' => $definition['name'],
                     'scope' => $definition['scope'],
                     'is_system' => true,
                 ],

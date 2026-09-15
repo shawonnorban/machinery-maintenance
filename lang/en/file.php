@@ -16,4 +16,5 @@ return [
     // moment" is actionable; "scan status PENDING" is not.
     'scan_pending' => 'This file is still being checked. Try again in a moment.',
     'infected' => 'This file was rejected because a security check found a problem with it.',
+    'referenced_by_checklist' => 'This file cannot be removed because a checklist result still points to it.',
 ];

@@ -163,11 +163,11 @@
                             @foreach ($group as $permission)
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="scopes[]"
-                                           value="{{ $permission->code }}"
-                                           id="scope-{{ $permission->code }}">
-                                    <label class="form-check-label small" for="scope-{{ $permission->code }}">
-                                        {{ $permission->name }}
-                                        <div class="text-body-secondary"><code>{{ $permission->code }}</code></div>
+                                           value="{{ $permission->name }}"
+                                           id="scope-{{ $permission->name }}">
+                                    <label class="form-check-label small" for="scope-{{ $permission->name }}">
+                                        {{ $permission->description }}
+                                        <div class="text-body-secondary"><code>{{ $permission->name }}</code></div>
                                     </label>
                                 </div>
                             @endforeach

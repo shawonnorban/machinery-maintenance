@@ -21,6 +21,7 @@ enum ErrorCode: string
     case FORBIDDEN = 'FORBIDDEN';
     case TENANT_ACCESS_DENIED = 'TENANT_ACCESS_DENIED';
     case TENANT_CONTEXT_REQUIRED = 'TENANT_CONTEXT_REQUIRED';
+    case TENANT_SUSPENDED = 'TENANT_SUSPENDED';
     case ACCOUNT_LOCKED = 'ACCOUNT_LOCKED';
     case PASSWORD_POLICY_VIOLATION = 'PASSWORD_POLICY_VIOLATION';
 
@@ -77,6 +78,7 @@ enum ErrorCode: string
             self::FORBIDDEN,
             self::TENANT_ACCESS_DENIED,
             self::TENANT_CONTEXT_REQUIRED,
+            self::TENANT_SUSPENDED,
             self::SUBSCRIPTION_READ_ONLY,
             self::SUBSCRIPTION_EXPIRED,
             self::PLAN_LIMIT_EXCEEDED,

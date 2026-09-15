@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Asset\Models;
 
+use App\Modules\Identity\Models\User;
 use App\Shared\Concerns\BelongsToTenant;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,5 +34,10 @@ class AssetStatusHistory extends BaseModel
     public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
+    }
+
+    public function changedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'changed_by');
     }
 }
