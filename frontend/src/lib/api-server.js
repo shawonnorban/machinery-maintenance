@@ -22,15 +22,26 @@ const BASE_URL = process.env.LARAVEL_API_URL ?? "http://localhost:8000/api/v1";
 // outright (confirmed live). Nothing at build time ever calls `apiFetch`,
 // so lazy setup keeps this code from running until the app is actually
 // serving a request.
-let dnsFallbackReady = false;
+// The promise itself is the guard, not a boolean flag set before the
+// `await` below resolves: callers routinely run several `apiFetch` calls
+// concurrently via `Promise.all` (this list page's own KPI/counts/me
+// calls, for one), and a boolean flipped synchronously up front would let
+// every call after the very first race ahead on the still-unconfigured
+// default dispatcher instead of waiting for setup to actually finish
+// (confirmed live — the exact page that does this failed while the
+// single-request login screen never did).
+let dnsFallbackSetup = null;
 
-async function ensureDnsFallback() {
-  if (dnsFallbackReady) {
-    return;
+function ensureDnsFallback() {
+  if (dnsFallbackSetup) {
+    return dnsFallbackSetup;
   }
 
-  dnsFallbackReady = true;
+  dnsFallbackSetup = setupDnsFallback();
+  return dnsFallbackSetup;
+}
 
+async function setupDnsFallback() {
   const dns = await import("node:dns");
   const { Agent, setGlobalDispatcher } = await import("undici");
 
