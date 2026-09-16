@@ -14,24 +14,11 @@ import { Alert } from "@/components/ui/alert";
 import { useToastManager } from "@/components/ui/toast";
 import { saveDraft, flush } from "@/lib/offline/queue";
 import { resizeImage } from "@/lib/offline/resize-image";
-
-const PRIORITY_OPTIONS = [
-  { value: "", label: "— (uses the machine's own criticality)" },
-  { value: "CRITICAL", label: "Critical" },
-  { value: "HIGH", label: "High" },
-  { value: "MEDIUM", label: "Medium" },
-  { value: "LOW", label: "Low" },
-];
-const SEVERITY_OPTIONS = [
-  { value: "CATASTROPHIC", label: "Catastrophic" },
-  { value: "MAJOR", label: "Major" },
-  { value: "MINOR", label: "Minor" },
-  { value: "NEGLIGIBLE", label: "Negligible" },
-];
+import { useT } from "@/lib/i18n";
 
 // Neither failure codes nor reason codes are exhaustive — a machine breaks
 // in a way the catalog hasn't seen yet often enough that forcing the
-// closest wrong match would be worse than a free-text note. Not a real
+// closest wrong match was worse than an honest free-text note. Not a real
 // record's id, so it can never collide with one.
 const OTHER = "OTHER";
 
@@ -67,6 +54,8 @@ const OTHER = "OTHER";
 function ReportBreakdownForm({ options, initialAssetId = "" }) {
   const router = useRouter();
   const toastManager = useToastManager();
+  const t = useT("breakdown");
+  const tc = useT("common");
   const [assetId, setAssetId] = useState(
     () => (options.assets.some((asset) => asset.id === initialAssetId) ? initialAssetId : ""),
   );
@@ -85,6 +74,20 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
   const [photoProcessing, setPhotoProcessing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  const PRIORITY_OPTIONS = [
+    { value: "", label: t("priority_default_hint") },
+    { value: "CRITICAL", label: t("priority_critical") },
+    { value: "HIGH", label: t("priority_high") },
+    { value: "MEDIUM", label: t("priority_medium") },
+    { value: "LOW", label: t("priority_low") },
+  ];
+  const SEVERITY_OPTIONS = [
+    { value: "CATASTROPHIC", label: t("severity_catastrophic") },
+    { value: "MAJOR", label: t("severity_major") },
+    { value: "MINOR", label: t("severity_minor") },
+    { value: "NEGLIGIBLE", label: t("severity_negligible") },
+  ];
 
   /**
    * Resized (docs/12-Stack-Migration-Implementation-Plan.md Phase E —
@@ -115,7 +118,7 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
       setPhoto({ dataUrl, filename: resized.name });
     } catch {
       setPhoto(null);
-      setError("Could not read that photo — try a different one, or skip it.");
+      setError(t("photo_error"));
     } finally {
       setPhotoProcessing(false);
     }
@@ -125,7 +128,7 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
     event.preventDefault();
 
     if (!assetId || !problemDescription.trim()) {
-      setError("Pick a machine and describe the problem before reporting.");
+      setError(t("pick_machine_and_describe"));
       return;
     }
 
@@ -162,8 +165,8 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
       flush();
 
       toastManager.add({
-        title: "Breakdown reported",
-        description: "Saved on this device and sending now — check the sync icon if you're offline.",
+        title: t("reported"),
+        description: t("saved_and_sending"),
         type: "success",
       });
       router.push("/breakdowns");
@@ -171,7 +174,7 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
       // saveDraft() itself failing means IndexedDB is unavailable
       // (private browsing with storage blocked, most likely) — the one
       // case this form genuinely can't route around.
-      setError("Could not save this report on this device. Try again, or use a different browser mode.");
+      setError(t("could_not_save_offline"));
       setSubmitting(false);
     }
   }
@@ -182,27 +185,27 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="flex flex-col gap-5">
-          <FormField label="Machine" required>
+          <FormField label={t("asset")} required>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
                 value={assetId}
                 onValueChange={setAssetId}
-                placeholder="Select the machine"
+                placeholder={t("select_machine")}
                 options={options.assets.map((asset) => ({ value: asset.id, label: `${asset.asset_code} — ${asset.name}` }))}
               />
             )}
           </FormField>
 
-          <FormField label="What's wrong" required helperText="Describe what happened — a technician can fill in the diagnosis later.">
+          <FormField label={t("problem_description")} required helperText={t("problem_description_hint")}>
             {(fieldProps) => (
               <Textarea {...fieldProps} value={problemDescription} onChange={(e) => setProblemDescription(e.target.value)} rows={4} maxLength={5000} required />
             )}
           </FormField>
 
           <FormField
-            label="Photo"
-            helperText={photoProcessing ? "Processing photo…" : "Optional — a picture of the fault, if you have one. Saved with the report even offline."}
+            label={t("photo")}
+            helperText={photoProcessing ? t("photo_processing") : t("photo_hint")}
           >
             {(fieldProps) => (
               <div className="flex flex-col gap-2">
@@ -216,9 +219,9 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
                       variant="ghost"
                       size="sm"
                       onClick={() => setPhoto(null)}
-                      aria-label="Remove photo"
+                      aria-label={t("remove_photo")}
                     >
-                      <X /> Remove
+                      <X /> {t("remove_photo")}
                     </Button>
                   </div>
                 ) : null}
@@ -227,10 +230,10 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
           </FormField>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField label="Machine stopped" helperText="Blank means now.">
+            <FormField label={t("failure_at")} helperText={t("failure_at_hint")}>
               {(fieldProps) => <DateTimeField {...fieldProps} value={failureAt} onChange={setFailureAt} />}
             </FormField>
-            <FormField label="Reported">
+            <FormField label={t("reported_at")}>
               {(fieldProps) => <DateTimeField {...fieldProps} value={reportedAt} onChange={setReportedAt} />}
             </FormField>
           </div>
@@ -238,15 +241,15 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
 
         <div className="flex flex-col gap-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField label="Priority">
+            <FormField label={t("priority")}>
               {(fieldProps) => <Select {...fieldProps} value={priority} onValueChange={setPriority} options={PRIORITY_OPTIONS} />}
             </FormField>
-            <FormField label="Severity">
+            <FormField label={t("severity")}>
               {(fieldProps) => <Select {...fieldProps} value={severity} onValueChange={setSeverity} options={SEVERITY_OPTIONS} />}
             </FormField>
           </div>
 
-          <FormField label="Production line">
+          <FormField label={t("production_line")}>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
@@ -258,13 +261,13 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
             )}
           </FormField>
 
-          <FormField label="Production order reference">
+          <FormField label={t("production_order_reference")}>
             {(fieldProps) => (
               <Input {...fieldProps} value={productionOrderReference} onChange={(e) => setProductionOrderReference(e.target.value)} maxLength={255} />
             )}
           </FormField>
 
-          <FormField label="Failure code" helperText="Optional at report time — maintenance confirms or corrects it at closure.">
+          <FormField label={t("failure_code")} helperText={t("failure_code_report_hint")}>
             {(fieldProps) => (
               <div className="flex flex-col gap-2">
                 <Select
@@ -274,14 +277,14 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
                   placeholder="—"
                   options={[
                     ...options.failure_codes.map((code) => ({ value: code.id, label: code.name })),
-                    { value: OTHER, label: "Other (not in this list)" },
+                    { value: OTHER, label: t("other_option") },
                   ]}
                 />
                 {failureCodeId === OTHER ? (
                   <Input
                     value={failureCodeOther}
                     onChange={(e) => setFailureCodeOther(e.target.value)}
-                    placeholder="Describe the failure"
+                    placeholder={t("describe_failure_placeholder")}
                     maxLength={255}
                   />
                 ) : null}
@@ -289,7 +292,7 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
             )}
           </FormField>
 
-          <FormField label="Reason">
+          <FormField label={t("reason_code")}>
             {(fieldProps) => (
               <div className="flex flex-col gap-2">
                 <Select
@@ -299,14 +302,14 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
                   placeholder="—"
                   options={[
                     ...options.reason_codes.map((reason) => ({ value: reason.id, label: reason.name })),
-                    { value: OTHER, label: "Other (not in this list)" },
+                    { value: OTHER, label: t("other_option") },
                   ]}
                 />
                 {downtimeReasonCodeId === OTHER ? (
                   <Input
                     value={downtimeReasonOther}
                     onChange={(e) => setDowntimeReasonOther(e.target.value)}
-                    placeholder="Describe the reason"
+                    placeholder={t("describe_reason_placeholder")}
                     maxLength={255}
                   />
                 ) : null}
@@ -318,10 +321,10 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" variant="danger" loading={submitting} disabled={photoProcessing}>
-          Report breakdown
+          {t("report_breakdown")}
         </Button>
       </div>
     </form>

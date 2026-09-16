@@ -152,6 +152,25 @@ return [
     'technician_unavailable' => 'That technician is not available.',
     'technician_other_factory' => ':name works at another factory.',
     'reported_by' => 'Reported by',
+    'report' => 'Report',
+    'select_machine' => 'Select the machine',
+    'priority_default_hint' => "— (uses the machine's own criticality)",
+    'failure_at_hint' => 'Blank means now.',
+    'photo' => 'Photo',
+    'photo_processing' => 'Processing photo…',
+    'photo_hint' => 'Optional — a picture of the fault, if you have one. Saved with the report even offline.',
+    'photo_error' => 'Could not read that photo — try a different one, or skip it.',
+    'remove_photo' => 'Remove',
+    'failure_code_report_hint' => 'Optional at report time — maintenance confirms or corrects it at closure.',
+    // The "Other" option on the failure-code/reason dropdowns, for the case
+    // neither catalog has a matching entry (Breakdown::failure_code_other/
+    // downtime_reason_other).
+    'other_option' => 'Other (not in this list)',
+    'describe_failure_placeholder' => 'Describe the failure',
+    'describe_reason_placeholder' => 'Describe the reason',
+    'pick_machine_and_describe' => 'Pick a machine and describe the problem before reporting.',
+    'could_not_save_offline' => 'Could not save this report on this device. Try again, or use a different browser mode.',
+    'saved_and_sending' => "Saved on this device and sending now — check the sync icon if you're offline.",
 
     // --- production impact ---
     'production_impact' => 'Production impact',
