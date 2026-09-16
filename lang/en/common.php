@@ -30,6 +30,7 @@ return [
     'sync_refused' => 'The server refused this',
     'sync_will_send' => 'Saved on this device. It will be sent as soon as the connection returns.',
     'sync_discard' => 'Discard',
+    'sending_now_check_sync' => "Sending now — check the sync icon if you're offline.",
     'connection_reconnecting' => 'Reconnecting',
     'connection_offline' => 'Offline',
     'toggle_navigation' => 'Toggle navigation',
@@ -69,6 +70,9 @@ return [
     'none' => 'None',
     'yes' => 'Yes',
     'no' => 'No',
+    // Shared across detail-page tabs (asset, breakdown, work order,
+    // metering) — kept here rather than duplicated per module namespace.
+    'overview' => 'Overview',
 
     // The sign-in screen's own copy (frontend/src/app/login/page.js,
     // components/auth/login-form.jsx) — distinct keys from the shorter

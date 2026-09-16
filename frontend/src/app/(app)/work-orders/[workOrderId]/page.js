@@ -4,7 +4,7 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody } from "@/components/ui/card";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
@@ -16,6 +16,7 @@ import { ChecklistTab } from "@/components/work-orders/checklist-tab";
 import { LaborTab } from "@/components/work-orders/labor-tab";
 import { PartsTab } from "@/components/work-orders/parts-tab";
 import { AttachmentsTab } from "@/components/work-orders/attachments-tab";
+import { getT } from "@/lib/i18n-server";
 import {
   submitForApproval, start, resume, complete, verify, close, hold, cancel, reopen,
   assignTechnician, unassignTechnician,
@@ -36,7 +37,7 @@ const TERMINAL_STATUSES = ["CLOSED", "CANCELLED"];
 export default async function WorkOrderDetailPage({ params }) {
   const { workOrderId } = await params;
 
-  const [workOrder, history, technicians, costs, checklist, labor, parts, attachments, spareParts, bins] = await Promise.all([
+  const [workOrder, history, technicians, costs, checklist, labor, parts, attachments, spareParts, bins, t, tc] = await Promise.all([
     apiFetch(`/work-orders/${workOrderId}`),
     apiFetch(`/work-orders/${workOrderId}/history`),
     apiFetch(`/work-orders/${workOrderId}/assignable-technicians`),
@@ -50,6 +51,8 @@ export default async function WorkOrderDetailPage({ params }) {
     apiFetch(`/work-orders/${workOrderId}/attachments`),
     apiFetch("/spare-parts?per_page=100"),
     apiFetch("/spare-parts/bins"),
+    getT("work_order"),
+    getT("common"),
   ]);
 
   const isTerminal = TERMINAL_STATUSES.includes(workOrder.status);
@@ -58,7 +61,7 @@ export default async function WorkOrderDetailPage({ params }) {
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Work Orders", href: "/work-orders" }, { label: workOrder.work_order_number }]}
+        breadcrumb={[{ label: t("work_orders"), href: "/work-orders" }, { label: workOrder.work_order_number }]}
         title={workOrder.work_order_number}
         description={workOrder.title}
         actions={
@@ -69,25 +72,25 @@ export default async function WorkOrderDetailPage({ params }) {
               actions={{ submitForApproval, start, resume, complete, verify, close, hold, cancel, reopen }}
             />
             <Link href="/work-orders" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <ArrowLeft /> Back
+              <ArrowLeft /> {tc("back")}
             </Link>
           </div>
         }
       />
 
       <Card className={cn("mb-6 flex flex-wrap items-center gap-x-8 gap-y-3 border-l-4 p-4", PRIORITY_BORDER[workOrder.priority] ?? "border-l-border-strong")}>
-        <SummaryItem label="Status">
-          <StatusBadge status={workOrder.status} />
+        <SummaryItem label={t("status")}>
+          <StatusBadge status={workOrder.status} label={t(`status_${workOrder.status?.toLowerCase()}`)} />
         </SummaryItem>
-        <SummaryItem label="Priority">
-          <Badge variant={PRIORITY_TONE[workOrder.priority] ?? "neutral"}>{formatStatus(workOrder.priority)}</Badge>
+        <SummaryItem label={t("priority")}>
+          <Badge variant={PRIORITY_TONE[workOrder.priority] ?? "neutral"}>{t(`priority_${workOrder.priority?.toLowerCase()}`)}</Badge>
         </SummaryItem>
-        <SummaryItem label="Asset">
+        <SummaryItem label={t("asset")}>
           <span className="text-sm font-medium text-foreground">
             {workOrder.asset?.asset_code} <span className="font-normal text-foreground-muted">— {workOrder.asset?.name}</span>
           </span>
         </SummaryItem>
-        <SummaryItem label="Factory">
+        <SummaryItem label={tc("factory_scope")}>
           <span className="text-sm text-foreground">{workOrder.factory?.name ?? "—"}</span>
         </SummaryItem>
       </Card>
@@ -96,26 +99,26 @@ export default async function WorkOrderDetailPage({ params }) {
         <CardBody>
           <Tabs defaultValue="overview">
             <TabsList>
-              <TabsTab value="overview">Overview</TabsTab>
-              <TabsTab value="checklist">Checklist</TabsTab>
-              <TabsTab value="labor">Labor</TabsTab>
-              <TabsTab value="parts">Parts</TabsTab>
-              <TabsTab value="attachments">Attachments</TabsTab>
-              <TabsTab value="history">History</TabsTab>
-              {costs ? <TabsTab value="costs">Costs</TabsTab> : null}
+              <TabsTab value="overview">{tc("overview")}</TabsTab>
+              <TabsTab value="checklist">{t("checklist")}</TabsTab>
+              <TabsTab value="labor">{t("labor")}</TabsTab>
+              <TabsTab value="parts">{t("parts")}</TabsTab>
+              <TabsTab value="attachments">{t("attachments")}</TabsTab>
+              <TabsTab value="history">{t("timeline")}</TabsTab>
+              {costs ? <TabsTab value="costs">{t("cost")}</TabsTab> : null}
               <TabsIndicator />
             </TabsList>
 
             <TabsPanel value="overview">
               <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-                <Field label="Maintenance type">{workOrder.maintenance_type ?? "—"}</Field>
-                <Field label="Source">{formatStatus(workOrder.source)}</Field>
-                <Field label="Scheduled start"><FormattedDateTime value={workOrder.scheduled_start} /></Field>
-                <Field label="Scheduled end"><FormattedDateTime value={workOrder.scheduled_end} /></Field>
-                <Field label="Requires shutdown">{workOrder.requires_shutdown ? "Yes" : "No"}</Field>
-                <Field label="Requires verification">{workOrder.requires_verification ? "Yes" : "No"}</Field>
+                <Field label={t("maintenance_type")}>{workOrder.maintenance_type ?? "—"}</Field>
+                <Field label={t("source")}>{t(`source_${workOrder.source?.toLowerCase()}`)}</Field>
+                <Field label={t("scheduled_start")}><FormattedDateTime value={workOrder.scheduled_start} /></Field>
+                <Field label={t("scheduled_end")}><FormattedDateTime value={workOrder.scheduled_end} /></Field>
+                <Field label={t("requires_shutdown")}>{workOrder.requires_shutdown ? tc("yes") : tc("no")}</Field>
+                <Field label={t("requires_verification")}>{workOrder.requires_verification ? tc("yes") : tc("no")}</Field>
                 <div className="sm:col-span-2">
-                  <Field label="Assigned technicians">
+                  <Field label={t("assigned_technicians")}>
                     <AssignTechnicianControl
                       status={workOrder.status}
                       workOrderId={workOrderId}
@@ -128,7 +131,7 @@ export default async function WorkOrderDetailPage({ params }) {
                 </div>
                 {workOrder.description ? (
                   <div className="sm:col-span-2">
-                    <Field label="Description">{workOrder.description}</Field>
+                    <Field label={t("description")}>{workOrder.description}</Field>
                   </div>
                 ) : null}
               </div>
@@ -183,10 +186,10 @@ export default async function WorkOrderDetailPage({ params }) {
             {costs ? (
               <TabsPanel value="costs">
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                  <Field label="Estimated parts">{costs.estimated_parts_cost ?? "—"} {costs.currency}</Field>
-                  <Field label="Actual parts">{costs.actual_parts_cost ?? "—"} {costs.currency}</Field>
-                  <Field label="Other costs">{costs.actual_other_cost ?? "—"} {costs.currency}</Field>
-                  <Field label="Actual total">{costs.actual_cost ?? "—"} {costs.currency}</Field>
+                  <Field label={t("cost_estimated_parts")}>{costs.estimated_parts_cost ?? "—"} {costs.currency}</Field>
+                  <Field label={t("cost_actual_parts")}>{costs.actual_parts_cost ?? "—"} {costs.currency}</Field>
+                  <Field label={t("cost_other")}>{costs.actual_other_cost ?? "—"} {costs.currency}</Field>
+                  <Field label={t("cost_actual_total")}>{costs.actual_cost ?? "—"} {costs.currency}</Field>
                 </div>
               </TabsPanel>
             ) : null}

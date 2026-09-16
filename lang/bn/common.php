@@ -28,6 +28,7 @@ return [
     'sync_refused' => 'সার্ভার এটি গ্রহণ করেনি',
     'sync_will_send' => 'এই ডিভাইসে সংরক্ষিত। সংযোগ ফিরলেই পাঠানো হবে।',
     'sync_discard' => 'বাতিল করুন',
+    'sending_now_check_sync' => 'এখন পাঠানো হচ্ছে — অফলাইনে থাকলে সিঙ্ক আইকন দেখুন।',
     'connection_reconnecting' => 'পুনঃসংযোগ হচ্ছে',
     'connection_offline' => 'সংযোগ নেই',
     'toggle_navigation' => 'মেনু দেখান/লুকান',
@@ -67,6 +68,7 @@ return [
     'none' => 'নেই',
     'yes' => 'হ্যাঁ',
     'no' => 'না',
+    'overview' => 'সারসংক্ষেপ',
 
     // সাইন-ইন স্ক্রিনের নিজস্ব টেক্সট।
     'email_address' => 'ইমেইল ঠিকানা',

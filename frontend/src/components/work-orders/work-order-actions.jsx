@@ -10,10 +10,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
 import { HOLD_REASONS } from "@/lib/work-order-transitions";
-import { formatStatus } from "@/components/ui/status-badge";
 import { saveDraft, flush } from "@/lib/offline/queue";
-
-const HOLD_REASON_OPTIONS = HOLD_REASONS.map((code) => ({ value: code, label: formatStatus(code) }));
+import { useT } from "@/lib/i18n";
 
 /**
  * The URL segment each transition posts to (`WorkOrderApiController`'s own
@@ -40,7 +38,7 @@ const ENDPOINT_SEGMENT = {
  * `ReportBreakdownForm` uses. Only reached when the Server Action's own
  * request never made it to the app at all (see the call sites' comments).
  */
-async function queueOfflineTransition({ workOrderId, step, payload, toastManager }) {
+async function queueOfflineTransition({ workOrderId, step, payload, toastManager, t, tc }) {
   await saveDraft({
     endpoint: `/work-orders/${workOrderId}/${ENDPOINT_SEGMENT[step.key]}`,
     payload,
@@ -48,8 +46,8 @@ async function queueOfflineTransition({ workOrderId, step, payload, toastManager
   });
   flush();
   toastManager.add({
-    title: `${step.label} saved on this device`,
-    description: "Sending now — check the sync icon if you're offline.",
+    title: t("action_saved_offline", { action: step.label }),
+    description: tc("sending_now_check_sync"),
     type: "success",
   });
 }
@@ -59,38 +57,46 @@ async function queueOfflineTransition({ workOrderId, step, payload, toastManager
  * TRANSITIONS`, not the enforcement (the API re-checks it). `assign`/
  * `unassign` are handled separately (AssignTechnicianControl) since
  * they're not part of the named lifecycle the way these are.
+ *
+ * Built from `t()` rather than a module-level constant: the label each
+ * step carries has to be the translated string, not a key, since it's
+ * reused as-is in confirm dialogs and toasts below.
  */
-const STATUS_ACTIONS = {
-  DRAFT: [
-    { key: "submitForApproval", label: "Submit for approval" },
-    { key: "cancel", label: "Cancel", destructive: true, needsReason: "reason" },
-  ],
-  PENDING_APPROVAL: [{ key: "cancel", label: "Cancel", destructive: true, needsReason: "reason" }],
-  SCHEDULED: [{ key: "cancel", label: "Cancel", destructive: true, needsReason: "reason" }],
-  ASSIGNED: [
-    { key: "start", label: "Start" },
-    { key: "cancel", label: "Cancel", destructive: true, needsReason: "reason" },
-  ],
-  IN_PROGRESS: [
-    { key: "hold", label: "Put on hold", needsReason: "reason_code", reasonIsCode: true },
-    { key: "complete", label: "Complete" },
-    { key: "cancel", label: "Cancel", destructive: true, needsReason: "reason" },
-  ],
-  ON_HOLD: [
-    { key: "resume", label: "Resume" },
-    { key: "cancel", label: "Cancel", destructive: true, needsReason: "reason" },
-  ],
-  COMPLETED: [
-    { key: "verify", label: "Verify" },
-    { key: "close", label: "Close" },
-  ],
-  VERIFIED: [{ key: "close", label: "Close" }],
-  CLOSED: [{ key: "reopen", label: "Reopen", needsReason: "reason" }],
-  CANCELLED: [{ key: "reopen", label: "Reopen", needsReason: "reason" }],
-};
+function statusActions(t) {
+  return {
+    DRAFT: [
+      { key: "submitForApproval", label: t("submit_for_approval") },
+      { key: "cancel", label: t("cancel"), destructive: true, needsReason: "reason" },
+    ],
+    PENDING_APPROVAL: [{ key: "cancel", label: t("cancel"), destructive: true, needsReason: "reason" }],
+    SCHEDULED: [{ key: "cancel", label: t("cancel"), destructive: true, needsReason: "reason" }],
+    ASSIGNED: [
+      { key: "start", label: t("start") },
+      { key: "cancel", label: t("cancel"), destructive: true, needsReason: "reason" },
+    ],
+    IN_PROGRESS: [
+      { key: "hold", label: t("hold"), needsReason: "reason_code", reasonIsCode: true },
+      { key: "complete", label: t("complete") },
+      { key: "cancel", label: t("cancel"), destructive: true, needsReason: "reason" },
+    ],
+    ON_HOLD: [
+      { key: "resume", label: t("resume") },
+      { key: "cancel", label: t("cancel"), destructive: true, needsReason: "reason" },
+    ],
+    COMPLETED: [
+      { key: "verify", label: t("verify") },
+      { key: "close", label: t("close") },
+    ],
+    VERIFIED: [{ key: "close", label: t("close") }],
+    CLOSED: [{ key: "reopen", label: t("reopen"), needsReason: "reason" }],
+    CANCELLED: [{ key: "reopen", label: t("reopen"), needsReason: "reason" }],
+  };
+}
 
 function WorkOrderActions({ status, workOrderId, actions }) {
-  const steps = STATUS_ACTIONS[status] ?? [];
+  const t = useT("work_order");
+  const tc = useT("common");
+  const steps = statusActions(t)[status] ?? [];
   const [confirming, setConfirming] = useState(null);
   const [reasonStep, setReasonStep] = useState(null);
   const [pending, startTransition] = useTransition();
@@ -102,7 +108,7 @@ function WorkOrderActions({ status, workOrderId, actions }) {
       try {
         const result = await actions[step.key](workOrderId);
         if (result?.status === "success") {
-          toastManager.add({ title: `${step.label} recorded`, type: "success" });
+          toastManager.add({ title: t("action_recorded", { action: step.label }), type: "success" });
           router.refresh();
         } else if (result?.status === "error") {
           toastManager.add({ title: result.message, type: "danger" });
@@ -112,7 +118,7 @@ function WorkOrderActions({ status, workOrderId, actions }) {
         // the one failure mode that means "no signal right now," as
         // opposed to a validation/permission error the action already
         // caught and returned as `result.status === "error"` above.
-        await queueOfflineTransition({ workOrderId, step, payload: {}, toastManager });
+        await queueOfflineTransition({ workOrderId, step, payload: {}, toastManager, t, tc });
       }
 
       setConfirming(null);
@@ -161,8 +167,11 @@ function WorkOrderActions({ status, workOrderId, actions }) {
 }
 
 function ReasonModal({ step, workOrderId, onOpenChange, action }) {
+  const t = useT("work_order");
+  const tc = useT("common");
   const router = useRouter();
   const toastManager = useToastManager();
+  const HOLD_REASON_OPTIONS = HOLD_REASONS.map((code) => ({ value: code, label: t(`hold_reason_${code.toLowerCase()}`) }));
 
   // Wrapped so `useActionState`'s action always settles into a state object
   // rather than rejecting — a transport-level failure (no signal to the app
@@ -177,6 +186,8 @@ function ReasonModal({ step, workOrderId, onOpenChange, action }) {
         step,
         payload: Object.fromEntries(formData.entries()),
         toastManager,
+        t,
+        tc,
       });
 
       return { status: "queued" };
@@ -187,7 +198,7 @@ function ReasonModal({ step, workOrderId, onOpenChange, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: `${step.label} recorded`, type: "success" });
+      toastManager.add({ title: t("action_recorded", { action: step.label }), type: "success" });
       queueMicrotask(() => onOpenChange(false));
       router.refresh();
     } else if (state?.status === "queued") {
@@ -201,7 +212,7 @@ function ReasonModal({ step, workOrderId, onOpenChange, action }) {
   return (
     <Modal open onOpenChange={onOpenChange} title={`${step.label}?`}>
       <form action={formAction} className="flex flex-col gap-4">
-        <FormField label={step.reasonIsCode ? "Reason" : "Why"} required error={state?.errors?.[step.needsReason]?.[0]}>
+        <FormField label={step.reasonIsCode ? t("hold_reason") : t("why")} required error={state?.errors?.[step.needsReason]?.[0]}>
           {(fieldProps) =>
             step.reasonIsCode ? (
               <Select {...fieldProps} name={step.needsReason} options={HOLD_REASON_OPTIONS} />
@@ -215,7 +226,7 @@ function ReasonModal({ step, workOrderId, onOpenChange, action }) {
 
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" variant={step.destructive ? "danger" : "primary"}>
             {step.label}
