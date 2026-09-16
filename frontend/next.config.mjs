@@ -49,6 +49,17 @@ const nextConfig = {
       "next-intl/config": "./src/i18n/request.js",
     },
   },
+
+  // The same alias as `turbopack.resolveAlias` above, for webpack builds
+  // (used on hosts whose glibc is too old for Turbopack's native binary —
+  // `next build --webpack`). Turbopack and webpack each read their own
+  // config block; without this, a webpack build fails prerendering every
+  // page with "Couldn't find next-intl config file".
+  webpack: (config) => {
+    config.resolve.alias["next-intl/config"] = `${import.meta.dirname}/src/i18n/request.js`;
+
+    return config;
+  },
 };
 
 export default nextConfig;
