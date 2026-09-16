@@ -32,8 +32,11 @@ function useEcho(channelName, event, callback) {
     const echo = getEcho();
     if (!echo) {
       // No Reverb key configured — live updates simply aren't available
-      // here (see `getEcho()`), not an error state a caller should react to.
-      setConnectionState("unavailable");
+      // here (see `getEcho()`), not an error state a caller should react
+      // to. Queued as a microtask for the same reason as the state read
+      // further down: React's set-state-in-effect check warns against
+      // calling it synchronously in the effect body.
+      queueMicrotask(() => setConnectionState("unavailable"));
       return undefined;
     }
 
