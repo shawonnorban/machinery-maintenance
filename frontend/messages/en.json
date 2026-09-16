@@ -2552,8 +2552,16 @@
         }
     },
     "scan": {
+        "scan": "Scan",
         "scanned_asset": "Scanned asset",
         "scanned_location": "Scanned location",
+        "no_actions_title": "Nothing you can do here",
+        "not_found_title": "This code doesn't match any machine you can reach",
+        "not_found_hint": "It may belong to a different company, or the label may be damaged. Ask your supervisor if this seems wrong.",
+        "location_not_found_title": "This code doesn't match any location you can reach",
+        "location_not_found_hint": "It may belong to a different company, or the label may be damaged. Ask your supervisor if this seems wrong.",
+        "machine_here_singular": ":count machine here",
+        "machines_here_plural": ":count machines here",
         "what_would_you_like_to_do": "What would you like to do?",
         "view_asset": "View asset",
         "report_breakdown": "Report breakdown",

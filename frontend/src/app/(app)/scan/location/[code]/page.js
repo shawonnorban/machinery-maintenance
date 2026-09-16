@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getT } from "@/lib/i18n-server";
 
 /**
  * Where a scanned location QR code lands — replaces Blade's
@@ -16,13 +17,14 @@ import { EmptyState } from "@/components/ui/empty-state";
  */
 export default async function ScanLocationPage({ params }) {
   const { code } = await params;
+  const [t, ta] = await Promise.all([getT("scan"), getT("asset")]);
 
   let data;
   try {
     data = await apiFetch(`/scan/locations/${code}`);
   } catch (error) {
     if (error instanceof ApiError && (error.status === 404 || error.status === 403)) {
-      return <NotFound />;
+      return <NotFound t={t} />;
     }
     throw error;
   }
@@ -31,21 +33,17 @@ export default async function ScanLocationPage({ params }) {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Scan" }]} title={location.name} description={location.full_path} />
+      <PageHeader breadcrumb={[{ label: t("scan") }]} title={location.name} description={location.full_path} />
 
       <div className="mx-auto flex max-w-lg flex-col gap-4">
         <p className="text-sm font-medium text-foreground-muted">
-          {assets.length} {assets.length === 1 ? "machine" : "machines"} here
+          {t(assets.length === 1 ? "machine_here_singular" : "machines_here_plural", { count: assets.length })}
         </p>
 
         {assets.length === 0 ? (
           <Card>
             <CardBody>
-              <EmptyState
-                icon={<Boxes />}
-                title="Nothing recorded at this location"
-                description="If a machine is actually standing here, register it or check its location assignment."
-              />
+              <EmptyState icon={<Boxes />} title={t("no_assets_here")} description={t("no_assets_here_hint")} />
             </CardBody>
           </Card>
         ) : (
@@ -64,7 +62,7 @@ export default async function ScanLocationPage({ params }) {
                       {asset.type ? ` · ${asset.type}` : ""}
                     </p>
                   </div>
-                  <StatusBadge status={asset.status} />
+                  <StatusBadge status={asset.status} label={ta(`status_${asset.status?.toLowerCase()}`)} />
                 </Link>
               ))}
             </CardBody>
@@ -75,16 +73,12 @@ export default async function ScanLocationPage({ params }) {
   );
 }
 
-function NotFound() {
+function NotFound({ t }) {
   return (
     <div className="mx-auto max-w-lg">
       <Card>
         <CardBody>
-          <EmptyState
-            icon={<MapPin />}
-            title="This code doesn't match any location you can reach"
-            description="It may belong to a different company, or the label may be damaged. Ask your supervisor if this seems wrong."
-          />
+          <EmptyState icon={<MapPin />} title={t("location_not_found_title")} description={t("location_not_found_hint")} />
         </CardBody>
       </Card>
     </div>

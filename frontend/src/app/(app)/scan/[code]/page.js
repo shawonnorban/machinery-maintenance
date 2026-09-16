@@ -4,11 +4,12 @@ import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardBody } from "@/components/ui/card";
-import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getT } from "@/lib/i18n-server";
 
 const CRITICALITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", LOW: "neutral" };
 
@@ -25,13 +26,14 @@ const ACTION_VARIANT = { primary: "primary", danger: "danger", secondary: "outli
  */
 export default async function ScanAssetPage({ params }) {
   const { code } = await params;
+  const [t, ta] = await Promise.all([getT("scan"), getT("asset")]);
 
   let data;
   try {
     data = await apiFetch(`/scan/assets/${code}`);
   } catch (error) {
     if (error instanceof ApiError && (error.status === 404 || error.status === 403)) {
-      return <NotFound />;
+      return <NotFound t={t} />;
     }
     throw error;
   }
@@ -40,7 +42,7 @@ export default async function ScanAssetPage({ params }) {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Scan" }]} title="Scanned machine" />
+      <PageHeader breadcrumb={[{ label: t("scan") }]} title={t("scanned_asset")} />
 
       <div className="mx-auto flex max-w-md flex-col gap-5">
         <Card className="border-l-4 border-l-brand">
@@ -50,11 +52,13 @@ export default async function ScanAssetPage({ params }) {
                 <p className="text-xs font-medium text-foreground-muted">{asset.asset_code}</p>
                 <h2 className="text-lg font-semibold text-foreground">{asset.name}</h2>
               </div>
-              <StatusBadge status={asset.status} />
+              <StatusBadge status={asset.status} label={ta(`status_${asset.status?.toLowerCase()}`)} />
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={CRITICALITY_TONE[asset.criticality] ?? "neutral"}>{formatStatus(asset.criticality)}</Badge>
+              <Badge variant={CRITICALITY_TONE[asset.criticality] ?? "neutral"}>
+                {ta(`criticality_${asset.criticality?.toLowerCase()}`)}
+              </Badge>
               {asset.type ? <span className="text-sm text-foreground-muted">{asset.type}</span> : null}
             </div>
 
@@ -63,13 +67,13 @@ export default async function ScanAssetPage({ params }) {
         </Card>
 
         <div>
-          <p className="mb-3 text-sm font-medium text-foreground-muted">What would you like to do?</p>
+          <p className="mb-3 text-sm font-medium text-foreground-muted">{t("what_would_you_like_to_do")}</p>
 
           {actions.length === 0 ? (
             <EmptyState
               icon={<QrCode />}
-              title="Nothing you can do here"
-              description="You don't hold a permission this machine's actions need."
+              title={t("no_actions_title")}
+              description={t("no_actions")}
             />
           ) : (
             <div className="flex flex-col gap-3">
@@ -96,16 +100,12 @@ export default async function ScanAssetPage({ params }) {
   );
 }
 
-function NotFound() {
+function NotFound({ t }) {
   return (
     <div className="mx-auto max-w-md">
       <Card>
         <CardBody>
-          <EmptyState
-            icon={<QrCode />}
-            title="This code doesn't match any machine you can reach"
-            description="It may belong to a different company, or the label may be damaged. Ask your supervisor if this seems wrong."
-          />
+          <EmptyState icon={<QrCode />} title={t("not_found_title")} description={t("not_found_hint")} />
         </CardBody>
       </Card>
     </div>
