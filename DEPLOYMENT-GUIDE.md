@@ -314,6 +314,22 @@ php artisan migrate --force
 php artisan migrate:fresh --force
 ```
 
+এটা যদি `2026_01_01_000500_create_asset_tables`-এ (বা এর পরের যেকোনো
+মাইগ্রেশনে) `SQLSTATE[42000]: ... 1067 Invalid default value for
+'<column>'` দিয়ে ব্যর্থ হয় — এটাও একটা আসল MySQL/MariaDB-নির্দিষ্ট বাগ,
+উপরেরটার থেকে আলাদা। যেসব হোস্টে সিস্টেম ভ্যারিয়েবল
+`explicit_defaults_for_timestamp` বন্ধ থাকে (অনেক shared hosting-এ এটাই
+ডিফল্ট), সেখানে একটা টেবিলে পরপর দুইটা "বেয়ার" `NOT NULL timestamp`
+কলাম (কোনো `->nullable()`, `->useCurrent()`, বা `->default()` ছাড়া)
+থাকলে দ্বিতীয়টা চুপচাপ একটা অকার্যকর `'0000-00-00 00:00:00'` ডিফল্ট
+পায়, যেটা আধুনিক MySQL-এর `NO_ZERO_DATE` strict mode `CREATE TABLE`-এর
+সময়েই প্রত্যাখ্যান করে। commit `3d51967`-এ পুরো মাইগ্রেশন ট্রি খুঁজে
+এই প্যাটার্নের প্রতিটা কলামে `->useCurrent()` যোগ করে ঠিক করা হয়েছে
+(অ্যাপ্লিকেশন কোড এমনিতেই ইনসার্টের সময় আসল ভ্যালু দেয়, তাই এই ডিফল্ট
+কখনো আসলে ব্যবহার হয় না — শুধু স্কিমাটা প্রতিটা MySQL বিল্ডে বৈধ রাখার
+জন্য)। `git pull` করে নিশ্চিত করুন কমিটটা আছে, তারপর আবার
+`migrate:fresh --force` চালান।
+
 তারপর seed করুন:
 
 ```bash
@@ -340,6 +356,21 @@ php artisan db:seed --class="Database\Seeders\DemoCustomerSeeder" --force
 অ্যাকাউন্টের পাশে স্থায়ীভাবে রাখার মতো কিছু না। কাজ শেষ হলে এটা মুছে
 ফেলুন (Platform কনসোল থেকে, বা আসল কাউকে অনবোর্ড করার আগে আবার
 `migrate:fresh` করে)।
+
+(`DemoCustomerSeeder`-এর বদলে সরাসরি এর প্যারেন্ট ক্লাস
+`--class=DemoTenantSeeder` চালালে দুইটা কোম্পানি/ফ্যাক্টরি সহ পুরো ডেমো
+ডেটা বসে — বৈধ, শুধু বড়।)
+
+এই সিডার (দুটো ভ্যারিয়েন্টই) যদি "Demo: N machines..." লাইনের পরে
+`SubscriptionContract::limitFor(): Return value must be of type ?int,
+string returned` দিয়ে ব্যর্থ হয় — এটা একটা আসল pre-existing বাগ ছিল
+`SubscriptionContract`-এ, seeder-এর নিজের সমস্যা না: এন্টাইটেলমেন্ট
+লিমিট কলামে (`included_factories`/`included_assets`/`included_users`)
+মডেলের `casts()`-এ `'integer'` cast ছিল না, তাই fresh DB fetch-এ PDO
+সেগুলো string হিসেবে ফেরত দিত আর `declare(strict_types=1)`-এর
+`?int` রিটার্ন-টাইপ চেক ভেঙে যেত। commit `3843b42`-এ ঠিক করা হয়েছে।
+`git pull` করে সিডারটা আবার চালান — স্কিমা বদলায়নি, তাই `migrate` লাগবে
+না।
 
 **Laravel অংশ শেষ করুন:**
 
@@ -494,6 +525,8 @@ definition-এর জন্য এটা কোনো নীরব অবনত�
 | `npm run` / "Run NPM Install" কয়েক মিনিট ধরে কোনো অগ্রগতি ছাড়াই আটকে থাকে | সম্ভবত একই LVE লিমিট — অনন্তকাল অপেক্ষা না করে বাতিল করে রিট্রাই করুন (§৫) |
 | `.env` ফাইল `/api/v1/.env`-এ 200 দিয়ে লোড হয় | Document root রিপো রুটে পয়েন্ট করছে, `public/`-এ না — §১.৩ দেখুন |
 | `php artisan migrate` `2026_09_03_083842_migrate_legacy_rbac_to_spatie`-তে "Key column 'role_id' doesn't exist" দিয়ে ব্যর্থ | commit `d324516`-এ ফিক্স করা হয়েছে — `git pull` করুন, ব্যর্থ চেষ্টা আগে মাঝপথে চলে থাকলে `migrate:fresh --force` চালান (কেন প্লেইন রিট্রাই না, §৪ দেখুন) |
+| `php artisan migrate` কোনো টেবিলে "1067 Invalid default value for '\<column\>'" দিয়ে ব্যর্থ | MySQL-এর `explicit_defaults_for_timestamp` off + `NO_ZERO_DATE` strict mode — commit `3d51967`-এ ফিক্স করা হয়েছে, `git pull` করে `migrate:fresh --force` চালান — §৪ দেখুন |
+| `db:seed` (Demo সিডার) "SubscriptionContract::limitFor(): Return value must be of type ?int, string returned" দিয়ে ব্যর্থ | মডেলের `casts()`-এ integer cast মিসিং ছিল — commit `3843b42`-এ ফিক্স করা হয়েছে, `git pull` করে সিডার আবার চালান, migrate লাগবে না — §৪ দেখুন |
 | §২-এর `sed` কমান্ডের পরও `APP_ENV` এখনো `local` দেখায় | সেই একটা `sed` substitution একবার চুপচাপ কাজ করেনি দেখা গেছে — `grep "^APP_ENV" .env` দিয়ে চেক করুন, দরকার হলে `nano`-তে হাতে ঠিক করুন |
 | ডিপ্লয়মেন্টের পর প্রতিটা পেজ 500 এরর দেয় | `db:seed --force` ভুলে গেছেন আর একটা নতুন setting definition মিসিং — §৮ দেখুন |
 | ডিপ্লয়মেন্টের পরও ফ্রন্টএন্ড পুরনো কনটেন্ট দেখায় | Node.js App রিস্টার্ট করা হয়নি — §৬ দেখুন |
