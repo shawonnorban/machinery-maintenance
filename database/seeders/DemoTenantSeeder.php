@@ -236,10 +236,13 @@ class DemoTenantSeeder extends Seeder
 
         // One user per role, so every permission set can be compared in the UI.
         $owner = $this->user($delta, 'COMPANY_OWNER', 'owner@delta.test', 'Rahim Uddin');
+        $this->user($delta, 'COMPANY_ADMIN', 'companyadmin@delta.test', 'Ayesha Khatun');
+        $this->user($delta, 'FACTORY_ADMIN', 'factoryadmin@delta.test', 'Delwar Hossain');
         $this->user($delta, 'FACTORY_MANAGER', 'manager@delta.test', 'Nasrin Akter');
         $maintenanceManager = $this->user($delta, 'MAINTENANCE_MANAGER', 'maintenance@delta.test', 'Kamrul Hasan');
         $engineer = $this->user($delta, 'MAINTENANCE_ENGINEER', 'engineer@delta.test', 'Sabbir Ahmed');
         $technicianUser = $this->user($delta, 'TECHNICIAN', 'technician@delta.test', 'Karim Mia');
+        $this->user($delta, 'LINE_CHIEF', 'linechief@delta.test', 'Moniruzzaman Khan');
         $this->user($delta, 'STORE_MANAGER', 'store@delta.test', 'Farhana Islam');
         $storekeeper = $this->user($delta, 'STOREKEEPER', 'storekeeper@delta.test', 'Jashim Uddin');
         $this->user($delta, 'AUDITOR', 'auditor@delta.test', 'Tanvir Rahman');
@@ -284,10 +287,13 @@ class DemoTenantSeeder extends Seeder
 
         $accounts = [
             ['owner@delta.test', 'Company Owner', $omega ? 'Delta + Omega (switcher)' : 'Delta'],
+            ['companyadmin@delta.test', 'Company Admin', 'Delta'],
+            ['factoryadmin@delta.test', 'Factory Admin', 'Delta, all factories'],
             ['manager@delta.test', 'Factory Manager', 'Delta, all factories'],
             ['maintenance@delta.test', 'Maintenance Manager', 'Delta, all factories'],
             ['engineer@delta.test', 'Maintenance Engineer', 'Delta, all factories'],
             ['technician@delta.test', 'Technician', 'Delta, all factories'],
+            ['linechief@delta.test', 'Line Chief', 'Delta, all factories'],
             ['store@delta.test', 'Store Manager', 'Delta, all factories'],
             ['storekeeper@delta.test', 'Storekeeper', 'Delta, all factories'],
             ['auditor@delta.test', 'Auditor', 'Delta, read-only'],

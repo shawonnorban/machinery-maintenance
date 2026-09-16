@@ -25,7 +25,7 @@ namespace Database\Seeders;
  *
  *   php artisan db:seed --class=Database\\Seeders\\DemoCustomerSeeder
  *
- * And on a live installation, know what it is: nine sign-ins sharing one
+ * And on a live installation, know what it is: a dozen sign-ins sharing one
  * well-known password. Fine for showing somebody the product, not something to
  * leave sitting beside real customers.
  */
