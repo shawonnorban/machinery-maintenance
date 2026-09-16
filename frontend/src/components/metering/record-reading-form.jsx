@@ -9,12 +9,14 @@ import { DateTimeField } from "@/components/ui/date-time-field";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
 import { saveDraft, flush } from "@/lib/offline/queue";
+import { useT } from "@/lib/i18n";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const t = useT("metering");
   return (
     <Button type="submit" loading={pending}>
-      Save reading
+      {t("save_reading")}
     </Button>
   );
 }
@@ -37,6 +39,8 @@ function SubmitButton() {
  */
 function RecordReadingForm({ action, meterId }) {
   const toastManager = useToastManager();
+  const t = useT("metering");
+  const tc = useT("common");
 
   // Wrapped so `useActionState`'s action always settles into a state object
   // rather than rejecting — a reading taken while walking the floor, where
@@ -70,12 +74,12 @@ function RecordReadingForm({ action, meterId }) {
   useEffect(() => {
     if (state?.status === "success") {
       formRef.current?.reset();
-      toastManager.add({ title: "Reading recorded", type: "success" });
+      toastManager.add({ title: t("reading_recorded"), type: "success" });
     } else if (state?.status === "queued") {
       formRef.current?.reset();
       toastManager.add({
-        title: "Reading saved on this device",
-        description: "Sending now — check the sync icon if you're offline.",
+        title: t("reading_saved_offline"),
+        description: tc("sending_now_check_sync"),
         type: "success",
       });
     }
@@ -96,19 +100,19 @@ function RecordReadingForm({ action, meterId }) {
 
   return (
     <form ref={formRef} action={formAction} className="flex flex-col gap-4">
-      <p className="font-semibold text-foreground">Record a reading</p>
+      <p className="font-semibold text-foreground">{t("record_reading")}</p>
 
       <div className="grid grid-cols-2 gap-3">
-        <FormField label="Reading" required error={state?.errors?.value?.[0]}>
+        <FormField label={t("value")} required error={state?.errors?.value?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="value" type="number" step="0.0001" min="0" required autoFocus />}
         </FormField>
 
-        <FormField label="Read at" error={state?.errors?.reading_at?.[0]}>
+        <FormField label={t("read_at")} error={state?.errors?.reading_at?.[0]}>
           {(fieldProps) => <DateTimeField {...fieldProps} ref={readingAtRef} name="reading_at" />}
         </FormField>
       </div>
 
-      <FormField label="Note" error={state?.errors?.notes?.[0]}>
+      <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
         {(fieldProps) => <Textarea {...fieldProps} name="notes" rows={2} maxLength={500} />}
       </FormField>
 

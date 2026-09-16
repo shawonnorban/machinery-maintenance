@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Gauge } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/card";
@@ -5,6 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { RecordReadingForm } from "@/components/metering/record-reading-form";
 import { formatQuantity } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 /**
  * The meters attached to this machine, each with its own record-reading
@@ -19,12 +22,14 @@ import { formatQuantity } from "@/lib/format";
  * came to do: log a number.
  */
 function MeteringTab({ meters, actions }) {
+  const t = useT("metering");
+
   if (meters.length === 0) {
     return (
       <EmptyState
         icon={<Gauge />}
-        title="No meters on this machine"
-        description="Attach one from the Metering screen to start tracking readings here."
+        title={t("no_meters_on_asset")}
+        description={t("no_meters_on_asset_hint")}
       />
     );
   }
@@ -44,10 +49,10 @@ function MeteringTab({ meters, actions }) {
               <span className="text-xs text-foreground-muted">
                 {meter.last_reading_at ? (
                   <>
-                    Last read <FormattedDateTime value={meter.last_reading_at} />
+                    {t("last_read_at")} <FormattedDateTime value={meter.last_reading_at} />
                   </>
                 ) : (
-                  "Never read"
+                  t("never_read")
                 )}
               </span>
             </div>

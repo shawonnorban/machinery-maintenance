@@ -8,12 +8,14 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const t = useT("metering");
   return (
     <Button type="submit" variant="danger" size="sm" loading={pending}>
-      Record replacement
+      {t("record_replacement")}
     </Button>
   );
 }
@@ -33,11 +35,12 @@ function ResetMeterForm({ action }) {
   const [state, formAction] = useActionState(action, null);
   const formRef = useRef(null);
   const toastManager = useToastManager();
+  const t = useT("metering");
 
   useEffect(() => {
     if (state?.status === "success") {
       formRef.current?.reset();
-      toastManager.add({ title: "Meter replacement recorded", type: "success" });
+      toastManager.add({ title: t("meter_reset"), type: "success" });
       queueMicrotask(() => setOpen(false));
     }
     // toastManager is not a stable reference across renders — including it
@@ -54,16 +57,16 @@ function ResetMeterForm({ action }) {
         className="flex items-center gap-1 text-xs text-foreground-muted hover:text-foreground"
       >
         <ChevronRight className={cn("size-3.5 transition-transform duration-150", open && "rotate-90")} />
-        The meter was replaced
+        {t("replace_meter")}
       </button>
 
       {open ? (
         <form ref={formRef} action={formAction} className="mt-3 flex flex-col gap-3">
-          <FormField label="Reading on the new meter" required error={state?.errors?.new_value?.[0]}>
+          <FormField label={t("new_value")} required error={state?.errors?.new_value?.[0]}>
             {(fieldProps) => <Input {...fieldProps} name="new_value" type="number" step="0.0001" min="0" defaultValue="0" required />}
           </FormField>
 
-          <FormField label="Why" required error={state?.errors?.reason?.[0]}>
+          <FormField label={t("reason")} required error={state?.errors?.reason?.[0]}>
             {(fieldProps) => <Input {...fieldProps} name="reason" type="text" maxLength={500} required />}
           </FormField>
 

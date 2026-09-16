@@ -7,11 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { formatQuantity } from "@/lib/format";
-
-const STATUS_OPTIONS = [
-  { value: "ACTIVE", label: "Active" },
-  { value: "INACTIVE", label: "Inactive" },
-];
+import { useT } from "@/lib/i18n";
 
 const STALE_AFTER_DAYS = 14;
 
@@ -32,6 +28,12 @@ function isStale(meter) {
  */
 function MetersTable({ meters, meta, page, status, assetId }) {
   const router = useRouter();
+  const t = useT("metering");
+
+  const STATUS_OPTIONS = [
+    { value: "ACTIVE", label: t("active") },
+    { value: "INACTIVE", label: t("inactive") },
+  ];
 
   function navigate(next) {
     const params = new URLSearchParams({ page: String(next.page ?? page), status: next.status ?? status });
@@ -49,7 +51,7 @@ function MetersTable({ meters, meta, page, status, assetId }) {
         columns={[
           {
             key: "asset",
-            header: "Asset",
+            header: t("asset"),
             render: (meter) => (
               <div>
                 <Link href={`/metering/${meter.id}`} className="font-medium text-brand hover:underline">
@@ -61,40 +63,40 @@ function MetersTable({ meters, meta, page, status, assetId }) {
           },
           {
             key: "meter",
-            header: "Meter",
+            header: t("meter"),
             render: (meter) => (
               <div className="flex items-center gap-2">
                 {meter.type?.name}
-                {!meter.type?.is_cumulative ? <Badge variant="neutral">May go down</Badge> : null}
+                {!meter.type?.is_cumulative ? <Badge variant="neutral">{t("non_cumulative")}</Badge> : null}
               </div>
             ),
           },
           {
             key: "current_value",
-            header: "Current reading",
+            header: t("current_value"),
             align: "right",
             render: (meter) => formatQuantity(meter.current_value, meter.type?.unit),
           },
           {
             key: "last_reading_at",
-            header: "Last read",
+            header: t("last_read_at"),
             render: (meter) =>
               meter.last_reading_at ? (
                 <span className={isStale(meter) ? "font-semibold text-danger" : undefined}>
                   <FormattedDateTime value={meter.last_reading_at} />
-                  {isStale(meter) ? <div className="text-xs font-normal">Not read for over a fortnight</div> : null}
+                  {isStale(meter) ? <div className="text-xs font-normal">{t("stale")}</div> : null}
                 </span>
               ) : (
-                <span className="text-foreground-muted">Never read</span>
+                <span className="text-foreground-muted">{t("never_read")}</span>
               ),
           },
         ]}
         rows={meters}
         rowKey={(meter) => meter.id}
-        emptyTitle="No meters fitted."
-        emptyDescription="Fit a meter to a machine from its own screen. Usage-based maintenance has nothing to hang off until one exists."
+        emptyTitle={t("no_meters")}
+        emptyDescription={t("no_meters_hint")}
         rowActions={(meter) => [
-          { label: "Record reading", onSelect: () => router.push(`/metering/${meter.id}`) },
+          { label: t("record_reading"), onSelect: () => router.push(`/metering/${meter.id}`) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}

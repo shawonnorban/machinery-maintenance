@@ -4,6 +4,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 /**
  * Column `render` functions and `rowKey` can't cross the Server→Client
@@ -13,25 +14,27 @@ import { formatNumber } from "@/lib/format";
  * client side that actually needs to call them per row.
  */
 function ReadingsTable({ readings }) {
+  const t = useT("metering");
+
   return (
     <DataTable
       columns={[
         {
           key: "reading_at",
-          header: "Read at",
+          header: t("read_at"),
           render: (reading) => <FormattedDateTime value={reading.reading_at} />,
         },
-        { key: "value", header: "Reading", align: "right", render: (reading) => formatNumber(reading.value) },
+        { key: "value", header: t("value"), align: "right", render: (reading) => formatNumber(reading.value) },
         {
           key: "delta",
-          header: "Since last",
+          header: t("consumed"),
           align: "right",
           render: (reading) =>
-            reading.is_reset_baseline ? <Badge variant="warning">Replaced</Badge> : formatNumber(reading.delta),
+            reading.is_reset_baseline ? <Badge variant="warning">{t("replacement")}</Badge> : formatNumber(reading.delta),
         },
         {
           key: "source",
-          header: "Source",
+          header: t("source"),
           render: (reading) => (
             <>
               {reading.source}
@@ -42,7 +45,7 @@ function ReadingsTable({ readings }) {
       ]}
       rows={readings}
       rowKey={(reading) => reading.id}
-      emptyTitle="No readings yet."
+      emptyTitle={t("no_readings")}
     />
   );
 }

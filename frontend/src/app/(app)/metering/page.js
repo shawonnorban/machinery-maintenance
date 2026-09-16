@@ -1,6 +1,7 @@
 import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetersTable } from "@/components/metering/meters-table";
+import { getT } from "@/lib/i18n-server";
 
 /**
  * Meters (docs/03-API-Specification.md §10; behaviour mirrors the Blade
@@ -23,15 +24,11 @@ export default async function MetersPage({ searchParams }) {
 
   const query = new URLSearchParams({ page: String(page), status });
   if (assetId) query.set("asset_id", assetId);
-  const meters = await apiFetch(`/meters?${query.toString()}`, { includeMeta: true });
+  const [meters, t] = await Promise.all([apiFetch(`/meters?${query.toString()}`, { includeMeta: true }), getT("metering")]);
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: "Meters" }]}
-        title="Meters"
-        description='What is counted on each machine. A plan can say "service every 500 running hours", and until somebody records the hours it can never come due.'
-      />
+      <PageHeader breadcrumb={[{ label: t("meters") }]} title={t("meters")} description={t("intro")} />
 
       <MetersTable meters={meters.data} meta={meters.meta} page={page} status={status} assetId={assetId} />
     </>
