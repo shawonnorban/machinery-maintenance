@@ -9,6 +9,14 @@ const nextConfig = {
   // processes at all; it only makes the build slower, never wrong.
   experimental: {
     cpus: 1,
+
+    // Same shared-hosting constraint as `cpus: 1` above, the memory side of
+    // it: the account's LVE memory ceiling is tight enough that a webpack
+    // build gets OOM-killed outright partway through (confirmed live,
+    // worsening on each retry as leftover `.next` cache made the next
+    // build do more work, not less). This trades some build time for a
+    // materially smaller peak heap.
+    webpackMemoryOptimizations: true,
   },
 
   // Next.js 15+ blocks cross-origin requests to dev-only resources
