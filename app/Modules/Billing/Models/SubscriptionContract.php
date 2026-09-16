@@ -57,6 +57,9 @@ class SubscriptionContract extends BaseModel
             'cancelled_at' => 'immutable_datetime',
             'pricing_model_json' => 'array',
             'auto_renew' => 'boolean',
+            'included_factories' => 'integer',
+            'included_assets' => 'integer',
+            'included_users' => 'integer',
         ];
     }
 
