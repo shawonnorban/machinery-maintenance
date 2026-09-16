@@ -87,7 +87,7 @@ return new class extends Migration
             $table->decimal('old_value', 18, 4);
             $table->decimal('new_value', 18, 4);
             $table->string('reason');
-            $table->timestamp('reset_at');
+            $table->timestamp('reset_at')->useCurrent();
             $table->foreignUlid('reset_by')->nullable();
             $table->timestamp('created_at')->nullable();
 

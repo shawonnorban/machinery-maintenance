@@ -80,8 +80,12 @@ return new class extends Migration
             $table->string('resource_type', 64)->nullable();
             $table->ulid('resource_id')->nullable();
 
-            $table->timestamp('locked_at');
-            $table->timestamp('expires_at');
+            // ->useCurrent(): see the note on `asset_transfer_history.
+            // requested_at` (2026_01_01_000500_create_asset_tables.php) —
+            // two bare NOT NULL timestamps in a row here hits the same MySQL
+            // "second one gets an invalid zero-date default" issue.
+            $table->timestamp('locked_at')->useCurrent();
+            $table->timestamp('expires_at')->useCurrent();
             $table->timestamp('created_at')->nullable();
 
             // The claim itself. Two concurrent requests race to insert this

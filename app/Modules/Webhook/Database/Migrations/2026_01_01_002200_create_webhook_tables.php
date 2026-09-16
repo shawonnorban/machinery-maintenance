@@ -90,7 +90,7 @@ return new class extends Migration
             $table->timestamp('last_attempted_at')->nullable();
             $table->timestamp('next_retry_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
 
             $table->index(['company_id', 'status', 'next_retry_at'], 'webhook_deliveries_retry_index');
             // The same three columns without the company, because the retry

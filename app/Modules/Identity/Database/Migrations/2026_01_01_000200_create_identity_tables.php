@@ -140,7 +140,7 @@ return new class extends Migration
             $table->string('ip_address', 45);
             $table->boolean('successful');
             $table->string('failure_reason', 64)->nullable();
-            $table->timestamp('attempted_at');
+            $table->timestamp('attempted_at')->useCurrent();
 
             $table->index(['email', 'attempted_at']);
             $table->index('attempted_at');

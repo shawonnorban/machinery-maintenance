@@ -90,7 +90,7 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             // Same retention as a report: a raw export of a company's asset
             // register is the same data with fewer columns (SRS 35).
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->useCurrent();
             $table->timestamps();
 
             $table->index(['company_id', 'requested_by', 'created_at'], 'export_jobs_owner_index');

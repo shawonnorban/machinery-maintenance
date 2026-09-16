@@ -129,7 +129,7 @@ return new class extends Migration
             $table->string('method', 24); // BANK_TRANSFER|CASH|CHEQUE|CARD|MOBILE|GATEWAY
             $table->decimal('amount', 18, 4);
             $table->string('currency', 3)->default('BDT');
-            $table->timestamp('paid_at');
+            $table->timestamp('paid_at')->useCurrent();
             $table->string('status', 16)->default('RECEIVED'); // RECEIVED|REVERSED
             $table->text('notes')->nullable();
             $table->foreignUlid('recorded_by')->nullable()->constrained('users')->nullOnDelete();
@@ -148,7 +148,7 @@ return new class extends Migration
             $table->string('currency', 3)->default('BDT');
             $table->text('reason');
             $table->string('status', 16)->default('ISSUED'); // ISSUED|SETTLED|CANCELLED
-            $table->timestamp('issued_at');
+            $table->timestamp('issued_at')->useCurrent();
             $table->foreignUlid('issued_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
@@ -167,7 +167,7 @@ return new class extends Migration
             $table->string('currency', 3)->default('BDT');
             $table->text('reason');
             $table->string('status', 16)->default('ISSUED'); // ISSUED|APPLIED|CANCELLED
-            $table->timestamp('issued_at');
+            $table->timestamp('issued_at')->useCurrent();
             $table->foreignUlid('issued_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
@@ -186,7 +186,7 @@ return new class extends Migration
             $table->decimal('limit_value', 18, 4)->nullable();
             $table->boolean('exceeded')->default(false);
 
-            $table->timestamp('measured_at');
+            $table->timestamp('measured_at')->useCurrent();
             $table->date('period_start');
             $table->date('period_end');
             $table->timestamps();

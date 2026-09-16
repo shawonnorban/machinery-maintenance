@@ -36,11 +36,15 @@ return new class extends Migration
             // a sentence somebody has to write is one they have to mean.
             $table->string('reason', 500);
 
-            $table->timestamp('starts_at');
+            $table->timestamp('starts_at')->useCurrent();
 
             // Time-boxed by construction. There is no "until revoked" option,
             // because that is how a support grant becomes a standing account.
-            $table->timestamp('expires_at');
+            // ->useCurrent(): see the note on `asset_transfer_history.
+            // requested_at` (2026_01_01_000500_create_asset_tables.php) — two
+            // bare NOT NULL timestamps in a row here hits the same MySQL
+            // "second one gets an invalid zero-date default" issue.
+            $table->timestamp('expires_at')->useCurrent();
 
             // Set when it is handed back early, which is the normal case: the
             // support call ends before the clock does.

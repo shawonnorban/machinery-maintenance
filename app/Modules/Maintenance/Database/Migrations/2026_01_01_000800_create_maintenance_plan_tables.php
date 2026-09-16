@@ -92,7 +92,7 @@ return new class extends Migration
             $table->foreignUlid('maintenance_plan_id')->constrained('maintenance_plans')->cascadeOnDelete();
             $table->foreignUlid('asset_id')->constrained('assets')->cascadeOnDelete();
 
-            $table->timestamp('due_at');
+            $table->timestamp('due_at')->useCurrent();
             // Populated alongside due_at for a combined rule, so whichever
             // threshold is reached first can trigger the occurrence.
             $table->decimal('due_meter', 18, 4)->nullable();

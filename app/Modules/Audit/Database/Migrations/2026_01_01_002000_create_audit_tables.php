@@ -57,7 +57,7 @@ return new class extends Migration
             $table->foreignUlid('impersonated_by')->nullable()->constrained('users')->nullOnDelete();
 
             // No updated_at: nothing here is ever updated.
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
 
             $table->index(['company_id', 'created_at'], 'audit_logs_company_time_index');
             $table->index(['company_id', 'entity_type', 'entity_id'], 'audit_logs_entity_index');

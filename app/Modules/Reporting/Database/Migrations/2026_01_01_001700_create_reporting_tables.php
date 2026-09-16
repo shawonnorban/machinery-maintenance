@@ -45,7 +45,7 @@ return new class extends Migration
             // Generated files are a copy of data that lives elsewhere. Keeping
             // them for ever means keeping a tenant's cost figures in a file
             // nobody remembers exists (SRS 35).
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->useCurrent();
             $table->timestamps();
 
             $table->index(['company_id', 'user_id', 'created_at'], 'report_jobs_owner_index');

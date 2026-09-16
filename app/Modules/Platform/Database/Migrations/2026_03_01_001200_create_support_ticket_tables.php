@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('status', 16)->default('OPEN');
 
             // For the inbox to sort by without a join to the messages table.
-            $table->timestamp('last_message_at');
+            $table->timestamp('last_message_at')->useCurrent();
 
             $table->timestamp('resolved_at')->nullable();
             $table->timestamp('closed_at')->nullable();
@@ -66,7 +66,7 @@ return new class extends Migration
 
             $table->text('body');
 
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
 
             $table->index('ticket_id');
         });

@@ -101,7 +101,7 @@ return new class extends Migration
             $table->foreignUlid('work_order_id')->constrained('work_orders')->cascadeOnDelete();
             $table->foreignUlid('technician_id')->constrained('technicians')->cascadeOnDelete();
             $table->foreignUlid('assigned_by')->nullable();
-            $table->timestamp('assigned_at');
+            $table->timestamp('assigned_at')->useCurrent();
             // Soft-ended rather than deleted, so "who was on this job" stays
             // answerable after a reassignment.
             $table->timestamp('unassigned_at')->nullable();
@@ -149,7 +149,7 @@ return new class extends Migration
             // shortage visible as its own cause instead of inflating MTTR.
             $table->string('reason_code', 32);
             $table->text('notes')->nullable();
-            $table->timestamp('started_at');
+            $table->timestamp('started_at')->useCurrent();
             $table->timestamp('ended_at')->nullable();
             $table->unsignedInteger('minutes')->nullable();
             $table->foreignUlid('created_by')->nullable();
@@ -196,7 +196,7 @@ return new class extends Migration
             $table->foreignUlid('followup_work_order_id')->nullable();
 
             $table->foreignUlid('completed_by')->nullable();
-            $table->timestamp('completed_at');
+            $table->timestamp('completed_at')->useCurrent();
             $table->timestamps();
 
             $table->unique(['work_order_id', 'checklist_item_id'], 'wo_checklist_result_unique');

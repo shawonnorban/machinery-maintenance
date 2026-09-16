@@ -214,7 +214,7 @@ return new class extends Migration
             $table->string('from_status', 32)->nullable();
             $table->string('to_status', 32);
             $table->foreignUlid('changed_by')->nullable();
-            $table->timestamp('changed_at');
+            $table->timestamp('changed_at')->useCurrent();
             $table->string('reason')->nullable();
             // Set when the change was driven by a breakdown or work order
             // rather than by a person.
@@ -239,7 +239,18 @@ return new class extends Migration
             $table->text('notes')->nullable();
 
             $table->foreignUlid('requested_by');
-            $table->timestamp('requested_at');
+            // ->useCurrent() rather than a bare NOT NULL timestamp: the
+            // application always supplies a real value on insert, so this
+            // never actually takes effect, but MySQL/MariaDB builds with
+            // `explicit_defaults_for_timestamp` off silently assign the
+            // *second* such column in a table an implicit zero-date default
+            // ('0000-00-00 00:00:00') that `NO_ZERO_DATE` strict mode then
+            // rejects at CREATE TABLE time — found live on a shared-hosting
+            // MySQL that has that setting off (SQLSTATE 42000 / error 1067,
+            // "Invalid default value for 'transfer_at'": the second bare
+            // NOT NULL timestamp here, after `requested_at`). An explicit
+            // default is valid on every build regardless of that setting.
+            $table->timestamp('requested_at')->useCurrent();
             $table->foreignUlid('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->foreignUlid('received_by')->nullable();
@@ -248,7 +259,7 @@ return new class extends Migration
             $table->timestamp('rejected_at')->nullable();
             $table->string('rejection_reason')->nullable();
 
-            $table->timestamp('transfer_at');
+            $table->timestamp('transfer_at')->useCurrent();
             $table->foreignUlid('reverses_transfer_id')->nullable();
             $table->timestamp('created_at')->nullable();
 

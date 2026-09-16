@@ -68,7 +68,7 @@ return new class extends Migration
             $table->decimal('pm_compliance_percent', 6, 2)->nullable();
 
             $table->unsignedSmallInteger('calculation_version');
-            $table->timestamp('computed_at');
+            $table->timestamp('computed_at')->useCurrent();
             $table->timestamps();
 
             // The version is part of the key: a definition change backfills a
