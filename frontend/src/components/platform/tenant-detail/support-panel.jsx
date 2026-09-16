@@ -1,10 +1,11 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import { LifeBuoy } from "lucide-react";
+import { LifeBuoy, LogIn } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardBody, CardFooter } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -16,12 +17,14 @@ import { useToastManager } from "@/components/ui/toast";
 /**
  * Support access to a customer's data (SRS 5.4) — an audited, time-boxed
  * grant, never standing access. Stepping *inside* the grant as a named user
- * (`enter`) mints a bearer token scoped to this app's own separately-
- * authenticated Next.js session, which has no handoff into it yet (a
- * documented gap in `TenantController::enterSupport`'s own docblock) — so
- * this panel manages grants without offering to enter one.
+ * (`enter`) mints a bearer token scoped to that user and company
+ * (`PlatformSupportGrantApiController::enter`, already built server-side);
+ * `enterAction` below sets that token as this app's own tenant session
+ * cookie and redirects into `/` — no cross-app handoff needed the way the
+ * old Blade console required one, since the platform console and the
+ * tenant app are the same Next.js deployment.
  */
-function SupportPanel({ grants, openAction, closeAction }) {
+function SupportPanel({ grants, members, openAction, closeAction, enterAction }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -35,7 +38,7 @@ function SupportPanel({ grants, openAction, closeAction }) {
         ) : (
           <div className="flex flex-col divide-y divide-border">
             {grants.map((grant) => (
-              <GrantRow key={grant.id} grant={grant} closeAction={closeAction} />
+              <GrantRow key={grant.id} grant={grant} members={members} closeAction={closeAction} enterAction={enterAction} />
             ))}
           </div>
         )}
@@ -50,14 +53,26 @@ function SupportPanel({ grants, openAction, closeAction }) {
   );
 }
 
-function GrantRow({ grant, closeAction }) {
+function GrantRow({ grant, members, closeAction, enterAction }) {
   const [pending, startTransition] = useTransition();
+  const [actingAs, setActingAs] = useState("");
+  const [error, setError] = useState(null);
   const toastManager = useToastManager();
 
   function close() {
     startTransition(async () => {
       const result = await closeAction(grant.id);
       if (result?.status === "error") toastManager.add({ title: result.message, type: "danger" });
+    });
+  }
+
+  function enter() {
+    setError(null);
+    startTransition(async () => {
+      // `enterAction` redirects to `/` on success (`redirect()` inside the
+      // Server Action) — a returned value only ever means it didn't.
+      const result = await enterAction(grant.id, actingAs);
+      if (result?.status === "error") setError(result.message);
     });
   }
 
@@ -71,11 +86,26 @@ function GrantRow({ grant, closeAction }) {
         <p className="text-xs text-foreground-subtle">
           Opened <RelativeTime value={grant.starts_at} /> · expires <RelativeTime value={grant.expires_at} />
         </p>
+        {error ? <p className="mt-1 text-xs text-danger">{error}</p> : null}
       </div>
       {grant.is_active ? (
-        <Button size="sm" variant="outline" loading={pending} onClick={close}>
-          Close now
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="w-44">
+            <Select
+              options={members.map((member) => ({ value: member.id, label: member.name }))}
+              value={actingAs}
+              onValueChange={setActingAs}
+              placeholder="Act as…"
+              disabled={pending}
+            />
+          </div>
+          <Button size="sm" variant="primary" loading={pending} disabled={!actingAs} onClick={enter}>
+            <LogIn /> Enter
+          </Button>
+          <Button size="sm" variant="outline" loading={pending} onClick={close}>
+            Close now
+          </Button>
+        </div>
       ) : null}
     </div>
   );

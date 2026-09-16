@@ -18,6 +18,7 @@ use App\Modules\Breakdown\Services\BreakdownScopeGuard;
 use App\Modules\Tenancy\Models\ProductionLine;
 use App\Modules\WorkOrder\Models\Technician;
 use App\Modules\WorkOrder\Models\WorkOrder;
+use App\Shared\Files\Actions\StoreFileAttachment;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiException;
 use App\Shared\Http\Api\ApiResponse;
@@ -27,6 +28,8 @@ use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -205,7 +208,7 @@ class BreakdownApiController extends ApiController
         ]);
     }
 
-    public function store(Request $request, ReportBreakdown $action): JsonResponse
+    public function store(Request $request, ReportBreakdown $action, StoreFileAttachment $files): JsonResponse
     {
         $this->allow('breakdown.breakdown.create');
 
@@ -221,6 +224,16 @@ class BreakdownApiController extends ApiController
             'failure_code_id' => ['nullable', 'string', 'size:26'],
             'downtime_reason_code_id' => ['nullable', 'string', 'size:26'],
             'production_order_reference' => ['nullable', 'string', 'max:255'],
+            // A photo taken with the report, not uploaded separately — the
+            // offline queue (frontend/src/lib/offline/queue.js) sends this
+            // whole payload as one JSON body through `/api/offline-relay`,
+            // so a photo attached at report time has to travel as base64
+            // inside it rather than as a second, separately-retried
+            // multipart request. `POST /breakdowns/{breakdown}/attachments`
+            // (`BreakdownAttachmentApiController`) is the normal, online-only
+            // path for anything added after the report exists.
+            'photo_base64' => ['nullable', 'string'],
+            'photo_filename' => ['nullable', 'string', 'max:255'],
         ]);
 
         // A caller sending a bare "2026-08-18T21:50" (no offset) means that
@@ -236,7 +249,52 @@ class BreakdownApiController extends ApiController
 
         $breakdown = $action->handle($data, $this->caller()->auditUserId());
 
+        if (! empty($data['photo_base64'])) {
+            $this->attachPhoto($breakdown, $data['photo_base64'], $data['photo_filename'] ?? 'photo.jpg', $files);
+        }
+
         return ApiResponse::created($this->detail($breakdown));
+    }
+
+    /**
+     * Decodes the report form's inline photo and stores it the same way
+     * `BreakdownAttachmentApiController::store()` does. The breakdown row
+     * itself is already committed by the time this runs — a malformed or
+     * over-size photo is logged and dropped rather than failing the whole
+     * report, since a stopped machine with no photo is still a long way
+     * better than a stopped machine with no report at all.
+     */
+    private function attachPhoto(Breakdown $breakdown, string $base64, string $filename, StoreFileAttachment $files): void
+    {
+        // A `data:image/jpeg;base64,...` URL, as `FileReader.readAsDataURL()`
+        // produces client-side — strip the prefix if present, decode raw
+        // base64 either way.
+        if (str_starts_with($base64, 'data:') && str_contains($base64, ',')) {
+            $base64 = substr($base64, strpos($base64, ',') + 1);
+        }
+
+        $bytes = base64_decode($base64, true);
+
+        if ($bytes === false) {
+            Log::warning('Breakdown report photo was not valid base64; skipped.', ['breakdown_id' => $breakdown->id]);
+
+            return;
+        }
+
+        $tmpPath = tempnam(sys_get_temp_dir(), 'brk-photo-');
+        file_put_contents($tmpPath, $bytes);
+
+        try {
+            $upload = new UploadedFile($tmpPath, $filename, mime_content_type($tmpPath) ?: null, null, true);
+            $files->handle($upload, 'breakdown', $breakdown->id, $this->caller()->auditUserId());
+        } catch (ValidationException $e) {
+            Log::warning('Breakdown report photo was rejected.', [
+                'breakdown_id' => $breakdown->id,
+                'error' => $e->getMessage(),
+            ]);
+        } finally {
+            @unlink($tmpPath);
+        }
     }
 
     /**

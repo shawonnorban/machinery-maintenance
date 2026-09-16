@@ -39,6 +39,7 @@ export default async function TenantDetailPage({ params }) {
     resetPassword: actions.resetMemberPassword.bind(null, companyId),
     openSupportGrant: actions.openSupportGrant.bind(null, companyId),
     closeSupportGrant: actions.closeSupportGrant.bind(null, companyId),
+    enterSupportGrant: actions.enterSupportGrant,
   };
 
   return (

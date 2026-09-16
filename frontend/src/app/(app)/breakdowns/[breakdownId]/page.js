@@ -14,10 +14,12 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { ChecklistTab } from "@/components/work-orders/checklist-tab";
 import { LaborTab } from "@/components/work-orders/labor-tab";
 import { PartsTab } from "@/components/work-orders/parts-tab";
+import { AttachmentsTab } from "@/components/work-orders/attachments-tab";
 import {
   acknowledge, arrive, startRepair, completeRepair, resumeProduction, resume, assign, hold, close, cancel,
   raiseWorkOrder, startWorkOrder, correctTimestamp,
   recordChecklistAnswer, recordLabor, deleteLabor, requestPart, issuePart, issueRequestedPart, consumePart, returnPart,
+  uploadAttachment,
 } from "./actions";
 
 const WORK_ORDER_TERMINAL_STATUSES = ["CLOSED", "CANCELLED"];
@@ -40,10 +42,11 @@ const PRIORITY_BORDER = { CRITICAL: "border-l-danger", HIGH: "border-l-warning",
 export default async function BreakdownDetailPage({ params }) {
   const { breakdownId } = await params;
 
-  const [breakdown, downtime, formOptions] = await Promise.all([
+  const [breakdown, downtime, formOptions, attachments] = await Promise.all([
     apiFetch(`/breakdowns/${breakdownId}`),
     apiFetch(`/breakdowns/${breakdownId}/downtime`),
     apiFetch(`/breakdowns/${breakdownId}/form-options`),
+    apiFetch(`/breakdowns/${breakdownId}/attachments`),
   ]);
 
   // Raised via the "Raise work order" action (`RaiseBreakdownWorkOrder`,
@@ -126,6 +129,7 @@ export default async function BreakdownDetailPage({ params }) {
           <Tabs defaultValue="overview">
             <TabsList>
               <TabsTab value="overview">Overview</TabsTab>
+              <TabsTab value="attachments">Attachments</TabsTab>
               <TabsTab value="timeline">Timeline</TabsTab>
               <TabsTab value="downtime">Downtime</TabsTab>
               {workOrderId ? (
@@ -155,6 +159,14 @@ export default async function BreakdownDetailPage({ params }) {
                   </>
                 ) : null}
               </div>
+            </TabsPanel>
+
+            <TabsPanel value="attachments">
+              <AttachmentsTab
+                attachments={attachments}
+                isTerminal={breakdown.is_terminal}
+                action={uploadAttachment.bind(null, breakdownId)}
+              />
             </TabsPanel>
 
             <TabsPanel value="timeline">

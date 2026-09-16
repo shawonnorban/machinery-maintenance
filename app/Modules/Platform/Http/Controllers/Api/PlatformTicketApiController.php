@@ -58,9 +58,27 @@ class PlatformTicketApiController extends ApiController
 
     public function show(string $ticket): JsonResponse
     {
-        $target = $this->ticket($ticket)->load(['messages.author:id,name', 'company:id,name,code']);
+        // `SupportTicketMessage` carries `BelongsToTenant` — `load()` builds
+        // a fresh query for the relation regardless of how the parent
+        // ticket was fetched, so it reapplies that scope on its own and
+        // throws under a platform request, which has no tenant context by
+        // design (a pre-existing bug: nothing had exercised this endpoint
+        // against a ticket that actually had messages until now).
+        $target = $this->ticket($ticket)->load([
+            'messages' => fn ($query) => $query->withoutGlobalScope(TenantScope::class)->with('author:id,name'),
+            'company:id,name,code',
+        ]);
 
-        return ApiResponse::ok($this->detail($target));
+        return ApiResponse::ok($this->detail($target) + [
+            // Who a ticket can be reassigned to — mirrors the web
+            // `PlatformTicketController::show()`'s own `staff` variable
+            // exactly. Sent only here, not on `index()`, since only the
+            // thread screen has anywhere to put a picker.
+            'staff' => User::where('is_platform_admin', true)->where('status', 'ACTIVE')
+                ->orderBy('name')->get(['id', 'name'])
+                ->map(fn (User $user): array => ['id' => $user->id, 'name' => $user->name])
+                ->all(),
+        ]);
     }
 
     public function reply(Request $request, string $ticket): JsonResponse
@@ -73,7 +91,14 @@ class PlatformTicketApiController extends ApiController
             throw ApiException::of(ErrorCode::CONFLICT, implode(' ', $e->validator->errors()->all()));
         }
 
-        return ApiResponse::ok($this->detail($this->ticket($ticket)->load(['messages.author:id,name', 'company:id,name,code'])));
+        // Same tenant-scope fix as `show()` — `SupportTicketMessage` carries
+        // `BelongsToTenant`, and this endpoint runs with no tenant context.
+        $target = $this->ticket($ticket)->load([
+            'messages' => fn ($query) => $query->withoutGlobalScope(TenantScope::class)->with('author:id,name'),
+            'company:id,name,code',
+        ]);
+
+        return ApiResponse::ok($this->detail($target));
     }
 
     public function setStatus(Request $request, string $ticket): JsonResponse

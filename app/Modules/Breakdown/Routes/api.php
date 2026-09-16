@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Breakdown\Http\Controllers\Api\BreakdownApiController;
+use App\Modules\Breakdown\Http\Controllers\Api\BreakdownAttachmentApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,10 +48,14 @@ Route::middleware(['api.auth', 'throttle:api'])->group(function (): void {
         ->name('breakdowns.root-cause');
     Route::get('/breakdowns/{breakdown}/form-options', [BreakdownApiController::class, 'formOptions'])
         ->name('breakdowns.form-options');
+    Route::get('/breakdowns/{breakdown}/attachments', [BreakdownAttachmentApiController::class, 'index'])
+        ->name('breakdowns.attachments.index');
 });
 
 Route::middleware(['api.auth', 'throttle:api', 'idempotent'])->group(function (): void {
     // Two breakdown numbers for one stoppage halve the MTBF of a machine that
     // broke once, and a tablet on factory wifi will be pressed twice.
     Route::post('/breakdowns', [BreakdownApiController::class, 'store'])->name('breakdowns.store');
+    Route::post('/breakdowns/{breakdown}/attachments', [BreakdownAttachmentApiController::class, 'store'])
+        ->name('breakdowns.attachments.store');
 });

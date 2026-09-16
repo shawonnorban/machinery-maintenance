@@ -283,8 +283,26 @@ async function correctTimestamp(breakdownId, previousState, formData) {
   }
 }
 
+/** Mirrors the work order detail page's own `uploadAttachment` action. */
+async function uploadAttachment(breakdownId, formData) {
+  try {
+    const file = formData.get("file");
+    if (!(file instanceof File) || file.size === 0) {
+      return { status: "error", message: "Choose a file first." };
+    }
+    const body = new FormData();
+    body.set("file", file);
+    await apiFetch(`/breakdowns/${breakdownId}/attachments`, { method: "POST", body });
+    revalidatePath(`/breakdowns/${breakdownId}`);
+    return { status: "success" };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
 export {
   acknowledge, arrive, startRepair, completeRepair, resumeProduction, resume, assign, hold, close, cancel,
   raiseWorkOrder, startWorkOrder, correctTimestamp,
   recordChecklistAnswer, recordLabor, deleteLabor, requestPart, issuePart, issueRequestedPart, consumePart, returnPart,
+  uploadAttachment,
 };

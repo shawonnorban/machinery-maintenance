@@ -11,6 +11,7 @@ use App\Modules\Tenancy\Models\Company;
 use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -29,6 +30,8 @@ class SupportTicketTest extends TestCase
 
     private User $staff;
 
+    private string $staffToken;
+
     private User $colleague;
 
     private Company $delta;
@@ -46,16 +49,9 @@ class SupportTicketTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
         $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
 
-        $this->staff = User::create([
-            'name' => 'Platform Support', 'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery', 'status' => 'ACTIVE', 'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
-        $this->colleague = User::create([
-            'name' => 'Second Administrator', 'email' => 'second@platform.test',
-            'password' => 'correct-horse-battery', 'status' => 'ACTIVE', 'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
+        $this->colleague = PlatformFixture::staff('second@platform.test', 'Second Administrator');
     }
 
     public function test_a_customer_can_open_a_ticket(): void
@@ -111,10 +107,9 @@ class SupportTicketTest extends TestCase
     {
         $ticket = $this->openTicket();
 
-        $this->signOut();
-        $this->actingAs($this->staff)
-            ->post('/platform/tickets/'.$ticket->id.'/reply', ['body' => 'Checked — this was a caching bug, now fixed.'])
-            ->assertRedirect();
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tickets/'.$ticket->id.'/reply', ['body' => 'Checked — this was a caching bug, now fixed.'])
+            ->assertOk();
 
         $ticket->refresh();
 
@@ -134,10 +129,9 @@ class SupportTicketTest extends TestCase
     {
         $ticket = $this->openTicket();
 
-        $this->signOut();
-        $this->actingAs($this->staff)
-            ->post('/platform/tickets/'.$ticket->id.'/reply', ['body' => 'Looking into it.'])
-            ->assertRedirect();
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tickets/'.$ticket->id.'/reply', ['body' => 'Looking into it.'])
+            ->assertOk();
 
         // Only the opener's own PLATFORM_TICKET_OPENED notice exists; nothing
         // was raised for the reply staff just wrote themselves.
@@ -155,9 +149,17 @@ class SupportTicketTest extends TestCase
 
         // Both platform administrators in this test hear about it — there is
         // no author on this side to leave out, unlike a staff reply, which
-        // leaves out whoever wrote it.
-        $this->assertSame(2, Notification::withoutGlobalScope(TenantScope::class)
-            ->where('event_type', 'PLATFORM_TICKET_REPLIED')->count());
+        // leaves out whoever wrote it. Checked by who, not by a total count:
+        // `PlatformAdminSeeder` (`database/seeders/DatabaseSeeder.php`) seeds
+        // a real, permanent platform admin alongside these two fixtures, so
+        // a bare count would be pinned to however many platform admins exist
+        // globally rather than to this property.
+        $recipients = Notification::withoutGlobalScope(TenantScope::class)
+            ->where('event_type', 'PLATFORM_TICKET_REPLIED')
+            ->pluck('user_id');
+
+        $this->assertContains($this->staff->id, $recipients);
+        $this->assertContains($this->colleague->id, $recipients);
 
         $this->assertSame(0, Notification::where('event_type', 'TICKET_REPLIED')
             ->where('user_id', $this->owner->id)->count());
@@ -167,10 +169,9 @@ class SupportTicketTest extends TestCase
     {
         $ticket = $this->openTicket();
 
-        $this->signOut();
-        $this->actingAs($this->staff)
-            ->post('/platform/tickets/'.$ticket->id.'/status', ['status' => 'RESOLVED'])
-            ->assertRedirect();
+        $this->asStaff()
+            ->patchJson('/api/v1/platform/tickets/'.$ticket->id.'/status', ['status' => 'RESOLVED'])
+            ->assertOk();
 
         $this->assertSame('RESOLVED', $ticket->fresh()->status);
         $this->assertSame(1, Notification::where('event_type', 'TICKET_RESOLVED')
@@ -179,7 +180,6 @@ class SupportTicketTest extends TestCase
         // "Resolved" was somebody's belief; the customer's own reply is them
         // saying it was wrong, and that reopens it without anybody having to
         // notice and change the status by hand.
-        $this->signOut();
         $this->actingAs($this->owner)
             ->post('/app/support/tickets/'.$ticket->id.'/reply', ['body' => 'This is still happening.'])
             ->assertRedirect();
@@ -191,12 +191,10 @@ class SupportTicketTest extends TestCase
     {
         $ticket = $this->openTicket();
 
-        $this->signOut();
-        $this->actingAs($this->staff)
-            ->post('/platform/tickets/'.$ticket->id.'/status', ['status' => 'CLOSED'])
-            ->assertRedirect();
+        $this->asStaff()
+            ->patchJson('/api/v1/platform/tickets/'.$ticket->id.'/status', ['status' => 'CLOSED'])
+            ->assertOk();
 
-        $this->signOut();
         $this->actingAs($this->owner)
             ->from('/app/support/tickets/'.$ticket->id)
             ->post('/app/support/tickets/'.$ticket->id.'/reply', ['body' => 'Hello?'])
@@ -209,10 +207,9 @@ class SupportTicketTest extends TestCase
     {
         $ticket = $this->openTicket();
 
-        $this->signOut();
-        $this->actingAs($this->staff)
-            ->post('/platform/tickets/'.$ticket->id.'/assign', ['assigned_to' => $this->colleague->id])
-            ->assertRedirect();
+        $this->asStaff()
+            ->patchJson('/api/v1/platform/tickets/'.$ticket->id.'/assign', ['assigned_to' => $this->colleague->id])
+            ->assertOk();
 
         $this->assertSame($this->colleague->id, $ticket->fresh()->assigned_to);
     }
@@ -221,23 +218,28 @@ class SupportTicketTest extends TestCase
     {
         $this->openTicket();
 
-        $this->signOut();
-        $this->actingAs($this->staff)
-            ->get('/platform/tickets')
+        $this->asStaff()
+            ->getJson('/api/v1/platform/tickets')
             ->assertOk()
-            ->assertSee('Delta Apparels Ltd')
-            ->assertSee('missing after a factory transfer');
+            ->assertJsonFragment(['name' => 'Delta Apparels Ltd'])
+            ->assertJsonFragment(['subject' => 'Work orders missing after a factory transfer']);
     }
 
     public function test_the_tickets_tab_shows_this_customers_tickets(): void
     {
         $this->openTicket();
 
-        $this->signOut();
-        $this->actingAs($this->staff)
-            ->get('/platform/tenants/'.$this->delta->id.'/tickets')
+        $this->asStaff()
+            ->getJson('/api/v1/platform/tickets?company_id='.$this->delta->id)
             ->assertOk()
-            ->assertSee('missing after a factory transfer');
+            ->assertJsonFragment(['subject' => 'Work orders missing after a factory transfer']);
+    }
+
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
     }
 
     private function openTicket(): SupportTicket

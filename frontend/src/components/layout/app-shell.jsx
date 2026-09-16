@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, Sun, Moon, Monitor, ChevronLeft, ChevronRight, Wrench } from "lucide-react";
+import { Menu, X, ChevronLeft, ChevronRight, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/theme/theme-provider";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { SupportSessionBanner } from "@/components/layout/support-session-banner";
 import { SyncIndicator } from "@/components/offline/sync-indicator";
 import { LocaleToggle } from "@/components/layout/locale-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
@@ -55,6 +56,7 @@ function AppShell({
   currentCompanyId,
   companyLogoUrl,
   switchCompanyAction,
+  impersonatedBy,
   children,
 }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -103,6 +105,10 @@ function AppShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
+        {impersonatedBy ? (
+          <SupportSessionBanner actingAsName={userName} actingAsEmail={userEmail} staffName={impersonatedBy.name} />
+        ) : null}
+
         <Topbar
           onOpenMobileNav={() => setMobileOpen(true)}
           extra={topbarExtra}
@@ -205,26 +211,6 @@ function Topbar({ onOpenMobileNav, extra, unreadNotifications = 0, recentNotific
         <NotificationBell unreadCount={unreadNotifications} recent={recentNotifications} />
       </div>
     </header>
-  );
-}
-
-const THEME_ICONS = { light: Sun, dark: Moon, system: Monitor };
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const order = ["light", "dark", "system"];
-  const Icon = THEME_ICONS[theme];
-
-  return (
-    <button
-      type="button"
-      onClick={() => setTheme(order[(order.indexOf(theme) + 1) % order.length])}
-      className="rounded-sm p-2 text-foreground-muted hover:bg-surface-muted hover:text-foreground"
-      aria-label={`Theme: ${theme}. Click to change.`}
-      title={`Theme: ${theme}`}
-    >
-      <Icon className="size-[18px]" />
-    </button>
   );
 }
 

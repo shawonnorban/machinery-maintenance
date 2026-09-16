@@ -15,6 +15,7 @@ use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -116,10 +117,12 @@ class EntitlementLimitTest extends TestCase
 
         $this->contract(['included_users' => 1, 'overage_policy' => 'BLOCK']);
 
-        // System roles: company_id is null on all of them.
+        // System roles: company_id is null on all of them. `name` holds the
+        // role code since the Spatie migration (`roles.code` no longer
+        // exists — the legacy code became Spatie's own `name` column).
         $role = Role::withoutGlobalScope(TenantScope::class)
             ->whereNull('company_id')
-            ->where('code', 'MAINTENANCE_MANAGER')
+            ->where('name', 'MAINTENANCE_MANAGER')
             ->firstOrFail();
 
         $this->expectException(ValidationException::class);
@@ -135,23 +138,16 @@ class EntitlementLimitTest extends TestCase
     {
         $this->contract(['included_factories' => 1, 'overage_policy' => 'BLOCK']);
 
-        $staff = User::create([
-            'name' => 'Platform Support',
-            'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $staff = PlatformFixture::staff();
 
-        $this->actingAs($staff)
-            ->patch('/platform/tenants/'.$this->delta->id.'/limits', [
+        $this->withHeader('Authorization', 'Bearer '.PlatformFixture::token($staff))
+            ->patchJson('/api/v1/platform/tenants/'.$this->delta->id.'/entitlements', [
                 'included_factories' => 5,
                 'included_assets' => 500,
                 'included_users' => 25,
                 'overage_policy' => 'WARN_ONLY',
             ])
-            ->assertRedirect();
+            ->assertOk();
 
         // One contract still, with new numbers on it. Superseding it would put
         // a contract number in the customer's file that nobody had signed, for
@@ -171,22 +167,17 @@ class EntitlementLimitTest extends TestCase
 
     public function test_limits_need_a_contract_to_live_on(): void
     {
-        $staff = User::create([
-            'name' => 'Platform Support',
-            'email' => 'support2@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $staff = PlatformFixture::staff();
 
-        $this->actingAs($staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->patch('/platform/tenants/'.$this->delta->id.'/limits', [
+        // 409, not a validation error: nothing about the request itself is
+        // wrong, there is simply no contract yet for these numbers to belong
+        // to (`PlatformTenantApiController::updateEntitlements`).
+        $this->withHeader('Authorization', 'Bearer '.PlatformFixture::token($staff))
+            ->patchJson('/api/v1/platform/tenants/'.$this->delta->id.'/entitlements', [
                 'included_factories' => 5,
                 'overage_policy' => 'BLOCK',
             ])
-            ->assertSessionHasErrors('limits');
+            ->assertStatus(409);
     }
 
     /**

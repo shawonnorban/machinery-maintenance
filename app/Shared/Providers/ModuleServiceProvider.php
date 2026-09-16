@@ -51,11 +51,6 @@ class ModuleServiceProvider extends ServiceProvider
      *   on every web request, independent of which module's own routes
      *   are registered) post to it directly. Edited directly in
      *   `Identity/Routes/web.php` rather than listed here.
-     * - Api: same reasoning again — `/session-token` has no screen of its
-     *   own, and is what the still-Blade technician mobile pages
-     *   (`layouts.mobile`, the QR scan landing pages) use to mint the
-     *   bearer token their own offline queue posts with (SRS 38). Edited
-     *   directly in `Api/Routes/web.php` rather than listed here.
      *
      * Every module below was checked for exactly that kind of external
      * dependency before being added — `route('app.*')` calls reaching in
@@ -66,7 +61,7 @@ class ModuleServiceProvider extends ServiceProvider
      * 404 once the route they named stopped existing.
      */
     private const WEB_DECOMMISSIONED = [
-        'Analytics', 'Approval', 'Asset', 'Audit', 'Billing', 'Breakdown',
+        'Analytics', 'Api', 'Approval', 'Asset', 'Audit', 'Billing', 'Breakdown',
         'Calendar', 'Costing', 'Inventory', 'Maintenance', 'Metering',
         'Notification', 'Reporting', 'Settings', 'Vendor', 'Webhook', 'WorkOrder',
     ];

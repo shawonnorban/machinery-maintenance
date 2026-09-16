@@ -11,6 +11,7 @@ use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -32,6 +33,8 @@ class SuspensionTest extends TestCase
 
     private User $staff;
 
+    private string $staffToken;
+
     private Company $delta;
 
     private User $owner;
@@ -49,14 +52,8 @@ class SuspensionTest extends TestCase
         $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->staff = User::create([
-            'name' => 'Platform Support',
-            'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
     }
 
     public function test_a_suspended_customer_cannot_reach_the_product(): void
@@ -140,10 +137,10 @@ class SuspensionTest extends TestCase
 
     public function test_a_reason_is_required(): void
     {
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/tenants/'.$this->delta->id.'/suspend', ['reason' => 'no'])
-            ->assertSessionHasErrors('reason');
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/suspend', ['reason' => 'no'])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reason');
 
         // Nothing happens without one. The customer is shown this sentence, so
         // there has to be a sentence.
@@ -166,9 +163,9 @@ class SuspensionTest extends TestCase
     {
         $this->suspend('Unpaid invoice.');
 
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/suspend')
-            ->assertRedirect();
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/reactivate')
+            ->assertOk();
 
         $company = $this->delta->fresh();
 
@@ -185,7 +182,7 @@ class SuspensionTest extends TestCase
     public function test_both_ends_are_audited(): void
     {
         $this->suspend('Unpaid invoice.');
-        $this->actingAs($this->staff)->post('/platform/tenants/'.$this->delta->id.'/suspend');
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/reactivate');
 
         foreach (['TENANT_SUSPENDED', 'TENANT_REACTIVATED'] as $label) {
             $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
@@ -201,14 +198,21 @@ class SuspensionTest extends TestCase
         // Platform staff belong to no company, so no tenant is resolved for
         // them and there is nothing to suspend. Losing the platform area
         // because a customer was stopped would make the stop irreversible.
-        $this->actingAs($this->staff)->get('/platform')->assertOk();
+        $this->asStaff()->getJson('/api/v1/platform/tenants')->assertOk();
+    }
+
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
     }
 
     private function suspend(string $reason): void
     {
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/suspend', ['reason' => $reason])
-            ->assertRedirect();
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/suspend', ['reason' => $reason])
+            ->assertOk();
     }
 
     private function signOut(): void

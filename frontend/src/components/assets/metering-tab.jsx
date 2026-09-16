@@ -53,7 +53,7 @@ function MeteringTab({ meters, actions }) {
             </div>
 
             <div className="w-full sm:max-w-xs">
-              <RecordReadingForm action={actions.recordReading.bind(null, meter.id)} />
+              <RecordReadingForm action={actions.recordReading.bind(null, meter.id)} meterId={meter.id} />
             </div>
           </CardBody>
         </Card>

@@ -15,6 +15,16 @@ const ALLOWED_ENDPOINTS = [
   // — the one write in the product where losing what was typed means a
   // line stays down while it's typed again.
   /^\/breakdowns$/,
+  // Work order lifecycle transitions (frontend/src/components/work-orders/
+  // work-order-actions.jsx) — the backend already treats every one of these
+  // as idempotent (`routes/api.php`'s `idempotent` middleware), the same
+  // guarantee breakdown reporting relies on, and a technician mid-repair on
+  // the factory floor is exactly who loses signal starting, holding or
+  // completing a job.
+  /^\/work-orders\/[^/]+\/(submit-for-approval|start|resume|complete|verify|close|hold|cancel|reopen)$/,
+  // Meter readings (frontend/src/components/metering/record-reading-form.jsx)
+  // — read while walking the floor, often exactly where wifi is weakest.
+  /^\/meters\/[^/]+\/readings$/,
 ];
 
 function isAllowed(endpoint) {

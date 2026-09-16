@@ -90,7 +90,13 @@ function TenantTabs({ data, actions }) {
       </TabsPanel>
 
       <TabsPanel value="support">
-        <SupportPanel grants={data.grants} openAction={actions.openSupportGrant} closeAction={actions.closeSupportGrant} />
+        <SupportPanel
+          grants={data.grants}
+          members={data.members}
+          openAction={actions.openSupportGrant}
+          closeAction={actions.closeSupportGrant}
+          enterAction={actions.enterSupportGrant}
+        />
       </TabsPanel>
 
       <TabsPanel value="tickets">

@@ -10,6 +10,7 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Services\PermissionResolver;
 use App\Modules\Notification\Services\NotificationDispatcher;
 use App\Modules\Platform\Models\SupportGrant;
+use App\Modules\Platform\Services\PlatformNotifier;
 use App\Modules\Tenancy\Models\Company;
 use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
@@ -45,6 +46,7 @@ class ManageSupportAccess
         private readonly AuditRecorder $audit,
         private readonly NotificationDispatcher $notifications,
         private readonly TenantContext $context,
+        private readonly PlatformNotifier $platformNotifier,
     ) {}
 
     /**
@@ -92,6 +94,22 @@ class ManageSupportAccess
             'reason' => $reason,
             'until' => $grant->expires_at->toDayDateTimeString(),
         ]);
+
+        // The customer is told by the SUPPORT_ACCESS notice above; this is
+        // the other half of the same accountability, told to the colleagues
+        // who can act on it without going and looking at an audit log.
+        // Ported in from the now-decommissioned Blade `TenantController::
+        // openSupport()`, which used to be the only caller that did this —
+        // moved here so the API controller (its replacement) doesn't have to
+        // remember to repeat it.
+        $this->platformNotifier->notify(
+            'PLATFORM_SUPPORT_OPENED',
+            __('platform.notify_support_opened', ['name' => $staff->name, 'company' => $company->name]),
+            $reason,
+            'WARNING',
+            config('tenancy.frontend_url').'/platform/tenants/'.$company->id,
+            exceptUserId: $staff->id,
+        );
 
         return $grant;
     }

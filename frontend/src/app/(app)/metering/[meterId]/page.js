@@ -54,7 +54,7 @@ export default async function MeterDetailPage({ params }) {
             </CardBody>
 
             <CardBody className="flex flex-col gap-4 border-t border-border">
-              <RecordReadingForm action={recordReading.bind(null, meterId)} />
+              <RecordReadingForm action={recordReading.bind(null, meterId)} meterId={meterId} />
               <ResetMeterForm action={resetMeter.bind(null, meterId)} />
             </CardBody>
           </Card>

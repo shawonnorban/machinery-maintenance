@@ -11,6 +11,7 @@ use App\Modules\Tenancy\Services\DomainVerifier;
 use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -43,6 +44,8 @@ class CustomDomainTest extends TestCase
 
     private User $staff;
 
+    private string $staffToken;
+
     private Company $delta;
 
     private Company $omega;
@@ -64,14 +67,8 @@ class CustomDomainTest extends TestCase
         TenantFixture::factory($this->omega, 'Savar Unit 1', 'SAV');
         TenantFixture::actingAsTenant($this->omega);
 
-        $this->staff = User::create([
-            'name' => 'Platform Support',
-            'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
 
         config(['tenancy.platform_host' => 'app.example.com']);
     }
@@ -123,9 +120,9 @@ class CustomDomainTest extends TestCase
         $this->addDomain('CUSTOM', 'maintenance.deltaapparels.com');
         $this->fakeDnsFor($this->domain());
 
-        $this->actingAs($this->staff)
-            ->post('/platform/domains/'.$this->domain()->id.'/verify')
-            ->assertRedirect();
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken)
+            ->postJson('/api/v1/platform/domains/'.$this->domain()->id.'/verify')
+            ->assertOk();
 
         $this->assertTrue($this->domain()->isVerified());
 
@@ -140,11 +137,12 @@ class CustomDomainTest extends TestCase
 
         // No record published. DNS takes time, and the honest answer is "not
         // yet" — a customer who has done everything right should not be told
-        // they have got it wrong.
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/domains/'.$this->domain()->id.'/verify')
-            ->assertSessionHasErrors('host');
+        // they have got it wrong. 409, not a validation error: nothing about
+        // the request is wrong, the DNS record simply has not propagated yet
+        // (`PlatformDomainApiController::verify`).
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken)
+            ->postJson('/api/v1/platform/domains/'.$this->domain()->id.'/verify')
+            ->assertStatus(409);
 
         $this->assertFalse($this->domain()->isVerified());
     }
@@ -153,13 +151,13 @@ class CustomDomainTest extends TestCase
     {
         $this->addDomain('CUSTOM', 'maintenance.deltaapparels.com');
 
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->omega->id)
-            ->post('/platform/tenants/'.$this->omega->id.'/domains', [
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken)
+            ->postJson('/api/v1/platform/tenants/'.$this->omega->id.'/domains', [
                 'kind' => 'CUSTOM',
                 'host' => 'maintenance.deltaapparels.com',
             ])
-            ->assertSessionHasErrors('host');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('host');
 
         $this->assertSame(1, CompanyDomain::withoutGlobalScope(TenantScope::class)
             ->where('host', 'maintenance.deltaapparels.com')->count());
@@ -199,13 +197,13 @@ class CustomDomainTest extends TestCase
 
     public function test_a_nonsense_address_is_refused(): void
     {
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/tenants/'.$this->delta->id.'/domains', [
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken)
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/domains', [
                 'kind' => 'CUSTOM',
                 'host' => 'not a hostname',
             ])
-            ->assertSessionHasErrors('host');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('host');
     }
 
     public function test_only_a_working_address_can_be_primary(): void
@@ -216,10 +214,11 @@ class CustomDomainTest extends TestCase
         $custom = CompanyDomain::withoutGlobalScope(TenantScope::class)
             ->where('host', 'maintenance.deltaapparels.com')->firstOrFail();
 
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/domains/'.$custom->id.'/primary')
-            ->assertSessionHasErrors('host');
+        // 409, not a validation error — same reasoning as the verify() case
+        // above (`PlatformDomainApiController::primary`).
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken)
+            ->postJson('/api/v1/platform/domains/'.$custom->id.'/primary')
+            ->assertStatus(409);
     }
 
     public function test_removing_an_address_stops_it_deciding_anything(): void
@@ -241,15 +240,9 @@ class CustomDomainTest extends TestCase
         // them their own area.
         $this->signOut();
 
-        // Absolute, and it has to be. A relative URL in a test is resolved
-        // against the *previous* request's host, so this one would go out on
-        // maintenance.deltaapparels.com — where platform staff, being members
-        // of no company, are correctly refused.
-        $this->actingAs($this->staff)
-            ->delete('http://localhost/platform/domains/'.$domainId)
-            ->assertRedirect();
-
-        $this->signOut();
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken)
+            ->deleteJson('/api/v1/platform/domains/'.$domainId)
+            ->assertNoContent();
 
         $this->assertSame(0, CompanyDomain::withoutGlobalScope(TenantScope::class)
             ->where('host', 'maintenance.deltaapparels.com')->count());
@@ -270,12 +263,12 @@ class CustomDomainTest extends TestCase
 
     private function addDomain(string $kind, string $host): void
     {
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/domains', [
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken)
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/domains', [
                 'kind' => $kind,
                 'host' => $host,
             ])
-            ->assertRedirect();
+            ->assertCreated();
     }
 
     private function domain(): CompanyDomain

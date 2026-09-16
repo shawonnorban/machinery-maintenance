@@ -40,16 +40,17 @@ class LoginController extends Controller
         // Prevents session fixation: the pre-login session id is discarded.
         $request->session()->regenerate();
 
-        // Platform staff have no company, so the tenant dashboard has nothing
-        // to show them and would refuse to resolve a tenant. Their home is the
-        // customer list (SRS 5).
-        //
-        // A tenant user's own screens are the Next.js app now (Phase D/F) —
-        // this Blade login page still exists only because platform staff sign
-        // in through it too, gated the same way, so it can't simply redirect
-        // there unconditionally.
+        // Both the tenant app and the platform console are the Next.js app
+        // now (Phase D/F; the platform admin console's own Blade routes
+        // were decommissioned once Next.js reached parity — impersonation
+        // handoff and cross-staff ticket reassignment included). This form
+        // itself is effectively vestigial for a platform admin, who has
+        // `/platform/login`'s own separate guard (`PlatformAuthApiController`)
+        // and would land on `/platform` only to be asked to sign in there
+        // properly — landing them somewhere real rather than throwing on a
+        // route this session no longer serves either way.
         return redirect()->intended($user->is_platform_admin
-            ? route('platform.tenants')
+            ? config('tenancy.frontend_url').'/platform'
             : config('tenancy.frontend_url'));
     }
 

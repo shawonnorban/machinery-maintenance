@@ -11,8 +11,48 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
 import { HOLD_REASONS } from "@/lib/work-order-transitions";
 import { formatStatus } from "@/components/ui/status-badge";
+import { saveDraft, flush } from "@/lib/offline/queue";
 
 const HOLD_REASON_OPTIONS = HOLD_REASONS.map((code) => ({ value: code, label: formatStatus(code) }));
+
+/**
+ * The URL segment each transition posts to (`WorkOrderApiController`'s own
+ * route names) — needed only for the offline fallback below, which talks to
+ * `/api/offline-relay` directly rather than through the Server Action, so it
+ * has to name the endpoint itself.
+ */
+const ENDPOINT_SEGMENT = {
+  submitForApproval: "submit-for-approval",
+  start: "start",
+  resume: "resume",
+  complete: "complete",
+  verify: "verify",
+  close: "close",
+  hold: "hold",
+  cancel: "cancel",
+  reopen: "reopen",
+};
+
+/**
+ * Shared by both the no-reason transitions (`run()` below) and the
+ * reason-requiring ones (`ReasonModal`): saves the transition as an offline
+ * draft and starts sending it in the background, the same mechanism
+ * `ReportBreakdownForm` uses. Only reached when the Server Action's own
+ * request never made it to the app at all (see the call sites' comments).
+ */
+async function queueOfflineTransition({ workOrderId, step, payload, toastManager }) {
+  await saveDraft({
+    endpoint: `/work-orders/${workOrderId}/${ENDPOINT_SEGMENT[step.key]}`,
+    payload,
+    label: `${step.label} — work order ${workOrderId}`,
+  });
+  flush();
+  toastManager.add({
+    title: `${step.label} saved on this device`,
+    description: "Sending now — check the sync icon if you're offline.",
+    type: "success",
+  });
+}
 
 /**
  * Which actions a status offers — a courtesy matching `WorkOrder::
@@ -59,14 +99,23 @@ function WorkOrderActions({ status, workOrderId, actions }) {
 
   function run(step) {
     startTransition(async () => {
-      const result = await actions[step.key](workOrderId);
-      if (result?.status === "success") {
-        toastManager.add({ title: `${step.label} recorded`, type: "success" });
-        setConfirming(null);
-        router.refresh();
-      } else if (result?.status === "error") {
-        toastManager.add({ title: result.message, type: "danger" });
+      try {
+        const result = await actions[step.key](workOrderId);
+        if (result?.status === "success") {
+          toastManager.add({ title: `${step.label} recorded`, type: "success" });
+          router.refresh();
+        } else if (result?.status === "error") {
+          toastManager.add({ title: result.message, type: "danger" });
+        }
+      } catch {
+        // The Server Action's own request never reached the app at all —
+        // the one failure mode that means "no signal right now," as
+        // opposed to a validation/permission error the action already
+        // caught and returned as `result.status === "error"` above.
+        await queueOfflineTransition({ workOrderId, step, payload: {}, toastManager });
       }
+
+      setConfirming(null);
     });
   }
 
@@ -102,6 +151,7 @@ function WorkOrderActions({ status, workOrderId, actions }) {
       {reasonStep ? (
         <ReasonModal
           step={reasonStep}
+          workOrderId={workOrderId}
           onOpenChange={() => setReasonStep(null)}
           action={actions[reasonStep.key].bind(null, workOrderId)}
         />
@@ -110,16 +160,40 @@ function WorkOrderActions({ status, workOrderId, actions }) {
   );
 }
 
-function ReasonModal({ step, onOpenChange, action }) {
-  const [state, formAction] = useActionState(action, null);
+function ReasonModal({ step, workOrderId, onOpenChange, action }) {
   const router = useRouter();
   const toastManager = useToastManager();
+
+  // Wrapped so `useActionState`'s action always settles into a state object
+  // rather than rejecting — a transport-level failure (no signal to the app
+  // at all) is turned into an offline draft here instead of surfacing as an
+  // uncaught error from within the transition.
+  async function wrappedAction(previousState, formData) {
+    try {
+      return await action(previousState, formData);
+    } catch {
+      await queueOfflineTransition({
+        workOrderId,
+        step,
+        payload: Object.fromEntries(formData.entries()),
+        toastManager,
+      });
+
+      return { status: "queued" };
+    }
+  }
+
+  const [state, formAction] = useActionState(wrappedAction, null);
 
   useEffect(() => {
     if (state?.status === "success") {
       toastManager.add({ title: `${step.label} recorded`, type: "success" });
       queueMicrotask(() => onOpenChange(false));
       router.refresh();
+    } else if (state?.status === "queued") {
+      // queueOfflineTransition already toasted; this only needs to close
+      // the dialog, not refresh — nothing on the server has changed yet.
+      queueMicrotask(() => onOpenChange(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);

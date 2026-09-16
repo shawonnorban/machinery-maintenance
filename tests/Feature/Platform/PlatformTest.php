@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Platform;
 
+use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Audit\Models\AuditLog;
 use App\Modules\Billing\Models\SubscriptionContract;
-use App\Modules\Identity\Actions\AttemptLogin;
 use App\Modules\Identity\Models\User;
 use App\Modules\Notification\Models\Notification;
 use App\Modules\Platform\Models\SupportGrant;
@@ -15,6 +15,7 @@ use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -25,12 +26,24 @@ use Tests\TestCase;
  * administrator can see that a customer exists and how large they are, and
  * nothing whatever about their machines. And every route into a customer's
  * data leaves a trail the customer can read.
+ *
+ * The admin console this file used to exercise over `/platform/*` web routes
+ * is decommissioned (`routes/web.php`) — replaced by the Next.js console
+ * against `/api/v1/platform/*`, which is what every test here now drives.
+ * Coverage that would simply duplicate `tests/Feature/Api/PlatformApiTest.php`
+ * (plain onboarding, the gate itself, a support grant's basic open/enter/
+ * leave cycle) isn't repeated here; what's left is what that file doesn't
+ * already prove — the audit trail specifics, the edge cases around who a
+ * grant may be used by and against, and the two-step contract/onboarding
+ * transactional guarantees.
  */
 class PlatformTest extends TestCase
 {
     use RefreshDatabase;
 
     private User $staff;
+
+    private string $staffToken;
 
     private Company $delta;
 
@@ -52,79 +65,33 @@ class PlatformTest extends TestCase
         // Platform staff belong to no company at all. That is the point: every
         // role in this system hangs off a company or a factory, and giving
         // platform staff one would put them inside a tenant.
-        $this->staff = User::create([
-            'name' => 'Platform Support',
-            'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
-
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
     }
 
-    // -- The gate -----------------------------------------------------------
+    // -- The gate -------------------------------------------------------------
 
     public function test_a_customer_cannot_find_the_platform_area(): void
     {
+        $token = app(IssueApiToken::class)->forUser($this->owner, $this->delta->id, 'Owner device')['plain'];
+
         // 404, not 403. A company owner has no business learning that a
         // platform area exists, let alone that they were refused entry to it.
-        $this->actingAs($this->owner)->get('/platform')->assertNotFound();
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/v1/platform/tenants')
+            ->assertNotFound();
 
         $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
             ->where('entity_label', 'PLATFORM_ACCESS_DENIED')
             ->count());
     }
 
-    public function test_a_guest_is_sent_to_sign_in(): void
-    {
-        $this->get('/platform')->assertRedirect(route('login'));
-    }
+    // -- Onboarding -------------------------------------------------------------
 
-    public function test_platform_staff_see_the_customer_list(): void
+    public function test_a_customer_can_be_taken_on_and_the_owner_can_actually_sign_in(): void
     {
-        $this->actingAs($this->staff)
-            ->get('/platform')
-            ->assertOk()
-            ->assertSee('Delta Apparels Ltd')
-            ->assertSee('DAL');
-    }
-
-    public function test_the_tenant_page_renders(): void
-    {
-        // Every other test here posts to this controller and follows a
-        // redirect without ever rendering the page, so a fatal in `show` —
-        // a missing import, a view that references a variable nobody passes —
-        // sailed through a green suite and only appeared in a browser.
-        //
-        // This customer's contract, invoices, support access and sign-in each
-        // moved to their own tab (TenantTabsTest::test_every_tab_renders
-        // exercises all seven), so what is left to check on the default page
-        // is what actually renders there: the company's own details and its
-        // factory list.
-        $this->actingAs($this->staff)
-            ->get('/platform/tenants/'.$this->delta->id)
-            ->assertOk()
-            ->assertSee('Delta Apparels Ltd')
-            ->assertSee(__('platform.company_management'))
-            ->assertSee(__('platform.details'))
-            ->assertSee(__('platform.factories'));
-    }
-
-    public function test_the_new_tenant_form_renders(): void
-    {
-        $this->actingAs($this->staff)
-            ->get('/platform/tenants/new')
-            ->assertOk()
-            ->assertSee(__('platform.owner_account'));
-    }
-
-    // -- Onboarding ---------------------------------------------------------
-
-    public function test_a_customer_can_be_taken_on(): void
-    {
-        $response = $this->actingAs($this->staff)
-            ->post('/platform/tenants', [
+        $response = $this->asStaff()
+            ->postJson('/api/v1/platform/tenants', [
                 'name' => 'Rival Textiles Ltd',
                 'code' => 'RTL',
                 'base_currency' => 'BDT',
@@ -135,7 +102,7 @@ class PlatformTest extends TestCase
                 'owner_name' => 'Nusrat Jahan',
                 'owner_email' => 'nusrat@rival.test',
             ])
-            ->assertRedirect();
+            ->assertCreated();
 
         $company = Company::withoutGlobalScope(TenantScope::class)
             ->where('code', 'RTL')
@@ -151,38 +118,14 @@ class PlatformTest extends TestCase
 
         $this->assertTrue($owner->belongsToCompany($company->id));
 
-        // The password is readable exactly once, on the screen that follows.
-        $password = $response->getSession()->get('owner_password');
+        // The password is readable exactly once, in this response.
+        $password = $response->json('data.password');
 
         $this->assertIsString($password);
 
-        $this->assertTrue(app(AttemptLogin::class)
-            ->verify('nusrat@rival.test', $password, '127.0.0.1')
-            ->is($owner));
-    }
-
-    public function test_the_new_owner_can_actually_do_something(): void
-    {
-        $this->actingAs($this->staff)->post('/platform/tenants', [
-            'name' => 'Rival Textiles Ltd',
-            'code' => 'RTL',
-            'base_currency' => 'BDT',
-            'timezone' => 'Asia/Dhaka',
-            'default_locale' => 'en',
-            'factory_name' => 'Savar Unit',
-            'factory_code' => 'SAV',
-            'owner_name' => 'Nusrat Jahan',
-            'owner_email' => 'nusrat@rival.test',
-        ]);
-
-        User::where('email', 'nusrat@rival.test')->firstOrFail();
-        $password = session('owner_password');
-
         // The whole point of onboarding: somebody can sign in and reach the
-        // product. Until this existed, a company could only be created by
-        // hand in the database. "Reach the product" is the Next.js app now
-        // (Phase D/F) — proven the same way it signs in for real, by
-        // exchanging the generated password this form flashed for a token.
+        // product. Proven the same way it signs in for real, by exchanging
+        // the generated password for a token.
         $this->postJson('/api/v1/auth/login', [
             'email' => 'nusrat@rival.test',
             'password' => $password,
@@ -191,9 +134,8 @@ class PlatformTest extends TestCase
 
     public function test_a_duplicate_code_is_refused(): void
     {
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/new')
-            ->post('/platform/tenants', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants', [
                 'name' => 'Another Delta',
                 'code' => 'DAL',
                 'base_currency' => 'BDT',
@@ -204,16 +146,16 @@ class PlatformTest extends TestCase
                 'owner_name' => 'Somebody',
                 'owner_email' => 'somebody@delta2.test',
             ])
-            ->assertSessionHasErrors('code');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('code');
     }
 
     public function test_nothing_is_half_created_when_onboarding_fails(): void
     {
         $before = Company::withoutGlobalScope(TenantScope::class)->count();
 
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/new')
-            ->post('/platform/tenants', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants', [
                 'name' => 'Rival Textiles Ltd',
                 'code' => 'RTL',
                 'base_currency' => 'BDT',
@@ -225,18 +167,19 @@ class PlatformTest extends TestCase
                 // Already taken by the fixture owner.
                 'owner_email' => 'owner@delta.test',
             ])
-            ->assertSessionHasErrors('owner_email');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('owner_email');
 
         // A company with no owner would need somebody with database access to
         // finish the job, which is the position this action exists to end.
         $this->assertSame($before, Company::withoutGlobalScope(TenantScope::class)->count());
     }
 
-    // -- Contract (SRS 40) --------------------------------------------------
+    // -- Contract (SRS 40) -----------------------------------------------------
 
     public function test_a_contract_supersedes_rather_than_edits(): void
     {
-        $this->actingAs($this->staff)->post('/platform/tenants/'.$this->delta->id.'/contract', [
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/contracts', [
             'contract_number' => 'SUB-0001',
             'start_date' => '2026-01-01',
             'billing_cycle' => 'MONTHLY',
@@ -244,9 +187,9 @@ class PlatformTest extends TestCase
             'currency' => 'BDT',
             'grace_period_days' => 14,
             'overage_policy' => 'WARN_ONLY',
-        ])->assertRedirect();
+        ])->assertCreated();
 
-        $this->actingAs($this->staff)->post('/platform/tenants/'.$this->delta->id.'/contract', [
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/contracts', [
             'contract_number' => 'SUB-0002',
             'start_date' => '2026-07-01',
             'billing_cycle' => 'YEARLY',
@@ -254,7 +197,7 @@ class PlatformTest extends TestCase
             'currency' => 'BDT',
             'grace_period_days' => 30,
             'overage_policy' => 'ALLOW_AND_BILL',
-        ])->assertRedirect();
+        ])->assertCreated();
 
         $contracts = SubscriptionContract::withoutGlobalScope(TenantScope::class)
             ->where('company_id', $this->delta->id)
@@ -269,17 +212,17 @@ class PlatformTest extends TestCase
         $this->assertSame('ACTIVE', $contracts[1]->status);
     }
 
-    // -- Support access (SRS 5.4) -------------------------------------------
+    // -- Support access (SRS 5.4) -----------------------------------------------
 
     public function test_opening_access_needs_a_real_reason(): void
     {
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/tenants/'.$this->delta->id.'/support', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/support-grants', [
                 'reason' => 'looking',
                 'hours' => 2,
             ])
-            ->assertSessionHasErrors('reason');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reason');
 
         $this->assertSame(0, SupportGrant::count());
     }
@@ -307,30 +250,18 @@ class PlatformTest extends TestCase
         $this->assertStringContainsString('Ticket 4471', $notification->body);
     }
 
-    // `test_a_grant_alone_shows_nobody_anything` lived here — proving
-    // permission-to-enter isn't entry by having the staff member (still
-    // logged in as themselves, grant or not) try to open a customer `/app/*`
-    // screen and get refused. Every such screen is gone now (Phase D/F);
-    // the mechanism it actually exercised was `TenantContext` refusing a
-    // platform admin with no requested company, not anything about the
-    // grant, so there's no meaningful live route left to repoint it at.
-
     public function test_entering_acts_as_a_named_user_and_is_audited(): void
     {
         $grant = $this->openGrant();
 
-        // KNOWN GAP (see `TenantController::enterSupport`'s own comment): a
-        // tenant user's own screens are the separately-authenticated
-        // Next.js app now, which this Blade-session login does not itself
-        // sign into — so this only proves the *Blade-side* half of
-        // impersonation (the session becomes the customer's user here, and
-        // the audit row is written), not that Next.js actually shows the
-        // staff member the customer's screens end to end.
-        $this->actingAs($this->staff)
-            ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
-            ->assertRedirect(config('tenancy.frontend_url'));
+        $enter = $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertCreated();
 
-        $this->assertAuthenticatedAs($this->owner);
+        $this->withHeader('Authorization', 'Bearer '.$enter->json('data.access_token'))
+            ->getJson('/api/v1/auth/me')
+            ->assertOk()
+            ->assertJsonPath('data.user.id', $this->owner->id);
 
         $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
             ->where('entity_label', 'SUPPORT_SESSION_STARTED')->count());
@@ -340,54 +271,54 @@ class PlatformTest extends TestCase
     {
         $grant = $this->openGrant();
 
-        $this->actingAs($this->staff)
-            ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $this->owner->id]);
+        $enter = $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertCreated();
 
-        // KNOWN GAP (see `TenantController::enterSupport`'s own comment):
-        // there is no HTTP write left that carries this Blade session at
-        // all — every `/app/*` screen that used to make one is gone (Phase
-        // D/F), and an API request authenticates from a bearer token, never
-        // from this session (`AuditRecorder::impersonatedBy`'s own
-        // docblock: "an API request carries no session at all"). Calling
-        // the action directly still proves the one thing this test is
-        // actually about — that `AuditRecorder` reads `impersonated_by`
-        // out of *whatever* session is active or writes without one, same
-        // reasoning `ManageSupportAccess::SESSION_KEY`'s own docblock gives
-        // — without depending on an HTTP route this session can no longer
-        // reach at all.
-        //
-        // A spare part, because it is one of the models the audit observer
-        // watches. The point is not the part; it is that an ordinary write
-        // made during a support session carries the trail on its own, with
-        // nothing in the inventory module knowing support exists.
-        app(\App\Modules\Inventory\Actions\SaveSparePart::class)->create([
-            'part_number' => 'JK-DDL9000-HOOK',
-            'name' => 'Rotary hook',
-            'unit' => 'PCS',
-        ]);
+        // An ordinary write, using the impersonation token exactly as the
+        // staff member's own browser would. The point is not the part; it is
+        // that the write carries the trail on its own, with nothing in the
+        // inventory module knowing support exists — `AuditRecorder` reads
+        // `impersonated_by` off the token itself (`SanctumTokenHandle::
+        // impersonatedBy()`), same as it reads `session('impersonated_by')`
+        // for a web request.
+        $this->withHeader('Authorization', 'Bearer '.$enter->json('data.access_token'))
+            ->postJson('/api/v1/spare-parts', [
+                'part_number' => 'JK-DDL9000-HOOK',
+                'name' => 'Rotary hook',
+                'unit' => 'PCS',
+            ])
+            ->assertCreated();
 
         // The column the audit screen has always shown in red, finally
-        // populated by something. Until now it described a feature that did
-        // not exist.
+        // populated by something.
         $this->assertSame($this->staff->id, AuditLog::withoutGlobalScope(TenantScope::class)
             ->where('company_id', $this->delta->id)
             ->whereNotNull('impersonated_by')
             ->value('impersonated_by'));
     }
 
-    public function test_leaving_puts_the_platform_account_back_and_is_audited(): void
+    public function test_leaving_ends_the_session_and_is_audited(): void
     {
         $grant = $this->openGrant();
 
-        $this->actingAs($this->staff)
-            ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $this->owner->id]);
+        $enter = $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertCreated();
 
-        $this->post('/app/support/leave')->assertRedirect(route('platform.tenants'));
+        $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/leave')
+            ->assertNoContent();
 
-        $this->assertAuthenticatedAs($this->staff);
+        // The token this session was using is gone — "leaving" an
+        // impersonation session has nothing else to give back, unlike the
+        // old Blade flow's session swap.
+        $this->withHeader('Authorization', 'Bearer '.$enter->json('data.access_token'))
+            ->getJson('/api/v1/auth/me')
+            ->assertStatus(401);
 
         // "When did they leave" is half the answer to "what could they have
-        // seen"; a grant that records only its beginning tells a customer
+        // seen"; a grant that only records its beginning tells a customer
         // nothing about how long somebody was inside.
         $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
             ->where('entity_label', 'SUPPORT_SESSION_ENDED')->count());
@@ -397,19 +328,13 @@ class PlatformTest extends TestCase
     {
         $grant = $this->openGrant();
 
-        $other = User::create([
-            'name' => 'Second Support',
-            'email' => 'second@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $other = PlatformFixture::staff('second@platform.test', 'Second Support');
+        $otherToken = PlatformFixture::token($other);
 
         // A grant names one person. Sharing one would make the audit trail say
         // somebody was inside who was not.
-        $this->actingAs($other)
-            ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+        $this->withHeader('Authorization', 'Bearer '.$otherToken)
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
             ->assertNotFound();
     }
 
@@ -419,12 +344,12 @@ class PlatformTest extends TestCase
 
         $grant->forceFill(['expires_at' => now()->subMinute()])->save();
 
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
-            ->assertSessionHasErrors('grant');
-
-        $this->assertAuthenticatedAs($this->staff);
+        // 409, not a field-level validation error: `PlatformSupportGrantApi
+        // Controller::enter` catches `ManageSupportAccess::enter()`'s
+        // `ValidationException` and re-throws it as a plain conflict.
+        $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertStatus(409);
     }
 
     public function test_a_person_outside_the_company_cannot_be_acted_as(): void
@@ -439,15 +364,21 @@ class PlatformTest extends TestCase
             'locale' => 'en',
         ]);
 
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/support/'.$grant->id.'/enter', ['user_id' => $outsider->id])
-            ->assertSessionHasErrors('user_id');
+        $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $outsider->id])
+            ->assertStatus(409);
+    }
+
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
     }
 
     private function openGrant(): SupportGrant
     {
-        $this->actingAs($this->staff)->post('/platform/tenants/'.$this->delta->id.'/support', [
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/support-grants', [
             'reason' => 'Ticket 4471: work orders missing after a factory transfer.',
             'hours' => 2,
         ]);

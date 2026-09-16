@@ -13,6 +13,7 @@ use App\Modules\Tenancy\Models\Company;
 use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -34,6 +35,8 @@ class PlatformFinanceTest extends TestCase
 
     private User $staff;
 
+    private string $staffToken;
+
     private Company $delta;
 
     protected function setUp(): void
@@ -46,19 +49,16 @@ class PlatformFinanceTest extends TestCase
         TenantFixture::factory($this->delta, 'Dhaka Unit 1', 'DHK');
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->staff = User::create([
-            'name' => 'Platform Support', 'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery', 'status' => 'ACTIVE', 'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
     }
 
     public function test_the_page_renders_with_nothing_recorded(): void
     {
-        $this->actingAs($this->staff)
-            ->get('/platform/finance')
+        $this->asStaff()
+            ->getJson('/api/v1/platform/finance/summary')
             ->assertOk()
-            ->assertSee(__('platform.no_money_yet'));
+            ->assertJsonPath('data.totals', []);
     }
 
     public function test_it_adds_up_what_was_invoiced_received_and_still_owed(): void
@@ -66,13 +66,11 @@ class PlatformFinanceTest extends TestCase
         $this->invoice('INV-1', '10000.0000', paid: '10000.0000');
         $this->invoice('INV-2', '5000.0000', paid: '1500.0000');
 
-        $response = $this->actingAs($this->staff)->get('/platform/finance')->assertOk();
-
-        $totals = $response->viewData('totals')['BDT'];
-
-        $this->assertSame('15000.0000', $totals['invoiced']);
-        $this->assertSame('11500.0000', $totals['received']);
-        $this->assertSame('3500.0000', $totals['due']);
+        $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->assertJsonPath('data.totals.BDT.invoiced', '15000.0000')
+            ->assertJsonPath('data.totals.BDT.received', '11500.0000')
+            ->assertJsonPath('data.totals.BDT.due', '3500.0000');
     }
 
     public function test_a_voided_invoice_is_not_money_owed(): void
@@ -80,49 +78,45 @@ class PlatformFinanceTest extends TestCase
         $this->invoice('INV-1', '10000.0000', paid: '0');
         $this->invoice('INV-2', '9999.0000', paid: '0', status: 'VOID');
 
-        $totals = $this->actingAs($this->staff)
-            ->get('/platform/finance')
-            ->viewData('totals')['BDT'];
-
         // A voided invoice is a document that was withdrawn. Counting it would
         // make the business look owed money nobody owes.
-        $this->assertSame('10000.0000', $totals['invoiced']);
-        $this->assertSame('10000.0000', $totals['due']);
+        $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->assertJsonPath('data.totals.BDT.invoiced', '10000.0000')
+            ->assertJsonPath('data.totals.BDT.due', '10000.0000');
     }
 
     public function test_a_draft_invoice_is_not_counted_either(): void
     {
         $this->invoice('INV-1', '7000.0000', paid: '0', status: 'DRAFT');
 
-        $totals = $this->actingAs($this->staff)->get('/platform/finance')->viewData('totals');
-
         // A draft has not been sent to anybody, so it is not yet a claim on
         // anyone's money.
-        $this->assertSame([], $totals);
+        $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->assertJsonPath('data.totals', []);
     }
 
     public function test_spending_comes_off_the_net(): void
     {
         $this->invoice('INV-1', '10000.0000', paid: '10000.0000');
 
-        $this->actingAs($this->staff)
-            ->post('/platform/finance/expenses', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/finance/expenses', [
                 'spent_on' => now()->toDateString(),
                 'category' => 'HOSTING',
                 'description' => 'Server, August',
                 'amount' => '2500',
                 'currency' => 'bdt',
             ])
-            ->assertRedirect();
-
-        $totals = $this->actingAs($this->staff)
-            ->get('/platform/finance')
-            ->viewData('totals')['BDT'];
+            ->assertCreated();
 
         // Lowercased on the way in, or "bdt" and "BDT" would be two currencies
         // that never add up to each other.
-        $this->assertSame('2500.0000', $totals['spent']);
-        $this->assertSame('7500.0000', $totals['net']);
+        $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->assertJsonPath('data.totals.BDT.spent', '2500.0000')
+            ->assertJsonPath('data.totals.BDT.net', '7500.0000');
     }
 
     public function test_two_currencies_are_never_added_together(): void
@@ -133,7 +127,9 @@ class PlatformFinanceTest extends TestCase
         TenantFixture::actingAsTenant($omega);
         $this->invoice('INV-2', '500.0000', paid: '500.0000', company: $omega, currency: 'USD');
 
-        $totals = $this->actingAs($this->staff)->get('/platform/finance')->viewData('totals');
+        $totals = $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->json('data.totals');
 
         // Two sets of figures, not one meaningless sum.
         $this->assertSame(['BDT', 'USD'], array_keys($totals));
@@ -149,22 +145,22 @@ class PlatformFinanceTest extends TestCase
         TenantFixture::actingAsTenant($omega);
         $this->invoice('INV-2', '8000.0000', paid: '0', company: $omega);
 
-        $rows = $this->actingAs($this->staff)->get('/platform/finance')->viewData('customers');
-
         // Whoever owes the most, first — that is the reason to open the table.
-        $this->assertSame('Omega Textiles Ltd', $rows[0]['company']->name);
-        $this->assertSame('8000.0000', $rows[0]['due']);
-        $this->assertSame('Delta Apparels Ltd', $rows[1]['company']->name);
+        $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->assertJsonPath('data.customers.0.company.name', 'Omega Textiles Ltd')
+            ->assertJsonPath('data.customers.0.due', '8000.0000')
+            ->assertJsonPath('data.customers.1.company.name', 'Delta Apparels Ltd');
     }
 
     public function test_a_customer_who_was_never_invoiced_is_left_out(): void
     {
         TenantFixture::company('Never Billed Ltd', 'NBL');
 
-        $rows = $this->actingAs($this->staff)->get('/platform/finance')->viewData('customers');
-
         // A row of zeroes for every customer buries the ones that owe money.
-        $this->assertSame([], $rows);
+        $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->assertJsonPath('data.customers', []);
     }
 
     public function test_a_closed_customer_who_still_owes_is_still_listed(): void
@@ -173,38 +169,43 @@ class PlatformFinanceTest extends TestCase
 
         $this->delta->delete();
 
-        $rows = $this->actingAs($this->staff)->get('/platform/finance')->viewData('customers');
+        // Exactly the customer somebody opens this page to find — the row
+        // itself is unaware the company is closed (`perCustomer()` reads
+        // `withTrashed()`), which the direct DB check below confirms.
+        $this->asStaff()->getJson('/api/v1/platform/finance/summary')
+            ->assertOk()
+            ->assertJsonCount(1, 'data.customers')
+            ->assertJsonPath('data.customers.0.due', '4000.0000')
+            ->assertJsonPath('data.customers.0.company.name', 'Delta Apparels Ltd');
 
-        // Exactly the customer somebody opens this page to find.
-        $this->assertCount(1, $rows);
-        $this->assertSame('4000.0000', $rows[0]['due']);
-        $this->assertTrue($rows[0]['company']->trashed());
+        $this->assertTrue(
+            Company::withoutGlobalScope(TenantScope::class)->withTrashed()->find($this->delta->id)->trashed(),
+        );
     }
 
     public function test_an_expense_can_be_removed_from_the_totals(): void
     {
-        $this->actingAs($this->staff)->post('/platform/finance/expenses', [
+        $this->asStaff()->postJson('/api/v1/platform/finance/expenses', [
             'spent_on' => now()->toDateString(),
             'category' => 'DOMAIN',
             'description' => 'Domain renewal',
             'amount' => '1200',
             'currency' => 'BDT',
-        ]);
+        ])->assertCreated();
 
         $expense = PlatformExpense::firstOrFail();
 
-        $this->actingAs($this->staff)
-            ->delete('/platform/finance/expenses/'.$expense->id)
-            ->assertRedirect();
+        $this->asStaff()
+            ->deleteJson('/api/v1/platform/finance/expenses/'.$expense->id)
+            ->assertNoContent();
 
         $this->assertSame(0, PlatformExpense::count());
     }
 
     public function test_an_expense_needs_a_known_category_and_a_positive_amount(): void
     {
-        $this->actingAs($this->staff)
-            ->from('/platform/finance')
-            ->post('/platform/finance/expenses', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/finance/expenses', [
                 'spent_on' => now()->toDateString(),
                 // A free-text category would give "Hosting", "hosting" and
                 // "AWS hosting" three rows in a summary meant to be added up.
@@ -213,7 +214,8 @@ class PlatformFinanceTest extends TestCase
                 'amount' => '0',
                 'currency' => 'BDT',
             ])
-            ->assertSessionHasErrors(['category', 'amount']);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['category', 'amount']);
 
         $this->assertSame(0, PlatformExpense::count());
     }
@@ -233,8 +235,11 @@ class PlatformFinanceTest extends TestCase
     {
         TenantFixture::actingAsTenant($this->delta);
         $owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
+        $token = app(\App\Modules\Api\Actions\IssueApiToken::class)->forUser($owner, $this->delta->id, 'Owner device')['plain'];
 
-        $this->actingAs($owner)->get('/platform/finance')->assertNotFound();
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/v1/platform/finance/summary')
+            ->assertNotFound();
     }
 
     public function test_overdue_invoices_are_singled_out(): void
@@ -245,19 +250,19 @@ class PlatformFinanceTest extends TestCase
         $this->invoice('INV-LATE', '3000.0000', paid: '0', dueDate: now()->subDays(10)->toDateString());
         $this->invoice('INV-OK', '2000.0000', paid: '0', dueDate: now()->addDays(10)->toDateString());
 
-        $overdue = $this->actingAs($this->staff)->get('/platform/finance')->viewData('overdue');
-
-        $this->assertCount(1, $overdue);
-        $this->assertSame('INV-LATE', $overdue->first()->invoice_number);
+        $this->asStaff()->getJson('/api/v1/platform/finance/invoices/overdue')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.invoice_number', 'INV-LATE');
     }
 
     public function test_a_paid_invoice_is_never_overdue(): void
     {
         $this->invoice('INV-PAID', '3000.0000', paid: '3000.0000', dueDate: now()->subDays(30)->toDateString(), status: 'PAID');
 
-        $overdue = $this->actingAs($this->staff)->get('/platform/finance')->viewData('overdue');
-
-        $this->assertCount(0, $overdue);
+        $this->asStaff()->getJson('/api/v1/platform/finance/invoices/overdue')
+            ->assertOk()
+            ->assertJsonCount(0, 'data');
     }
 
     public function test_every_payment_is_listed_one_row_each(): void
@@ -265,11 +270,18 @@ class PlatformFinanceTest extends TestCase
         $this->invoice('INV-1', '10000.0000', paid: '10000.0000');
         $this->invoice('INV-2', '2000.0000', paid: '2000.0000');
 
-        $payments = $this->actingAs($this->staff)->get('/platform/finance')->viewData('payments');
-
         // The totals answer "how much came in"; this answers "which payments",
         // which is what somebody reconciles a bank statement against.
-        $this->assertCount(2, $payments);
+        $this->asStaff()->getJson('/api/v1/platform/finance/payments')
+            ->assertOk()
+            ->assertJsonCount(2, 'data');
+    }
+
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
     }
 
     private function invoice(

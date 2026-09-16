@@ -29,6 +29,7 @@ class FileAttachmentController extends Controller
         // order permission to read one would deny it to the people who need it.
         $this->authorize(match ($attachment->attachable_type) {
             'asset' => 'asset.asset.view',
+            'breakdown' => 'breakdown.breakdown.view',
             default => 'work_order.work_order.view',
         });
 

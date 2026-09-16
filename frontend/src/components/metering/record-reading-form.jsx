@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { DateTimeField } from "@/components/ui/date-time-field";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { saveDraft, flush } from "@/lib/offline/queue";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -24,20 +25,59 @@ function SubmitButton() {
  * server, not this component, resolves what "now" means for that factory),
  * and a note.
  *
- * @param {{ action: (prevState: any, formData: FormData) => Promise<any> }} props
+ * @param {{
+ *   action: (prevState: any, formData: FormData) => Promise<any>,
+ *   meterId: string,
+ * }} props
  *   `action` is the recordReading Server Action pre-bound to a meter id
  *   (`recordReading.bind(null, meterId)`) by the page that renders this.
+ *   `meterId` is passed separately because the offline fallback below talks
+ *   to `/api/offline-relay` directly rather than through the Server Action,
+ *   and needs the endpoint to name itself.
  */
-function RecordReadingForm({ action }) {
-  const [state, formAction] = useActionState(action, null);
+function RecordReadingForm({ action, meterId }) {
+  const toastManager = useToastManager();
+
+  // Wrapped so `useActionState`'s action always settles into a state object
+  // rather than rejecting — a reading taken while walking the floor, where
+  // signal drops mid-submit, is exactly the case this exists for (mirrors
+  // `WorkOrderActions`'s `ReasonModal` wrapper).
+  async function wrappedAction(previousState, formData) {
+    try {
+      return await action(previousState, formData);
+    } catch {
+      const readingAt = formData.get("reading_at");
+
+      await saveDraft({
+        endpoint: `/meters/${meterId}/readings`,
+        payload: {
+          value: formData.get("value"),
+          reading_at: readingAt ? new Date(readingAt).toISOString() : null,
+          notes: formData.get("notes") || null,
+        },
+        label: `Meter reading — ${meterId}`,
+      });
+      flush();
+
+      return { status: "queued" };
+    }
+  }
+
+  const [state, formAction] = useActionState(wrappedAction, null);
   const formRef = useRef(null);
   const readingAtRef = useRef(null);
-  const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
       formRef.current?.reset();
       toastManager.add({ title: "Reading recorded", type: "success" });
+    } else if (state?.status === "queued") {
+      formRef.current?.reset();
+      toastManager.add({
+        title: "Reading saved on this device",
+        description: "Sending now — check the sync icon if you're offline.",
+        type: "success",
+      });
     }
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes

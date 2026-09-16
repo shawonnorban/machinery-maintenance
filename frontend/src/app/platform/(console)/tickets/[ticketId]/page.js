@@ -17,6 +17,7 @@ export default async function PlatformTicketDetailPage({ params }) {
       <TicketThread
         ticket={ticket}
         me={me}
+        staff={ticket.staff}
         replyAction={replyToTicket.bind(null, ticketId)}
         statusAction={setTicketStatus.bind(null, ticketId)}
         assignAction={assignTicket.bind(null, ticketId)}

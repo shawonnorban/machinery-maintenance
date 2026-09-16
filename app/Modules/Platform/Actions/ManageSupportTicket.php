@@ -79,7 +79,10 @@ class ManageSupportTicket
             __('platform.notify_ticket_opened', ['name' => $opener->name, 'company' => $company->name]),
             $subject,
             'INFO',
-            route('platform.tickets.show', $ticket),
+            // The platform console's own ticket thread is the Next.js app
+            // now (Phase D/F, ADR-066's Platform console cutover) — not the
+            // decommissioned Blade `platform.tickets.show` route.
+            config('tenancy.frontend_url').'/platform/tickets/'.$ticket->id,
         );
 
         return $ticket;
@@ -140,7 +143,9 @@ class ManageSupportTicket
                 'PLATFORM_TICKET_REPLIED',
                 __('platform.notify_ticket_replied', ['name' => $author->name, 'subject' => $ticket->subject]),
                 severity: 'INFO',
-                actionUrl: route('platform.tickets.show', $ticket),
+                // Same as `open()` above — the Next.js platform console, not
+                // the decommissioned Blade route.
+                actionUrl: config('tenancy.frontend_url').'/platform/tickets/'.$ticket->id,
             );
         }
 

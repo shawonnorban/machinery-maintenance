@@ -163,7 +163,27 @@ class AuthController extends ApiController
                 'name' => $caller->token->name(),
                 'expires_at' => $caller->token->expiresAt()?->toIso8601String(),
             ],
+            // Set only on a support-session token (`PlatformSupportGrantApi
+            // Controller::enter`) — lets the frontend show "you are acting
+            // as this person on behalf of support" instead of leaving that
+            // silent (SRS 5.4). `null` is the ordinary case and costs one
+            // extra lookup only when it isn't.
+            'impersonated_by' => $this->impersonator($caller->token->impersonatedBy()),
         ]);
+    }
+
+    /**
+     * @return array{id: string, name: string}|null
+     */
+    private function impersonator(?string $userId): ?array
+    {
+        if ($userId === null) {
+            return null;
+        }
+
+        $staff = User::find($userId);
+
+        return $staff === null ? null : ['id' => $staff->id, 'name' => $staff->name];
     }
 
     /**

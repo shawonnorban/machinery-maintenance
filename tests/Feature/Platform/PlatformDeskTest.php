@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Platform;
 
+use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Identity\Models\User;
 use App\Modules\Notification\Models\Notification;
 use App\Modules\Platform\Services\PlatformNotifier;
@@ -11,6 +12,7 @@ use App\Modules\Tenancy\Models\Company;
 use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -33,7 +35,11 @@ class PlatformDeskTest extends TestCase
 
     private User $staff;
 
+    private string $staffToken;
+
     private User $colleague;
+
+    private string $colleagueToken;
 
     private Company $delta;
 
@@ -50,46 +56,35 @@ class PlatformDeskTest extends TestCase
         TenantFixture::actingAsTenant($this->delta);
         $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
 
-        $this->staff = $this->platformUser('support@platform.test', 'Platform Support');
-        $this->colleague = $this->platformUser('second@platform.test', 'Second Administrator');
+        $this->staff = PlatformFixture::staff('support@platform.test', 'Platform Support');
+        $this->staffToken = PlatformFixture::token($this->staff);
+        $this->colleague = PlatformFixture::staff('second@platform.test', 'Second Administrator');
+        $this->colleagueToken = PlatformFixture::token($this->colleague);
     }
 
     public function test_the_support_desk_renders(): void
     {
-        $this->actingAs($this->staff)
-            ->get('/platform/support')
+        $this->asStaff()
+            ->getJson('/api/v1/platform/support-grants?active=true')
             ->assertOk()
-            ->assertSee(__('platform.support_none_open'));
+            ->assertJsonCount(0, 'data');
     }
 
     public function test_the_notifications_page_renders(): void
     {
-        $this->actingAs($this->staff)
-            ->get('/platform/notifications')
+        $this->asStaff()
+            ->getJson('/api/v1/platform/notifications')
             ->assertOk();
-    }
-
-    public function test_the_shell_is_on_every_platform_screen(): void
-    {
-        $response = $this->actingAs($this->staff)->get('/platform')->assertOk();
-
-        // The sidebar, its three real destinations, and the badge that says
-        // which side of the tenancy this is.
-        $response->assertSee('sidebar', false)
-            ->assertSee(__('platform.tenants'))
-            ->assertSee(__('platform.support_access'))
-            ->assertSee(__('notification.notifications'))
-            ->assertSee(__('platform.staff'));
     }
 
     public function test_opening_support_tells_the_other_platform_staff(): void
     {
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/support', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/support-grants', [
                 'reason' => 'Ticket 4471: work orders not appearing after a factory transfer.',
                 'hours' => 2,
             ])
-            ->assertRedirect();
+            ->assertCreated();
 
         $rows = Notification::withoutGlobalScope(TenantScope::class)
             ->where('event_type', 'PLATFORM_SUPPORT_OPENED')
@@ -97,20 +92,22 @@ class PlatformDeskTest extends TestCase
 
         // The colleague hears about it. The person who did it does not — a
         // notification saying "you opened support access" is noise, and noise
-        // is how a bell stops being read.
-        $this->assertCount(1, $rows);
-        $this->assertSame($this->colleague->id, $rows->first()->user_id);
-        $this->assertNull($rows->first()->company_id);
+        // is how a bell stops being read. Checked by who rather than a total
+        // count: `PlatformAdminSeeder` seeds a real, permanent platform admin
+        // alongside this test's own two fixtures, so it hears about this too.
+        $this->assertContains($this->colleague->id, $rows->pluck('user_id'));
+        $this->assertNotContains($this->staff->id, $rows->pluck('user_id'));
+        $this->assertTrue($rows->every(fn (Notification $row): bool => $row->company_id === null));
     }
 
     public function test_a_platform_notification_never_reaches_a_customer(): void
     {
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/support', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/support-grants', [
                 'reason' => 'Ticket 4471: work orders not appearing after a factory transfer.',
                 'hours' => 2,
             ])
-            ->assertRedirect();
+            ->assertCreated();
 
         TenantFixture::actingAsTenant($this->delta);
 
@@ -127,14 +124,14 @@ class PlatformDeskTest extends TestCase
         $this->notifyColleague();
         $this->notifyColleague();
 
-        $this->actingAs($this->colleague)
-            ->get('/platform')
+        $this->withHeader('Authorization', 'Bearer '.$this->colleagueToken)
+            ->getJson('/api/v1/platform/notifications')
             ->assertOk()
-            ->assertSee('notification-bell-badge', false);
+            ->assertJsonPath('meta.unread_count', 2);
 
-        $this->actingAs($this->colleague)
-            ->post('/platform/notifications/read')
-            ->assertRedirect();
+        $this->withHeader('Authorization', 'Bearer '.$this->colleagueToken)
+            ->postJson('/api/v1/platform/notifications/read-all')
+            ->assertNoContent();
 
         $this->assertSame(0, Notification::withoutGlobalScope(TenantScope::class)
             ->where('user_id', $this->colleague->id)
@@ -158,17 +155,32 @@ class PlatformDeskTest extends TestCase
             ->where('user_id', $this->staff->id)
             ->firstOrFail();
 
-        $this->actingAs($this->colleague)->post('/platform/notifications/read')->assertRedirect();
+        $this->withHeader('Authorization', 'Bearer '.$this->colleagueToken)
+            ->postJson('/api/v1/platform/notifications/read-all')
+            ->assertNoContent();
 
         $this->assertNull($mine->fresh()->read_at);
     }
 
     public function test_a_customer_cannot_reach_the_platform_desk(): void
     {
+        $token = app(IssueApiToken::class)->forUser($this->owner, $this->delta->id, 'Owner device')['plain'];
+
         // 404 rather than 403: the platform area does not announce itself to
         // somebody who has no business knowing it is there.
-        $this->actingAs($this->owner)->get('/platform/support')->assertNotFound();
-        $this->actingAs($this->owner)->get('/platform/notifications')->assertNotFound();
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/v1/platform/support-grants')
+            ->assertNotFound();
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/v1/platform/notifications')
+            ->assertNotFound();
+    }
+
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
     }
 
     /**
@@ -189,15 +201,4 @@ class PlatformDeskTest extends TestCase
         );
     }
 
-    private function platformUser(string $email, string $name): User
-    {
-        return User::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
-    }
 }

@@ -65,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
 
         View::composer(
-            ['layouts.app', 'layouts.mobile', 'components.layout.*'],
+            ['layouts.app', 'components.layout.*'],
             AppShellComposer::class,
         );
 

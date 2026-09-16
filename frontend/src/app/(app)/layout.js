@@ -198,6 +198,7 @@ export default async function AppLayout({ children }) {
         currentCompanyId={me.company_id}
         companyLogoUrl={me.company?.logo_url}
         switchCompanyAction={switchCompany}
+        impersonatedBy={me.impersonated_by}
       >
         {children}
       </AppShell>

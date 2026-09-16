@@ -11,6 +11,7 @@ use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -32,6 +33,8 @@ class TenantLifecycleTest extends TestCase
 
     private User $staff;
 
+    private string $staffToken;
+
     private Company $delta;
 
     private User $owner;
@@ -49,25 +52,19 @@ class TenantLifecycleTest extends TestCase
         $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->staff = User::create([
-            'name' => 'Platform Support',
-            'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
     }
 
     public function test_closing_needs_the_code_typed_exactly(): void
     {
-        $this->actingAs($this->staff)
-            ->from($this->tenantUrl())
-            ->delete($this->tenantUrl(), [
+        $this->asStaff()
+            ->deleteJson($this->tenantUrl(), [
                 'confirm_code' => 'dal',
                 'reason' => 'Contract ended on 31 August; customer confirmed by email.',
             ])
-            ->assertSessionHasErrors('confirm_code');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('confirm_code');
 
         // A confirm() dialog is dismissed by reflex. Nothing happens here
         // without the code read off the screen and copied.
@@ -76,10 +73,10 @@ class TenantLifecycleTest extends TestCase
 
     public function test_closing_needs_a_reason(): void
     {
-        $this->actingAs($this->staff)
-            ->from($this->tenantUrl())
-            ->delete($this->tenantUrl(), ['confirm_code' => 'DAL', 'reason' => 'no'])
-            ->assertSessionHasErrors('reason');
+        $this->asStaff()
+            ->deleteJson($this->tenantUrl(), ['confirm_code' => 'DAL', 'reason' => 'no'])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reason');
 
         $this->assertNotNull(Company::withoutGlobalScope(TenantScope::class)->find($this->delta->id));
     }
@@ -175,22 +172,21 @@ class TenantLifecycleTest extends TestCase
     {
         $this->close();
 
-        $this->actingAs($this->staff)
-            ->get('/platform')
+        // Still findable, because a list that forgot them would make the
+        // mistake unrecoverable in practice.
+        $this->asStaff()
+            ->getJson('/api/v1/platform/tenants?status=closed')
             ->assertOk()
-            // Still findable, because a list that forgot them would make the
-            // mistake unrecoverable in practice.
-            ->assertSee(__('platform.closed_customers'))
-            ->assertSee('Delta Apparels Ltd');
+            ->assertJsonFragment(['name' => 'Delta Apparels Ltd']);
     }
 
     public function test_reopening_gives_the_customer_everything_back(): void
     {
         $this->close();
 
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/restore')
-            ->assertRedirect();
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/restore')
+            ->assertOk();
 
         $this->signOut();
 
@@ -201,8 +197,8 @@ class TenantLifecycleTest extends TestCase
     {
         // Two decisions on two days. There is no route from here to an empty
         // database without closing the account first.
-        $this->actingAs($this->staff)
-            ->delete($this->tenantUrl().'/erase', [
+        $this->asStaff()
+            ->deleteJson($this->tenantUrl().'/purge', [
                 'confirm_code' => 'DAL',
                 'reason' => 'Contract ended on 31 August; customer confirmed by email.',
             ])
@@ -215,13 +211,13 @@ class TenantLifecycleTest extends TestCase
     {
         $this->close();
 
-        $this->actingAs($this->staff)
-            ->from('/platform')
-            ->delete($this->tenantUrl().'/erase', [
+        $this->asStaff()
+            ->deleteJson($this->tenantUrl().'/purge', [
                 'confirm_code' => 'WRONG',
                 'reason' => 'Customer asked for their records to be destroyed.',
             ])
-            ->assertSessionHasErrors('purge_code');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('confirm_code');
 
         $this->assertNotNull(
             Company::withoutGlobalScope(TenantScope::class)->withTrashed()->find($this->delta->id),
@@ -287,29 +283,36 @@ class TenantLifecycleTest extends TestCase
         $this->actingAs($this->owner)->get('/app/support/tickets')->assertForbidden();
     }
 
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
+    }
+
     private function tenantUrl(): string
     {
-        return '/platform/tenants/'.$this->delta->id;
+        return '/api/v1/platform/tenants/'.$this->delta->id;
     }
 
     private function close(): void
     {
-        $this->actingAs($this->staff)
-            ->delete($this->tenantUrl(), [
+        $this->asStaff()
+            ->deleteJson($this->tenantUrl(), [
                 'confirm_code' => 'DAL',
                 'reason' => 'Contract ended on 31 August; customer confirmed by email.',
             ])
-            ->assertRedirect(route('platform.tenants'));
+            ->assertNoContent();
     }
 
     private function erase(): void
     {
-        $this->actingAs($this->staff)
-            ->delete($this->tenantUrl().'/erase', [
+        $this->asStaff()
+            ->deleteJson($this->tenantUrl().'/purge', [
                 'confirm_code' => 'DAL',
                 'reason' => 'Customer asked for their records to be destroyed.',
             ])
-            ->assertRedirect(route('platform.tenants'));
+            ->assertNoContent();
     }
 
     private function signOut(): void

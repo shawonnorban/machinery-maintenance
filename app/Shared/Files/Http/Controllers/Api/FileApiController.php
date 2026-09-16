@@ -140,6 +140,7 @@ class FileApiController extends ApiController
     {
         $this->allow(match ($file->attachable_type) {
             'asset' => 'asset.asset.view',
+            'breakdown' => 'breakdown.breakdown.view',
             default => 'work_order.work_order.view',
         });
     }
@@ -148,6 +149,7 @@ class FileApiController extends ApiController
     {
         $this->allow(match ($file->attachable_type) {
             'asset' => 'asset.document.manage',
+            'breakdown' => 'breakdown.breakdown.repair',
             default => 'work_order.work_order.update',
         });
     }

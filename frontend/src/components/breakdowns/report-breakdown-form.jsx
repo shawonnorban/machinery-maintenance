@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { FileInput } from "@/components/ui/file-input";
 import { DateTimeField } from "@/components/ui/date-time-field";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useToastManager } from "@/components/ui/toast";
 import { saveDraft, flush } from "@/lib/offline/queue";
+import { resizeImage } from "@/lib/offline/resize-image";
 
 const PRIORITY_OPTIONS = [
   { value: "", label: "— (uses the machine's own criticality)" },
@@ -70,8 +73,45 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
   const [productionOrderReference, setProductionOrderReference] = useState("");
   const [failureCodeId, setFailureCodeId] = useState("");
   const [downtimeReasonCodeId, setDowntimeReasonCodeId] = useState("");
+  const [photo, setPhoto] = useState(null); // { dataUrl, filename } | null
+  const [photoProcessing, setPhotoProcessing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  /**
+   * Resized (docs/12-Stack-Migration-Implementation-Plan.md Phase E —
+   * factory wifi can't absorb raw camera output) and read as a base64 data
+   * URL right away, before submit, not at send time — the same reasoning
+   * as `saveDraft()` minting the idempotency key at save time: this form
+   * has to finish its own work with no network at all, and `FileReader`
+   * needs none. The offline queue only carries JSON, so the photo has to
+   * already be a string by the time it goes into the draft.
+   */
+  async function handlePhotoChange(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      setPhoto(null);
+      return;
+    }
+
+    setPhotoProcessing(true);
+    try {
+      const resized = await resizeImage(file);
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(resized);
+      });
+      setPhoto({ dataUrl, filename: resized.name });
+    } catch {
+      setPhoto(null);
+      setError("Could not read that photo — try a different one, or skip it.");
+    } finally {
+      setPhotoProcessing(false);
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -101,6 +141,8 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
           production_order_reference: productionOrderReference || null,
           failure_code_id: failureCodeId || null,
           downtime_reason_code_id: downtimeReasonCodeId || null,
+          photo_base64: photo?.dataUrl ?? null,
+          photo_filename: photo?.filename ?? null,
         },
         label: `Breakdown report — ${options.assets.find((a) => a.id === assetId)?.asset_code ?? assetId}`,
       });
@@ -143,6 +185,32 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
           <FormField label="What's wrong" required helperText="Describe what happened — a technician can fill in the diagnosis later.">
             {(fieldProps) => (
               <Textarea {...fieldProps} value={problemDescription} onChange={(e) => setProblemDescription(e.target.value)} rows={4} maxLength={5000} required />
+            )}
+          </FormField>
+
+          <FormField
+            label="Photo"
+            helperText={photoProcessing ? "Processing photo…" : "Optional — a picture of the fault, if you have one. Saved with the report even offline."}
+          >
+            {(fieldProps) => (
+              <div className="flex flex-col gap-2">
+                <FileInput {...fieldProps} accept="image/*" capture="environment" onChange={handlePhotoChange} disabled={photoProcessing} />
+                {photo ? (
+                  <div className="flex items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- a local data: URL preview, not a next/image-optimizable remote asset */}
+                    <img src={photo.dataUrl} alt="" className="size-14 rounded-sm border border-border object-cover" />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPhoto(null)}
+                      aria-label="Remove photo"
+                    >
+                      <X /> Remove
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
             )}
           </FormField>
 
@@ -214,7 +282,7 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
         <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-        <Button type="submit" variant="danger" loading={submitting}>
+        <Button type="submit" variant="danger" loading={submitting} disabled={photoProcessing}>
           Report breakdown
         </Button>
       </div>

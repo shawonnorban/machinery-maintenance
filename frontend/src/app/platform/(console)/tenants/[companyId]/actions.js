@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { platformApiFetch } from "@/lib/platform-api-server";
+import { setSessionToken } from "@/lib/session";
 import { ApiError } from "@/lib/api-error";
 
 function fail(error) {
@@ -305,6 +306,38 @@ async function closeSupportGrant(companyId, grantId) {
   return ok();
 }
 
+/**
+ * Steps inside an open grant as a named user of the company, right from the
+ * platform console — no cross-app handoff to design, unlike the old Blade
+ * flow (`TenantController::enterSupport`'s own "KNOWN GAP" comment): the
+ * platform console and the tenant app are the same Next.js deployment, so
+ * the token `PlatformSupportGrantApiController::enter` mints just becomes
+ * this app's own tenant session cookie, in the same request.
+ *
+ * Not bound to a `companyId` like its siblings — the grant id alone is
+ * enough for the API call, and the redirect target is always the tenant
+ * app's own root, not a platform URL.
+ */
+async function enterSupportGrant(grantId, userId) {
+  let session;
+
+  try {
+    session = await platformApiFetch(`/support-grants/${grantId}/enter`, {
+      method: "POST",
+      body: JSON.stringify({ user_id: userId }),
+    });
+  } catch (error) {
+    return fail(error);
+  }
+
+  await setSessionToken(session.access_token, session.expires_at);
+
+  // Deliberately outside the try/catch above: `redirect()` works by
+  // throwing, and catching that here would turn a successful hand-off into
+  // a reported "error".
+  redirect("/");
+}
+
 export {
   updateTenantDetails,
   suspendTenant,
@@ -325,4 +358,5 @@ export {
   resetMemberPassword,
   openSupportGrant,
   closeSupportGrant,
+  enterSupportGrant,
 };

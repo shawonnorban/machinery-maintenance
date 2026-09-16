@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Platform;
 
 use App\Modules\Api\Actions\IssueApiToken;
-use App\Modules\Api\Models\ApiToken;
 use App\Modules\Audit\Models\AuditLog;
 use App\Modules\Billing\Models\SubscriptionInvoice;
 use App\Modules\Identity\Actions\AttemptLogin;
@@ -16,6 +15,8 @@ use App\Shared\Scopes\TenantScope;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Laravel\Sanctum\PersonalAccessToken;
+use Tests\Support\PlatformFixture;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -39,6 +40,8 @@ class TenantBillingAndAccountTest extends TestCase
 
     private User $staff;
 
+    private string $staffToken;
+
     private Company $delta;
 
     private User $owner;
@@ -56,14 +59,8 @@ class TenantBillingAndAccountTest extends TestCase
         $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->staff = User::create([
-            'name' => 'Platform Support',
-            'email' => 'support@platform.test',
-            'password' => 'correct-horse-battery',
-            'status' => 'ACTIVE',
-            'locale' => 'en',
-            'is_platform_admin' => true,
-        ]);
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
     }
 
     // -- Invoicing ----------------------------------------------------------
@@ -72,12 +69,12 @@ class TenantBillingAndAccountTest extends TestCase
     {
         $this->giveContract();
 
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/invoices', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/invoices', [
                 'period_start' => '2026-08-01',
                 'period_end' => '2026-08-31',
             ])
-            ->assertRedirect();
+            ->assertCreated();
 
         $invoice = SubscriptionInvoice::withoutGlobalScope(TenantScope::class)->firstOrFail();
 
@@ -86,22 +83,22 @@ class TenantBillingAndAccountTest extends TestCase
         $this->assertSame('DRAFT', $invoice->status);
         $this->assertNotNull($invoice->invoice_number);
 
-        $this->actingAs($this->staff)
-            ->post('/platform/invoices/'.$invoice->id.'/issue')
-            ->assertRedirect();
+        $this->asStaff()
+            ->postJson('/api/v1/platform/invoices/'.$invoice->id.'/issue')
+            ->assertOk();
 
         $this->assertNotSame('DRAFT', $invoice->fresh()->status);
     }
 
     public function test_there_is_nothing_to_invoice_without_a_contract(): void
     {
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/tenants/'.$this->delta->id.'/invoices', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/invoices', [
                 'period_start' => '2026-08-01',
                 'period_end' => '2026-08-31',
             ])
-            ->assertSessionHasErrors('period_start');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('period_start');
 
         // Inventing terms for one invoice would put a figure on a document
         // with nothing behind it.
@@ -112,13 +109,13 @@ class TenantBillingAndAccountTest extends TestCase
     {
         $invoice = $this->issuedInvoice();
 
-        $this->actingAs($this->staff)
-            ->post('/platform/invoices/'.$invoice->id.'/payments', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/invoices/'.$invoice->id.'/payments', [
                 'amount' => $invoice->balance_due,
                 'method' => 'BANK_TRANSFER',
-                'reference' => 'TXN-99120',
+                'payment_reference' => 'TXN-99120',
             ])
-            ->assertRedirect();
+            ->assertCreated();
 
         // Most payments in this market arrive as a transfer somebody in the
         // office reconciles, not as a card the customer enters.
@@ -150,13 +147,13 @@ class TenantBillingAndAccountTest extends TestCase
             'last_activity' => now()->getTimestamp(),
         ]);
 
-        $response = $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/password', [
+        $response = $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/reset-password', [
                 'reason' => 'Owner locked out; company email account closed. Ticket 5120.',
             ])
-            ->assertRedirect();
+            ->assertOk();
 
-        $password = $response->getSession()->get('reset_password');
+        $password = $response->json('data.password');
 
         $this->assertIsString($password);
 
@@ -167,23 +164,25 @@ class TenantBillingAndAccountTest extends TestCase
 
         // And everything the old one could still reach is gone. A reset that
         // leaves a live session or a valid token behind has reset nothing for
-        // whoever was misusing it.
+        // whoever was misusing it. `IssueApiToken::forUser()` mints a Sanctum
+        // token now, and `revokeAllFor()` deletes those outright rather than
+        // soft-revoking them the way the legacy `ApiToken` scheme did — the
+        // row itself is gone, not merely flagged.
         $this->assertNull(DB::table('sessions')->where('id', 'owner-session')->value('id'));
-        $this->assertNotNull(ApiToken::withoutGlobalScope(TenantScope::class)
-            ->whereKey($token->id)->value('revoked_at'));
+        $this->assertNull(PersonalAccessToken::find($token->id));
     }
 
     public function test_a_reset_is_reasoned_audited_and_announced(): void
     {
-        $this->actingAs($this->staff)
-            ->from('/platform/tenants/'.$this->delta->id)
-            ->post('/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/password', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/reset-password', [
                 'reason' => 'short',
             ])
-            ->assertSessionHasErrors('reason');
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reason');
 
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/password', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/reset-password', [
                 'reason' => 'Owner locked out; company email account closed. Ticket 5120.',
             ]);
 
@@ -202,12 +201,12 @@ class TenantBillingAndAccountTest extends TestCase
 
     public function test_a_sign_in_address_can_be_corrected(): void
     {
-        $this->actingAs($this->staff)
-            ->patch('/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/email', [
+        $this->asStaff()
+            ->patchJson('/api/v1/platform/tenants/'.$this->delta->id.'/members/'.$this->owner->id.'/email', [
                 'email' => 'owner@delta-apparels.test',
                 'reason' => 'Address mistyped at onboarding. Ticket 5120.',
             ])
-            ->assertRedirect();
+            ->assertOk();
 
         $this->assertSame('owner@delta-apparels.test', $this->owner->fresh()->email);
     }
@@ -222,8 +221,8 @@ class TenantBillingAndAccountTest extends TestCase
 
         // The one place this screen could otherwise reach across the tenancy:
         // a user id from another company put into the URL.
-        $this->actingAs($this->staff)
-            ->post('/platform/tenants/'.$this->delta->id.'/members/'.$theirs->id.'/password', [
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/members/'.$theirs->id.'/reset-password', [
                 'reason' => 'Trying it on, which is exactly what this refuses.',
             ])
             ->assertNotFound();
@@ -233,8 +232,8 @@ class TenantBillingAndAccountTest extends TestCase
 
     public function test_details_can_be_corrected_but_the_code_cannot(): void
     {
-        $this->actingAs($this->staff)
-            ->patch('/platform/tenants/'.$this->delta->id.'/details', [
+        $this->asStaff()
+            ->patchJson('/api/v1/platform/tenants/'.$this->delta->id, [
                 'name' => 'Delta Apparels Limited',
                 'legal_name' => 'Delta Apparels Ltd.',
                 'base_currency' => 'BDT',
@@ -244,7 +243,7 @@ class TenantBillingAndAccountTest extends TestCase
                 // number this customer has ever issued.
                 'code' => 'CHANGED',
             ])
-            ->assertRedirect();
+            ->assertOk();
 
         $company = $this->delta->fresh();
 
@@ -252,9 +251,16 @@ class TenantBillingAndAccountTest extends TestCase
         $this->assertSame('DAL', $company->code);
     }
 
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
+    }
+
     private function giveContract(): void
     {
-        $this->actingAs($this->staff)->post('/platform/tenants/'.$this->delta->id.'/contract', [
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/contracts', [
             'contract_number' => 'SUB-0001',
             'start_date' => '2026-01-01',
             'billing_cycle' => 'MONTHLY',
@@ -269,14 +275,14 @@ class TenantBillingAndAccountTest extends TestCase
     {
         $this->giveContract();
 
-        $this->actingAs($this->staff)->post('/platform/tenants/'.$this->delta->id.'/invoices', [
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/invoices', [
             'period_start' => '2026-08-01',
             'period_end' => '2026-08-31',
         ]);
 
         $invoice = SubscriptionInvoice::withoutGlobalScope(TenantScope::class)->firstOrFail();
 
-        $this->actingAs($this->staff)->post('/platform/invoices/'.$invoice->id.'/issue');
+        $this->asStaff()->postJson('/api/v1/platform/invoices/'.$invoice->id.'/issue');
 
         return $invoice->fresh();
     }

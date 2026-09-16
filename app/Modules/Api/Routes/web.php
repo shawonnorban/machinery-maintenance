@@ -11,15 +11,20 @@ use Illuminate\Support\Facades\Route;
  * Migration-Implementation-Plan.md) — fully replaced by the Next.js app's
  * own `/settings/api-clients`.
  *
- * `/session-token` survives on purpose, and is not a screen at all: it's
- * what the *still-Blade* technician mobile pages (`layouts.mobile`, the QR
- * scan landing pages — no Next.js port of those exists yet) use to get a
- * bearer token for their own offline queue (`resources/js/offline/token.js`
- * → `queue.js`, SRS 38) — session-authenticated and CSRF-protected like any
- * other web route, which is what makes it safe to hand a bearer token to a
- * browser at all. Decommissioning this file wholesale would have taken
- * that down along with the screen, breaking offline breakdown reporting
- * from a scanned machine on the factory floor for no reason.
+ * `/session-token` outlived that for a while: it minted a bearer token for
+ * the old Blade technician mobile pages' own offline queue
+ * (`resources/js/offline/token.js` → `queue.js`, SRS 38). Those pages —
+ * the QR scan landing pages, the breakdown report form, "My Work" — all
+ * belonged to modules (Asset, Breakdown, WorkOrder) already listed in
+ * `ModuleServiceProvider::WEB_DECOMMISSIONED`, so once the last of them
+ * was confirmed to have no other caller, this route had none either. `Api`
+ * is now in that list too, and this file (like every other decommissioned
+ * module's `Routes/web.php`) is simply never loaded — left in place rather
+ * than deleted, so un-decommissioning is a one-line revert if a gap turns
+ * up. `frontend/src/lib/offline/*` + `frontend/src/app/api/offline-relay/
+ * route.js` is the equivalent mechanism in the current stack, and never
+ * needed this route at all — the bearer token lives in an httpOnly cookie
+ * on the Next.js side, not in page-reachable JS.
  */
 Route::middleware('auth')->group(function (): void {
     Route::post('/session-token', [SessionTokenController::class, 'store'])->name('session-token');

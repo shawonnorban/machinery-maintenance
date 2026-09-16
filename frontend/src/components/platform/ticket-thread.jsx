@@ -18,10 +18,17 @@ const STATUS_OPTIONS = [
   { value: "CLOSED", label: "Closed" },
 ];
 
+const UNASSIGNED = "__unassigned__";
+
 /** A ticket thread, reached the same way whether from the cross-customer inbox or a customer's own Tickets tab (mirrors `_ticket_thread.blade.php`). */
-function TicketThread({ ticket, me, replyAction, statusAction, assignAction }) {
+function TicketThread({ ticket, me, staff = [], replyAction, statusAction, assignAction }) {
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
+
+  const assigneeOptions = [
+    { value: UNASSIGNED, label: "Unassigned" },
+    ...staff.map((person) => ({ value: person.id, label: person.id === me.id ? `${person.name} (you)` : person.name })),
+  ];
 
   function changeStatus(status) {
     startTransition(async () => {
@@ -30,10 +37,13 @@ function TicketThread({ ticket, me, replyAction, statusAction, assignAction }) {
     });
   }
 
-  function toggleAssignment() {
+  // A plain reassignment picker rather than only a self-assign toggle — a
+  // ticket handed off to a colleague (they're out, or it needs a different
+  // specialism) previously had no path except that colleague signing in and
+  // assigning it to themselves.
+  function changeAssignee(userId) {
     startTransition(async () => {
-      const assignedToMe = ticket.assignee?.id === me.id;
-      const result = await assignAction(assignedToMe ? null : me.id);
+      const result = await assignAction(userId === UNASSIGNED ? null : userId);
       if (result?.status === "error") toastManager.add({ title: result.message, type: "danger" });
     });
   }
@@ -42,18 +52,18 @@ function TicketThread({ ticket, me, replyAction, statusAction, assignAction }) {
     <div className="flex flex-col gap-5">
       <Card>
         <CardBody className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <StatusBadge status={ticket.status} />
-            <span className="text-xs text-foreground-muted">
-              Assigned to {ticket.assignee?.name ?? "nobody yet"}
-            </span>
-          </div>
+          <StatusBadge status={ticket.status} />
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" loading={pending} onClick={toggleAssignment}>
-              {ticket.assignee?.id === me.id ? "Unassign me" : "Assign to me"}
-            </Button>
+            <div className="w-48">
+              <Select
+                options={assigneeOptions}
+                value={ticket.assignee?.id ?? UNASSIGNED}
+                onValueChange={changeAssignee}
+                disabled={pending}
+              />
+            </div>
             <div className="w-40">
-              <Select options={STATUS_OPTIONS} value={ticket.status} onValueChange={changeStatus} />
+              <Select options={STATUS_OPTIONS} value={ticket.status} onValueChange={changeStatus} disabled={pending} />
             </div>
           </div>
         </CardBody>
