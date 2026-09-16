@@ -49,7 +49,23 @@ async function ensureDnsFallback() {
 
             publicDnsFallback
               .resolve4(hostname)
-              .then((addresses) => callback(null, addresses[0], 4))
+              .then((addresses) => {
+                // Node's own `dns.lookup` reports success in one of two
+                // shapes depending on `options.all`: a single `(address,
+                // family)` pair, or one array of `{ address, family }`
+                // objects. The caller here is undici's connector, which
+                // picks the shape it wants via that flag — answering with
+                // the wrong one is what produced "Invalid IP address:
+                // undefined" the one time this path was actually exercised.
+                if (options?.all) {
+                  callback(
+                    null,
+                    addresses.map((address) => ({ address, family: 4 })),
+                  );
+                } else {
+                  callback(null, addresses[0], 4);
+                }
+              })
               .catch(() => callback(error));
           });
         },
