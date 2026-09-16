@@ -30,6 +30,13 @@ function useEcho(channelName, event, callback) {
     }
 
     const echo = getEcho();
+    if (!echo) {
+      // No Reverb key configured — live updates simply aren't available
+      // here (see `getEcho()`), not an error state a caller should react to.
+      setConnectionState("unavailable");
+      return undefined;
+    }
+
     const channel = echo.private(channelName);
 
     channel.listen(event, (payload) => callbackRef.current(payload));

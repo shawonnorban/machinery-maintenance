@@ -13,6 +13,15 @@ import Pusher from "pusher-js";
  */
 let echo = null;
 
+/**
+ * `null` when there is no Reverb key configured (deliberately blank on a
+ * host with nothing to run `reverb:start` — DEPLOYMENT-GUIDE.md §3) rather
+ * than a connection to make: `pusher-js` throws synchronously, inside the
+ * caller's `useEffect`, the moment it's asked to instantiate without one
+ * ("You must pass your app key when you instantiate Pusher"), and an
+ * uncaught throw there crashed the whole page, not just the live-update
+ * feature — confirmed live on exactly the screens that mount one.
+ */
 function getEcho() {
   if (echo) {
     return echo;
@@ -20,6 +29,10 @@ function getEcho() {
 
   if (typeof window === "undefined") {
     throw new Error("getEcho() must only be called in the browser.");
+  }
+
+  if (!process.env.NEXT_PUBLIC_REVERB_APP_KEY) {
+    return null;
   }
 
   window.Pusher = Pusher;
