@@ -1,7 +1,5 @@
 import "server-only";
 
-import dns from "node:dns";
-import { Agent, setGlobalDispatcher } from "undici";
 import { getSessionToken } from "@/lib/session";
 import { ApiError } from "@/lib/api-error";
 
@@ -16,28 +14,49 @@ const BASE_URL = process.env.LARAVEL_API_URL ?? "http://localhost:8000/api/v1";
 // header and the TLS handshake's SNI are untouched (both still come from
 // the original hostname), which is what keeps this safe against a
 // certificate mismatch.
-const publicDnsFallback = new dns.promises.Resolver();
-publicDnsFallback.setServers(["1.1.1.1", "8.8.8.8"]);
+//
+// Set up lazily, on the first real request, rather than at module load:
+// Next's build evaluates every route module to collect its metadata, and
+// on a memory-capped shared host that was enough extra weight, loaded
+// across dozens of routes in one build worker, to have the build killed
+// outright (confirmed live). Nothing at build time ever calls `apiFetch`,
+// so lazy setup keeps this code from running until the app is actually
+// serving a request.
+let dnsFallbackReady = false;
 
-setGlobalDispatcher(
-  new Agent({
-    connect: {
-      lookup(hostname, options, callback) {
-        dns.lookup(hostname, options, (error, address, family) => {
-          if (!error) {
-            callback(null, address, family);
-            return;
-          }
+async function ensureDnsFallback() {
+  if (dnsFallbackReady) {
+    return;
+  }
 
-          publicDnsFallback
-            .resolve4(hostname)
-            .then((addresses) => callback(null, addresses[0], 4))
-            .catch(() => callback(error));
-        });
+  dnsFallbackReady = true;
+
+  const dns = await import("node:dns");
+  const { Agent, setGlobalDispatcher } = await import("undici");
+
+  const publicDnsFallback = new dns.default.promises.Resolver();
+  publicDnsFallback.setServers(["1.1.1.1", "8.8.8.8"]);
+
+  setGlobalDispatcher(
+    new Agent({
+      connect: {
+        lookup(hostname, options, callback) {
+          dns.default.lookup(hostname, options, (error, address, family) => {
+            if (!error) {
+              callback(null, address, family);
+              return;
+            }
+
+            publicDnsFallback
+              .resolve4(hostname)
+              .then((addresses) => callback(null, addresses[0], 4))
+              .catch(() => callback(error));
+          });
+        },
       },
-    },
-  }),
-);
+    }),
+  );
+}
 
 /**
  * The only way the frontend talks to the Laravel API (see
@@ -56,6 +75,8 @@ setGlobalDispatcher(
  *   `has_more` (cursor) alongside the page of rows.
  */
 async function apiFetch(path, options = {}) {
+  await ensureDnsFallback();
+
   const { token: explicitToken, headers, includeMeta = false, ...rest } = options;
   const token = explicitToken !== undefined ? explicitToken : await getSessionToken();
 
@@ -121,4 +142,4 @@ async function apiFetch(path, options = {}) {
   return includeMeta ? { data: body.data, meta: body.meta } : body.data;
 }
 
-export { apiFetch, BASE_URL };
+export { apiFetch, BASE_URL, ensureDnsFallback };

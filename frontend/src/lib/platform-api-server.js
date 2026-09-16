@@ -2,7 +2,7 @@ import "server-only";
 
 import { getPlatformSessionToken } from "@/lib/platform-session";
 import { ApiError } from "@/lib/api-error";
-import { BASE_URL } from "@/lib/api-server";
+import { BASE_URL, ensureDnsFallback } from "@/lib/api-server";
 
 /**
  * The platform console's own `apiFetch` (see `lib/api-server.js`'s docblock
@@ -13,6 +13,8 @@ import { BASE_URL } from "@/lib/api-server";
  * @param {string} path e.g. "/tenants" — joined onto `${BASE_URL}/platform`.
  */
 async function platformApiFetch(path, options = {}) {
+  await ensureDnsFallback();
+
   const { token: explicitToken, headers, includeMeta = false, ...rest } = options;
   const token = explicitToken !== undefined ? explicitToken : await getPlatformSessionToken();
 
