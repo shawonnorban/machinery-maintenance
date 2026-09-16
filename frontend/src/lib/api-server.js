@@ -31,16 +31,29 @@ async function apiFetch(path, options = {}) {
   // correct boundary itself only when the header is left unset entirely.
   const isFormData = typeof FormData !== "undefined" && rest.body instanceof FormData;
 
-  const response = await fetch(`${BASE_URL}${path}`, {
-    ...rest,
-    headers: {
-      Accept: "application/json",
-      ...(isFormData ? {} : { "Content-Type": "application/json" }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...headers,
-    },
-    cache: "no-store",
-  });
+  let response;
+
+  try {
+    response = await fetch(`${BASE_URL}${path}`, {
+      ...rest,
+      headers: {
+        Accept: "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...headers,
+      },
+      cache: "no-store",
+    });
+  } catch (cause) {
+    // `fetch` itself throws on a network-level failure (DNS, connection
+    // refused, TLS) rather than returning a Response — left uncaught, that
+    // exception crosses a Server Action/Route Handler boundary as an
+    // unhandled error, and the client sees a body-less 500 whose
+    // `response.json()` fails with a "Unexpected end of JSON input" that
+    // hides what actually went wrong. Every caller already knows how to
+    // handle an ApiError, so route this through the same path.
+    throw new ApiError(502, { message: `Unable to reach the API: ${cause.message}`, code: "API_UNREACHABLE" });
+  }
 
   if (response.status === 204) {
     return null;
