@@ -18,7 +18,7 @@ async function platformApiFetch(path, options = {}) {
 
   const isFormData = typeof FormData !== "undefined" && rest.body instanceof FormData;
 
-  const response = await fetch(`${BASE_URL}/platform${path}`, {
+  const fetchOptions = {
     ...rest,
     headers: {
       Accept: "application/json",
@@ -27,7 +27,31 @@ async function platformApiFetch(path, options = {}) {
       ...headers,
     },
     cache: "no-store",
-  });
+  };
+
+  // See `apiFetch` in `lib/api-server.js` for why this retries on a
+  // network-level failure rather than letting it crash unhandled.
+  let response;
+  let lastError;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 200 * attempt));
+    }
+
+    try {
+      response = await fetch(`${BASE_URL}/platform${path}`, fetchOptions);
+      lastError = undefined;
+      break;
+    } catch (cause) {
+      lastError = cause;
+    }
+  }
+
+  if (lastError) {
+    const detail = lastError.cause?.message ?? lastError.message;
+    throw new ApiError(502, { message: `Unable to reach the API: ${detail}`, code: "API_UNREACHABLE" });
+  }
 
   if (response.status === 204) {
     return null;

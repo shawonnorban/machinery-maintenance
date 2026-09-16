@@ -1,9 +1,43 @@
 import "server-only";
 
+import dns from "node:dns";
+import { Agent, setGlobalDispatcher } from "undici";
 import { getSessionToken } from "@/lib/session";
 import { ApiError } from "@/lib/api-error";
 
 const BASE_URL = process.env.LARAVEL_API_URL ?? "http://localhost:8000/api/v1";
+
+// Some hosts' own resolver drops lookups for this app's own API subdomain
+// intermittently (confirmed live: `getaddrinfo ENOTFOUND` from Node while
+// the same hostname resolved fine moments earlier from a plain shell) —
+// evidently a quirk of that resolver, not the DNS record. A public resolver
+// as a fallback keeps that from taking the API down for this process: this
+// only changes which IP the TCP connection dials, so the request's Host
+// header and the TLS handshake's SNI are untouched (both still come from
+// the original hostname), which is what keeps this safe against a
+// certificate mismatch.
+const publicDnsFallback = new dns.promises.Resolver();
+publicDnsFallback.setServers(["1.1.1.1", "8.8.8.8"]);
+
+setGlobalDispatcher(
+  new Agent({
+    connect: {
+      lookup(hostname, options, callback) {
+        dns.lookup(hostname, options, (error, address, family) => {
+          if (!error) {
+            callback(null, address, family);
+            return;
+          }
+
+          publicDnsFallback
+            .resolve4(hostname)
+            .then((addresses) => callback(null, addresses[0], 4))
+            .catch(() => callback(error));
+        });
+      },
+    },
+  }),
+);
 
 /**
  * The only way the frontend talks to the Laravel API (see
