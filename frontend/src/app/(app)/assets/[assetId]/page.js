@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { ApiError } from "@/lib/api-error";
 import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -25,32 +24,24 @@ const CRITICALITY_BORDER = { CRITICAL: "border-l-danger", HIGH: "border-l-warnin
  * maintenance history, status change, transfer, the QR token card, the
  * documents card — ported as a tab here rather than a standalone card, per
  * the Work Order attachments tab precedent).
+ *
+ * Only three calls up front — the asset itself, the header actions' own
+ * form options, and the QR card — rather than the twelve this page used
+ * to fire in one `Promise.all`. Everything else (status/maintenance
+ * history, transfers, meters, costs, documents) is fetched by its own tab,
+ * lazily, the first time it's actually opened (`AssetDetailTabs`'s own
+ * note has why): that original all-at-once load took long enough on this
+ * product's actual shared hosting that a slow mobile connection timed out
+ * before the page ever painted, confirmed live.
  */
 export default async function AssetDetailPage({ params }) {
   const { assetId } = await params;
 
-  const [asset, statusHistory, maintenanceHistory, transfers, formOptions, lifecycle, costEntries, costCategories, qr, documents, permissions, meters] =
-    await Promise.all([
-      apiFetch(`/assets/${assetId}`),
-      apiFetch(`/assets/${assetId}/status-history`),
-      apiFetch(`/assets/${assetId}/maintenance-history`),
-      apiFetch(`/assets/${assetId}/transfer-history`),
-      apiFetch("/assets/form-options"),
-      apiFetch(`/assets/${assetId}/lifecycle-cost`),
-      apiFetch(`/costs?asset_id=${assetId}&per_page=100`),
-      apiFetch("/cost-categories"),
-      apiFetch(`/assets/${assetId}/qr`),
-      apiFetch(`/assets/${assetId}/documents`),
-      apiFetch("/auth/permissions"),
-      // Gated on `meter.reading.view_any`, distinct from `asset.asset.view`
-      // (which everything else on this page shares) — a viewer without it
-      // simply sees an empty Metering tab rather than the whole page
-      // crashing on a 403 nobody asked this particular fetch for.
-      apiFetch(`/assets/${assetId}/meters`).catch((error) => {
-        if (error instanceof ApiError && error.status === 403) return [];
-        throw error;
-      }),
-    ]);
+  const [asset, formOptions, qr] = await Promise.all([
+    apiFetch(`/assets/${assetId}`),
+    apiFetch("/assets/form-options"),
+    apiFetch(`/assets/${assetId}/qr`),
+  ]);
 
   return (
     <>
@@ -101,28 +92,19 @@ export default async function AssetDetailPage({ params }) {
         <div className="lg:col-span-8">
           <AssetDetailTabs
             asset={asset}
-            statusHistory={statusHistory}
-            maintenanceHistory={maintenanceHistory}
-            transfers={transfers}
             transferActions={{
               approve: approveTransfer.bind(null, assetId),
               receive: receiveTransfer.bind(null, assetId),
               reject: rejectTransfer.bind(null, assetId),
             }}
-            meters={meters}
             meteringActions={{ recordReading: recordReading.bind(null, assetId) }}
-            costs={{
-              lifecycle,
-              entries: costEntries,
-              categories: costCategories,
+            costActions={{
               postAction: postCost.bind(null, assetId),
               reverseAction: reverseCost.bind(null, assetId),
             }}
-            documents={{
-              items: documents,
+            documentActions={{
               uploadAction: uploadDocument.bind(null, assetId),
               deleteAction: deleteDocument.bind(null, assetId),
-              canManage: permissions.permissions.includes("asset.document.manage"),
             }}
           />
         </div>

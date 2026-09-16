@@ -17,7 +17,7 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
  * submit (a 403 there is what actually gates it, same as the QR
  * regenerate button), so both actions are always shown.
  */
-function DocumentsTab({ documents, uploadAction, deleteAction, canManage }) {
+function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMutated }) {
   const router = useRouter();
   const formRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -35,6 +35,7 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage }) {
       toastManager.add({ title: "Document uploaded", type: "success" });
       formRef.current?.reset();
       router.refresh();
+      onMutated?.();
     } else if (result?.status === "error") {
       toastManager.add({ title: result.message, type: "danger" });
     }
@@ -48,6 +49,7 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage }) {
       toastManager.add({ title: "Document removed", type: "success" });
       setPendingDelete(null);
       router.refresh();
+      onMutated?.();
     } else if (result?.status === "error") {
       toastManager.add({ title: result.message, type: "danger" });
     }

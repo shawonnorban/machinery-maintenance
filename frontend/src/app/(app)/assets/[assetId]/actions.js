@@ -235,7 +235,61 @@ async function recordReading(assetId, meterId, previousState, formData) {
   }
 }
 
+/**
+ * The six fetches below back the tabs that aren't visible until a click —
+ * status/maintenance history, transfers, meters, costs, documents (see
+ * `AssetDetailTabs`'s own note on why). Each is called directly from the
+ * client, on that tab's first render, rather than joining the page's own
+ * `Promise.all`: the asset detail page's original all-at-once fetch (12
+ * concurrent calls) took long enough on this product's actual hosting that
+ * a slow mobile connection would time out before the page ever painted
+ * (confirmed live) — moving the six heaviest, least-often-needed ones
+ * behind their tab cuts the page's own initial load to three calls.
+ */
+async function getStatusHistory(assetId) {
+  return apiFetch(`/assets/${assetId}/status-history`);
+}
+
+async function getMaintenanceHistory(assetId) {
+  return apiFetch(`/assets/${assetId}/maintenance-history`);
+}
+
+async function getTransferHistory(assetId) {
+  return apiFetch(`/assets/${assetId}/transfer-history`);
+}
+
+/** Same 403-tolerant shape as the page's old inline fetch: a viewer without `meter.reading.view_any` just sees an empty tab. */
+async function getMeters(assetId) {
+  try {
+    return await apiFetch(`/assets/${assetId}/meters`);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 403) return [];
+    throw error;
+  }
+}
+
+async function getCostsData(assetId) {
+  const [lifecycle, entries, categories] = await Promise.all([
+    apiFetch(`/assets/${assetId}/lifecycle-cost`),
+    apiFetch(`/costs?asset_id=${assetId}&per_page=100`),
+    apiFetch("/cost-categories"),
+  ]);
+
+  return { lifecycle, entries, categories };
+}
+
+/** `canManage` travels with the documents themselves now, rather than the page fetching `/auth/permissions` up front for this alone. */
+async function getDocumentsData(assetId) {
+  const [items, permissions] = await Promise.all([
+    apiFetch(`/assets/${assetId}/documents`),
+    apiFetch("/auth/permissions"),
+  ]);
+
+  return { items, canManage: permissions.permissions.includes("asset.document.manage") };
+}
+
 export {
   changeStatus, requestTransfer, approveTransfer, receiveTransfer, rejectTransfer, postCost, reverseCost, regenerateQr,
   uploadDocument, deleteDocument, recordReading,
+  getStatusHistory, getMaintenanceHistory, getTransferHistory, getMeters, getCostsData, getDocumentsData,
 };

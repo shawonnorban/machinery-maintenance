@@ -35,7 +35,7 @@ const NOT_MANUALLY_POSTABLE = ["LABOR", "PARTS"];
  * the plain `lifecycle`/`entries`/`categories` data still crosses from the
  * server page as props.
  */
-function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverseAction }) {
+function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverseAction, onMutated }) {
   const postableCategories = categories.filter((c) => !NOT_MANUALLY_POSTABLE.includes(c.code));
 
   return (
@@ -86,7 +86,7 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
           </Card>
 
           {lifecycle.can_post ? (
-            <PostCostForm categories={postableCategories} currency={lifecycle.currency} action={postAction} />
+            <PostCostForm categories={postableCategories} currency={lifecycle.currency} action={postAction} onMutated={onMutated} />
           ) : null}
         </div>
 
@@ -140,7 +140,7 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
                             </td>
                             <td className="px-5 py-2">
                               {lifecycle.can_reverse && !entry.is_reversal && !isDerived ? (
-                                <ReverseCostCell entryId={entry.id} reverseAction={reverseAction} />
+                                <ReverseCostCell entryId={entry.id} reverseAction={reverseAction} onMutated={onMutated} />
                               ) : null}
                             </td>
                           </tr>
@@ -161,7 +161,7 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
   );
 }
 
-function PostCostForm({ categories, currency, action }) {
+function PostCostForm({ categories, currency, action, onMutated }) {
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
@@ -182,10 +182,11 @@ function PostCostForm({ categories, currency, action }) {
         setDescription("");
         setInvoiceReference("");
       });
+      onMutated?.();
     }
-    // toastManager is not a stable reference across renders — including it
-    // re-fires this effect every render once state first becomes
-    // "success", stacking duplicate toasts.
+    // toastManager/onMutated are not stable references across renders —
+    // including them re-fires this effect every render once state first
+    // becomes "success", stacking duplicate toasts and refetches.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
@@ -266,7 +267,7 @@ function PostCostForm({ categories, currency, action }) {
   );
 }
 
-function ReverseCostCell({ entryId, reverseAction }) {
+function ReverseCostCell({ entryId, reverseAction, onMutated }) {
   const [reason, setReason] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
@@ -280,6 +281,7 @@ function ReverseCostCell({ entryId, reverseAction }) {
     if (result?.status === "success") {
       toastManager.add({ title: "Reversed", type: "success" });
       router.refresh();
+      onMutated?.();
     } else if (result?.status === "error") {
       toastManager.add({ title: result.message, type: "danger" });
     }

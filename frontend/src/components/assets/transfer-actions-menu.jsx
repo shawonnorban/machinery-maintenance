@@ -21,7 +21,7 @@ const APPROVABLE = ["REQUESTED"];
 const REJECTABLE = ["REQUESTED", "APPROVED"];
 const RECEIVABLE = ["REQUESTED", "APPROVED", "IN_TRANSIT"];
 
-function TransferActionsMenu({ transfer, actions }) {
+function TransferActionsMenu({ transfer, actions, onMutated }) {
   const [confirmApprove, setConfirmApprove] = useState(false);
   const [confirmReceive, setConfirmReceive] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
@@ -50,6 +50,7 @@ function TransferActionsMenu({ transfer, actions }) {
       if (result?.status === "success") {
         toastManager.add({ title: successMessage, type: "success" });
         router.refresh();
+        onMutated?.();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
       }
@@ -93,12 +94,13 @@ function TransferActionsMenu({ transfer, actions }) {
         open={rejectOpen}
         onOpenChange={setRejectOpen}
         action={actions.reject.bind(null, transfer.id)}
+        onMutated={onMutated}
       />
     </>
   );
 }
 
-function RejectModal({ open, onOpenChange, action }) {
+function RejectModal({ open, onOpenChange, action, onMutated }) {
   const [state, formAction] = useActionState(action, null);
   const router = useRouter();
   const toastManager = useToastManager();
@@ -108,6 +110,7 @@ function RejectModal({ open, onOpenChange, action }) {
       toastManager.add({ title: "Transfer rejected", type: "success" });
       queueMicrotask(() => onOpenChange(false));
       router.refresh();
+      onMutated?.();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
