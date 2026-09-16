@@ -31,28 +31,47 @@ async function apiFetch(path, options = {}) {
   // correct boundary itself only when the header is left unset entirely.
   const isFormData = typeof FormData !== "undefined" && rest.body instanceof FormData;
 
-  let response;
+  const fetchOptions = {
+    ...rest,
+    headers: {
+      Accept: "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...headers,
+    },
+    cache: "no-store",
+  };
 
-  try {
-    response = await fetch(`${BASE_URL}${path}`, {
-      ...rest,
-      headers: {
-        Accept: "application/json",
-        ...(isFormData ? {} : { "Content-Type": "application/json" }),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...headers,
-      },
-      cache: "no-store",
-    });
-  } catch (cause) {
-    // `fetch` itself throws on a network-level failure (DNS, connection
-    // refused, TLS) rather than returning a Response — left uncaught, that
-    // exception crosses a Server Action/Route Handler boundary as an
-    // unhandled error, and the client sees a body-less 500 whose
-    // `response.json()` fails with a "Unexpected end of JSON input" that
-    // hides what actually went wrong. Every caller already knows how to
-    // handle an ApiError, so route this through the same path.
-    throw new ApiError(502, { message: `Unable to reach the API: ${cause.message}`, code: "API_UNREACHABLE" });
+  // A network-level failure (DNS, connection refused, TLS) makes `fetch`
+  // itself throw rather than return a Response. A couple of the sites this
+  // has run on resolve BASE_URL's own hostname intermittently — a transient
+  // blip on hosts otherwise healthy, not a real outage — so it's worth one
+  // short retry before giving up. Left uncaught entirely, the exception
+  // crosses a Server Action/Route Handler boundary unhandled, and the
+  // client sees a body-less 500 whose `response.json()` fails with
+  // "Unexpected end of JSON input" that hides what actually went wrong.
+  let response;
+  let lastError;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 200 * attempt));
+    }
+
+    try {
+      response = await fetch(`${BASE_URL}${path}`, fetchOptions);
+      lastError = undefined;
+      break;
+    } catch (cause) {
+      lastError = cause;
+    }
+  }
+
+  if (lastError) {
+    // Every caller already knows how to handle an ApiError, so route this
+    // through the same path instead of leaving it to crash unhandled.
+    const detail = lastError.cause?.message ?? lastError.message;
+    throw new ApiError(502, { message: `Unable to reach the API: ${detail}`, code: "API_UNREACHABLE" });
   }
 
   if (response.status === 204) {
