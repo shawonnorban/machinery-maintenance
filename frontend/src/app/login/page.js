@@ -2,27 +2,23 @@ import { Suspense } from "react";
 import { Wrench, Check, Sparkles, ClipboardCheck, PackageSearch, CalendarCheck, ShieldCheck } from "lucide-react";
 import { LoginForm } from "@/components/auth/login-form";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { getT } from "@/lib/i18n-server";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Sign in — Annotech RMG" };
 
-const HIGHLIGHTS = [
-  { text: "Preventive maintenance, scheduled and never missed" },
-  { text: "Breakdowns reported and resolved from the factory floor" },
-  { text: "Spare parts and inventory under one roof" },
-];
-
 // Illustrative only (no live data belongs on a signed-out page) — mirrors
 // the shape of a real usage sparkline (see AnalyticsPanel) purely for the
 // brand panel's visual weight. One series per card, tone-matched to that
-// card's own icon colour.
+// card's own icon colour. Values/trends are fixed display numbers, not
+// translated — the labels above them are.
 const STAT_CARDS = [
   {
     badge: "#1",
     badgeTone: "dark",
     icon: null,
     iconTone: "",
-    label: "Total assets",
+    labelKey: "login_stat_total_assets",
     value: "2,847",
     trend: "+12.4%",
     barColor: "bg-emerald-500",
@@ -31,7 +27,7 @@ const STAT_CARDS = [
   {
     icon: ClipboardCheck,
     iconTone: "bg-brand-subtle text-brand-hover",
-    label: "Work orders closed",
+    labelKey: "login_stat_work_orders_closed",
     value: "1,204",
     trend: "+5.2%",
     barColor: "bg-brand",
@@ -40,7 +36,7 @@ const STAT_CARDS = [
   {
     icon: PackageSearch,
     iconTone: "bg-amber-50 text-amber-600",
-    label: "Spare parts tracked",
+    labelKey: "login_stat_spare_parts_tracked",
     value: "3,562",
     trend: "+3.1%",
     barColor: "bg-amber-500",
@@ -49,7 +45,7 @@ const STAT_CARDS = [
   {
     icon: CalendarCheck,
     iconTone: "bg-info-subtle text-info",
-    label: "PM tasks completed",
+    labelKey: "login_stat_pm_tasks_completed",
     value: "5,120",
     trend: "+9.3%",
     barColor: "bg-info",
@@ -57,7 +53,15 @@ const STAT_CARDS = [
   },
 ];
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const t = await getT("common");
+
+  const HIGHLIGHTS = [
+    { key: "maintenance", text: t("login_highlight_maintenance") },
+    { key: "breakdown", text: t("login_highlight_breakdown") },
+    { key: "inventory", text: t("login_highlight_inventory") },
+  ];
+
   return (
     <div className="flex min-h-dvh flex-col bg-surface lg:flex-row">
       {/* Form panel — a fixed, comfortably narrow column on large screens
@@ -87,10 +91,8 @@ export default function LoginPage() {
 
         <div className="relative flex flex-1 items-center justify-center py-10">
           <div className="w-full max-w-sm">
-            <h1 className="text-[26px] font-bold tracking-tight text-foreground">Sign in to your account</h1>
-            <p className="mt-1.5 mb-7 text-sm text-foreground-muted">
-              Enter your credentials to access Annotech RMG.
-            </p>
+            <h1 className="text-[26px] font-bold tracking-tight text-foreground">{t("sign_in_to_your_account")}</h1>
+            <p className="mt-1.5 mb-7 text-sm text-foreground-muted">{t("login_subtitle")}</p>
             {/* `LoginForm` reads `?from=` (`useSearchParams`) to return a
                 visitor to whatever page sent them here — that hook opts a
                 client component out of static rendering unless it has its
@@ -104,9 +106,9 @@ export default function LoginPage() {
         <div className="relative flex flex-col items-center gap-1.5 lg:items-start">
           <p className="flex items-center gap-1.5 text-xs text-foreground-subtle">
             <ShieldCheck className="size-3.5" />
-            Every session encrypted, every company's data kept apart
+            {t("login_security_note")}
           </p>
-          <p className="text-xs text-foreground-subtle">App Version : 2.0</p>
+          <p className="text-xs text-foreground-subtle">{t("login_app_version", { version: "2.0" })}</p>
         </div>
       </div>
 
@@ -127,17 +129,13 @@ export default function LoginPage() {
 
         <div className="relative flex w-full flex-col gap-8">
           <div className="flex max-w-xl flex-col gap-3">
-            <h2 className="text-4xl font-bold text-balance text-slate-900">
-              Keep every machine running, and every record straight.
-            </h2>
-            <p className="text-sm text-slate-600">
-              Maintenance, breakdowns, and asset lifecycle management built for RMG factory floors.
-            </p>
+            <h2 className="text-4xl font-bold text-balance text-slate-900">{t("login_headline")}</h2>
+            <p className="text-sm text-slate-600">{t("login_tagline")}</p>
           </div>
 
           <ul className="flex max-w-xl flex-col gap-3.5">
-            {HIGHLIGHTS.map(({ text }) => (
-              <li key={text} className="flex items-center gap-3 text-sm font-medium text-slate-800">
+            {HIGHLIGHTS.map(({ key, text }) => (
+              <li key={key} className="flex items-center gap-3 text-sm font-medium text-slate-800">
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
                   <Check className="size-3.5" strokeWidth={3} />
                 </span>
@@ -154,7 +152,7 @@ export default function LoginPage() {
               cards falling back to overlapping/un-sized boxes. */}
           <div className="flex w-full gap-4">
             {STAT_CARDS.map((card) => (
-              <div key={card.label} className="min-w-0 flex-1 overflow-hidden rounded-2xl bg-white p-5 shadow-xl">
+              <div key={card.labelKey} className="min-w-0 flex-1 overflow-hidden rounded-2xl bg-white p-5 shadow-xl">
                 <div className="flex items-center justify-between gap-2">
                   {card.icon ? (
                     <span className={cn("flex size-8 items-center justify-center rounded-full", card.iconTone)}>
@@ -170,7 +168,7 @@ export default function LoginPage() {
                   </span>
                 </div>
                 <span className="mt-2.5 block text-[10px] font-semibold tracking-wide text-slate-400 uppercase">
-                  {card.label}
+                  {t(card.labelKey)}
                 </span>
                 <p className="tabular mt-1 text-2xl font-bold tracking-tight text-slate-900">{card.value}</p>
                 {/* `flex-1` (not `w-full`) so the bars divide the row's
@@ -191,7 +189,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="relative text-xs text-slate-500">A Product by Data State Ltd</p>
+        <p className="relative text-xs text-slate-500">{t("login_footer_product_by", { company: "Data State Ltd" })}</p>
       </div>
     </div>
   );

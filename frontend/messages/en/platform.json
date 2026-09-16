@@ -96,6 +96,7 @@
     "no_grants": "Nobody has been given access to this customer.",
     "grant_not_active": "That access has ended or expired. Open a new one.",
     "not_a_member": "That person is not an active member of this company.",
+    "support_session_token_name": "Support session (:name)",
     "support_session_banner": "Support session — you are inside a customer's account",
     "acting_as": "Acting as :name (:email)",
     "leave_support_session": "Leave",

@@ -7,21 +7,23 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useT } from "@/lib/i18n";
 
 // One demo login per role a reviewer most needs to compare: the person who
 // can see everything, the floor supervisor who only reports what they spot,
 // and the technician who repairs it — not all twelve seeded roles, which
 // would turn a quick demo click into another list to read.
 const DEMO_ACCOUNTS = [
-  { role: "Company Owner", email: "owner@delta.test" },
-  { role: "Line Chief", email: "linechief@delta.test" },
-  { role: "Technician", email: "technician@delta.test" },
+  { roleKey: "role_company_owner", email: "owner@delta.test" },
+  { roleKey: "role_line_chief", email: "linechief@delta.test" },
+  { roleKey: "role_technician", email: "technician@delta.test" },
 ];
 const DEMO_PASSWORD = "password123";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useT("common");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -52,7 +54,7 @@ function LoginForm() {
       const body = await response.json();
 
       if (!response.ok) {
-        throw new Error(body.message ?? "Login failed");
+        throw new Error(body.message ?? t("login_failed"));
       }
 
       // `proxy.js` sends an unauthenticated visitor here with `?from=` set
@@ -81,7 +83,7 @@ function LoginForm() {
       <form onSubmit={handleSubmit} method="post" className="flex flex-col gap-4">
         {error ? <Alert variant="danger">{error}</Alert> : null}
 
-        <FormField label="Email address" required>
+        <FormField label={t("email_address")} required>
           {(fieldProps) => (
             <div className="relative">
               <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-subtle" />
@@ -100,7 +102,7 @@ function LoginForm() {
           )}
         </FormField>
 
-        <FormField label="Password" required>
+        <FormField label={t("password")} required>
           {(fieldProps) => (
             <div className="relative">
               <Lock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-subtle" />
@@ -109,7 +111,7 @@ function LoginForm() {
                 type="password"
                 name="password"
                 autoComplete="current-password"
-                placeholder="Enter your password"
+                placeholder={t("login_password_placeholder")}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
@@ -124,7 +126,7 @@ function LoginForm() {
           loading={submitting}
           className="mt-2 h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-base font-semibold text-white hover:from-emerald-600 hover:to-cyan-600 focus-visible:ring-emerald-500/50"
         >
-          Log in
+          {t("log_in_button")}
         </Button>
       </form>
 
@@ -137,7 +139,7 @@ function LoginForm() {
       <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
         <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-amber-800 uppercase">
           <Ticket className="size-4" />
-          Try a demo account
+          {t("login_demo_heading")}
         </div>
 
         <div className="mt-3 flex flex-col gap-2">
@@ -149,15 +151,15 @@ function LoginForm() {
               className="flex items-center justify-between gap-3 rounded-lg border border-amber-100 bg-white px-3.5 py-2.5 text-left transition-colors hover:border-amber-300"
             >
               <span className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">{account.role}</span>
+                <span className="text-sm font-semibold text-foreground">{t(account.roleKey)}</span>
                 <span className="font-mono text-xs text-amber-700">{account.email}</span>
               </span>
-              <span className="shrink-0 text-xs font-semibold text-amber-600">Click to use</span>
+              <span className="shrink-0 text-xs font-semibold text-amber-600">{t("login_demo_click_to_use")}</span>
             </button>
           ))}
         </div>
 
-        <p className="mt-3 text-xs text-amber-700">Password for all accounts: {DEMO_PASSWORD}</p>
+        <p className="mt-3 text-xs text-amber-700">{t("login_demo_password_note", { password: DEMO_PASSWORD })}</p>
       </div>
     </div>
   );

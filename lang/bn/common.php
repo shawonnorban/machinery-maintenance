@@ -67,4 +67,31 @@ return [
     'none' => 'নেই',
     'yes' => 'হ্যাঁ',
     'no' => 'না',
+
+    // সাইন-ইন স্ক্রিনের নিজস্ব টেক্সট।
+    'email_address' => 'ইমেইল ঠিকানা',
+    'log_in_button' => 'লগ ইন',
+    'login_subtitle' => 'Annotech RMG-এ প্রবেশ করতে আপনার তথ্য দিন।',
+    'login_failed' => 'লগইন ব্যর্থ হয়েছে',
+    'login_password_placeholder' => 'আপনার পাসওয়ার্ড লিখুন',
+    'login_highlight_maintenance' => 'নির্ধারিত প্রতিরোধমূলক রক্ষণাবেক্ষণ, কখনো মিস হয় না',
+    'login_highlight_breakdown' => 'ফ্যাক্টরি ফ্লোর থেকেই ব্রেকডাউন রিপোর্ট ও সমাধান',
+    'login_highlight_inventory' => 'স্পেয়ার পার্টস ও ইনভেন্টরি এক জায়গায়',
+    'login_headline' => 'প্রতিটি মেশিন সচল রাখুন, প্রতিটি রেকর্ড সঠিক রাখুন।',
+    'login_tagline' => 'RMG ফ্যাক্টরি ফ্লোরের জন্য তৈরি মেইনটেন্যান্স, ব্রেকডাউন ও এসেট লাইফসাইকেল ব্যবস্থাপনা।',
+    'login_stat_total_assets' => 'মোট এসেট',
+    'login_stat_work_orders_closed' => 'সম্পন্ন কাজের আদেশ',
+    'login_stat_spare_parts_tracked' => 'ট্র্যাক করা স্পেয়ার পার্টস',
+    'login_stat_pm_tasks_completed' => 'সম্পন্ন পিএম কাজ',
+    'login_security_note' => 'প্রতিটি সেশন এনক্রিপ্টেড, প্রতিটি কোম্পানির ডেটা আলাদা রাখা হয়',
+    'login_app_version' => 'অ্যাপ ভার্সন : :version',
+    'login_footer_product_by' => ':company-এর একটি পণ্য',
+
+    // ডেমো-অ্যাকাউন্ট প্যানেল (login-form.jsx) — বারোটা সিড করা রোলের সবগুলো না, শুধু তিনটা।
+    'login_demo_heading' => 'একটি ডেমো অ্যাকাউন্ট ব্যবহার করুন',
+    'login_demo_click_to_use' => 'ব্যবহার করতে ক্লিক করুন',
+    'login_demo_password_note' => 'সব অ্যাকাউন্টের পাসওয়ার্ড: :password',
+    'role_company_owner' => 'কোম্পানি ওনার',
+    'role_line_chief' => 'লাইন চিফ',
+    'role_technician' => 'টেকনিশিয়ান',
 ];

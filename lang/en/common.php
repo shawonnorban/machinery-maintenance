@@ -69,4 +69,36 @@ return [
     'none' => 'None',
     'yes' => 'Yes',
     'no' => 'No',
+
+    // The sign-in screen's own copy (frontend/src/app/login/page.js,
+    // components/auth/login-form.jsx) — distinct keys from the shorter
+    // 'email'/'login' above rather than reusing them, so this screen's
+    // exact wording ("Email address", "Log in") doesn't silently drift if
+    // a shorter label elsewhere ever changes.
+    'email_address' => 'Email address',
+    'log_in_button' => 'Log in',
+    'login_subtitle' => 'Enter your credentials to access Annotech RMG.',
+    'login_failed' => 'Login failed',
+    'login_password_placeholder' => 'Enter your password',
+    'login_highlight_maintenance' => 'Preventive maintenance, scheduled and never missed',
+    'login_highlight_breakdown' => 'Breakdowns reported and resolved from the factory floor',
+    'login_highlight_inventory' => 'Spare parts and inventory under one roof',
+    'login_headline' => 'Keep every machine running, and every record straight.',
+    'login_tagline' => 'Maintenance, breakdowns, and asset lifecycle management built for RMG factory floors.',
+    'login_stat_total_assets' => 'Total assets',
+    'login_stat_work_orders_closed' => 'Work orders closed',
+    'login_stat_spare_parts_tracked' => 'Spare parts tracked',
+    'login_stat_pm_tasks_completed' => 'PM tasks completed',
+    'login_security_note' => "Every session encrypted, every company's data kept apart",
+    'login_app_version' => 'App Version : :version',
+    'login_footer_product_by' => 'A Product by :company',
+
+    // The demo-account panel (login-form.jsx) — three roles, not all
+    // twelve seeded ones (see that component's own note on why).
+    'login_demo_heading' => 'Try a demo account',
+    'login_demo_click_to_use' => 'Click to use',
+    'login_demo_password_note' => 'Password for all accounts: :password',
+    'role_company_owner' => 'Company Owner',
+    'role_line_chief' => 'Line Chief',
+    'role_technician' => 'Technician',
 ];

@@ -150,6 +150,7 @@
     "work_order_raised": "Work order :number raised.",
     "raise_work_order": "Raise repair work order",
     "work_order_after_close": "A closed breakdown cannot raise new work.",
+    "work_order_already_open": "Work order :number is still open — close or cancel it before raising another.",
     "no_work_orders": "No repair work raised yet.",
     "no_maintenance_type": "No maintenance type is configured, so repair work cannot be raised.",
     "filter_open": "Open",
