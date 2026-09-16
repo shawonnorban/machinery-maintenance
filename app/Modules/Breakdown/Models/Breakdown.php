@@ -81,10 +81,11 @@ class Breakdown extends BaseModel
         'company_id', 'factory_id', 'asset_id', 'asset_location_id', 'production_line_id',
         'breakdown_number', 'reported_by', 'failure_at', 'reported_at',
         'status', 'priority', 'severity', 'problem_description',
-        'failure_category_id', 'failure_code_id', 'root_cause_id',
+        'failure_category_id', 'failure_code_id', 'failure_code_other', 'root_cause_id',
         'corrective_action', 'preventive_action', 'production_order_reference',
         'assigned_technician_id', 'assigned_team_id',
-        'downtime_class', 'downtime_reason_code_id', 'is_recurrence_of_breakdown_id',
+        'downtime_class', 'downtime_reason_code_id', 'downtime_reason_other',
+        'is_recurrence_of_breakdown_id',
     ];
 
     protected function casts(): array

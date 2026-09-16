@@ -114,10 +114,22 @@ class ReportBreakdown
                 'problem_description' => $data['problem_description'],
                 'failure_category_id' => $data['failure_category_id'] ?? null,
                 'failure_code_id' => $data['failure_code_id'] ?? null,
+                'failure_code_other' => $data['failure_code_other'] ?? null,
                 'production_order_reference' => $data['production_order_reference'] ?? null,
                 'downtime_class' => 'UNPLANNED',
+                // The default only fills in for a field the reporter simply
+                // left alone. Picking "Other" is a different thing entirely
+                // — a deliberate statement that no catalog reason fits — and
+                // defaulting it to MACHINE_BREAKDOWN would silently overwrite
+                // that. Left null instead, `DowntimeCalculator` already
+                // flags an unclassified row as `needs_review` rather than
+                // excluding it from anything (ERD Section 12 rule 1), which
+                // is exactly the outcome an "Other" reason should have.
                 'downtime_reason_code_id' => $data['downtime_reason_code_id']
-                    ?? $this->defaultReasonCodeId($asset->company_id),
+                    ?? (filled($data['downtime_reason_other'] ?? null)
+                        ? null
+                        : $this->defaultReasonCodeId($asset->company_id)),
+                'downtime_reason_other' => $data['downtime_reason_other'] ?? null,
                 // Rule 4: a second report against a machine already down is the
                 // same event. Counting it independently halves MTBF for a
                 // machine that broke once.

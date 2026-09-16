@@ -151,12 +151,19 @@ export default async function BreakdownDetailPage({ params }) {
                 <div className="sm:col-span-2">
                   <Field label="Problem description">{breakdown.problem_description}</Field>
                 </div>
-                {breakdown.failure_category || breakdown.failure_code || breakdown.root_cause ? (
+                {breakdown.failure_category || breakdown.failure_code || breakdown.failure_code_other || breakdown.root_cause ? (
                   <>
                     <Field label="Failure category">{breakdown.failure_category ?? "—"}</Field>
-                    <Field label="Failure code">{breakdown.failure_code ?? "—"}</Field>
+                    <Field label="Failure code">
+                      {breakdown.failure_code ?? (breakdown.failure_code_other ? `Other: ${breakdown.failure_code_other}` : "—")}
+                    </Field>
                     <Field label="Root cause">{breakdown.root_cause ?? "—"}</Field>
                   </>
+                ) : null}
+                {breakdown.downtime_reason || breakdown.downtime_reason_other ? (
+                  <Field label="Reason">
+                    {breakdown.downtime_reason ?? `Other: ${breakdown.downtime_reason_other}`}
+                  </Field>
                 ) : null}
               </div>
             </TabsPanel>

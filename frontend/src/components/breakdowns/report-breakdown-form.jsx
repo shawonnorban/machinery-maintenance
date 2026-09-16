@@ -29,6 +29,12 @@ const SEVERITY_OPTIONS = [
   { value: "NEGLIGIBLE", label: "Negligible" },
 ];
 
+// Neither failure codes nor reason codes are exhaustive — a machine breaks
+// in a way the catalog hasn't seen yet often enough that forcing the
+// closest wrong match would be worse than a free-text note. Not a real
+// record's id, so it can never collide with one.
+const OTHER = "OTHER";
+
 /**
  * The one form in the product built to work with no signal (docs/12-
  * Stack-Migration-Implementation-Plan.md Phase E; mirrors the Blade
@@ -72,7 +78,9 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
   const [productionLineId, setProductionLineId] = useState("");
   const [productionOrderReference, setProductionOrderReference] = useState("");
   const [failureCodeId, setFailureCodeId] = useState("");
+  const [failureCodeOther, setFailureCodeOther] = useState("");
   const [downtimeReasonCodeId, setDowntimeReasonCodeId] = useState("");
+  const [downtimeReasonOther, setDowntimeReasonOther] = useState("");
   const [photo, setPhoto] = useState(null); // { dataUrl, filename } | null
   const [photoProcessing, setPhotoProcessing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -139,8 +147,12 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
           severity,
           production_line_id: productionLineId || null,
           production_order_reference: productionOrderReference || null,
-          failure_code_id: failureCodeId || null,
-          downtime_reason_code_id: downtimeReasonCodeId || null,
+          // "Other" is never a real catalog id — it stands in for the
+          // free-text field below, so the id is left null either way.
+          failure_code_id: failureCodeId && failureCodeId !== OTHER ? failureCodeId : null,
+          failure_code_other: failureCodeId === OTHER ? failureCodeOther.trim() || null : null,
+          downtime_reason_code_id: downtimeReasonCodeId && downtimeReasonCodeId !== OTHER ? downtimeReasonCodeId : null,
+          downtime_reason_other: downtimeReasonCodeId === OTHER ? downtimeReasonOther.trim() || null : null,
           photo_base64: photo?.dataUrl ?? null,
           photo_filename: photo?.filename ?? null,
         },
@@ -254,25 +266,51 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
 
           <FormField label="Failure code" helperText="Optional at report time — maintenance confirms or corrects it at closure.">
             {(fieldProps) => (
-              <Select
-                {...fieldProps}
-                value={failureCodeId}
-                onValueChange={setFailureCodeId}
-                placeholder="—"
-                options={options.failure_codes.map((code) => ({ value: code.id, label: code.name }))}
-              />
+              <div className="flex flex-col gap-2">
+                <Select
+                  {...fieldProps}
+                  value={failureCodeId}
+                  onValueChange={setFailureCodeId}
+                  placeholder="—"
+                  options={[
+                    ...options.failure_codes.map((code) => ({ value: code.id, label: code.name })),
+                    { value: OTHER, label: "Other (not in this list)" },
+                  ]}
+                />
+                {failureCodeId === OTHER ? (
+                  <Input
+                    value={failureCodeOther}
+                    onChange={(e) => setFailureCodeOther(e.target.value)}
+                    placeholder="Describe the failure"
+                    maxLength={255}
+                  />
+                ) : null}
+              </div>
             )}
           </FormField>
 
           <FormField label="Reason">
             {(fieldProps) => (
-              <Select
-                {...fieldProps}
-                value={downtimeReasonCodeId}
-                onValueChange={setDowntimeReasonCodeId}
-                placeholder="—"
-                options={options.reason_codes.map((reason) => ({ value: reason.id, label: reason.name }))}
-              />
+              <div className="flex flex-col gap-2">
+                <Select
+                  {...fieldProps}
+                  value={downtimeReasonCodeId}
+                  onValueChange={setDowntimeReasonCodeId}
+                  placeholder="—"
+                  options={[
+                    ...options.reason_codes.map((reason) => ({ value: reason.id, label: reason.name })),
+                    { value: OTHER, label: "Other (not in this list)" },
+                  ]}
+                />
+                {downtimeReasonCodeId === OTHER ? (
+                  <Input
+                    value={downtimeReasonOther}
+                    onChange={(e) => setDowntimeReasonOther(e.target.value)}
+                    placeholder="Describe the reason"
+                    maxLength={255}
+                  />
+                ) : null}
+              </div>
             )}
           </FormField>
         </div>

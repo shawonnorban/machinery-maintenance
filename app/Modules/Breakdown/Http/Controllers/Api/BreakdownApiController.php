@@ -110,7 +110,7 @@ class BreakdownApiController extends ApiController
         $breakdown->load([
             'asset:id,asset_code,name', 'factory:id,name',
             'failureCategory:id,name', 'failureCode:id,name', 'rootCause:id,name',
-            'assignedTechnician:id,name',
+            'downtimeReasonCode:id,name', 'assignedTechnician:id,name',
         ]);
 
         return ApiResponse::ok($this->detail($breakdown) + [
@@ -222,7 +222,11 @@ class BreakdownApiController extends ApiController
             'production_line_id' => ['nullable', 'string', 'size:26'],
             'failure_category_id' => ['nullable', 'string', 'size:26'],
             'failure_code_id' => ['nullable', 'string', 'size:26'],
+            // Set instead of failure_code_id when the reporter picked "Other"
+            // because nothing in the catalog matched what actually happened.
+            'failure_code_other' => ['nullable', 'string', 'max:255'],
             'downtime_reason_code_id' => ['nullable', 'string', 'size:26'],
+            'downtime_reason_other' => ['nullable', 'string', 'max:255'],
             'production_order_reference' => ['nullable', 'string', 'max:255'],
             // A photo taken with the report, not uploaded separately — the
             // offline queue (frontend/src/lib/offline/queue.js) sends this
@@ -651,7 +655,10 @@ class BreakdownApiController extends ApiController
             'problem_description' => $breakdown->problem_description,
             'failure_category' => $breakdown->failureCategory?->name,
             'failure_code' => $breakdown->failureCode?->name,
+            'failure_code_other' => $breakdown->failure_code_other,
             'root_cause' => $breakdown->rootCause?->name,
+            'downtime_reason' => $breakdown->downtimeReasonCode?->name,
+            'downtime_reason_other' => $breakdown->downtime_reason_other,
             'corrective_action' => $breakdown->corrective_action,
             'preventive_action' => $breakdown->preventive_action,
             'assigned_technician' => $breakdown->assignedTechnician?->name,
