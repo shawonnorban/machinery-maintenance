@@ -1,5 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Shared hosting (CloudLinux LVE) caps how many OS processes/threads an
+  // account may hold at once. Next.js's build-time worker pool forks one
+  // child process per CPU by default, and on that kind of host the fork
+  // fails mid-build with `spawn ... EAGAIN` right after webpack compiles
+  // successfully — not a code problem, just too many processes for the
+  // account's limit. Forcing a single worker avoids spawning extra
+  // processes at all; it only makes the build slower, never wrong.
+  experimental: {
+    cpus: 1,
+  },
+
   // Next.js 15+ blocks cross-origin requests to dev-only resources
   // (`/_next/hmr`, and apparently enough of the rest of the dev bundle to
   // break hydration entirely) unless the request's Host header is on this
