@@ -6,6 +6,7 @@ import { AssetsTable } from "@/components/assets/assets-table";
 import { StatCard } from "@/components/ui/stat-card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getT } from "@/lib/i18n-server";
 
 const STATUSES = [
   "DRAFT", "PURCHASED", "INSTALLED", "COMMISSIONED", "RUNNING", "IDLE",
@@ -32,32 +33,33 @@ export default async function AssetsPage({ searchParams }) {
   if (status) query.set("status", status);
   if (criticality) query.set("criticality", criticality);
 
-  const [assets, counts] = await Promise.all([
+  const [assets, counts, t] = await Promise.all([
     apiFetch(`/assets?${query.toString()}`, { includeMeta: true }),
     // Not scoped to whatever status/criticality filter or page the list
     // below happens to be on — same reasoning as Work Orders' own
     // `/work-orders/counts`.
     apiFetch("/assets/counts"),
+    getT("asset"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Assets" }]}
-        title="Assets"
-        description="Every machine on the floors you can reach."
+        breadcrumb={[{ label: t("assets") }]}
+        title={t("assets")}
+        description={t("page_description")}
         actions={
           <Link href="/assets/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> New asset
+            <Plus /> {t("new_asset")}
           </Link>
         }
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total assets" value={counts.total} icon={<Boxes />} tone="brand" />
-        <StatCard label="Running" value={counts.running} icon={<Play />} tone="success" />
-        <StatCard label="Needs attention" value={counts.needs_attention} icon={<TriangleAlert />} tone="danger" />
-        <StatCard label="Critical" value={counts.critical} icon={<Flame />} tone="warning" />
+        <StatCard label={t("total_assets")} value={counts.total} icon={<Boxes />} tone="brand" />
+        <StatCard label={t("status_running")} value={counts.running} icon={<Play />} tone="success" />
+        <StatCard label={t("needs_attention")} value={counts.needs_attention} icon={<TriangleAlert />} tone="danger" />
+        <StatCard label={t("criticality_critical")} value={counts.critical} icon={<Flame />} tone="warning" />
       </div>
 
       <AssetsTable

@@ -7,9 +7,10 @@ import { Search } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody } from "@/components/ui/card";
+import { useT } from "@/lib/i18n";
 
 const CRITICALITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", LOW: "neutral" };
 
@@ -20,6 +21,8 @@ const CRITICALITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", 
  * (docs/12-Stack-Migration-Implementation-Plan.md Phase C §5).
  */
 function AssetsTable({ assets, meta, page, search, status, criticality, sort, direction, statusOptions, criticalityOptions }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const router = useRouter();
   const [searchInput, setSearchInput] = useState(search);
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -69,24 +72,24 @@ function AssetsTable({ assets, meta, page, search, status, criticality, sort, di
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search asset code, name, serial…"
+              placeholder={t("search_placeholder")}
               className="pl-9"
             />
           </div>
           <div className="w-full max-w-[220px]">
             <Select
-              options={[{ value: "", label: "All statuses" }, ...statusOptions.map((s) => ({ value: s, label: formatStatus(s) }))]}
+              options={[{ value: "", label: t("all_statuses") }, ...statusOptions.map((s) => ({ value: s, label: t(`status_${s.toLowerCase()}`) }))]}
               value={status}
               onValueChange={(value) => navigate({ status: value, page: 1 })}
-              placeholder="All statuses"
+              placeholder={t("all_statuses")}
             />
           </div>
           <div className="w-full max-w-[180px]">
             <Select
-              options={[{ value: "", label: "All criticalities" }, ...criticalityOptions.map((c) => ({ value: c, label: formatStatus(c) }))]}
+              options={[{ value: "", label: t("all_criticalities") }, ...criticalityOptions.map((c) => ({ value: c, label: t(`criticality_${c.toLowerCase()}`) }))]}
               value={criticality}
               onValueChange={(value) => navigate({ criticality: value, page: 1 })}
-              placeholder="All criticalities"
+              placeholder={t("all_criticalities")}
             />
           </div>
         </CardBody>
@@ -96,7 +99,7 @@ function AssetsTable({ assets, meta, page, search, status, criticality, sort, di
         columns={[
           {
             key: "asset_code",
-            header: "Asset",
+            header: t("asset"),
             sortable: true,
             render: (asset) => (
               <div>
@@ -107,10 +110,10 @@ function AssetsTable({ assets, meta, page, search, status, criticality, sort, di
               </div>
             ),
           },
-          { key: "type", header: "Type", render: (asset) => asset.type?.name ?? "—" },
+          { key: "type", header: t("type"), render: (asset) => asset.type?.name ?? "—" },
           {
             key: "factory",
-            header: "Factory",
+            header: t("factory"),
             render: (asset) => (
               <div>
                 {asset.factory?.name}
@@ -120,29 +123,29 @@ function AssetsTable({ assets, meta, page, search, status, criticality, sort, di
           },
           {
             key: "criticality",
-            header: "Criticality",
+            header: t("criticality"),
             sortable: true,
-            render: (asset) => <Badge variant={CRITICALITY_TONE[asset.criticality] ?? "neutral"}>{formatStatus(asset.criticality)}</Badge>,
+            render: (asset) => <Badge variant={CRITICALITY_TONE[asset.criticality] ?? "neutral"}>{t(`criticality_${asset.criticality?.toLowerCase()}`)}</Badge>,
           },
           {
             key: "status",
-            header: "Status",
+            header: t("status"),
             sortable: true,
-            render: (asset) => <StatusBadge status={asset.status} />,
+            render: (asset) => <StatusBadge status={asset.status} label={t(`status_${asset.status?.toLowerCase()}`)} />,
           },
         ]}
         rows={assets}
         rowKey={(asset) => asset.id}
         sort={{ key: sort, direction }}
         onSortChange={toggleSort}
-        emptyTitle="No assets found."
-        emptyDescription="Try a different search or filter."
-        rowActions={(asset) => [{ label: "View", onSelect: () => router.push(`/assets/${asset.id}`) }]}
+        emptyTitle={t("no_assets")}
+        emptyDescription={t("try_different_filter")}
+        rowActions={(asset) => [{ label: tc("view"), onSelect: () => router.push(`/assets/${asset.id}`) }]}
         selectedKeys={selectedKeys}
         onSelectedKeysChange={setSelectedKeys}
         bulkActions={[
           {
-            label: "Print labels",
+            label: t("print_labels"),
             onSelect: (keys) => router.push(`/assets/labels?${keys.map((id) => `ids[]=${encodeURIComponent(id)}`).join("&")}`),
           },
         ]}

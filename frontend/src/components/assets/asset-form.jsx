@@ -10,7 +10,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useToastManager } from "@/components/ui/toast";
-import { formatStatus } from "@/components/ui/status-badge";
+import { useT } from "@/lib/i18n";
 
 /**
  * Shared by `/assets/create` and `/assets/[assetId]/edit` — mirrors
@@ -32,6 +32,8 @@ import { formatStatus } from "@/components/ui/status-badge";
  * }} props
  */
 function AssetForm({ asset = null, options, action }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const isEdit = asset !== null;
   const router = useRouter();
   const toastManager = useToastManager();
@@ -68,7 +70,7 @@ function AssetForm({ asset = null, options, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: isEdit ? "Asset saved" : "Asset created", type: "success" });
+      toastManager.add({ title: isEdit ? t("asset_saved_toast") : t("asset_created_toast"), type: "success" });
     }
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes
@@ -109,17 +111,17 @@ function AssetForm({ asset = null, options, action }) {
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <FormField label="Asset code" required helperText={isEdit ? "Printed on the machine — not changeable." : undefined} error={state?.errors?.asset_code?.[0]}>
+        <FormField label={t("asset_code")} required helperText={isEdit ? t("asset_code_readonly_hint") : undefined} error={state?.errors?.asset_code?.[0]}>
           {(fieldProps) => (
             <Input {...fieldProps} value={assetCode} onChange={(e) => setAssetCode(e.target.value)} disabled={isEdit} required maxLength={64} />
           )}
         </FormField>
 
-        <FormField label="Name" required className="sm:col-span-2" error={state?.errors?.name?.[0]}>
+        <FormField label={t("name")} required className="sm:col-span-2" error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} required maxLength={255} />}
         </FormField>
 
-        <FormField label="Type" required error={state?.errors?.asset_type_id?.[0]}>
+        <FormField label={t("type")} required error={state?.errors?.asset_type_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -128,59 +130,59 @@ function AssetForm({ asset = null, options, action }) {
                 setTypeId(value);
                 setCategoryId("");
               }}
-              placeholder="Select a type"
-              options={options.types.map((t) => ({ value: t.id, label: t.name }))}
+              placeholder={t("select_a_type")}
+              options={options.types.map((type) => ({ value: type.id, label: type.name }))}
             />
           )}
         </FormField>
 
-        <FormField label="Category" required error={state?.errors?.asset_category_id?.[0]}>
+        <FormField label={t("category")} required error={state?.errors?.asset_category_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={categoryId}
               onValueChange={setCategoryId}
-              placeholder="Select a category"
+              placeholder={t("select_a_category")}
               options={categoryOptions.map((c) => ({ value: c.id, label: c.name }))}
             />
           )}
         </FormField>
 
-        <FormField label="Criticality" required>
+        <FormField label={t("criticality")} required>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={criticality}
               onValueChange={setCriticality}
-              options={options.criticalities.map((c) => ({ value: c, label: formatStatus(c) }))}
+              options={options.criticalities.map((c) => ({ value: c, label: t(`criticality_${c.toLowerCase()}`) }))}
             />
           )}
         </FormField>
 
-        <FormField label="Manufacturer">
+        <FormField label={t("manufacturer")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={manufacturerId}
               onValueChange={setManufacturerId}
-              placeholder="Select a manufacturer"
+              placeholder={t("select_a_manufacturer")}
               options={options.manufacturers.map((m) => ({ value: m.id, label: m.name }))}
             />
           )}
         </FormField>
 
-        <FormField label="Serial number" error={state?.errors?.serial_number?.[0]}>
+        <FormField label={t("serial_number")} error={state?.errors?.serial_number?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} maxLength={128} />}
         </FormField>
 
-        <FormField label="Barcode">
+        <FormField label={t("barcode")}>
           {(fieldProps) => <Input {...fieldProps} value={barcode} onChange={(e) => setBarcode(e.target.value)} maxLength={64} />}
         </FormField>
 
         <FormField
-          label="Factory"
+          label={t("factory")}
           required
-          helperText={isEdit ? "Moving factories is a transfer, from the Transfers tab." : undefined}
+          helperText={isEdit ? t("factory_readonly_hint") : undefined}
           error={state?.errors?.current_factory_id?.[0]}
         >
           {(fieldProps) => (
@@ -191,20 +193,20 @@ function AssetForm({ asset = null, options, action }) {
                 setFactoryId(value);
                 setLocationId("");
               }}
-              placeholder="Select a factory"
+              placeholder={t("select_a_factory")}
               disabled={isEdit}
               options={options.factories.map((f) => ({ value: f.id, label: f.name }))}
             />
           )}
         </FormField>
 
-        <FormField label="Location" required error={state?.errors?.asset_location_id?.[0]}>
+        <FormField label={t("location")} required error={state?.errors?.asset_location_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={locationId}
               onValueChange={setLocationId}
-              placeholder="Select a location"
+              placeholder={t("select_a_location")}
               disabled={isEdit}
               options={locationOptions.map((l) => ({ value: l.id, label: l.full_path || l.name }))}
             />
@@ -212,41 +214,41 @@ function AssetForm({ asset = null, options, action }) {
         </FormField>
       </div>
 
-      <FormField label="Description">
+      <FormField label={t("description")}>
         {(fieldProps) => <Textarea {...fieldProps} value={description} onChange={(e) => setDescription(e.target.value)} rows={2} maxLength={5000} />}
       </FormField>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="Purchase date">{() => <DatePicker value={purchaseDate} onChange={setPurchaseDate} />}</FormField>
-        <FormField label="Installation date">{() => <DatePicker value={installationDate} onChange={setInstallationDate} />}</FormField>
-        <FormField label="Commissioning date">{() => <DatePicker value={commissioningDate} onChange={setCommissioningDate} />}</FormField>
+        <FormField label={t("purchase_date")}>{() => <DatePicker value={purchaseDate} onChange={setPurchaseDate} />}</FormField>
+        <FormField label={t("installation_date")}>{() => <DatePicker value={installationDate} onChange={setInstallationDate} />}</FormField>
+        <FormField label={t("commissioning_date")}>{() => <DatePicker value={commissioningDate} onChange={setCommissioningDate} />}</FormField>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="Acquisition cost" error={state?.errors?.acquisition_cost?.[0]}>
+        <FormField label={t("acquisition_cost")} error={state?.errors?.acquisition_cost?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="number" step="0.0001" min="0" value={acquisitionCost} onChange={(e) => setAcquisitionCost(e.target.value)} />}
         </FormField>
-        <FormField label="Installation cost">
+        <FormField label={t("installation_cost")}>
           {(fieldProps) => <Input {...fieldProps} type="number" step="0.0001" min="0" value={installationCost} onChange={(e) => setInstallationCost(e.target.value)} />}
         </FormField>
-        <FormField label="Currency" error={state?.errors?.currency?.[0]}>
+        <FormField label={t("currency")} error={state?.errors?.currency?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={currency} onChange={(e) => setCurrency(e.target.value)} maxLength={3} />}
         </FormField>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Warranty start">{() => <DatePicker value={warrantyStart} onChange={setWarrantyStart} />}</FormField>
-        <FormField label="Warranty end" error={state?.errors?.warranty_end?.[0]}>
+        <FormField label={t("warranty_start")}>{() => <DatePicker value={warrantyStart} onChange={setWarrantyStart} />}</FormField>
+        <FormField label={t("warranty_end")} error={state?.errors?.warranty_end?.[0]}>
           {() => <DatePicker value={warrantyEnd} onChange={setWarrantyEnd} />}
         </FormField>
       </div>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? "Save changes" : "Create asset"}
+          {isEdit ? t("save_changes") : t("create_asset")}
         </Button>
       </div>
     </form>

@@ -51,6 +51,7 @@ return [
     'showing_entries' => ':total টির মধ্যে :from থেকে :to দেখানো হচ্ছে',
     'showing_none' => 'কোনো তথ্য নেই',
     'add_new' => 'নতুন যোগ',
+    'new' => 'নতুন',
     'view' => 'দেখুন',
     'edit' => 'সম্পাদনা',
     'import_csv' => 'CSV থেকে আনুন',

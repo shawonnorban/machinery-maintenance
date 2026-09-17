@@ -53,6 +53,7 @@ return [
     'showing_entries' => 'Showing :from to :to of :total entries',
     'showing_none' => 'No entries',
     'add_new' => 'Add New',
+    'new' => 'New',
     'view' => 'View',
     'edit' => 'Edit',
     'import_csv' => 'Import from CSV',
