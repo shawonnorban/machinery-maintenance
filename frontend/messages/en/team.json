@@ -19,5 +19,22 @@
     "in_use": ":count records were handed to this team, so it cannot be removed. Take it out of use instead — a job still has to be able to say who it went to.",
     "factory_unavailable": "That factory is not available to you.",
     "no_teams": "No teams yet.",
-    "no_teams_hint": "Without one, every job has to be handed to a named person."
+    "no_teams_hint": "Without one, every job has to be handed to a named person.",
+    "team": "Team",
+    "status": "Status",
+    "team_deactivated_toast": "Team deactivated",
+    "team_activated_toast": "Team activated",
+    "team_deleted_toast": "Team deleted",
+    "team_saved_toast": "Team saved",
+    "team_created_toast": "Team created",
+    "delete_confirm_title": "Delete :name?",
+    "delete_confirm_hint": "Only possible while nothing points at this team.",
+    "code_hint": "Letters, numbers, dots, hyphens, underscores.",
+    "select_a_factory": "Select a factory",
+    "new_team_title": "New team",
+    "edit_team_title": "Edit :name",
+    "save_changes": "Save changes",
+    "create_team": "Create team",
+    "settings_breadcrumb": "Settings",
+    "page_description": "Maintenance teams a job can be handed to."
 }
