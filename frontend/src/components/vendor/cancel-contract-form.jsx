@@ -5,14 +5,16 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 function CancelContractForm({ action }) {
+  const t = useT("vendor");
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Contract cancelled", type: "success" });
+      toastManager.add({ title: t("contract_cancelled"), type: "success" });
     }
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes
@@ -23,12 +25,12 @@ function CancelContractForm({ action }) {
   return (
     <form action={dispatch} className="flex items-end gap-2">
       <div className="flex-1">
-        <FormField label="Cancel reason" required error={state?.errors?.reason?.[0]}>
+        <FormField label={t("cancel_reason")} required error={state?.errors?.reason?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="reason" required />}
         </FormField>
       </div>
       <Button type="submit" size="sm" variant="danger" loading={pending}>
-        Cancel contract
+        {t("cancel_contract")}
       </Button>
     </form>
   );
