@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { formatQuantity, formatCurrency } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 /**
  * Column `render` functions can't cross the Server→Client boundary, so this
@@ -12,6 +13,7 @@ import { formatQuantity, formatCurrency } from "@/lib/format";
  * over the current page of `balances` as plain data.
  */
 function StockBalancesTable({ balances, meta, search, binId }) {
+  const t = useT("inventory");
   const router = useRouter();
 
   function navigate(page) {
@@ -26,7 +28,7 @@ function StockBalancesTable({ balances, meta, search, binId }) {
       columns={[
         {
           key: "spare_part",
-          header: "Part",
+          header: t("part"),
           render: (row) =>
             row.spare_part ? (
               <div>
@@ -39,12 +41,12 @@ function StockBalancesTable({ balances, meta, search, binId }) {
               "—"
             ),
         },
-        { key: "bin", header: "Bin", render: (row) => row.bin?.full_path ?? "—" },
-        { key: "on_hand", header: "On hand", align: "right", render: (row) => formatQuantity(row.on_hand, row.spare_part?.unit) },
-        { key: "reserved", header: "Reserved", align: "right", render: (row) => formatQuantity(row.reserved, row.spare_part?.unit) },
+        { key: "bin", header: t("bin"), render: (row) => row.bin?.full_path ?? "—" },
+        { key: "on_hand", header: t("on_hand"), align: "right", render: (row) => formatQuantity(row.on_hand, row.spare_part?.unit) },
+        { key: "reserved", header: t("reserved"), align: "right", render: (row) => formatQuantity(row.reserved, row.spare_part?.unit) },
         {
           key: "available",
-          header: "Available",
+          header: t("available"),
           align: "right",
           render: (row) => (
             <span className={Number(row.available) <= 0 ? "text-danger" : undefined}>
@@ -57,19 +59,19 @@ function StockBalancesTable({ balances, meta, search, binId }) {
           header: "",
           render: (row) =>
             row.spare_part && Number(row.on_hand) <= Number(row.spare_part.reorder_level ?? 0) ? (
-              <Badge variant="warning">Low</Badge>
+              <Badge variant="warning">{t("low")}</Badge>
             ) : null,
         },
         {
           key: "total_value",
-          header: "Value",
+          header: t("total_value"),
           align: "right",
           render: (row) => formatCurrency(row.total_value, row.currency),
         },
       ]}
       rows={balances}
       rowKey={(row) => row.id}
-      emptyTitle="No stock recorded yet."
+      emptyTitle={t("no_stock")}
       pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
       onPageChange={navigate}
     />

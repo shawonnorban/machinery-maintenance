@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { StockBalancesTable } from "@/components/inventory/stock-balances-table";
 import { StockFilters } from "@/components/inventory/stock-filters";
+import { getT } from "@/lib/i18n-server";
 
 /**
  * Mirrors `StockController::index` — what's on the shelf right now, bin by
@@ -20,31 +21,36 @@ export default async function InventoryStockPage({ searchParams }) {
   if (search) query.set("search", search);
   if (binId) query.set("bin_id", binId);
 
-  const [balances, bins] = await Promise.all([
+  const [balances, bins, t] = await Promise.all([
     apiFetch(`/inventory-balances?${query.toString()}`, { includeMeta: true }),
     apiFetch("/spare-parts/bins"),
+    getT("inventory"),
   ]);
 
   const { totals } = balances.meta;
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Spare Parts", href: "/inventory/parts" }, { label: "Stock" }]} title="Stock" description="What's on the shelf right now, bin by bin." />
+      <PageHeader
+        breadcrumb={[{ label: t("spare_parts"), href: "/inventory/parts" }, { label: t("stock") }]}
+        title={t("stock")}
+        description={t("stock_page_description")}
+      />
 
       <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard
-          label="Stock value"
+          label={t("stock_value")}
           value={Number(totals.value).toLocaleString(undefined, { maximumFractionDigits: 0 })}
           icon={<DollarSign />}
           tone="brand"
         />
         <StatCard
-          label="In transit"
+          label={t("in_transit")}
           value={Number(totals.in_transit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
           icon={<Truck />}
           tone="info"
         />
-        <StatCard label="Balance lines" value={totals.lines} icon={<Boxes />} tone="success" />
+        <StatCard label={t("balance_lines")} value={totals.lines} icon={<Boxes />} tone="success" />
       </div>
 
       <div className="mb-4">

@@ -6,8 +6,10 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Card, CardBody } from "@/components/ui/card";
+import { useT } from "@/lib/i18n";
 
 function StockFilters({ bins, search, binId }) {
+  const t = useT("inventory");
   const router = useRouter();
   const [searchInput, setSearchInput] = useState(search);
 
@@ -38,16 +40,16 @@ function StockFilters({ bins, search, binId }) {
           <Input
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search part number or name…"
+            placeholder={t("search_stock_placeholder")}
             className="pl-9"
           />
         </div>
         <div className="w-full max-w-xs">
           <Select
-            options={[{ value: "", label: "All bins" }, ...bins.map((b) => ({ value: b.id, label: b.full_path }))]}
+            options={[{ value: "", label: t("all_bins") }, ...bins.map((b) => ({ value: b.id, label: b.full_path }))]}
             value={binId}
             onValueChange={(value) => navigate({ bin_id: value })}
-            placeholder="All bins"
+            placeholder={t("all_bins")}
           />
         </div>
       </CardBody>
