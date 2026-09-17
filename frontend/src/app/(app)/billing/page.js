@@ -7,6 +7,7 @@ import { StatCard } from "@/components/ui/stat-card";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { InvoicesTable } from "@/components/billing/invoices-table";
+import { getT } from "@/lib/i18n-server";
 
 const CONTRACT_TONE = {
   ACTIVE: "success",
@@ -29,79 +30,77 @@ export default async function BillingPage({ searchParams }) {
   const params = await searchParams;
   const page = Number(params.page ?? 1);
 
-  const [subscription, invoices] = await Promise.all([
+  const [subscription, invoices, t, tc] = await Promise.all([
     apiFetch("/subscription"),
     apiFetch(`/subscription/invoices?page=${page}`, { includeMeta: true }),
+    getT("billing"),
+    getT("common"),
   ]);
 
   const contract = subscription.contract;
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Billing" }]} title="Billing" description={contract?.contract_number} />
+      <PageHeader breadcrumb={[{ label: t("billing") }]} title={t("billing")} description={contract?.contract_number} />
 
       {contract === null ? (
-        <EmptyState
-          icon={<CreditCard />}
-          title="No subscription contract"
-          description="This company isn't billed by anyone — onboarding, or a self-hosted deployment, is restricted by nothing."
-        />
+        <EmptyState icon={<CreditCard />} title={t("no_contract")} description={t("no_contract_page_hint")} />
       ) : (
         <div className="flex flex-col gap-6">
           {contract.is_read_only ? (
-            <Alert variant="danger" title="This subscription is read-only.">
-              Nothing on the account can be written until it&apos;s settled.
+            <Alert variant="danger" title={t("read_only_title")}>
+              {t("read_only_alert_body")}
             </Alert>
           ) : ["PAST_DUE", "GRACE"].includes(contract.status) ? (
-            <Alert variant="warning" title="Payment is past due.">
-              Settle the outstanding balance below before the account becomes read-only.
+            <Alert variant="warning" title={t("past_due_title")}>
+              {t("past_due_alert_body")}
             </Alert>
           ) : null}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <Card className="p-5">
-              <span className="text-xs font-medium text-foreground-muted">Status</span>
+              <span className="text-xs font-medium text-foreground-muted">{t("status")}</span>
               <div className="mt-2">
-                <Badge variant={CONTRACT_TONE[contract.status] ?? "neutral"}>{contract.status}</Badge>
+                <Badge variant={CONTRACT_TONE[contract.status] ?? "neutral"}>{t(`statuses.${contract.status}`)}</Badge>
               </div>
             </Card>
             <StatCard
-              label="Outstanding"
+              label={t("outstanding")}
               value={`${Number(subscription.outstanding).toLocaleString(undefined, { minimumFractionDigits: 2 })} ${contract.currency}`}
               tone={Number(subscription.outstanding) > 0 ? "danger" : "success"}
             />
             <StatCard
-              label="Amount"
+              label={t("amount")}
               value={`${Number(contract.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })} ${contract.currency}`}
-              supportingText={contract.billing_cycle}
+              supportingText={t(`cycles.${contract.billing_cycle}`)}
             />
-            <StatCard label="Grace period" value={`${contract.grace_period_days ?? 0} days`} />
+            <StatCard label={t("grace_period")} value={t("grace_days", { days: contract.grace_period_days ?? 0 })} />
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             <div className="flex flex-col gap-6 lg:col-span-5">
               <Card>
                 <CardHeader>
-                  <CardTitle>Subscription</CardTitle>
+                  <CardTitle>{t("subscription")}</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <dl className="flex flex-col gap-2 text-sm">
-                    <Row label="Start date" value={contract.start_date} />
-                    <Row label="End date" value={contract.end_date ?? "—"} />
-                    <Row label="Trial end" value={contract.trial_end ?? "—"} />
-                    <Row label="Auto-renew" value={contract.auto_renew ? "Yes" : "No"} />
-                    <Row label="Overage policy" value={contract.overage_policy} />
+                    <Row label={t("start_date")} value={contract.start_date} />
+                    <Row label={t("end_date")} value={contract.end_date ?? "—"} />
+                    <Row label={t("trial_end")} value={contract.trial_end ?? "—"} />
+                    <Row label={t("auto_renew")} value={contract.auto_renew ? tc("yes") : tc("no")} />
+                    <Row label={t("overage_policy")} value={t(`policies.${contract.overage_policy}`)} />
                   </dl>
                 </CardBody>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Usage</CardTitle>
+                  <CardTitle>{t("usage")}</CardTitle>
                 </CardHeader>
                 <CardBody>
                   {subscription.usage.length === 0 ? (
-                    <p className="text-sm text-foreground-muted">No usage recorded yet.</p>
+                    <p className="text-sm text-foreground-muted">{t("no_usage_recorded")}</p>
                   ) : (
                     <div className="flex flex-col gap-2 text-sm">
                       {subscription.usage.map((row) => (
@@ -109,7 +108,7 @@ export default async function BillingPage({ searchParams }) {
                           key={row.metric}
                           className={`flex items-center justify-between rounded-sm px-2 py-1.5 ${row.exceeded ? "bg-warning-subtle" : ""}`}
                         >
-                          <span className="text-foreground">{row.metric}</span>
+                          <span className="text-foreground">{t(`metrics.${row.metric}`)}</span>
                           <span className="tabular text-xs text-foreground-muted">
                             {Number(row.value).toLocaleString()}
                             {row.limit === null ? "" : ` / ${Number(row.limit).toLocaleString()}`}
@@ -125,7 +124,7 @@ export default async function BillingPage({ searchParams }) {
             <div className="lg:col-span-7">
               <Card>
                 <CardHeader>
-                  <CardTitle>Invoices</CardTitle>
+                  <CardTitle>{t("invoices")}</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <InvoicesTable invoices={invoices.data} meta={invoices.meta} />

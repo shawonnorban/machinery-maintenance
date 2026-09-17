@@ -10,21 +10,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { DateTimeField } from "@/components/ui/date-time-field";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
-const METHOD_OPTIONS = ["BANK_TRANSFER", "CASH", "CHEQUE", "CARD", "MOBILE", "GATEWAY"].map((value) => ({
-  value,
-  label: value.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
-}));
+const METHODS = ["BANK_TRANSFER", "CASH", "CHEQUE", "CARD", "MOBILE", "GATEWAY"];
 
 /** Mirrors `invoice.blade.php`'s own `@can('billing.payment.manage')` record-payment card — only shown for an open invoice, to whoever can actually confirm money arrived. */
 function RecordPaymentForm({ balanceDue, action }) {
+  const t = useT("billing");
+  const METHOD_OPTIONS = METHODS.map((value) => ({ value, label: t(`methods.${value}`) }));
   const [state, dispatch, pending] = useActionState(action, null);
   const router = useRouter();
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Payment recorded", type: "success" });
+      toastManager.add({ title: t("payment_recorded"), type: "success" });
       router.refresh();
     } else if (state?.status === "error" && !state.errors) {
       toastManager.add({ title: state.message, type: "danger" });
@@ -41,29 +41,29 @@ function RecordPaymentForm({ balanceDue, action }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Record a payment</CardTitle>
+        <CardTitle>{t("record_payment")}</CardTitle>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <FormField label="Amount" required error={state?.errors?.amount?.[0]}>
+          <FormField label={t("amount")} required error={state?.errors?.amount?.[0]}>
             {(fieldProps) => (
               <Input {...fieldProps} name="amount" type="number" step="0.01" min="0.01" defaultValue={balanceDue} required />
             )}
           </FormField>
-          <FormField label="Method" required error={state?.errors?.method?.[0]}>
-            {(fieldProps) => <Select {...fieldProps} name="method" options={METHOD_OPTIONS} placeholder="Select a method" />}
+          <FormField label={t("method")} required error={state?.errors?.method?.[0]}>
+            {(fieldProps) => <Select {...fieldProps} name="method" options={METHOD_OPTIONS} placeholder={t("select_a_method")} />}
           </FormField>
-          <FormField label="Payment reference" error={state?.errors?.payment_reference?.[0]}>
+          <FormField label={t("payment_reference")} error={state?.errors?.payment_reference?.[0]}>
             {(fieldProps) => <Input {...fieldProps} name="payment_reference" maxLength={64} />}
           </FormField>
-          <FormField label="Paid at" error={state?.errors?.paid_at?.[0]}>
+          <FormField label={t("paid_at_field")} error={state?.errors?.paid_at?.[0]}>
             {(fieldProps) => <DateTimeField {...fieldProps} name="paid_at" />}
           </FormField>
-          <FormField label="Notes" error={state?.errors?.notes?.[0]}>
+          <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
             {(fieldProps) => <Textarea {...fieldProps} name="notes" rows={2} maxLength={1000} />}
           </FormField>
           <Button type="submit" loading={pending}>
-            Record payment
+            {t("record_payment")}
           </Button>
         </form>
       </CardBody>

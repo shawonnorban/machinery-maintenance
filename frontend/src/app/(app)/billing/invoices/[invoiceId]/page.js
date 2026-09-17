@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Alert } from "@/components/ui/alert";
 import { RecordPaymentForm } from "@/components/billing/record-payment-form";
+import { getT } from "@/lib/i18n-server";
 import { recordPayment } from "./actions";
 
 const OPEN_STATUSES = ["ISSUED", "PARTIALLY_PAID", "OVERDUE"];
@@ -16,9 +17,11 @@ const OPEN_STATUSES = ["ISSUED", "PARTIALLY_PAID", "OVERDUE"];
 export default async function InvoiceDetailPage({ params }) {
   const { invoiceId } = await params;
 
-  const [invoice, permissions] = await Promise.all([
+  const [invoice, permissions, t, tc] = await Promise.all([
     apiFetch(`/subscription/invoices/${invoiceId}`),
     apiFetch("/auth/permissions"),
+    getT("billing"),
+    getT("common"),
   ]);
 
   const canRecordPayment = permissions.permissions.includes("billing.payment.manage");
@@ -27,18 +30,18 @@ export default async function InvoiceDetailPage({ params }) {
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Billing", href: "/billing" }, { label: invoice.invoice_number }]}
+        breadcrumb={[{ label: t("billing"), href: "/billing" }, { label: invoice.invoice_number }]}
         title={invoice.invoice_number}
-        description={`Issued ${invoice.issue_date}`}
+        description={`${t("issue_date")} ${invoice.issue_date}`}
         actions={
           <Link href="/billing" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-            <ArrowLeft /> Back
+            <ArrowLeft /> {tc("back")}
           </Link>
         }
       />
 
       {invoice.status === "VOID" ? (
-        <Alert variant="warning" className="mb-6" title="This invoice was voided.">
+        <Alert variant="warning" className="mb-6" title={t("invoice_voided_title")}>
           {invoice.void_reason}
         </Alert>
       ) : null}
@@ -47,17 +50,17 @@ export default async function InvoiceDetailPage({ params }) {
         <div className="flex flex-col gap-6 lg:col-span-8">
           <Card>
             <CardHeader>
-              <CardTitle>Lines</CardTitle>
+              <CardTitle>{t("lines")}</CardTitle>
             </CardHeader>
             <CardBody className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="text-xs font-medium text-foreground-muted">
                     <tr>
-                      <th className="px-5 py-2.5 text-left">Description</th>
-                      <th className="px-5 py-2.5 text-right">Quantity</th>
-                      <th className="px-5 py-2.5 text-right">Unit price</th>
-                      <th className="px-5 py-2.5 text-right">Amount</th>
+                      <th className="px-5 py-2.5 text-left">{t("description")}</th>
+                      <th className="px-5 py-2.5 text-right">{t("quantity")}</th>
+                      <th className="px-5 py-2.5 text-right">{t("unit_price")}</th>
+                      <th className="px-5 py-2.5 text-right">{t("line_amount")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -78,11 +81,11 @@ export default async function InvoiceDetailPage({ params }) {
                     ))}
                   </tbody>
                   <tfoot className="divide-y divide-border border-t border-border">
-                    <FooterRow label="Subtotal" value={invoice.subtotal} />
-                    <FooterRow label="Tax" value={invoice.tax} />
-                    <FooterRow label="Total" value={invoice.total} suffix={invoice.currency} strong />
-                    <FooterRow label="Paid" value={invoice.paid_amount} />
-                    <FooterRow label="Balance due" value={invoice.balance_due} strong danger={Number(invoice.balance_due) > 0} />
+                    <FooterRow label={t("subtotal")} value={invoice.subtotal} />
+                    <FooterRow label={t("tax")} value={invoice.tax} />
+                    <FooterRow label={t("total")} value={invoice.total} suffix={invoice.currency} strong />
+                    <FooterRow label={t("paid_amount")} value={invoice.paid_amount} />
+                    <FooterRow label={t("balance_due")} value={invoice.balance_due} strong danger={Number(invoice.balance_due) > 0} />
                   </tfoot>
                 </table>
               </div>
@@ -91,11 +94,11 @@ export default async function InvoiceDetailPage({ params }) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Payments</CardTitle>
+              <CardTitle>{t("payments")}</CardTitle>
             </CardHeader>
             <CardBody>
               {invoice.payments.length === 0 ? (
-                <p className="text-sm text-foreground-muted">No payments recorded yet.</p>
+                <p className="text-sm text-foreground-muted">{t("no_payments")}</p>
               ) : (
                 <div className="flex flex-col gap-3">
                   {invoice.payments.map((payment) => (
@@ -108,11 +111,11 @@ export default async function InvoiceDetailPage({ params }) {
                     >
                       <div>
                         <span className="text-foreground">{payment.payment_reference ?? "—"}</span>
-                        <div className="text-xs text-foreground-muted">{payment.method}</div>
+                        <div className="text-xs text-foreground-muted">{t(`methods.${payment.method}`)}</div>
                       </div>
                       <div className="text-right">
                         <span className="tabular font-medium">{Number(payment.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                        {payment.status === "REVERSED" ? <div className="text-xs text-danger">Reversed</div> : null}
+                        {payment.status === "REVERSED" ? <div className="text-xs text-danger">{t("reversed")}</div> : null}
                       </div>
                     </div>
                   ))}
@@ -124,7 +127,7 @@ export default async function InvoiceDetailPage({ params }) {
           {invoice.credit_notes.length > 0 ? (
             <Card>
               <CardHeader>
-                <CardTitle>Credit notes</CardTitle>
+                <CardTitle>{t("credit_notes")}</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="flex flex-col gap-3">
@@ -152,13 +155,13 @@ export default async function InvoiceDetailPage({ params }) {
             <CardBody>
               <dl className="flex flex-col gap-2 text-sm">
                 <div className="flex justify-between">
-                  <dt className="text-foreground-muted">Status</dt>
+                  <dt className="text-foreground-muted">{t("status")}</dt>
                   <dd>
-                    <StatusBadge status={invoice.status} />
+                    <StatusBadge status={invoice.status} label={t(`invoice_statuses.${invoice.status}`)} />
                   </dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-foreground-muted">Due date</dt>
+                  <dt className="text-foreground-muted">{t("due_date")}</dt>
                   <dd className="text-foreground">{invoice.due_date}</dd>
                 </div>
               </dl>
