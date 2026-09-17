@@ -11,9 +11,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `AssetTransferController::index` — the pending queue: what is waiting on somebody, company-wide. */
 function TransfersTable({ transfers, meta, actions }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const router = useRouter();
   const [pending, startPending] = useTransition();
   const [rejecting, setRejecting] = useState(null);
@@ -23,7 +26,7 @@ function TransfersTable({ transfers, meta, actions }) {
     startPending(async () => {
       const result = await actions.approveTransfer(transfer.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Transfer approved", type: "success" });
+        toastManager.add({ title: t("transfer_approved_toast"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -35,7 +38,7 @@ function TransfersTable({ transfers, meta, actions }) {
     startPending(async () => {
       const result = await actions.receiveTransfer(transfer.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Transfer received", type: "success" });
+        toastManager.add({ title: t("transfer_received_toast"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -49,50 +52,54 @@ function TransfersTable({ transfers, meta, actions }) {
         columns={[
           {
             key: "transfer_number",
-            header: "Transfer",
-            render: (t) => (
+            header: t("transfer"),
+            render: (row) => (
               <div>
-                <Link href={`/assets/transfers/${t.id}`} className="font-medium text-brand hover:underline">
-                  {t.transfer_number}
+                <Link href={`/assets/transfers/${row.id}`} className="font-medium text-brand hover:underline">
+                  {row.transfer_number}
                 </Link>
                 <div className="text-xs text-foreground-muted">
-                  <Link href={`/assets/${t.asset?.id}`} className="text-brand hover:underline">
-                    {t.asset?.asset_code}
+                  <Link href={`/assets/${row.asset?.id}`} className="text-brand hover:underline">
+                    {row.asset?.asset_code}
                   </Link>
                   {" — "}
-                  {t.asset?.name}
+                  {row.asset?.name}
                 </div>
               </div>
             ),
           },
           {
             key: "route",
-            header: "Route",
-            render: (t) => (
+            header: t("route"),
+            render: (row) => (
               <span>
-                {t.from_factory?.name ?? "—"} → {t.to_factory?.name ?? "—"}
-                <div className="text-xs text-foreground-muted">{t.to_location?.name}</div>
+                {row.from_factory?.name ?? "—"} → {row.to_factory?.name ?? "—"}
+                <div className="text-xs text-foreground-muted">{row.to_location?.name}</div>
               </span>
             ),
           },
-          { key: "reason", header: "Reason", render: (t) => t.reason ?? "—" },
-          { key: "status", header: "Status", render: (t) => <StatusBadge status={t.status} /> },
+          { key: "reason", header: t("reason"), render: (row) => row.reason ?? "—" },
+          {
+            key: "status",
+            header: t("status"),
+            render: (row) => <StatusBadge status={row.status} label={t(`transfer_status_${row.status?.toLowerCase()}`)} />,
+          },
           {
             key: "requested_at",
-            header: "Requested",
-            render: (t) => <FormattedDateTime value={t.requested_at} mode="date" />,
+            header: t("requested"),
+            render: (row) => <FormattedDateTime value={row.requested_at} mode="date" />,
           },
         ]}
         rows={transfers}
-        rowKey={(t) => t.id}
-        emptyTitle="Nothing pending."
-        emptyDescription="No transfer is currently waiting on approval or receipt."
-        rowActions={(t) =>
+        rowKey={(row) => row.id}
+        emptyTitle={t("no_pending_transfers")}
+        emptyDescription={t("no_pending_transfers_hint")}
+        rowActions={(row) =>
           [
-            { label: "View", onSelect: () => router.push(`/assets/transfers/${t.id}`) },
-            t.status === "REQUESTED" ? { label: "Approve", onSelect: () => runApprove(t) } : null,
-            ["REQUESTED", "APPROVED", "IN_TRANSIT"].includes(t.status) ? { label: "Receive", onSelect: () => runReceive(t) } : null,
-            t.status === "REQUESTED" ? { label: "Reject", destructive: true, onSelect: () => setRejecting(t) } : null,
+            { label: tc("view"), onSelect: () => router.push(`/assets/transfers/${row.id}`) },
+            row.status === "REQUESTED" ? { label: t("approve"), onSelect: () => runApprove(row) } : null,
+            ["REQUESTED", "APPROVED", "IN_TRANSIT"].includes(row.status) ? { label: t("receive"), onSelect: () => runReceive(row) } : null,
+            row.status === "REQUESTED" ? { label: t("reject"), destructive: true, onSelect: () => setRejecting(row) } : null,
           ].filter(Boolean)
         }
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
@@ -107,6 +114,8 @@ function TransfersTable({ transfers, meta, actions }) {
 }
 
 function RejectModal({ transfer, action, onClose }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action.bind(null, transfer.id), null);
   const router = useRouter();
   const toastManager = useToastManager();
@@ -119,7 +128,7 @@ function RejectModal({ transfer, action, onClose }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Transfer rejected", type: "success" });
+      toastManager.add({ title: t("transfer_rejected_toast"), type: "success" });
       onClose();
       router.refresh();
     }
@@ -131,18 +140,18 @@ function RejectModal({ transfer, action, onClose }) {
   }, [state]);
 
   return (
-    <Modal open onOpenChange={onClose} title={`Reject ${transfer.transfer_number}?`}>
+    <Modal open onOpenChange={onClose} title={t("reject_transfer_named_title", { number: transfer.transfer_number })}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <FormField label="Reason" required error={state?.errors?.rejection_reason?.[0]}>
+        <FormField label={t("reason")} required error={state?.errors?.rejection_reason?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="rejection_reason" required maxLength={255} />}
         </FormField>
         {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" variant="danger" loading={pending}>
-            Reject
+            {t("reject")}
           </Button>
         </div>
       </form>

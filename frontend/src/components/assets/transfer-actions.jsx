@@ -8,9 +8,12 @@ import { Modal } from "@/components/ui/modal";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Status-driven, the same as `TransfersTable`'s own row actions — only one status is ever current, so which buttons render is a pure function of it. */
 function TransferActions({ transfer, actions }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const [pending, startPending] = useTransition();
   const [rejecting, setRejecting] = useState(false);
   const router = useRouter();
@@ -20,7 +23,7 @@ function TransferActions({ transfer, actions }) {
     startPending(async () => {
       const result = await actions.approve();
       if (result?.status === "success") {
-        toastManager.add({ title: "Transfer approved", type: "success" });
+        toastManager.add({ title: t("transfer_approved_toast"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -32,7 +35,7 @@ function TransferActions({ transfer, actions }) {
     startPending(async () => {
       const result = await actions.receive();
       if (result?.status === "success") {
-        toastManager.add({ title: "Transfer received", type: "success" });
+        toastManager.add({ title: t("transfer_received_toast"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -51,22 +54,22 @@ function TransferActions({ transfer, actions }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Actions</CardTitle>
+        <CardTitle>{tc("actions")}</CardTitle>
       </CardHeader>
       <CardBody className="flex flex-wrap gap-2">
         {canApprove ? (
           <Button loading={pending} onClick={runApprove}>
-            Approve
+            {t("approve")}
           </Button>
         ) : null}
         {canReceive ? (
           <Button variant="outline" loading={pending} onClick={runReceive}>
-            Receive
+            {t("receive")}
           </Button>
         ) : null}
         {canReject ? (
           <Button variant="danger" onClick={() => setRejecting(true)}>
-            Reject
+            {t("reject")}
           </Button>
         ) : null}
       </CardBody>
@@ -77,13 +80,15 @@ function TransferActions({ transfer, actions }) {
 }
 
 function RejectModal({ action, onClose }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action, null);
   const router = useRouter();
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Transfer rejected", type: "success" });
+      toastManager.add({ title: t("transfer_rejected_toast"), type: "success" });
       onClose();
       router.refresh();
     }
@@ -101,18 +106,18 @@ function RejectModal({ action, onClose }) {
   }
 
   return (
-    <Modal open onOpenChange={onClose} title="Reject this transfer?">
+    <Modal open onOpenChange={onClose} title={t("reject_transfer_confirm_title")}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <FormField label="Reason" required error={state?.errors?.rejection_reason?.[0]}>
+        <FormField label={t("reason")} required error={state?.errors?.rejection_reason?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="rejection_reason" required maxLength={255} />}
         </FormField>
         {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" variant="danger" loading={pending}>
-            Reject
+            {t("reject")}
           </Button>
         </div>
       </form>

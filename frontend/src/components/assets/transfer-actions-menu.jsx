@@ -10,6 +10,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /**
  * Which action(s) a transfer accepts depends on its own status, mirroring
@@ -22,6 +23,7 @@ const REJECTABLE = ["REQUESTED", "APPROVED"];
 const RECEIVABLE = ["REQUESTED", "APPROVED", "IN_TRANSIT"];
 
 function TransferActionsMenu({ transfer, actions, onMutated }) {
+  const t = useT("asset");
   const [confirmApprove, setConfirmApprove] = useState(false);
   const [confirmReceive, setConfirmReceive] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
@@ -31,13 +33,13 @@ function TransferActionsMenu({ transfer, actions, onMutated }) {
 
   const items = [];
   if (APPROVABLE.includes(transfer.status)) {
-    items.push({ label: "Approve", onSelect: () => setConfirmApprove(true) });
+    items.push({ label: t("approve"), onSelect: () => setConfirmApprove(true) });
   }
   if (RECEIVABLE.includes(transfer.status)) {
-    items.push({ label: "Receive", onSelect: () => setConfirmReceive(true) });
+    items.push({ label: t("receive"), onSelect: () => setConfirmReceive(true) });
   }
   if (REJECTABLE.includes(transfer.status)) {
-    items.push({ label: "Reject", destructive: true, onSelect: () => setRejectOpen(true) });
+    items.push({ label: t("reject"), destructive: true, onSelect: () => setRejectOpen(true) });
   }
 
   if (items.length === 0) {
@@ -71,23 +73,23 @@ function TransferActionsMenu({ transfer, actions, onMutated }) {
       <ConfirmDialog
         open={confirmApprove}
         onOpenChange={setConfirmApprove}
-        title="Approve this transfer?"
-        description="The destination factory will still need to receive it before the machine actually moves."
-        confirmLabel="Approve"
+        title={t("approve_transfer_confirm_title")}
+        description={t("approve_transfer_confirm_desc")}
+        confirmLabel={t("approve")}
         destructive={false}
         loading={pending}
-        onConfirm={() => run(actions.approve, "Transfer approved")}
+        onConfirm={() => run(actions.approve, t("transfer_approved_toast"))}
       />
 
       <ConfirmDialog
         open={confirmReceive}
         onOpenChange={setConfirmReceive}
-        title="Receive this transfer?"
-        description="This is the point the machine actually moves — its factory and location update immediately."
-        confirmLabel="Receive"
+        title={t("receive_transfer_confirm_title")}
+        description={t("receive_transfer_confirm_desc")}
+        confirmLabel={t("receive")}
         destructive={false}
         loading={pending}
-        onConfirm={() => run(actions.receive, "Transfer received")}
+        onConfirm={() => run(actions.receive, t("transfer_received_toast"))}
       />
 
       <RejectModal
@@ -101,13 +103,15 @@ function TransferActionsMenu({ transfer, actions, onMutated }) {
 }
 
 function RejectModal({ open, onOpenChange, action, onMutated }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const [state, formAction] = useActionState(action, null);
   const router = useRouter();
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Transfer rejected", type: "success" });
+      toastManager.add({ title: t("transfer_rejected_toast"), type: "success" });
       queueMicrotask(() => onOpenChange(false));
       router.refresh();
       onMutated?.();
@@ -116,9 +120,9 @@ function RejectModal({ open, onOpenChange, action, onMutated }) {
   }, [state]);
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title="Reject this transfer?">
+    <Modal open={open} onOpenChange={onOpenChange} title={t("reject_transfer_confirm_title")}>
       <form action={formAction} className="flex flex-col gap-4">
-        <FormField label="Reason" required error={state?.errors?.rejection_reason?.[0]}>
+        <FormField label={t("reason")} required error={state?.errors?.rejection_reason?.[0]}>
           {(fieldProps) => <Textarea {...fieldProps} name="rejection_reason" rows={2} maxLength={255} required />}
         </FormField>
 
@@ -126,10 +130,10 @@ function RejectModal({ open, onOpenChange, action, onMutated }) {
 
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" variant="danger">
-            Reject
+            {t("reject")}
           </Button>
         </div>
       </form>

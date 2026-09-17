@@ -8,25 +8,30 @@ import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { TransferActions } from "@/components/assets/transfer-actions";
+import { getT } from "@/lib/i18n-server";
 import { approveTransfer, receiveTransfer, rejectTransfer } from "../actions";
 
 /** Mirrors `AssetTransferApiController::show` — no equivalent page exists on the web (everything happens from the pending-queue index instead); this is a genuinely new, more discoverable detail view for the same data. */
 export default async function AssetTransferDetailPage({ params }) {
   const { transferId } = await params;
 
-  const transfer = await apiFetch(`/transfers/${transferId}`);
+  const [transfer, t, tc] = await Promise.all([
+    apiFetch(`/transfers/${transferId}`),
+    getT("asset"),
+    getT("common"),
+  ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Assets", href: "/assets" }, { label: "Transfers", href: "/assets/transfers" }, { label: transfer.transfer_number }]}
+        breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: t("transfers"), href: "/assets/transfers" }, { label: transfer.transfer_number }]}
         title={transfer.transfer_number}
         description={`${transfer.from_factory?.name ?? "—"} → ${transfer.to_factory?.name ?? "—"}`}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge status={transfer.status} />
+            <StatusBadge status={transfer.status} label={t(`transfer_status_${transfer.status?.toLowerCase()}`)} />
             <Link href="/assets/transfers" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <ArrowLeft /> Back
+              <ArrowLeft /> {tc("back")}
             </Link>
           </div>
         }
@@ -36,20 +41,20 @@ export default async function AssetTransferDetailPage({ params }) {
         <div className="flex flex-col gap-4 lg:col-span-8">
           <Card>
             <CardHeader>
-              <CardTitle>Machine</CardTitle>
+              <CardTitle>{t("asset")}</CardTitle>
             </CardHeader>
             <CardBody>
               <dl className="flex flex-col gap-2 text-sm">
-                <Row label="Machine">
+                <Row label={t("asset")}>
                   <Link href={`/assets/${transfer.asset?.id}`} className="text-brand hover:underline">
                     {transfer.asset?.asset_code}
                   </Link>{" "}
                   — {transfer.asset?.name}
                 </Row>
-                <Row label="From factory">{transfer.from_factory?.name ?? "—"}</Row>
-                <Row label="To factory">{transfer.to_factory?.name ?? "—"}</Row>
-                <Row label="To location">{transfer.to_location?.name ?? "—"}</Row>
-                <Row label="Reason">{transfer.reason}</Row>
+                <Row label={t("from_factory")}>{transfer.from_factory?.name ?? "—"}</Row>
+                <Row label={t("to_factory")}>{transfer.to_factory?.name ?? "—"}</Row>
+                <Row label={t("to_location")}>{transfer.to_location?.name ?? "—"}</Row>
+                <Row label={t("reason")}>{transfer.reason}</Row>
               </dl>
             </CardBody>
           </Card>
@@ -57,7 +62,7 @@ export default async function AssetTransferDetailPage({ params }) {
           {transfer.notes ? (
             <Card>
               <CardHeader>
-                <CardTitle>Notes</CardTitle>
+                <CardTitle>{t("notes")}</CardTitle>
               </CardHeader>
               <CardBody>
                 <p className="text-sm text-foreground">{transfer.notes}</p>
@@ -68,7 +73,7 @@ export default async function AssetTransferDetailPage({ params }) {
           {transfer.status === "REJECTED" && transfer.rejection_reason ? (
             <Card>
               <CardHeader>
-                <CardTitle>Rejection reason</CardTitle>
+                <CardTitle>{t("rejection_reason")}</CardTitle>
               </CardHeader>
               <CardBody>
                 <p className="text-sm text-danger">{transfer.rejection_reason}</p>
@@ -89,13 +94,13 @@ export default async function AssetTransferDetailPage({ params }) {
 
           <Card>
             <CardHeader>
-              <CardTitle>History</CardTitle>
+              <CardTitle>{t("transfer_history")}</CardTitle>
             </CardHeader>
             <CardBody className="flex flex-col gap-2 text-sm">
-              <HistoryRow label="Requested" at={transfer.requested_at} />
-              <HistoryRow label="Approved" at={transfer.approved_at} />
-              <HistoryRow label="Rejected" at={transfer.rejected_at} />
-              <HistoryRow label="Received" at={transfer.received_at} />
+              <HistoryRow label={t("requested_at")} at={transfer.requested_at} />
+              <HistoryRow label={t("approved_at")} at={transfer.approved_at} />
+              <HistoryRow label={t("rejected_at")} at={transfer.rejected_at} />
+              <HistoryRow label={t("received_at")} at={transfer.received_at} />
             </CardBody>
           </Card>
         </div>
