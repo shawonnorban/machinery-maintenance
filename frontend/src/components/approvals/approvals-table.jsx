@@ -6,6 +6,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
+import { useT } from "@/lib/i18n";
 
 /**
  * Column `render` functions can't cross the Server→Client boundary, so this
@@ -13,6 +14,8 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
  * over the current page of `approvals` as plain data.
  */
 function ApprovalsTable({ approvals, meta, page, status }) {
+  const t = useT("approval");
+  const tc = useT("common");
   const router = useRouter();
 
   function navigate(nextPage) {
@@ -24,7 +27,7 @@ function ApprovalsTable({ approvals, meta, page, status }) {
       columns={[
         {
           key: "entity",
-          header: "Entity",
+          header: t("entity"),
           render: (approval) =>
             approval.work_order ? (
               <div>
@@ -41,7 +44,7 @@ function ApprovalsTable({ approvals, meta, page, status }) {
         },
         {
           key: "cost",
-          header: "Cost",
+          header: t("cost"),
           align: "right",
           render: (approval) =>
             approval.context?.cost !== undefined
@@ -50,30 +53,30 @@ function ApprovalsTable({ approvals, meta, page, status }) {
         },
         {
           key: "step",
-          header: "Step",
-          render: (approval) => `${approval.current_step} of ${approval.total_steps}`,
+          header: t("step"),
+          render: (approval) => t("step_progress", { current: approval.current_step, total: approval.total_steps }),
         },
         {
           key: "requested_at",
-          header: "Requested",
+          header: t("requested_at"),
           render: (approval) => <FormattedDateTime value={approval.requested_at} />,
         },
         {
           key: "status",
-          header: "Status",
+          header: t("status"),
           render: (approval) => (
             <div className="flex items-center gap-1.5">
-              <StatusBadge status={approval.status} />
-              {approval.can_act ? <Badge variant="warning">Awaiting you</Badge> : null}
+              <StatusBadge status={approval.status} label={t(`status_${approval.status?.toLowerCase()}`)} />
+              {approval.can_act ? <Badge variant="warning">{t("awaiting_you")}</Badge> : null}
             </div>
           ),
         },
       ]}
       rows={approvals}
       rowKey={(approval) => approval.id}
-      emptyTitle="No requests found."
-      emptyDescription="Nothing is waiting in this view."
-      rowActions={(approval) => [{ label: "View", onSelect: () => router.push(`/approvals/${approval.id}`) }]}
+      emptyTitle={t("no_requests_found")}
+      emptyDescription={t("nothing_in_this_view")}
+      rowActions={(approval) => [{ label: tc("view"), onSelect: () => router.push(`/approvals/${approval.id}`) }]}
       pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
       onPageChange={navigate}
     />

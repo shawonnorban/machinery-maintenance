@@ -78,5 +78,12 @@
     "priority": "Priority",
     "rule_min_cost": "From :amount",
     "rule_max_cost": "Up to :amount",
-    "awaiting_signature": "Awaiting approval"
+    "awaiting_signature": "Awaiting approval",
+    "awaiting_you": "Awaiting you",
+    "step_progress": ":current of :total",
+    "no_requests_found": "No requests found.",
+    "nothing_in_this_view": "Nothing is waiting in this view.",
+    "approval_fallback": "Approval",
+    "no_decisions_yet": "No decisions yet.",
+    "frozen_figures_note": "These figures are frozen from when the request was raised."
 }

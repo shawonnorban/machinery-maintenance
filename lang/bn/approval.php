@@ -88,4 +88,11 @@ return [
     'rule_min_cost' => ':amount থেকে',
     'rule_max_cost' => ':amount পর্যন্ত',
     'awaiting_signature' => 'অনুমোদনের অপেক্ষায়',
+    'awaiting_you' => 'আপনার অপেক্ষায়',
+    'step_progress' => ':total এর মধ্যে :current',
+    'no_requests_found' => 'কোনো অনুরোধ পাওয়া যায়নি।',
+    'nothing_in_this_view' => 'এই দৃশ্যে কিছু অপেক্ষা করছে না।',
+    'approval_fallback' => 'অনুমোদন',
+    'no_decisions_yet' => 'এখনো কোনো সিদ্ধান্ত হয়নি।',
+    'frozen_figures_note' => 'অনুরোধ তোলার সময় এই তথ্যগুলো স্থির করা হয়েছে।',
 ];
