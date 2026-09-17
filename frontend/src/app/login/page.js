@@ -1,8 +1,10 @@
 import { Suspense } from "react";
 import { Wrench, Check, Sparkles, ClipboardCheck, PackageSearch, CalendarCheck, ShieldCheck } from "lucide-react";
 import { LoginForm } from "@/components/auth/login-form";
+import { LocaleSwitcher } from "@/components/auth/locale-switcher";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { getT } from "@/lib/i18n-server";
+import { getLocale } from "next-intl/server";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Sign in — Annotech RMG" };
@@ -54,7 +56,7 @@ const STAT_CARDS = [
 ];
 
 export default async function LoginPage() {
-  const t = await getT("common");
+  const [t, locale] = await Promise.all([getT("common"), getLocale()]);
 
   const HIGHLIGHTS = [
     { key: "maintenance", text: t("login_highlight_maintenance") },
@@ -86,7 +88,10 @@ export default async function LoginPage() {
             </div>
             <span className="text-lg font-semibold text-foreground">Annotech RMG</span>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <LocaleSwitcher locale={locale} />
+            <ThemeToggle />
+          </div>
         </div>
 
         <div className="relative flex flex-1 items-center justify-center py-10">
