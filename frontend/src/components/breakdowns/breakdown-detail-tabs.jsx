@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
-import { formatStatus } from "@/components/ui/status-badge";
 import { BreakdownTimelineTab } from "@/components/breakdowns/breakdown-timeline-tab";
 import { ChecklistTab } from "@/components/work-orders/checklist-tab";
 import { LaborTab } from "@/components/work-orders/labor-tab";
 import { PartsTab } from "@/components/work-orders/parts-tab";
 import { AttachmentsTab } from "@/components/work-orders/attachments-tab";
 import { useLazyTabData, withRefetch } from "@/lib/use-lazy-tab-data";
+import { useT } from "@/lib/i18n";
 import {
   correctTimestamp, uploadAttachment,
   recordChecklistAnswer, recordLabor, deleteLabor, requestPart, issuePart, issueRequestedPart, consumePart, returnPart,
@@ -33,20 +33,23 @@ import {
  * before the page ever painted.
  */
 function BreakdownDetailTabs({ breakdown, breakdownId, workOrderId, workOrderIsTerminal, canExecuteChecklist }) {
+  const t = useT("breakdown");
+  const tc = useT("common");
+
   return (
     <Card>
       <CardBody>
         <Tabs defaultValue="overview">
           <TabsList>
-            <TabsTab value="overview">Overview</TabsTab>
-            <TabsTab value="attachments">Attachments</TabsTab>
-            <TabsTab value="timeline">Timeline</TabsTab>
-            <TabsTab value="downtime">Downtime</TabsTab>
+            <TabsTab value="overview">{tc("overview")}</TabsTab>
+            <TabsTab value="attachments">{t("attachments")}</TabsTab>
+            <TabsTab value="timeline">{t("timeline")}</TabsTab>
+            <TabsTab value="downtime">{t("downtime")}</TabsTab>
             {workOrderId ? (
               <>
-                <TabsTab value="checklist">Checklist</TabsTab>
-                <TabsTab value="labor">Labor</TabsTab>
-                <TabsTab value="parts">Parts</TabsTab>
+                <TabsTab value="checklist">{t("checklist")}</TabsTab>
+                <TabsTab value="labor">{t("labor")}</TabsTab>
+                <TabsTab value="parts">{t("parts")}</TabsTab>
               </>
             ) : null}
             <TabsIndicator />
@@ -54,24 +57,24 @@ function BreakdownDetailTabs({ breakdown, breakdownId, workOrderId, workOrderIsT
 
           <TabsPanel value="overview">
             <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-              <Field label="Severity">{formatStatus(breakdown.severity) || "—"}</Field>
-              <Field label="Production order">{breakdown.production_order_reference ?? "—"}</Field>
-              <Field label="Reported at"><FormattedDateTime value={breakdown.reported_at} /></Field>
-              <Field label="Failure at"><FormattedDateTime value={breakdown.failure_at} /></Field>
+              <Field label={t("severity")}>{breakdown.severity ? t(`severity_${breakdown.severity.toLowerCase()}`) : "—"}</Field>
+              <Field label={t("production_order_reference")}>{breakdown.production_order_reference ?? "—"}</Field>
+              <Field label={t("reported_at")}><FormattedDateTime value={breakdown.reported_at} /></Field>
+              <Field label={t("failure_at")}><FormattedDateTime value={breakdown.failure_at} /></Field>
               <div className="sm:col-span-2">
-                <Field label="Problem description">{breakdown.problem_description}</Field>
+                <Field label={t("problem_description")}>{breakdown.problem_description}</Field>
               </div>
               {breakdown.failure_category || breakdown.failure_code || breakdown.failure_code_other || breakdown.root_cause ? (
                 <>
-                  <Field label="Failure category">{breakdown.failure_category ?? "—"}</Field>
-                  <Field label="Failure code">
-                    {breakdown.failure_code ?? (breakdown.failure_code_other ? `Other: ${breakdown.failure_code_other}` : "—")}
+                  <Field label={t("failure_category")}>{breakdown.failure_category ?? "—"}</Field>
+                  <Field label={t("failure_code")}>
+                    {breakdown.failure_code ?? (breakdown.failure_code_other ? `${t("other_option")}: ${breakdown.failure_code_other}` : "—")}
                   </Field>
-                  <Field label="Root cause">{breakdown.root_cause ?? "—"}</Field>
+                  <Field label={t("root_cause")}>{breakdown.root_cause ?? "—"}</Field>
                 </>
               ) : null}
               {breakdown.downtime_reason || breakdown.downtime_reason_other ? (
-                <Field label="Reason">{breakdown.downtime_reason ?? `Other: ${breakdown.downtime_reason_other}`}</Field>
+                <Field label={t("reason_code")}>{breakdown.downtime_reason ?? `${t("other_option")}: ${breakdown.downtime_reason_other}`}</Field>
               ) : null}
             </div>
           </TabsPanel>
@@ -129,6 +132,8 @@ function TabLoadState({ loading, error, onRetry, rows = 4 }) {
 }
 
 function DowntimePanel({ breakdownId }) {
+  const t = useT("breakdown");
+  const tc = useT("common");
   const { data: downtime, loading, error, refetch } = useLazyTabData(() => getDowntime(breakdownId));
 
   if (loading || error) {
@@ -136,20 +141,20 @@ function DowntimePanel({ breakdownId }) {
   }
 
   if (!downtime) {
-    return <p className="text-sm text-foreground-muted">No downtime record yet — this breakdown hasn&apos;t reached a completed repair.</p>;
+    return <p className="text-sm text-foreground-muted">{t("no_downtime_record")}</p>;
   }
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-      <Field label="Response">{formatMinutes(downtime.response_minutes)}</Field>
-      <Field label="Repair">{formatMinutes(downtime.repair_minutes)}</Field>
-      <Field label="On hold">{formatMinutes(downtime.hold_minutes)}</Field>
-      <Field label="Total downtime">{formatMinutes(downtime.total_downtime_minutes)}</Field>
-      <Field label="Class">{downtime.downtime_class ?? "—"}</Field>
-      <Field label="Counts against availability">{downtime.counts_against_availability ? "Yes" : "No"}</Field>
+      <Field label={t("response_time")}>{formatMinutes(downtime.response_minutes)}</Field>
+      <Field label={t("repair_time")}>{formatMinutes(downtime.repair_minutes)}</Field>
+      <Field label={t("hold_time")}>{formatMinutes(downtime.hold_minutes)}</Field>
+      <Field label={t("total_downtime")}>{formatMinutes(downtime.total_downtime_minutes)}</Field>
+      <Field label={t("downtime_class")}>{downtime.downtime_class ? t(`class_${downtime.downtime_class.toLowerCase()}`) : "—"}</Field>
+      <Field label={t("counts_against_availability")}>{downtime.counts_against_availability ? tc("yes") : tc("no")}</Field>
       {downtime.needs_review ? (
         <div className="col-span-2">
-          <Badge variant="warning">Needs review</Badge>
+          <Badge variant="warning">{t("needs_review")}</Badge>
         </div>
       ) : null}
     </div>

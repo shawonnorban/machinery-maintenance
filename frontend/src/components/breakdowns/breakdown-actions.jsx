@@ -10,7 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
-import { formatStatus } from "@/components/ui/status-badge";
+import { useT } from "@/lib/i18n";
 
 /**
  * The action bar for a breakdown's current status — mirrors
@@ -35,10 +35,12 @@ function BreakdownActions({
   workOrderStatus,
   actions,
 }) {
+  const t = useT("breakdown");
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {status === "REPORTED" ? (
-        <SimpleTransition label="Acknowledge" action={actions.acknowledge} breakdownId={breakdownId} />
+        <SimpleTransition label={t("acknowledge")} action={actions.acknowledge} breakdownId={breakdownId} />
       ) : null}
 
       {["ACKNOWLEDGED", "ASSIGNED"].includes(status) ? (
@@ -49,7 +51,7 @@ function BreakdownActions({
           (the walk to the machine) is a different question from repair time,
           so it's offered separately from — and before — starting the repair. */}
       {isOpen && !arrivalRecorded && status !== "REPORTED" ? (
-        <SimpleTransition label="Record arrival" variant="outline" action={actions.arrive} breakdownId={breakdownId} />
+        <SimpleTransition label={t("record_arrival")} variant="outline" action={actions.arrive} breakdownId={breakdownId} />
       ) : null}
 
       {/* Starting from ACKNOWLEDGED/ASSIGNED now happens by starting the
@@ -66,20 +68,20 @@ function BreakdownActions({
           that turned out not to be has no work-order-side action to route
           through (its own work order never left IN_PROGRESS). */}
       {status === "REPAIRED" ? (
-        <SimpleTransition label="Reopen repair" action={actions.startRepair} breakdownId={breakdownId} />
+        <SimpleTransition label={t("reopen_repair")} action={actions.startRepair} breakdownId={breakdownId} />
       ) : null}
 
       {status === "IN_REPAIR" ? (
         <>
           <HoldModal holdReasons={holdReasons} action={actions.hold.bind(null, breakdownId)} />
-          <SimpleTransition label="Complete repair" variant="success" action={actions.completeRepair} breakdownId={breakdownId} />
+          <SimpleTransition label={t("complete_repair")} variant="success" action={actions.completeRepair} breakdownId={breakdownId} />
         </>
       ) : null}
 
-      {status === "ON_HOLD" ? <SimpleTransition label="Resume" action={actions.resume} breakdownId={breakdownId} /> : null}
+      {status === "ON_HOLD" ? <SimpleTransition label={t("resume")} action={actions.resume} breakdownId={breakdownId} /> : null}
 
       {status === "REPAIRED" ? (
-        <SimpleTransition label="Resume production" variant="success" action={actions.resumeProduction} breakdownId={breakdownId} />
+        <SimpleTransition label={t("resume_production")} variant="success" action={actions.resumeProduction} breakdownId={breakdownId} />
       ) : null}
 
       {["REPAIRED", "PRODUCTION_RESUMED"].includes(status) ? (
@@ -107,6 +109,7 @@ function BreakdownActions({
 }
 
 function SimpleTransition({ label, breakdownId, action, variant = "primary" }) {
+  const t = useT("breakdown");
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const router = useRouter();
@@ -117,7 +120,7 @@ function SimpleTransition({ label, breakdownId, action, variant = "primary" }) {
     const result = await action(breakdownId);
     setPending(false);
     if (result?.status === "success") {
-      toastManager.add({ title: `${label} recorded`, type: "success" });
+      toastManager.add({ title: t("action_recorded", { action: label }), type: "success" });
       setOpen(false);
       router.refresh();
     } else if (result?.status === "error") {
@@ -137,6 +140,7 @@ function SimpleTransition({ label, breakdownId, action, variant = "primary" }) {
 
 /** Starts the linked work order directly from this page — the click that also moves the breakdown itself to IN_REPAIR (see `startWorkOrder`'s own docblock). */
 function StartWorkOrderButton({ breakdownId, workOrderId, action }) {
+  const t = useT("breakdown");
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const router = useRouter();
@@ -147,7 +151,7 @@ function StartWorkOrderButton({ breakdownId, workOrderId, action }) {
     const result = await action(breakdownId, workOrderId);
     setPending(false);
     if (result?.status === "success") {
-      toastManager.add({ title: "Repair started", type: "success" });
+      toastManager.add({ title: t("repair_started_message"), type: "success" });
       setOpen(false);
       router.refresh();
     } else if (result?.status === "error") {
@@ -158,14 +162,14 @@ function StartWorkOrderButton({ breakdownId, workOrderId, action }) {
   return (
     <>
       <Button size="sm" onClick={() => setOpen(true)}>
-        Start work order
+        {t("start_work_order")}
       </Button>
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title="Start this work order?"
-        description="Marks it in progress and moves this breakdown to IN_REPAIR."
-        confirmLabel="Start"
+        title={t("start_work_order_confirm_title")}
+        description={t("start_work_order_description")}
+        confirmLabel={t("start")}
         destructive={false}
         loading={pending}
         onConfirm={confirm}
@@ -176,6 +180,7 @@ function StartWorkOrderButton({ breakdownId, workOrderId, action }) {
 
 /** Toasts the new work order's own number, mirroring the web flash message (`breakdown.work_order_raised`) rather than a generic "recorded" confirmation. */
 function RaiseWorkOrderButton({ breakdownId, action }) {
+  const t = useT("breakdown");
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const router = useRouter();
@@ -186,7 +191,7 @@ function RaiseWorkOrderButton({ breakdownId, action }) {
     const result = await action(breakdownId);
     setPending(false);
     if (result?.status === "success") {
-      toastManager.add({ title: `Work order ${result.workOrderNumber} raised`, type: "success" });
+      toastManager.add({ title: t("raised_toast", { number: result.workOrderNumber }), type: "success" });
       setOpen(false);
       router.refresh();
     } else if (result?.status === "error") {
@@ -197,14 +202,14 @@ function RaiseWorkOrderButton({ breakdownId, action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        Raise work order
+        {t("raise_work_order")}
       </Button>
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title="Raise a repair work order?"
-        description="Puts every technician on this line's roster onto a new work order for it — any of them can then open it and start."
-        confirmLabel="Raise"
+        title={t("raise_work_order_confirm_title")}
+        description={t("raise_work_order_description")}
+        confirmLabel={t("raise")}
         destructive={false}
         loading={pending}
         onConfirm={confirm}
@@ -214,6 +219,8 @@ function RaiseWorkOrderButton({ breakdownId, action }) {
 }
 
 function AssignModal({ technicians, action }) {
+  const t = useT("breakdown");
+  const tc = useT("common");
   const [open, setOpen] = useState(false);
   const [state, dispatch, pending] = useActionState(action, null);
   const [technicianId, setTechnicianId] = useState("");
@@ -222,7 +229,7 @@ function AssignModal({ technicians, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Assigned", type: "success" });
+      toastManager.add({ title: t("assigned_message"), type: "success" });
       queueMicrotask(() => setOpen(false));
       router.refresh();
     }
@@ -245,28 +252,28 @@ function AssignModal({ technicians, action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        Assign
+        {t("assign")}
       </Button>
-      <Modal open={open} onOpenChange={setOpen} title="Assign">
+      <Modal open={open} onOpenChange={setOpen} title={t("assign")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <FormField label="Technician" required error={state?.errors?.technician_id?.[0]}>
+          <FormField label={t("technician")} required error={state?.errors?.technician_id?.[0]}>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
                 value={technicianId}
                 onValueChange={setTechnicianId}
-                options={technicians.map((t) => ({ value: t.id, label: `${t.name} (${t.employee_id})` }))}
-                placeholder="Select a technician"
+                options={technicians.map((tech) => ({ value: tech.id, label: `${tech.name} (${tech.employee_id})` }))}
+                placeholder={t("select_technician")}
               />
             )}
           </FormField>
           {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" loading={pending} disabled={!technicianId}>
-              Assign
+              {t("assign")}
             </Button>
           </div>
         </form>
@@ -276,6 +283,8 @@ function AssignModal({ technicians, action }) {
 }
 
 function HoldModal({ holdReasons, action }) {
+  const t = useT("breakdown");
+  const tc = useT("common");
   const [open, setOpen] = useState(false);
   const [state, dispatch, pending] = useActionState(action, null);
   const [reasonCode, setReasonCode] = useState("");
@@ -285,7 +294,7 @@ function HoldModal({ holdReasons, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "On hold", type: "success" });
+      toastManager.add({ title: t("held_message"), type: "success" });
       queueMicrotask(() => setOpen(false));
       router.refresh();
     }
@@ -305,32 +314,32 @@ function HoldModal({ holdReasons, action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        Hold
+        {t("hold")}
       </Button>
-      <Modal open={open} onOpenChange={setOpen} title="Hold">
+      <Modal open={open} onOpenChange={setOpen} title={t("hold")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <FormField label="Reason" required error={state?.errors?.reason_code?.[0]}>
+          <FormField label={t("hold_reason")} required error={state?.errors?.reason_code?.[0]}>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
                 value={reasonCode}
                 onValueChange={setReasonCode}
-                options={holdReasons.map((r) => ({ value: r, label: formatStatus(r) }))}
-                placeholder="Select a reason"
+                options={holdReasons.map((r) => ({ value: r, label: t(`hold_reason_${r.toLowerCase()}`) }))}
+                placeholder={t("select_reason")}
               />
             )}
           </FormField>
-          <FormField label="Notes" error={state?.errors?.notes?.[0]}>
+          <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
             {(fieldProps) => <Textarea {...fieldProps} value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={2000} />}
           </FormField>
-          <p className="text-xs text-foreground-muted">Time on hold is tracked separately from repair time.</p>
+          <p className="text-xs text-foreground-muted">{t("hold_time_note")}</p>
           {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" variant="outline" loading={pending} disabled={!reasonCode}>
-              Hold
+              {t("hold")}
             </Button>
           </div>
         </form>
@@ -340,6 +349,8 @@ function HoldModal({ holdReasons, action }) {
 }
 
 function CloseModal({ failureCodes, rootCauses, action }) {
+  const t = useT("breakdown");
+  const tc = useT("common");
   const [open, setOpen] = useState(false);
   const [state, dispatch, pending] = useActionState(action, null);
   const [failureCodeId, setFailureCodeId] = useState("");
@@ -352,7 +363,7 @@ function CloseModal({ failureCodes, rootCauses, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Closed", type: "success" });
+      toastManager.add({ title: t("closed_message"), type: "success" });
       queueMicrotask(() => setOpen(false));
       router.refresh();
     }
@@ -375,48 +386,48 @@ function CloseModal({ failureCodes, rootCauses, action }) {
   return (
     <>
       <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
-        Close
+        {t("close")}
       </Button>
-      <Modal open={open} onOpenChange={setOpen} title="Close" description="A failure code and root cause are required — the failure-analysis reports are built from exactly these two fields." className="max-w-2xl">
+      <Modal open={open} onOpenChange={setOpen} title={t("close")} description={t("close_description")} className="max-w-2xl">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField label="Failure code" required error={state?.errors?.failure_code_id?.[0]}>
+            <FormField label={t("failure_code")} required error={state?.errors?.failure_code_id?.[0]}>
               {(fieldProps) => (
                 <Select
                   {...fieldProps}
                   value={failureCodeId}
                   onValueChange={setFailureCodeId}
                   options={failureCodes.map((c) => ({ value: c.id, label: c.name }))}
-                  placeholder="Select a failure code"
+                  placeholder={t("select_failure_code")}
                 />
               )}
             </FormField>
-            <FormField label="Root cause" required error={state?.errors?.root_cause_id?.[0]}>
+            <FormField label={t("root_cause")} required error={state?.errors?.root_cause_id?.[0]}>
               {(fieldProps) => (
                 <Select
                   {...fieldProps}
                   value={rootCauseId}
                   onValueChange={setRootCauseId}
                   options={rootCauses.map((c) => ({ value: c.id, label: c.name }))}
-                  placeholder="Select a root cause"
+                  placeholder={t("select_root_cause")}
                 />
               )}
             </FormField>
           </div>
 
-          <FormField label="Corrective action" error={state?.errors?.corrective_action?.[0]}>
+          <FormField label={t("corrective_action")} error={state?.errors?.corrective_action?.[0]}>
             {(fieldProps) => (
               <Textarea {...fieldProps} value={correctiveAction} onChange={(e) => setCorrectiveAction(e.target.value)} rows={2} maxLength={5000} />
             )}
           </FormField>
 
-          <FormField label="Preventive action" error={state?.errors?.preventive_action?.[0]}>
+          <FormField label={t("preventive_action")} error={state?.errors?.preventive_action?.[0]}>
             {(fieldProps) => (
               <Textarea {...fieldProps} value={preventiveAction} onChange={(e) => setPreventiveAction(e.target.value)} rows={2} maxLength={5000} />
             )}
           </FormField>
 
-          <FormField label="Closure notes" error={state?.errors?.closure_notes?.[0]}>
+          <FormField label={t("closure_notes")} error={state?.errors?.closure_notes?.[0]}>
             {(fieldProps) => <Textarea {...fieldProps} value={closureNotes} onChange={(e) => setClosureNotes(e.target.value)} rows={2} maxLength={5000} />}
           </FormField>
 
@@ -424,10 +435,10 @@ function CloseModal({ failureCodes, rootCauses, action }) {
 
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" loading={pending} disabled={!failureCodeId || !rootCauseId}>
-              Close
+              {t("close")}
             </Button>
           </div>
         </form>
@@ -437,6 +448,8 @@ function CloseModal({ failureCodes, rootCauses, action }) {
 }
 
 function CancelModal({ action }) {
+  const t = useT("breakdown");
+  const tc = useT("common");
   const [open, setOpen] = useState(false);
   const [state, dispatch, pending] = useActionState(action, null);
   const [reason, setReason] = useState("");
@@ -445,7 +458,7 @@ function CancelModal({ action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Cancelled", type: "success" });
+      toastManager.add({ title: t("cancelled_message"), type: "success" });
       queueMicrotask(() => setOpen(false));
       router.refresh();
     }
@@ -464,20 +477,20 @@ function CancelModal({ action }) {
   return (
     <>
       <Button size="sm" variant="outline" className="sm:ml-auto" onClick={() => setOpen(true)}>
-        Cancel
+        {t("cancel")}
       </Button>
-      <Modal open={open} onOpenChange={setOpen} title="Cancel breakdown">
+      <Modal open={open} onOpenChange={setOpen} title={t("cancel_breakdown")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <FormField label="Reason" required error={state?.errors?.cancellation_reason?.[0]} helperText="Why this report doesn't stand — a false alarm, a duplicate, or the machine turned out fine.">
+          <FormField label={t("cancellation_reason")} required error={state?.errors?.cancellation_reason?.[0]} helperText={t("cancel_reason_hint")}>
             {(fieldProps) => <Input {...fieldProps} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={255} required />}
           </FormField>
           {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Back
+              {tc("back")}
             </Button>
             <Button type="submit" variant="danger" loading={pending} disabled={!reason.trim()}>
-              Cancel breakdown
+              {t("cancel_breakdown")}
             </Button>
           </div>
         </form>
