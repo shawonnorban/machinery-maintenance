@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { getT } from "@/lib/i18n-server";
 
 function fail(error) {
   if (error instanceof ApiError) {
@@ -43,7 +44,8 @@ async function uploadLogo(previousState, formData) {
   try {
     const file = formData.get("logo");
     if (!(file instanceof File) || file.size === 0) {
-      return { status: "error", message: "Choose an image first." };
+      const t = await getT("settings");
+      return { status: "error", message: t("choose_image_first") };
     }
 
     const body = new FormData();

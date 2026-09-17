@@ -6,18 +6,8 @@ import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
 import { SettingRow } from "@/components/settings/setting-row";
 import { FactoryPicker } from "@/components/settings/factory-picker";
 import { CompanyLogoForm } from "@/components/settings/company-logo-form";
+import { getT } from "@/lib/i18n-server";
 import { updateSetting, resetSetting, uploadLogo, removeLogo } from "./actions";
-
-const GROUP_LABELS = {
-  metrics: "Metrics",
-  inventory: "Inventory",
-  maintenance: "Maintenance",
-  work_order: "Work orders",
-  notification: "Notifications",
-  subscription: "Subscription",
-  locale: "Locale",
-  factory: "Factory defaults",
-};
 
 const GROUP_ICONS = {
   metrics: Gauge,
@@ -53,11 +43,13 @@ const GROUP_TONE = {
 export default async function CompanySettingsPage({ searchParams }) {
   const params = await searchParams;
 
-  const [factories, definitions, settings, me] = await Promise.all([
+  const [factories, definitions, settings, me, t, tn] = await Promise.all([
     apiFetch("/factories?per_page=100"),
     apiFetch("/settings/definitions"),
     apiFetch(`/settings${params.factory_id ? `?factory_id=${params.factory_id}` : ""}`),
     apiFetch("/auth/me"),
+    getT("settings"),
+    getT("nav"),
   ]);
 
   const factory = factories.find((f) => f.id === params.factory_id) ?? null;
@@ -73,16 +65,16 @@ export default async function CompanySettingsPage({ searchParams }) {
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "Company settings" }]}
-        title="Company settings"
-        description="How this company wants the product to behave. A setting can be answered once for the company and again for a single factory — each row shows where its current answer comes from."
+        breadcrumb={[{ label: tn("settings") }, { label: t("company_settings") }]}
+        title={t("company_settings")}
+        description={t("intro")}
       />
 
       <div className="mb-6 flex flex-col gap-4">
         <CompanyLogoForm logoUrl={me.company?.logo_url} actions={{ upload: uploadLogo, remove: removeLogo }} />
 
         <div className="flex w-full flex-col gap-1.5 sm:w-64">
-          <span className="text-xs font-medium text-foreground-muted">Viewing</span>
+          <span className="text-xs font-medium text-foreground-muted">{t("viewing")}</span>
           <FactoryPicker factories={factories} value={factory?.id} />
         </div>
       </div>
@@ -98,7 +90,7 @@ export default async function CompanySettingsPage({ searchParams }) {
                   <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-full", GROUP_TONE[group] ?? GROUP_TONE.inventory)}>
                     <Icon className="size-4" />
                   </span>
-                  <CardTitle>{GROUP_LABELS[group] ?? group}</CardTitle>
+                  <CardTitle>{t(`groups.${group}`) === `groups.${group}` ? group : t(`groups.${group}`)}</CardTitle>
                 </div>
               </CardHeader>
               <CardBody>

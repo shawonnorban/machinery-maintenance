@@ -8,6 +8,7 @@ import { FileInput } from "@/components/ui/file-input";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
 import { Wrench } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 /**
  * The company's own branding mark, shown in the sidebar in place of the
@@ -18,6 +19,7 @@ import { Wrench } from "lucide-react";
  * attachment system.
  */
 function CompanyLogoForm({ logoUrl, actions }) {
+  const t = useT("settings");
   const [state, dispatch, pending] = useActionState(actions.upload, null);
   const [removing, startRemoving] = useTransition();
   const [preview, setPreview] = useState(null);
@@ -35,7 +37,7 @@ function CompanyLogoForm({ logoUrl, actions }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Logo updated", type: "success" });
+      toastManager.add({ title: t("logo_updated"), type: "success" });
       // queueMicrotask rather than a bare setState call, same pattern
       // ThemeProvider/SidebarNav already use for a post-render state update
       // triggered by an effect — avoids the react-hooks/set-state-in-effect
@@ -67,7 +69,7 @@ function CompanyLogoForm({ logoUrl, actions }) {
     startRemoving(async () => {
       const result = await actions.remove();
       if (result?.status === "success") {
-        toastManager.add({ title: "Logo removed", type: "success" });
+        toastManager.add({ title: t("logo_removed"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -86,7 +88,7 @@ function CompanyLogoForm({ logoUrl, actions }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Company logo</CardTitle>
+        <CardTitle>{t("company_logo")}</CardTitle>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:flex-row sm:items-center">
@@ -96,18 +98,18 @@ function CompanyLogoForm({ logoUrl, actions }) {
           <div className="flex h-20 w-40 shrink-0 items-center justify-center overflow-hidden rounded-sm border border-dashed border-border-strong bg-surface-muted p-2">
             {shown ? (
               // eslint-disable-next-line @next/next/no-img-element -- a tenant-hosted, on-disk (or locally previewed) logo, not an optimizable remote asset worth Next's image pipeline
-              <img src={shown} alt="Company logo" className="max-h-full max-w-full object-contain" />
+              <img src={shown} alt={t("company_logo")} className="max-h-full max-w-full object-contain" />
             ) : (
               <div className="flex flex-col items-center gap-1 text-foreground-muted">
                 <Wrench className="size-6" />
-                <span className="text-[11px]">No logo yet</span>
+                <span className="text-[11px]">{t("no_logo_yet")}</span>
               </div>
             )}
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-end">
             <div className="w-full sm:max-w-xs">
-              <FormField label="Replace logo" helperText="PNG, JPG or WebP, up to 2MB." error={state?.errors?.logo?.[0]}>
+              <FormField label={t("replace_logo")} helperText={t("logo_hint")} error={state?.errors?.logo?.[0]}>
                 {(fieldProps) => (
                   <FileInput {...fieldProps} name="logo" accept="image/png,image/jpeg,image/webp" onChange={handleFileChange} required />
                 )}
@@ -117,11 +119,11 @@ function CompanyLogoForm({ logoUrl, actions }) {
             <div className="flex shrink-0 gap-2 sm:ml-auto">
               {logoUrl ? (
                 <Button type="button" variant="outline" loading={removing} onClick={remove}>
-                  Remove
+                  {t("remove")}
                 </Button>
               ) : null}
               <Button type="submit" loading={pending}>
-                Upload
+                {t("upload")}
               </Button>
             </div>
           </div>
