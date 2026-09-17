@@ -254,8 +254,43 @@ async function uploadAttachment(workOrderId, formData) {
   }
 }
 
+/**
+ * The five fetches below back the tabs that aren't visible until a click
+ * (checklist, labor, parts, attachments, history) — see
+ * `WorkOrderDetailTabs`'s own note for why: the page's original all-at-once
+ * fetch (ten concurrent calls) was slow enough on this product's actual
+ * shared hosting to time out on a poor connection before the page ever
+ * painted, the same problem already fixed on the asset detail page.
+ */
+async function getChecklist(workOrderId) {
+  return apiFetch(`/work-orders/${workOrderId}/checklist`);
+}
+
+async function getLabor(workOrderId) {
+  return apiFetch(`/work-orders/${workOrderId}/labor`);
+}
+
+async function getPartsData(workOrderId) {
+  const [parts, spareParts, bins] = await Promise.all([
+    apiFetch(`/work-orders/${workOrderId}/parts`),
+    apiFetch("/spare-parts?per_page=100"),
+    apiFetch("/spare-parts/bins"),
+  ]);
+
+  return { parts, spareParts, bins };
+}
+
+async function getAttachments(workOrderId) {
+  return apiFetch(`/work-orders/${workOrderId}/attachments`);
+}
+
+async function getHistory(workOrderId) {
+  return apiFetch(`/work-orders/${workOrderId}/history`);
+}
+
 export {
   submitForApproval, start, resume, complete, verify, close, hold, cancel, reopen, assignTechnician, unassignTechnician,
   recordChecklistAnswer, recordLabor, deleteLabor, requestPart, issuePart, issueRequestedPart, consumePart, returnPart,
   uploadAttachment,
+  getChecklist, getLabor, getPartsData, getAttachments, getHistory,
 };

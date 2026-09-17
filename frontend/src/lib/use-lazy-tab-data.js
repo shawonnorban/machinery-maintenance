@@ -74,4 +74,29 @@ function useLazyTabData(fetcher) {
   return { data, error, loading, refetch: load };
 }
 
-export { useLazyTabData };
+/**
+ * Wraps a bound Server Action so a successful mutation also refreshes the
+ * lazy tab it lives in — the replacement, at the call site, for the same
+ * `revalidatePath`-driven refresh a mutation used to get for free when its
+ * tab's data still arrived as page props. Works for both calling
+ * conventions already in use across these tabs: a `useActionState` action
+ * (`(previousState, formData)`) and a plain awaited call
+ * (`(id, ...args)`) — this only ever inspects the resolved result, never
+ * the arguments, so either shape passes through untouched.
+ *
+ * @param {(...args: any[]) => Promise<{ status?: string } | undefined>} action
+ * @param {() => void} refetch
+ */
+function withRefetch(action, refetch) {
+  return async (...args) => {
+    const result = await action(...args);
+
+    if (result?.status === "success") {
+      refetch();
+    }
+
+    return result;
+  };
+}
+
+export { useLazyTabData, withRefetch };

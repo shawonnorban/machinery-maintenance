@@ -6,23 +6,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardBody } from "@/components/ui/card";
-import { FormattedDateTime } from "@/components/ui/formatted-date-time";
-import { Tabs, TabsList, TabsTab, TabsIndicator, TabsPanel } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 import { WorkOrderActions } from "@/components/work-orders/work-order-actions";
-import { AssignTechnicianControl } from "@/components/work-orders/assign-technician-control";
-import { HistoryTable } from "@/components/work-orders/history-table";
-import { ChecklistTab } from "@/components/work-orders/checklist-tab";
-import { LaborTab } from "@/components/work-orders/labor-tab";
-import { PartsTab } from "@/components/work-orders/parts-tab";
-import { AttachmentsTab } from "@/components/work-orders/attachments-tab";
+import { WorkOrderDetailTabs } from "@/components/work-orders/work-order-detail-tabs";
 import { getT } from "@/lib/i18n-server";
-import {
-  submitForApproval, start, resume, complete, verify, close, hold, cancel, reopen,
-  assignTechnician, unassignTechnician,
-  recordChecklistAnswer, recordLabor, deleteLabor, requestPart, issuePart, issueRequestedPart, consumePart, returnPart,
-  uploadAttachment,
-} from "./actions";
+import { submitForApproval, start, resume, complete, verify, close, hold, cancel, reopen } from "./actions";
 
 const PRIORITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", LOW: "neutral" };
 const PRIORITY_BORDER = { CRITICAL: "border-l-danger", HIGH: "border-l-warning", MEDIUM: "border-l-info", LOW: "border-l-border-strong" };
@@ -33,24 +21,26 @@ const TERMINAL_STATUSES = ["CLOSED", "CANCELLED"];
  * parts panels (`_checklist`/`_labor`/`_parts.blade.php`) and a new
  * attachments upload the web never offered (it only ever lists them
  * read-only).
+ *
+ * Only three calls up front — the work order itself, assignable
+ * technicians (needed by the Overview tab's always-visible assignment
+ * control), and costs (needed just to decide whether the Costs tab exists
+ * at all) — rather than the ten this page used to fire in one
+ * `Promise.all`. Checklist/labor/parts/attachments/history are fetched by
+ * their own tab, lazily, the first time each is actually opened
+ * (`WorkOrderDetailTabs`'s own note has why): the same problem already
+ * found and fixed on the asset detail page.
  */
 export default async function WorkOrderDetailPage({ params }) {
   const { workOrderId } = await params;
 
-  const [workOrder, history, technicians, costs, checklist, labor, parts, attachments, spareParts, bins, t, tc] = await Promise.all([
+  const [workOrder, technicians, costs, t, tc] = await Promise.all([
     apiFetch(`/work-orders/${workOrderId}`),
-    apiFetch(`/work-orders/${workOrderId}/history`),
     apiFetch(`/work-orders/${workOrderId}/assignable-technicians`),
     // work_order.cost.view is a separate permission from viewing the work
     // order itself (SRS 25.1) — absent rather than erroring for a caller
     // who lacks it, mirroring the web's own `showCosts` conditional.
     apiFetch(`/work-orders/${workOrderId}/costs`).catch(() => null),
-    apiFetch(`/work-orders/${workOrderId}/checklist`),
-    apiFetch(`/work-orders/${workOrderId}/labor`),
-    apiFetch(`/work-orders/${workOrderId}/parts`),
-    apiFetch(`/work-orders/${workOrderId}/attachments`),
-    apiFetch("/spare-parts?per_page=100"),
-    apiFetch("/spare-parts/bins"),
     getT("work_order"),
     getT("common"),
   ]);
@@ -95,107 +85,14 @@ export default async function WorkOrderDetailPage({ params }) {
         </SummaryItem>
       </Card>
 
-      <Card>
-        <CardBody>
-          <Tabs defaultValue="overview">
-            <TabsList>
-              <TabsTab value="overview">{tc("overview")}</TabsTab>
-              <TabsTab value="checklist">{t("checklist")}</TabsTab>
-              <TabsTab value="labor">{t("labor")}</TabsTab>
-              <TabsTab value="parts">{t("parts")}</TabsTab>
-              <TabsTab value="attachments">{t("attachments")}</TabsTab>
-              <TabsTab value="history">{t("timeline")}</TabsTab>
-              {costs ? <TabsTab value="costs">{t("cost")}</TabsTab> : null}
-              <TabsIndicator />
-            </TabsList>
-
-            <TabsPanel value="overview">
-              <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-                <Field label={t("maintenance_type")}>{workOrder.maintenance_type ?? "—"}</Field>
-                <Field label={t("source")}>{t(`source_${workOrder.source?.toLowerCase()}`)}</Field>
-                <Field label={t("scheduled_start")}><FormattedDateTime value={workOrder.scheduled_start} /></Field>
-                <Field label={t("scheduled_end")}><FormattedDateTime value={workOrder.scheduled_end} /></Field>
-                <Field label={t("requires_shutdown")}>{workOrder.requires_shutdown ? tc("yes") : tc("no")}</Field>
-                <Field label={t("requires_verification")}>{workOrder.requires_verification ? tc("yes") : tc("no")}</Field>
-                <div className="sm:col-span-2">
-                  <Field label={t("assigned_technicians")}>
-                    <AssignTechnicianControl
-                      status={workOrder.status}
-                      workOrderId={workOrderId}
-                      assignments={workOrder.assignments}
-                      technicians={technicians}
-                      assign={assignTechnician}
-                      unassign={unassignTechnician}
-                    />
-                  </Field>
-                </div>
-                {workOrder.description ? (
-                  <div className="sm:col-span-2">
-                    <Field label={t("description")}>{workOrder.description}</Field>
-                  </div>
-                ) : null}
-              </div>
-            </TabsPanel>
-
-            <TabsPanel value="checklist">
-              <ChecklistTab
-                progress={checklist.progress}
-                items={checklist.items}
-                canExecute={canExecuteChecklist}
-                action={recordChecklistAnswer.bind(null, workOrderId)}
-              />
-            </TabsPanel>
-
-            <TabsPanel value="labor">
-              <LaborTab
-                entries={labor}
-                technicians={technicians}
-                canManage
-                isTerminal={isTerminal}
-                recordAction={recordLabor.bind(null, workOrderId)}
-                deleteAction={deleteLabor.bind(null, workOrderId)}
-              />
-            </TabsPanel>
-
-            <TabsPanel value="parts">
-              <PartsTab
-                lines={parts}
-                spareParts={spareParts}
-                bins={bins}
-                isTerminal={isTerminal}
-                showCosts={Boolean(costs)}
-                currency={costs?.currency}
-                actions={{
-                  requestPart: requestPart.bind(null, workOrderId),
-                  issuePart: issuePart.bind(null, workOrderId),
-                  issueRequestedPart: issueRequestedPart.bind(null, workOrderId),
-                  consumePart: consumePart.bind(null, workOrderId),
-                  returnPart: returnPart.bind(null, workOrderId),
-                }}
-              />
-            </TabsPanel>
-
-            <TabsPanel value="attachments">
-              <AttachmentsTab attachments={attachments} isTerminal={isTerminal} action={uploadAttachment.bind(null, workOrderId)} />
-            </TabsPanel>
-
-            <TabsPanel value="history">
-              <HistoryTable history={history} />
-            </TabsPanel>
-
-            {costs ? (
-              <TabsPanel value="costs">
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                  <Field label={t("cost_estimated_parts")}>{costs.estimated_parts_cost ?? "—"} {costs.currency}</Field>
-                  <Field label={t("cost_actual_parts")}>{costs.actual_parts_cost ?? "—"} {costs.currency}</Field>
-                  <Field label={t("cost_other")}>{costs.actual_other_cost ?? "—"} {costs.currency}</Field>
-                  <Field label={t("cost_actual_total")}>{costs.actual_cost ?? "—"} {costs.currency}</Field>
-                </div>
-              </TabsPanel>
-            ) : null}
-          </Tabs>
-        </CardBody>
-      </Card>
+      <WorkOrderDetailTabs
+        workOrder={workOrder}
+        workOrderId={workOrderId}
+        technicians={technicians}
+        costs={costs}
+        isTerminal={isTerminal}
+        canExecuteChecklist={canExecuteChecklist}
+      />
     </>
   );
 }
@@ -205,15 +102,6 @@ function SummaryItem({ label, children }) {
     <div className="flex flex-col gap-1">
       <span className="text-xs font-medium text-foreground-muted">{label}</span>
       {children}
-    </div>
-  );
-}
-
-function Field({ label, children }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium text-foreground-muted">{label}</span>
-      <span className="text-sm text-foreground">{children}</span>
     </div>
   );
 }
