@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { LabelSheet } from "@/components/assets/label-sheet";
 import { LabelFilters } from "@/components/assets/label-filters";
+import { getT } from "@/lib/i18n-server";
 
 /** Mirrors `AssetLabelController::index` — explicit `ids[]`, else factory/status filters, capped at 200. */
 export default async function AssetLabelsPage({ searchParams }) {
@@ -23,17 +24,18 @@ export default async function AssetLabelsPage({ searchParams }) {
   // (the permission this whole screen and its own bulk endpoint are
   // gated on), the same over-privileged-dropdown mistake already found
   // and fixed for Reports/Technicians/Maintenance Plans this session.
-  const [result, options] = await Promise.all([
+  const [result, options, t] = await Promise.all([
     hasCriteria ? apiFetch(`/assets/labels?${query.toString()}`) : null,
     apiFetch("/assets/form-options"),
+    getT("asset"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Assets", href: "/assets" }, { label: "Print Labels" }]}
-        title="Print labels"
-        description="A QR label per machine — the code, the asset code and its name, nothing else."
+        breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: t("print_labels") }]}
+        title={t("print_labels")}
+        description={t("print_labels_description")}
       />
 
       <LabelFilters factories={options.factories} factoryId={factoryId} status={status} hasIds={ids.length > 0} />

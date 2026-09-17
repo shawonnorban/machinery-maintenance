@@ -4,25 +4,28 @@ import { Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `asset::labels.sheet.blade.php` — the QR, the asset code and the name, nothing else (Data Dictionary 5.5): anything more is one more thing to go stale on a sticker nobody reprints. */
 function LabelSheet({ labels, truncated }) {
+  const t = useT("asset");
+
   if (labels.length === 0) {
-    return <EmptyState title="No matching assets" description="Adjust the factory/status filters, or select assets from the list and print from there." />;
+    return <EmptyState title={t("no_matching_assets")} description={t("no_matching_assets_hint")} />;
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <span className="text-sm text-foreground-muted">{labels.length} label{labels.length === 1 ? "" : "s"}</span>
+        <span className="text-sm text-foreground-muted">{t("label_count", { count: labels.length })}</span>
         <Button size="sm" onClick={() => window.print()}>
-          <Printer /> Print
+          <Printer /> {t("print")}
         </Button>
       </div>
 
       {truncated ? (
         <div className="print:hidden">
-          <Alert variant="warning">Showing the first 200 assets — narrow the filters to print the rest separately.</Alert>
+          <Alert variant="warning">{t("showing_first_200")}</Alert>
         </div>
       ) : null}
 

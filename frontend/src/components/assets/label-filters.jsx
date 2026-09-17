@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { formatStatus } from "@/components/ui/status-badge";
+import { useT } from "@/lib/i18n";
 
 const STATUSES = [
   "DRAFT", "PURCHASED", "INSTALLED", "COMMISSIONED", "RUNNING", "IDLE",
@@ -13,6 +13,7 @@ const STATUSES = [
 
 /** An alternative to arriving here with explicit `ids[]` from the Assets list's own "Print labels" bulk action — generate a sheet for a whole factory/status slice instead. */
 function LabelFilters({ factories, factoryId, status, hasIds }) {
+  const t = useT("asset");
   const router = useRouter();
   const [nextFactoryId, setNextFactoryId] = useState(factoryId);
   const [nextStatus, setNextStatus] = useState(status);
@@ -31,28 +32,28 @@ function LabelFilters({ factories, factoryId, status, hasIds }) {
   return (
     <div className="mb-4 flex flex-wrap items-end gap-3 print:hidden">
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-foreground">Factory</label>
+        <label className="text-sm font-medium text-foreground">{t("factory")}</label>
         <div className="w-52">
           <Select
             value={nextFactoryId}
             onValueChange={setNextFactoryId}
-            placeholder="All reachable factories"
+            placeholder={t("all_reachable_factories")}
             options={factories.map((f) => ({ value: f.id, label: f.name }))}
           />
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-foreground">Status</label>
+        <label className="text-sm font-medium text-foreground">{t("status")}</label>
         <div className="w-52">
           <Select
             value={nextStatus}
             onValueChange={setNextStatus}
-            placeholder="Any status"
-            options={STATUSES.map((s) => ({ value: s, label: formatStatus(s) }))}
+            placeholder={t("any_status")}
+            options={STATUSES.map((s) => ({ value: s, label: t(`status_${s.toLowerCase()}`) }))}
           />
         </div>
       </div>
-      <Button onClick={generate}>Generate sheet</Button>
+      <Button onClick={generate}>{t("generate_sheet")}</Button>
     </div>
   );
 }
