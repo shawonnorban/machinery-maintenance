@@ -13,21 +13,24 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Button } from "@/components/ui/button";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
-
-const STATUS_OPTIONS = [
-  { value: "", label: "Open (due & overdue)" },
-  { value: "OVERDUE", label: "Overdue" },
-  { value: "COMPLETED", label: "Completed" },
-  { value: "SKIPPED", label: "Skipped" },
-  { value: "CANCELLED", label: "Cancelled" },
-];
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `ScheduleController::index` — one concrete occurrence of a plan. */
 function SchedulesTable({ schedules, meta, page, status, actions }) {
+  const t = useT("maintenance");
+  const tc = useT("common");
   const router = useRouter();
   const [pending, startPending] = useTransition();
   const [modal, setModal] = useState(null);
   const toastManager = useToastManager();
+
+  const statusOptions = [
+    { value: "", label: t("open_due_overdue") },
+    { value: "OVERDUE", label: t("status_overdue") },
+    { value: "COMPLETED", label: t("status_completed") },
+    { value: "SKIPPED", label: t("status_skipped") },
+    { value: "CANCELLED", label: t("status_cancelled") },
+  ];
 
   function navigate(next) {
     const params = new URLSearchParams({
@@ -44,7 +47,7 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
     startPending(async () => {
       const result = await actions.completeSchedule(schedule.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Marked complete", type: "success" });
+        toastManager.add({ title: t("schedule_completed_toast"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -56,7 +59,7 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-3">
         <div className="w-full max-w-[220px]">
-          <Select options={STATUS_OPTIONS} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
+          <Select options={statusOptions} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
         </div>
       </div>
 
@@ -64,7 +67,7 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
         columns={[
           {
             key: "asset",
-            header: "Asset",
+            header: t("asset"),
             render: (s) => (
               <div>
                 <Link href={`/assets/${s.asset?.id}`} className="font-medium text-brand hover:underline">
@@ -76,24 +79,28 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
           },
           {
             key: "due_at",
-            header: "Due",
+            header: t("due_at"),
             render: (s) => (
               <span className={s.is_overdue ? "font-semibold text-danger" : undefined}>
                 <FormattedDateTime value={s.due_at} mode="date" />
               </span>
             ),
           },
-          { key: "status", header: "Status", render: (s) => <StatusBadge status={s.status} /> },
+          {
+            key: "status",
+            header: t("status"),
+            render: (s) => <StatusBadge status={s.status} label={t(`status_${s.status?.toLowerCase()}`)} />,
+          },
         ]}
         rows={schedules}
         rowKey={(s) => s.id}
-        emptyTitle="Nothing due."
+        emptyTitle={t("nothing_due")}
         rowActions={(s) =>
           ["PLANNED", "DUE", "OVERDUE", "IN_PROGRESS"].includes(s.status)
             ? [
-                { label: "Complete", onSelect: () => runComplete(s) },
-                { label: "Reschedule", onSelect: () => setModal({ type: "reschedule", schedule: s }) },
-                { label: "Skip", destructive: true, onSelect: () => setModal({ type: "skip", schedule: s }) },
+                { label: t("complete"), onSelect: () => runComplete(s) },
+                { label: t("reschedule"), onSelect: () => setModal({ type: "reschedule", schedule: s }) },
+                { label: t("skip"), destructive: true, onSelect: () => setModal({ type: "skip", schedule: s }) },
               ]
             : []
         }
@@ -112,13 +119,15 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
 }
 
 function SkipModal({ schedule, action, onClose }) {
+  const t = useT("maintenance");
+  const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action.bind(null, schedule.id), null);
   const router = useRouter();
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Schedule skipped", type: "success" });
+      toastManager.add({ title: t("schedule_skipped_toast"), type: "success" });
       onClose();
       router.refresh();
     }
@@ -132,17 +141,17 @@ function SkipModal({ schedule, action, onClose }) {
   }
 
   return (
-    <Modal open onOpenChange={onClose} title={`Skip ${schedule.asset?.asset_code}?`}>
+    <Modal open onOpenChange={onClose} title={t("skip_confirm_title", { code: schedule.asset?.asset_code })}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <FormField label="Reason" required error={state?.errors?.skipped_reason?.[0]}>
+        <FormField label={t("reason")} required error={state?.errors?.skipped_reason?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="skipped_reason" required />}
         </FormField>
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" variant="danger" loading={pending}>
-            Skip
+            {t("skip")}
           </Button>
         </div>
       </form>
@@ -151,6 +160,8 @@ function SkipModal({ schedule, action, onClose }) {
 }
 
 function RescheduleModal({ schedule, action, onClose }) {
+  const t = useT("maintenance");
+  const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action.bind(null, schedule.id), null);
   const [dueAt, setDueAt] = useState(schedule.due_at ? schedule.due_at.slice(0, 10) : "");
   const router = useRouter();
@@ -158,7 +169,7 @@ function RescheduleModal({ schedule, action, onClose }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Schedule rescheduled", type: "success" });
+      toastManager.add({ title: t("schedule_rescheduled_toast"), type: "success" });
       onClose();
       router.refresh();
     }
@@ -174,20 +185,20 @@ function RescheduleModal({ schedule, action, onClose }) {
   }
 
   return (
-    <Modal open onOpenChange={onClose} title={`Reschedule ${schedule.asset?.asset_code}?`}>
+    <Modal open onOpenChange={onClose} title={t("reschedule_confirm_title", { code: schedule.asset?.asset_code })}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <FormField label="New due date" required error={state?.errors?.due_at?.[0]}>
+        <FormField label={t("reschedule_to")} required error={state?.errors?.due_at?.[0]}>
           {() => <DatePicker value={dueAt} onChange={setDueAt} />}
         </FormField>
-        <FormField label="Reason" required error={state?.errors?.rescheduled_reason?.[0]}>
+        <FormField label={t("reason")} required error={state?.errors?.rescheduled_reason?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="rescheduled_reason" required />}
         </FormField>
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" loading={pending}>
-            Reschedule
+            {t("reschedule")}
           </Button>
         </div>
       </form>
