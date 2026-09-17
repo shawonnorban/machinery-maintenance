@@ -3,20 +3,22 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { TechnicianForm } from "@/components/technicians/technician-form";
 import { TechnicianSkills } from "@/components/technicians/technician-skills";
+import { getT } from "@/lib/i18n-server";
 import { updateTechnician, addSkill, removeSkill } from "../actions";
 
 export default async function EditTechnicianPage({ params }) {
   const { technicianId } = await params;
 
-  const [technician, options] = await Promise.all([
+  const [technician, options, t] = await Promise.all([
     apiFetch(`/technicians/${technicianId}`),
     apiFetch("/technicians/form-options"),
+    getT("technician"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Technicians", href: "/technicians" }, { label: technician.name }]}
+        breadcrumb={[{ label: t("technicians"), href: "/technicians" }, { label: technician.name }]}
         title={technician.name}
       />
 

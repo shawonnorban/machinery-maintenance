@@ -11,9 +11,12 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Card, CardBody } from "@/components/ui/card";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `TechnicianController::index` (SRS 25) — who works here and what they look after, carrying no money of any kind. */
 function TechniciansTable({ technicians, meta, page, search, factoryId, departmentId, factories, departments, actions }) {
+  const t = useT("technician");
+  const tc = useT("common");
   const router = useRouter();
   const [searchInput, setSearchInput] = useState(search);
   const [deleting, setDeleting] = useState(null);
@@ -52,7 +55,7 @@ function TechniciansTable({ technicians, meta, page, search, factoryId, departme
     startTransition(async () => {
       const result = await actions.deleteTechnician(deleting.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Technician deleted", type: "success" });
+        toastManager.add({ title: t("technician_deleted_toast"), type: "success" });
         setDeleting(null);
         router.refresh();
       } else if (result?.status === "error") {
@@ -70,20 +73,20 @@ function TechniciansTable({ technicians, meta, page, search, factoryId, departme
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search name or employee id…"
+              placeholder={t("search")}
               className="pl-9"
             />
           </div>
           <div className="w-full max-w-[220px]">
             <Select
-              options={[{ value: "", label: "All factories" }, ...factories.map((f) => ({ value: f.id, label: f.name }))]}
+              options={[{ value: "", label: t("all_factories") }, ...factories.map((f) => ({ value: f.id, label: f.name }))]}
               value={factoryId}
               onValueChange={(value) => navigate({ factory_id: value, page: 1 })}
             />
           </div>
           <div className="w-full max-w-[220px]">
             <Select
-              options={[{ value: "", label: "All departments" }, ...departments.map((d) => ({ value: d.id, label: d.name }))]}
+              options={[{ value: "", label: t("all_departments") }, ...departments.map((d) => ({ value: d.id, label: d.name }))]}
               value={departmentId}
               onValueChange={(value) => navigate({ department_id: value, page: 1 })}
             />
@@ -95,39 +98,48 @@ function TechniciansTable({ technicians, meta, page, search, factoryId, departme
         columns={[
           {
             key: "name",
-            header: "Technician",
-            render: (t) => (
+            header: t("technician"),
+            render: (row) => (
               <div>
-                <Link href={`/technicians/${t.id}/edit`} className="font-medium text-brand hover:underline">
-                  {t.name}
+                <Link href={`/technicians/${row.id}/edit`} className="font-medium text-brand hover:underline">
+                  {row.name}
                 </Link>
-                <div className="text-xs text-foreground-muted">{t.employee_id}</div>
+                <div className="text-xs text-foreground-muted">{row.employee_id}</div>
               </div>
             ),
           },
           {
             key: "covers",
-            header: "Covers",
-            render: (t) => (
+            header: t("covers"),
+            render: (row) => (
               <div>
-                <div>{t.factory?.name ?? "—"}</div>
+                <div>{row.factory?.name ?? "—"}</div>
                 <div className="text-xs text-foreground-muted">
-                  {t.department ? [t.department, t.production_line].filter(Boolean).join(" · ") : "Whole factory"}
+                  {row.department ? [row.department, row.production_line].filter(Boolean).join(" · ") : t("whole_factory")}
                 </div>
               </div>
             ),
           },
-          { key: "specialization", header: "Specialization", render: (t) => t.specialization ?? "—" },
-          { key: "max_concurrent_work_orders", header: "Workload limit", align: "right", render: (t) => t.max_concurrent_work_orders ?? "No limit" },
-          { key: "status", header: "Status", render: (t) => <StatusBadge status={t.status} /> },
+          { key: "specialization", header: t("specialization"), render: (row) => row.specialization ?? "—" },
+          {
+            key: "max_concurrent_work_orders",
+            header: t("workload_limit"),
+            align: "right",
+            render: (row) => row.max_concurrent_work_orders ?? t("no_limit"),
+          },
+          {
+            key: "status",
+            header: t("status"),
+            render: (row) => <StatusBadge status={row.status} label={row.status === "ACTIVE" ? t("active") : t("inactive")} />,
+          },
         ]}
         rows={technicians}
-        rowKey={(t) => t.id}
-        emptyTitle="No technicians found."
-        rowActions={(t) => [
-          { label: "Edit", onSelect: () => router.push(`/technicians/${t.id}/edit`) },
-          { label: t.status === "ACTIVE" ? "Deactivate" : "Activate", onSelect: () => runToggle(t) },
-          { label: "Delete", destructive: true, onSelect: () => setDeleting(t) },
+        rowKey={(row) => row.id}
+        emptyTitle={t("no_technicians_found")}
+        rowActions={(row) => [
+          { label: tc("edit"), onSelect: () => router.push(`/technicians/${row.id}/edit`) },
+          { label: row.status === "ACTIVE" ? t("deactivate") : t("activate"), onSelect: () => runToggle(row) },
+          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(row) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
@@ -136,9 +148,9 @@ function TechniciansTable({ technicians, meta, page, search, factoryId, departme
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={() => setDeleting(null)}
-        title={`Delete ${deleting?.name}?`}
-        description="Only possible while nothing references this technician."
-        confirmLabel="Delete"
+        title={t("delete_confirm_title", { name: deleting?.name })}
+        description={t("delete_confirm_hint")}
+        confirmLabel={tc("delete")}
         loading={pending}
         onConfirm={runDelete}
       />

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TechniciansTable } from "@/components/technicians/technicians-table";
+import { getT } from "@/lib/i18n-server";
 import { toggleTechnician, deleteTechnician } from "./actions";
 
 /** Mirrors `TechnicianController::index` (SRS 25). */
@@ -20,20 +21,21 @@ export default async function TechniciansPage({ searchParams }) {
   if (factoryId) query.set("factory_id", factoryId);
   if (departmentId) query.set("department_id", departmentId);
 
-  const [technicians, options] = await Promise.all([
+  const [technicians, options, t] = await Promise.all([
     apiFetch(`/technicians?${query.toString()}`, { includeMeta: true }),
     apiFetch("/technicians/form-options"),
+    getT("technician"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Technicians" }]}
-        title="Technicians"
-        description="Who works here and what they look after."
+        breadcrumb={[{ label: t("technicians") }]}
+        title={t("technicians")}
+        description={t("intro")}
         actions={
           <Link href="/technicians/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> New technician
+            <Plus /> {t("new_technician")}
           </Link>
         }
       />
