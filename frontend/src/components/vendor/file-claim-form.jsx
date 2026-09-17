@@ -6,17 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
 /** Mirrors `warranties/show.blade.php`'s file-claim card. */
 function FileClaimForm({ action }) {
+  const t = useT("vendor");
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Claim filed", type: "success" });
+      toastManager.add({ title: t("claim_filed"), type: "success" });
     }
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes
@@ -27,19 +29,19 @@ function FileClaimForm({ action }) {
   return (
     <form action={dispatch} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Claim date" required>
+        <FormField label={t("claim_date")} required>
           {(fieldProps) => <Input {...fieldProps} type="date" name="claim_date" defaultValue={today()} required />}
         </FormField>
-        <FormField label="Incident date" helperText="Cover is judged on the day the machine failed, not the day it's claimed.">
+        <FormField label={t("incident_date")} helperText={t("incident_date_hint")}>
           {(fieldProps) => <Input {...fieldProps} type="date" name="incident_date" />}
         </FormField>
       </div>
 
-      <FormField label="Description" required error={state?.errors?.description?.[0]}>
+      <FormField label={t("description")} required error={state?.errors?.description?.[0]}>
         {(fieldProps) => <Textarea {...fieldProps} name="description" rows={3} required />}
       </FormField>
 
-      <FormField label="Claimed amount">
+      <FormField label={t("claimed_amount")}>
         {(fieldProps) => <Input {...fieldProps} type="number" step="0.01" min="0" name="claimed_amount" />}
       </FormField>
 
@@ -47,7 +49,7 @@ function FileClaimForm({ action }) {
 
       <div>
         <Button type="submit" loading={pending}>
-          File claim
+          {t("file_claim")}
         </Button>
       </div>
     </form>

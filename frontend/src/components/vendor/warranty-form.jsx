@@ -7,22 +7,25 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-
-const TYPE_OPTIONS = [
-  { value: "MANUFACTURER", label: "Manufacturer" },
-  { value: "EXTENDED", label: "Extended" },
-  { value: "SERVICE", label: "Service" },
-];
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `warranties/create.blade.php`. */
 function WarrantyForm({ assets, vendors, assetId, action }) {
+  const t = useT("vendor");
+  const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action, null);
   const router = useRouter();
+
+  const TYPE_OPTIONS = [
+    { value: "MANUFACTURER", label: t("type_manufacturer") },
+    { value: "EXTENDED", label: t("type_extended") },
+    { value: "SERVICE", label: t("type_service_warranty") },
+  ];
 
   return (
     <form action={dispatch} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Asset" required error={state?.errors?.asset_id?.[0]}>
+        <FormField label={t("asset")} required error={state?.errors?.asset_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -33,7 +36,7 @@ function WarrantyForm({ assets, vendors, assetId, action }) {
           )}
         </FormField>
 
-        <FormField label="Vendor">
+        <FormField label={t("vendor")}>
           {(fieldProps) => (
             <Select {...fieldProps} name="vendor_id" options={vendors.map((v) => ({ value: v.id, label: v.name }))} />
           )}
@@ -41,26 +44,26 @@ function WarrantyForm({ assets, vendors, assetId, action }) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="Type" required>
+        <FormField label={t("warranty_type")} required>
           {(fieldProps) => <Select {...fieldProps} name="warranty_type" defaultValue="MANUFACTURER" options={TYPE_OPTIONS} />}
         </FormField>
-        <FormField label="Start date" required error={state?.errors?.start_date?.[0]}>
+        <FormField label={t("start_date")} required error={state?.errors?.start_date?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="date" name="start_date" required />}
         </FormField>
-        <FormField label="End date" required error={state?.errors?.end_date?.[0]}>
+        <FormField label={t("end_date")} required error={state?.errors?.end_date?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="date" name="end_date" required />}
         </FormField>
       </div>
 
-      <FormField label="Reference">
+      <FormField label={t("reference")}>
         {(fieldProps) => <Input {...fieldProps} name="reference" />}
       </FormField>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Coverage">
+        <FormField label={t("coverage")}>
           {(fieldProps) => <Textarea {...fieldProps} name="coverage" rows={3} />}
         </FormField>
-        <FormField label="Exclusions" helperText="What this warranty does not pay for.">
+        <FormField label={t("exclusions")} helperText={t("exclusions_hint")}>
           {(fieldProps) => <Textarea {...fieldProps} name="exclusions" rows={3} />}
         </FormField>
       </div>
@@ -69,10 +72,10 @@ function WarrantyForm({ assets, vendors, assetId, action }) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          Save
+          {tc("save")}
         </Button>
       </div>
     </form>
