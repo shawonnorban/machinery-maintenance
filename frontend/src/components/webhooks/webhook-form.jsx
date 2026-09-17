@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `WebhookController`'s create/edit form — one endpoint, the events
@@ -17,6 +18,8 @@ import { Alert } from "@/components/ui/alert";
  * `UserForm`'s one-time generated password).
  */
 function WebhookForm({ endpoint = null, eventOptions, action }) {
+  const t = useT("webhook");
+  const tc = useT("common");
   const isEdit = endpoint !== null;
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
@@ -42,13 +45,13 @@ function WebhookForm({ endpoint = null, eventOptions, action }) {
   if (!isEdit && state?.status === "success") {
     return (
       <div className="flex flex-col gap-4">
-        <Alert variant="success" title="Endpoint created">
-          Copy this signing secret now — it will not be shown again.
+        <Alert variant="success" title={t("created")}>
+          {t("secret_shown_once")}
         </Alert>
         <div className="rounded-sm border border-border bg-surface-muted px-4 py-3 font-mono text-sm break-all">{state.secret}</div>
         <div>
           <Link href={`/settings/webhooks/${state.endpointId}`} className="text-sm font-medium text-brand hover:underline">
-            Go to the endpoint →
+            {t("go_to_endpoint")} →
           </Link>
         </div>
       </div>
@@ -59,15 +62,15 @@ function WebhookForm({ endpoint = null, eventOptions, action }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <FormField label="URL" required error={state?.errors?.url?.[0]} helperText="Must be a reachable public HTTPS address — a private/internal address is refused.">
+      <FormField label={t("url")} required error={state?.errors?.url?.[0]} helperText={t("url_hint")}>
         {(fieldProps) => <Input {...fieldProps} type="url" value={url} onChange={(e) => setUrl(e.target.value)} maxLength={2048} required />}
       </FormField>
 
-      <FormField label="Description">
+      <FormField label={t("description")}>
         {(fieldProps) => <Input {...fieldProps} value={description} onChange={(e) => setDescription(e.target.value)} maxLength={255} />}
       </FormField>
 
-      <FormField label="Events" required error={state?.errors?.events?.[0] ?? state?.errors?.["events.0"]?.[0]}>
+      <FormField label={t("events")} required error={state?.errors?.events?.[0] ?? state?.errors?.["events.0"]?.[0]}>
         {() => (
           <div className="grid grid-cols-1 gap-2 rounded-sm border border-border-strong p-3 sm:grid-cols-2">
             {eventOptions.map((option) => (
@@ -82,10 +85,10 @@ function WebhookForm({ endpoint = null, eventOptions, action }) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending} disabled={events.length === 0}>
-          {isEdit ? "Save changes" : "Create endpoint"}
+          {isEdit ? t("save_changes") : t("create_endpoint")}
         </Button>
       </div>
     </form>

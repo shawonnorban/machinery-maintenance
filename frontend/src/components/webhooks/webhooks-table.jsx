@@ -7,9 +7,12 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `WebhookController::index` — outgoing integrations and how many events each is subscribed to. */
 function WebhooksTable({ endpoints, actions }) {
+  const t = useT("webhook");
+  const tc = useT("common");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [deleting, setDeleting] = useState(null);
@@ -27,7 +30,7 @@ function WebhooksTable({ endpoints, actions }) {
     startTransition(async () => {
       const result = await actions.deleteEndpoint(deleting.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Endpoint paused", type: "success" });
+        toastManager.add({ title: t("endpoint_paused_toast"), type: "success" });
         setDeleting(null);
         router.refresh();
       } else if (result?.status === "error") {
@@ -43,7 +46,7 @@ function WebhooksTable({ endpoints, actions }) {
         columns={[
           {
             key: "url",
-            header: "Endpoint",
+            header: t("endpoint"),
             render: (e) => (
               <div>
                 <button type="button" onClick={() => router.push(`/settings/webhooks/${e.id}`)} className="font-medium text-brand hover:underline">
@@ -53,28 +56,28 @@ function WebhooksTable({ endpoints, actions }) {
               </div>
             ),
           },
-          { key: "subscriptions_count", header: "Events", align: "right", render: (e) => e.subscriptions_count ?? 0 },
-          { key: "consecutive_failure_count", header: "Failures", align: "right", render: (e) => e.consecutive_failure_count },
-          { key: "created_at", header: "Created", render: (e) => <FormattedDateTime value={e.created_at} mode="date" /> },
-          { key: "status", header: "Status", render: (e) => <StatusBadge status={e.status} /> },
+          { key: "subscriptions_count", header: t("events"), align: "right", render: (e) => e.subscriptions_count ?? 0 },
+          { key: "consecutive_failure_count", header: t("failures"), align: "right", render: (e) => e.consecutive_failure_count },
+          { key: "created_at", header: t("created_at_header"), render: (e) => <FormattedDateTime value={e.created_at} mode="date" /> },
+          { key: "status", header: t("status"), render: (e) => <StatusBadge status={e.status} label={t(`statuses.${e.status}`)} /> },
         ]}
         rows={endpoints}
         rowKey={(e) => e.id}
-        emptyTitle="No webhook endpoints yet."
+        emptyTitle={t("no_endpoints_found")}
         rowActions={(e) => [
-          { label: "View", onSelect: () => router.push(`/settings/webhooks/${e.id}`) },
-          { label: "Edit", onSelect: () => router.push(`/settings/webhooks/${e.id}/edit`) },
-          { label: e.status === "ACTIVE" ? "Pause" : "Enable", onSelect: () => runToggle(e) },
-          { label: "Delete", destructive: true, onSelect: () => setDeleting(e) },
+          { label: tc("view"), onSelect: () => router.push(`/settings/webhooks/${e.id}`) },
+          { label: tc("edit"), onSelect: () => router.push(`/settings/webhooks/${e.id}/edit`) },
+          { label: e.status === "ACTIVE" ? t("pause") : t("enable"), onSelect: () => runToggle(e) },
+          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(e) },
         ]}
       />
 
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={() => setDeleting(null)}
-        title={`Delete ${deleting?.url}?`}
-        description="This pauses the endpoint rather than erasing its delivery history."
-        confirmLabel="Delete"
+        title={deleting ? t("delete_endpoint_title", { url: deleting.url }) : ""}
+        description={t("delete_endpoint_description")}
+        confirmLabel={tc("delete")}
         loading={pending}
         onConfirm={runDelete}
       />

@@ -2,26 +2,30 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { WebhookForm } from "@/components/webhooks/webhook-form";
+import { getT } from "@/lib/i18n-server";
 import { updateWebhook } from "../actions";
 
 export default async function EditWebhookPage({ params }) {
   const { endpointId } = await params;
 
-  const [endpoint, eventOptions] = await Promise.all([
+  const [endpoint, eventOptions, t, tc, tn] = await Promise.all([
     apiFetch(`/webhooks/${endpointId}`),
     apiFetch("/webhooks/events"),
+    getT("webhook"),
+    getT("common"),
+    getT("nav"),
   ]);
 
   return (
     <>
       <PageHeader
         breadcrumb={[
-          { label: "Settings" },
-          { label: "Webhooks", href: "/settings/webhooks" },
+          { label: tn("settings") },
+          { label: t("webhooks"), href: "/settings/webhooks" },
           { label: endpoint.url, href: `/settings/webhooks/${endpointId}` },
-          { label: "Edit" },
+          { label: tc("edit") },
         ]}
-        title="Edit webhook endpoint"
+        title={t("edit_webhook_endpoint")}
       />
 
       <Card>
