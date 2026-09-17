@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { AuditFilters } from "@/components/audit/audit-filters";
 import { AuditLogsTable } from "@/components/audit/audit-logs-table";
+import { getT } from "@/lib/i18n-server";
 
 /** Mirrors `AuditLogController::index` (SRS 34) — read-only, append-only. */
 export default async function AuditLogsPage({ searchParams }) {
@@ -20,11 +21,14 @@ export default async function AuditLogsPage({ searchParams }) {
     if (value) query.set(key, value);
   }
 
-  const logs = await apiFetch(`/audit-logs?${query.toString()}`, { includeMeta: true });
+  const [logs, t] = await Promise.all([
+    apiFetch(`/audit-logs?${query.toString()}`, { includeMeta: true }),
+    getT("audit"),
+  ]);
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Audit log" }]} title="Audit log" description="Append-only. Nothing here can be edited or removed." />
+      <PageHeader breadcrumb={[{ label: t("audit_log") }]} title={t("audit_log")} description={t("append_only")} />
 
       <div className="mb-4">
         <AuditFilters
