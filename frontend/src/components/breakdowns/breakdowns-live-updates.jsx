@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useEcho } from "@/lib/use-echo";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /**
  * Phase F's first real Echo/Reverb wiring (docs/12-Stack-Migration-
@@ -18,18 +19,20 @@ import { useToastManager } from "@/components/ui/toast";
  * visible element.
  */
 function BreakdownsLiveUpdates({ companyId }) {
+  const t = useT("breakdown");
   const router = useRouter();
   const toastManager = useToastManager();
 
   const onReported = useCallback(
     (payload) => {
       toastManager.add({
-        title: `New breakdown: ${payload.asset_code ?? "—"}`,
+        title: t("new_breakdown_toast", { asset: payload.asset_code ?? "—" }),
         description: payload.problem,
         type: payload.severity === "CATASTROPHIC" || payload.severity === "MAJOR" ? "danger" : "warning",
       });
       router.refresh();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router, toastManager],
   );
 
