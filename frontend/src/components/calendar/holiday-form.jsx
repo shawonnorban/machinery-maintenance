@@ -7,9 +7,11 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `calendar::calendar.index.blade.php`'s "add a holiday" form. */
 function HolidayForm({ factoryId, action }) {
+  const t = useT("calendar");
   const [state, dispatch, pending] = useActionState(action, null);
   const [date, setDate] = useState(null);
   const [name, setName] = useState("");
@@ -18,7 +20,7 @@ function HolidayForm({ factoryId, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Added to the calendar", type: "success" });
+      toastManager.add({ title: t("holiday_saved"), type: "success" });
       queueMicrotask(() => {
         setDate(null);
         setName("");
@@ -42,21 +44,21 @@ function HolidayForm({ factoryId, action }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-end">
-      <FormField label="Date" required error={state?.errors?.date?.[0]} className="sm:w-40">
+      <FormField label={t("date")} required error={state?.errors?.date?.[0]} className="sm:w-40">
         {() => <DatePicker value={date} onChange={setDate} />}
       </FormField>
 
-      <FormField label="Occasion" required error={state?.errors?.name?.[0]} className="sm:flex-1">
+      <FormField label={t("occasion")} required error={state?.errors?.name?.[0]} className="sm:flex-1">
         {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
       </FormField>
 
       <label className="flex items-center gap-1.5 pb-2.5 text-sm whitespace-nowrap text-foreground">
         <Checkbox checked={isWorkingDay} onCheckedChange={setIsWorkingDay} />
-        Working day
+        {t("working_day")}
       </label>
 
       <Button type="submit" loading={pending}>
-        Add
+        {t("add_holiday")}
       </Button>
 
       {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}

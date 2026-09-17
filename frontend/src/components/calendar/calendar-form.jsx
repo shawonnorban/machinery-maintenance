@@ -7,20 +7,16 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
-const MODE_OPTIONS = [
-  { value: "SHIFT_BASED", label: "Shift based" },
-  { value: "CONTINUOUS", label: "Continuous (never stops)" },
-];
-
-const WEEKDAYS = [
-  { value: 1, label: "Mon" },
-  { value: 2, label: "Tue" },
-  { value: 3, label: "Wed" },
-  { value: 4, label: "Thu" },
-  { value: 5, label: "Fri" },
-  { value: 6, label: "Sat" },
-  { value: 7, label: "Sun" },
+const WEEKDAY_KEYS = [
+  { value: 1, key: "monday_short" },
+  { value: 2, key: "tuesday_short" },
+  { value: 3, key: "wednesday_short" },
+  { value: 4, key: "thursday_short" },
+  { value: 5, key: "friday_short" },
+  { value: 6, key: "saturday_short" },
+  { value: 7, key: "sunday_short" },
 ];
 
 /**
@@ -33,6 +29,11 @@ const WEEKDAYS = [
  *   `action` is the setCalendar Server Action pre-bound to a factory id.
  */
 function CalendarForm({ factoryId, calendar, today, action }) {
+  const t = useT("calendar");
+  const MODE_OPTIONS = [
+    { value: "SHIFT_BASED", label: t("mode_shift_based") },
+    { value: "CONTINUOUS", label: t("mode_continuous") },
+  ];
   const [state, dispatch, pending] = useActionState(action, null);
   const [mode, setMode] = useState(calendar?.operating_mode ?? "SHIFT_BASED");
   const [offDays, setOffDays] = useState(calendar?.weekly_off_days ?? []);
@@ -41,7 +42,7 @@ function CalendarForm({ factoryId, calendar, today, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "The working week is in force", type: "success" });
+      toastManager.add({ title: t("calendar_saved"), type: "success" });
     }
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes
@@ -67,28 +68,26 @@ function CalendarForm({ factoryId, calendar, today, action }) {
       {calendar ? (
         <div className="text-sm">
           <p className="font-medium text-foreground">
-            {calendar.operating_mode === "CONTINUOUS" ? "Continuous (never stops)" : "Shift based"}
+            {calendar.operating_mode === "CONTINUOUS" ? t("mode_continuous") : t("mode_shift_based")}
           </p>
-          <p className="text-xs text-foreground-muted">In force since {calendar.effective_from}</p>
+          <p className="text-xs text-foreground-muted">{t("in_force_since", { date: calendar.effective_from })}</p>
         </div>
       ) : (
-        <p className="text-sm text-warning">
-          No working week set yet, so availability is being measured against a default one.
-        </p>
+        <p className="text-sm text-warning">{t("not_set_yet")}</p>
       )}
 
-      <FormField label="Operating mode" required>
+      <FormField label={t("operating_mode")} required>
         {(fieldProps) => <Select {...fieldProps} options={MODE_OPTIONS} value={mode} onValueChange={setMode} />}
       </FormField>
 
       {mode === "SHIFT_BASED" ? (
         <div>
-          <span className="mb-1.5 block text-sm font-medium text-foreground">Weekly off</span>
+          <span className="mb-1.5 block text-sm font-medium text-foreground">{t("weekly_off")}</span>
           <div className="flex flex-wrap gap-3">
-            {WEEKDAYS.map((day) => (
+            {WEEKDAY_KEYS.map((day) => (
               <label key={day.value} className="flex items-center gap-1.5 text-sm text-foreground">
                 <Checkbox checked={offDays.includes(day.value)} onCheckedChange={() => toggleDay(day.value)} />
-                {day.label}
+                {t(day.key)}
               </label>
             ))}
           </div>
@@ -97,10 +96,10 @@ function CalendarForm({ factoryId, calendar, today, action }) {
           ) : null}
         </div>
       ) : (
-        <p className="text-xs text-foreground-muted">Runs every day of the week.</p>
+        <p className="text-xs text-foreground-muted">{t("no_weekly_off")}</p>
       )}
 
-      <FormField label="In force from" required error={state?.errors?.effective_from?.[0]}>
+      <FormField label={t("in_force_from")} required error={state?.errors?.effective_from?.[0]}>
         {() => <DatePicker value={effectiveFrom} onChange={setEffectiveFrom} />}
       </FormField>
 
@@ -108,7 +107,7 @@ function CalendarForm({ factoryId, calendar, today, action }) {
 
       <div>
         <Button type="submit" loading={pending}>
-          Put in force
+          {t("put_in_force")}
         </Button>
       </div>
     </form>

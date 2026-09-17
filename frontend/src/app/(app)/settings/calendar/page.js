@@ -9,6 +9,7 @@ import { ShiftForm } from "@/components/calendar/shift-form";
 import { ShiftsList } from "@/components/calendar/shifts-list";
 import { HolidayForm } from "@/components/calendar/holiday-form";
 import { HolidaysList } from "@/components/calendar/holidays-list";
+import { getT } from "@/lib/i18n-server";
 import { setCalendar, createShift, endShift, createHoliday, deleteHoliday } from "./actions";
 
 /**
@@ -20,7 +21,11 @@ export default async function CalendarPage({ searchParams }) {
   const params = await searchParams;
   const today = new Date().toISOString().slice(0, 10);
 
-  const factories = await apiFetch("/factories?per_page=100");
+  const [factories, t, tn] = await Promise.all([
+    apiFetch("/factories?per_page=100"),
+    getT("calendar"),
+    getT("nav"),
+  ]);
 
   const factory = factories.find((f) => f.id === params.factory_id) ?? factories[0] ?? null;
 
@@ -35,9 +40,9 @@ export default async function CalendarPage({ searchParams }) {
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "Calendar and shifts" }]}
-        title="Calendar and shifts"
-        description="When this factory is running. Availability divides downtime by scheduled operating time, and a maintenance date that falls on a rest day is moved to the next working one — both read what is set here."
+        breadcrumb={[{ label: tn("settings") }, { label: t("calendar") }]}
+        title={t("calendar")}
+        description={t("intro")}
       />
 
       {factories.length > 1 ? (
@@ -49,15 +54,15 @@ export default async function CalendarPage({ searchParams }) {
       {!factory ? (
         <EmptyState
           icon={<CalendarClock />}
-          title="No factory to configure."
-          description="Add a factory first; a calendar belongs to one."
+          title={t("no_factory")}
+          description={t("no_factory_hint")}
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Working week</CardTitle>
+                <CardTitle>{t("working_week")}</CardTitle>
               </CardHeader>
               <CardBody>
                 <CalendarForm
@@ -73,7 +78,7 @@ export default async function CalendarPage({ searchParams }) {
           <div className="flex flex-col gap-4 lg:col-span-3">
             <Card>
               <CardHeader>
-                <CardTitle>Shifts</CardTitle>
+                <CardTitle>{t("shifts")}</CardTitle>
               </CardHeader>
               <CardBody className="flex flex-col gap-4">
                 <ShiftsList shifts={shifts} endShift={endShift} />
@@ -83,7 +88,7 @@ export default async function CalendarPage({ searchParams }) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Holidays and exceptions</CardTitle>
+                <CardTitle>{t("holidays")}</CardTitle>
               </CardHeader>
               <CardBody className="flex flex-col gap-4">
                 <HolidaysList holidays={holidays} deleteHoliday={deleteHoliday} />
