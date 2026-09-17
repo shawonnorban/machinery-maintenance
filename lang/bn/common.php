@@ -97,4 +97,10 @@ return [
     'role_company_owner' => 'কোম্পানি ওনার',
     'role_line_chief' => 'লাইন চিফ',
     'role_technician' => 'টেকনিশিয়ান',
+
+    // অফলাইন সিঙ্ক ইন্ডিকেটর (টপবার, সবসময় মাউন্ট করা থাকে)।
+    'all_work_synced' => 'সব কাজ সিঙ্ক হয়েছে',
+    'sync_pending_failed_summary' => ':pending টি বাকি, :failed টি ব্যর্থ',
+    'sync_item_pending' => ':label — বাকি',
+    'sync_item_failed' => ':label — ব্যর্থ, বাতিল করতে ট্যাপ করুন',
 ];

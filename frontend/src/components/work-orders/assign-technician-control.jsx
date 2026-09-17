@@ -9,11 +9,14 @@ import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Shown only while assignment is meaningful — matches AssignTechnicians' own terminal-state rule (ADR-003) by simply not offering it past IN_PROGRESS. */
 const ASSIGNABLE_STATUSES = ["SCHEDULED", "ASSIGNED", "IN_PROGRESS", "ON_HOLD"];
 
 function AssignTechnicianControl({ status, workOrderId, assignments, technicians, assign, unassign }) {
+  const t = useT("work_order");
+  const tc = useT("common");
   const [open, setOpen] = useState(false);
   const [technicianId, setTechnicianId] = useState("");
   const [pending, startTransition] = useTransition();
@@ -51,28 +54,28 @@ function AssignTechnicianControl({ status, workOrderId, assignments, technicians
       {assignments.map((a) => (
         <Badge key={a.technician_id} variant="neutral" className="gap-1">
           {a.technician_name}
-          <button type="button" onClick={() => run(unassign, a.technician_id)} className="hover:text-danger" aria-label={`Unassign ${a.technician_name}`}>
+          <button type="button" onClick={() => run(unassign, a.technician_id)} className="hover:text-danger" aria-label={t("unassign_aria", { name: a.technician_name })}>
             <X className="size-3" />
           </button>
         </Badge>
       ))}
 
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        <UserPlus className="size-4" /> Assign
+        <UserPlus className="size-4" /> {t("assign")}
       </Button>
 
-      <Modal open={open} onOpenChange={setOpen} title="Assign a technician" description="Listed with whoever covers this machine's area first.">
+      <Modal open={open} onOpenChange={setOpen} title={t("assign_technician_title")} description={t("assign_technician_hint")}>
         <div className="flex flex-col gap-4">
-          <FormField label="Technician" required>
+          <FormField label={t("technician")} required>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
                 value={technicianId}
                 onValueChange={setTechnicianId}
-                placeholder="Select a technician"
-                options={available.map((t) => ({
-                  value: t.id,
-                  label: t.covers_location ? `${t.name} (covers this area)` : t.name,
+                placeholder={t("select_a_technician")}
+                options={available.map((tech) => ({
+                  value: tech.id,
+                  label: tech.covers_location ? `${tech.name} (${t("covers_this_area_short")})` : tech.name,
                 }))}
               />
             )}
@@ -80,7 +83,7 @@ function AssignTechnicianControl({ status, workOrderId, assignments, technicians
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button
               loading={pending}
@@ -91,7 +94,7 @@ function AssignTechnicianControl({ status, workOrderId, assignments, technicians
                 setTechnicianId("");
               }}
             >
-              Assign
+              {t("assign")}
             </Button>
           </div>
         </div>

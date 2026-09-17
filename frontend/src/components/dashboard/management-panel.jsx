@@ -21,7 +21,7 @@ async function ManagementPanel({ data }) {
   const t = await getT("dashboard");
   const k = data.kpis;
 
-  const asHours = (minutes) => (minutes === null || minutes === undefined ? "N/A" : `${(minutes / 60).toFixed(1)} ${t("hours")}`);
+  const asHours = (minutes) => (minutes === null || minutes === undefined ? t("na") : `${(minutes / 60).toFixed(1)} ${t("hours")}`);
   const currency = (value) => Number(value).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
   return (
@@ -49,15 +49,15 @@ async function ManagementPanel({ data }) {
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="tabular text-3xl font-bold tracking-tight text-foreground">
-              {k.availability_percent === null ? "N/A" : `${k.availability_percent}%`}
+              {k.availability_percent === null ? t("na") : `${k.availability_percent}%`}
             </span>
             <TrendBadge value={k.availability_trend} />
           </div>
           {k.availability_percent !== null ? <p className="mt-1.5 text-xs text-foreground-subtle">{t("availability_hint")}</p> : null}
         </Card>
         <StatCard label={t("mtbf")} icon={<Clock />} tone="info" value={asHours(k.mtbf_minutes)} trend={k.mtbf_trend} supportingText={t("mtbf_hint")} />
-        <StatCard label={t("mttr")} icon={<Wrench />} tone="warning" value={k.mttr_minutes === null ? "N/A" : `${Math.round(k.mttr_minutes)} ${t("minutes")}`} trend={k.mttr_trend} supportingText={t("mttr_hint")} />
-        <StatCard label={t("mtta")} icon={<Timer />} tone="danger" value={k.mtta_minutes === null ? "N/A" : `${Math.round(k.mtta_minutes)} ${t("minutes")}`} trend={k.mtta_trend} supportingText={t("mtta_hint")} />
+        <StatCard label={t("mttr")} icon={<Wrench />} tone="warning" value={k.mttr_minutes === null ? t("na") : `${Math.round(k.mttr_minutes)} ${t("minutes")}`} trend={k.mttr_trend} supportingText={t("mttr_hint")} />
+        <StatCard label={t("mtta")} icon={<Timer />} tone="danger" value={k.mtta_minutes === null ? t("na") : `${Math.round(k.mtta_minutes)} ${t("minutes")}`} trend={k.mtta_trend} supportingText={t("mtta_hint")} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">

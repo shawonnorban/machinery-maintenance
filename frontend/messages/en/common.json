@@ -86,5 +86,9 @@
     "login_demo_password_note": "Password for all accounts: :password",
     "role_company_owner": "Company Owner",
     "role_line_chief": "Line Chief",
-    "role_technician": "Technician"
+    "role_technician": "Technician",
+    "all_work_synced": "All work synced",
+    "sync_pending_failed_summary": ":pending pending, :failed failed",
+    "sync_item_pending": ":label — pending",
+    "sync_item_failed": ":label — failed, tap to discard"
 }

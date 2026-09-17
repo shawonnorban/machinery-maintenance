@@ -4,6 +4,7 @@ import { CloudOff, Cloud, CloudUpload, AlertTriangle, X } from "lucide-react";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Badge } from "@/components/ui/badge";
 import { useOfflineQueue } from "@/lib/offline/use-offline-queue";
+import { useT } from "@/lib/i18n";
 
 /**
  * Always visible in the topbar (docs/12-Stack-Migration-Implementation-
@@ -14,11 +15,12 @@ import { useOfflineQueue } from "@/lib/offline/use-offline-queue";
  * empty, so it costs nothing on every other screen either.
  */
 function SyncIndicator() {
+  const t = useT("common");
   const { pending, failed, discardDraft } = useOfflineQueue();
 
   if (pending.length === 0 && failed.length === 0) {
     return (
-      <span className="rounded-sm p-2 text-foreground-muted" title="All work synced" aria-label="All work synced">
+      <span className="rounded-sm p-2 text-foreground-muted" title={t("all_work_synced")} aria-label={t("all_work_synced")}>
         <Cloud className="size-[18px]" />
       </span>
     );
@@ -26,12 +28,12 @@ function SyncIndicator() {
 
   const items = [
     ...pending.map((draft) => ({
-      label: `${draft.label} — pending`,
+      label: t("sync_item_pending", { label: draft.label }),
       icon: <CloudUpload />,
       disabled: true,
     })),
     ...failed.map((draft) => ({
-      label: `${draft.label} — failed, tap to discard`,
+      label: t("sync_item_failed", { label: draft.label }),
       icon: <X />,
       destructive: true,
       onSelect: () => discardDraft(draft.key),
@@ -45,7 +47,7 @@ function SyncIndicator() {
       trigger={
         <span
           className="relative flex size-9 items-center justify-center rounded-sm text-foreground-muted hover:bg-surface-muted hover:text-foreground"
-          title={`${pending.length} pending, ${failed.length} failed`}
+          title={t("sync_pending_failed_summary", { pending: pending.length, failed: failed.length })}
         >
           <Icon className={failed.length > 0 ? "size-[18px] text-danger" : "size-[18px]"} />
           <Badge variant={failed.length > 0 ? "danger" : "warning"} className="absolute -top-1 -right-1 min-w-4 justify-center px-1 py-0 text-[10px]">

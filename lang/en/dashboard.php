@@ -90,6 +90,7 @@ return [
     // --- shared ---
     'minutes' => 'min',
     'hours' => 'h',
+    'na' => 'N/A',
     'not_available_reason' => 'Nothing happened in this period to compute it from. A zero would say something different.',
     'no_panels' => 'Nothing to show',
     'no_panels_hint' => 'Your role has no dashboard panels. The lists in the sidebar are where your work is.',

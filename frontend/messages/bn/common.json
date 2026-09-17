@@ -86,5 +86,9 @@
     "login_demo_password_note": "সব অ্যাকাউন্টের পাসওয়ার্ড: :password",
     "role_company_owner": "কোম্পানি ওনার",
     "role_line_chief": "লাইন চিফ",
-    "role_technician": "টেকনিশিয়ান"
+    "role_technician": "টেকনিশিয়ান",
+    "all_work_synced": "সব কাজ সিঙ্ক হয়েছে",
+    "sync_pending_failed_summary": ":pending টি বাকি, :failed টি ব্যর্থ",
+    "sync_item_pending": ":label — বাকি",
+    "sync_item_failed": ":label — ব্যর্থ, বাতিল করতে ট্যাপ করুন"
 }

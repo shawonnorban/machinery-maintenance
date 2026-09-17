@@ -106,4 +106,10 @@ return [
     'role_company_owner' => 'Company Owner',
     'role_line_chief' => 'Line Chief',
     'role_technician' => 'Technician',
+
+    // Offline sync indicator (topbar, always mounted) — SRS Phase E.
+    'all_work_synced' => 'All work synced',
+    'sync_pending_failed_summary' => ':pending pending, :failed failed',
+    'sync_item_pending' => ':label — pending',
+    'sync_item_failed' => ':label — failed, tap to discard',
 ];

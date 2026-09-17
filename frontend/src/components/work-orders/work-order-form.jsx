@@ -10,16 +10,18 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-
-const PRIORITY_OPTIONS = [
-  { value: "CRITICAL", label: "Critical" },
-  { value: "HIGH", label: "High" },
-  { value: "MEDIUM", label: "Medium" },
-  { value: "LOW", label: "Low" },
-];
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `work_order::work-orders.create` — a template's published version auto-populates the checklist (`CreateWorkOrder`'s own `template_version_id` handling), same as the web form. */
 function WorkOrderForm({ options, action }) {
+  const t = useT("work_order");
+  const tc = useT("common");
+  const PRIORITY_OPTIONS = [
+    { value: "CRITICAL", label: t("priority_critical") },
+    { value: "HIGH", label: t("priority_high") },
+    { value: "MEDIUM", label: t("priority_medium") },
+    { value: "LOW", label: t("priority_low") },
+  ];
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
 
@@ -58,87 +60,87 @@ function WorkOrderForm({ options, action }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <FormField label="Title" required error={state?.errors?.title?.[0]}>
+      <FormField label={t("title")} required error={state?.errors?.title?.[0]}>
         {(fieldProps) => <Input {...fieldProps} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={255} required />}
       </FormField>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Asset" required error={state?.errors?.asset_id?.[0]}>
+        <FormField label={t("asset")} required error={state?.errors?.asset_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={assetId}
               onValueChange={setAssetId}
-              placeholder="Select a machine"
+              placeholder={t("select_a_machine")}
               options={options.assets.map((a) => ({ value: a.id, label: `${a.asset_code} — ${a.name}` }))}
             />
           )}
         </FormField>
 
-        <FormField label="Maintenance type" required error={state?.errors?.maintenance_type_id?.[0]}>
+        <FormField label={t("maintenance_type")} required error={state?.errors?.maintenance_type_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={maintenanceTypeId}
               onValueChange={setMaintenanceTypeId}
-              placeholder="Select a type"
-              options={options.maintenance_types.map((t) => ({ value: t.id, label: t.name }))}
+              placeholder={t("select_a_type")}
+              options={options.maintenance_types.map((mt) => ({ value: mt.id, label: mt.name }))}
             />
           )}
         </FormField>
 
-        <FormField label="Priority" required>
+        <FormField label={t("priority")} required>
           {(fieldProps) => <Select {...fieldProps} value={priority} onValueChange={setPriority} options={PRIORITY_OPTIONS} />}
         </FormField>
 
-        <FormField label="Team">
+        <FormField label={t("team")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={teamId}
               onValueChange={setTeamId}
-              placeholder="Unassigned"
-              options={options.teams.map((t) => ({ value: t.id, label: t.name }))}
+              placeholder={t("unassigned_option")}
+              options={options.teams.map((team) => ({ value: team.id, label: team.name }))}
             />
           )}
         </FormField>
 
-        <FormField label="Template" helperText="Pre-fills the checklist from a published maintenance template.">
+        <FormField label={t("template")} helperText={t("template_hint")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={templateVersionId}
               onValueChange={setTemplateVersionId}
-              placeholder="None"
-              options={options.templates.map((t) => ({ value: t.current_version_id, label: `${t.name} (v${t.version_number})` }))}
+              placeholder={t("none_option")}
+              options={options.templates.map((tpl) => ({ value: tpl.current_version_id, label: `${tpl.name} (v${tpl.version_number})` }))}
             />
           )}
         </FormField>
 
-        <FormField label="Scheduled start">{() => <DatePicker value={scheduledStart} onChange={setScheduledStart} />}</FormField>
-        <FormField label="Scheduled end" error={state?.errors?.scheduled_end?.[0]}>
+        <FormField label={t("scheduled_start")}>{() => <DatePicker value={scheduledStart} onChange={setScheduledStart} />}</FormField>
+        <FormField label={t("scheduled_end")} error={state?.errors?.scheduled_end?.[0]}>
           {() => <DatePicker value={scheduledEnd} onChange={setScheduledEnd} />}
         </FormField>
 
-        <FormField label="Estimated parts cost" error={state?.errors?.estimated_parts_cost?.[0]}>
+        <FormField label={t("estimated_parts_cost")} error={state?.errors?.estimated_parts_cost?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="number" step="0.0001" min="0" value={estimatedPartsCost} onChange={(e) => setEstimatedPartsCost(e.target.value)} />}
         </FormField>
       </div>
 
-      <FormField label="Description">
+      <FormField label={t("description")}>
         {(fieldProps) => <Textarea {...fieldProps} value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={5000} />}
       </FormField>
 
       <label className="flex items-center gap-2 text-sm text-foreground">
-        <Checkbox checked={requiresShutdown} onCheckedChange={setRequiresShutdown} /> Requires the machine to be shut down
+        <Checkbox checked={requiresShutdown} onCheckedChange={setRequiresShutdown} /> {t("requires_shutdown_checkbox")}
       </label>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          Create work order
+          {t("create_work_order")}
         </Button>
       </div>
     </form>

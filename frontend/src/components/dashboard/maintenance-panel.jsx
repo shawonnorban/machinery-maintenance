@@ -82,7 +82,7 @@ async function MaintenancePanel({ data, trend }) {
           <CardBody className="flex flex-col items-center gap-5">
             {compliancePercent === null ? (
               <div className="flex h-[136px] items-center justify-center">
-                <span className="text-2xl font-semibold text-foreground-muted">N/A</span>
+                <span className="text-2xl font-semibold text-foreground-muted">{t("na")}</span>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2">
