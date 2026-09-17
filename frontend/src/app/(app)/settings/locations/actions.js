@@ -83,4 +83,28 @@ async function deleteLocation(locationId) {
   }
 }
 
-export { createLocation, updateLocation, toggleLocation, deleteLocation };
+/**
+ * The six master-data lists the create/edit modal's own dropdowns need —
+ * fetched only when that modal is actually about to open (`LocationsTable`
+ * calls this once, caching the result, on the first "New location"/"Edit"
+ * click) rather than by the page on every load. This page's original
+ * all-at-once fetch (eight concurrent calls, most of them a 200-row
+ * master-data list nobody looks at unless they're actually adding or
+ * editing a location) was slow enough on this product's actual shared
+ * hosting to time out on a poor connection before the page ever painted —
+ * the same problem already found and fixed on several detail pages.
+ */
+async function getLocationFormLists() {
+  const [buildings, floors, departments, sections, productionLines, workstations] = await Promise.all([
+    apiFetch("/master-data/buildings?per_page=200"),
+    apiFetch("/master-data/floors?per_page=200"),
+    apiFetch("/master-data/departments?per_page=200"),
+    apiFetch("/master-data/sections?per_page=200"),
+    apiFetch("/master-data/production-lines?per_page=200"),
+    apiFetch("/master-data/workstations?per_page=200"),
+  ]);
+
+  return { buildings, floors, departments, sections, productionLines, workstations };
+}
+
+export { createLocation, updateLocation, toggleLocation, deleteLocation, getLocationFormLists };

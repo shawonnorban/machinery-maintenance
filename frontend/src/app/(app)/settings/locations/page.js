@@ -3,7 +3,18 @@ import { PageHeader } from "@/components/layout/page-header";
 import { LocationsTable } from "@/components/locations/locations-table";
 import { createLocation, updateLocation, toggleLocation, deleteLocation } from "./actions";
 
-/** Mirrors `AssetLocationController::index` (ADR-052) — under Settings because a location is configuration, not day-to-day work. Create/edit happen in a modal over this list rather than a separate page. */
+/**
+ * Mirrors `AssetLocationController::index` (ADR-052) — under Settings
+ * because a location is configuration, not day-to-day work. Create/edit
+ * happen in a modal over this list rather than a separate page.
+ *
+ * Only two calls up front — the location list and factories (needed by
+ * the always-visible filter dropdown) — rather than the eight this page
+ * used to fire in one `Promise.all`. The six master-data lists the
+ * create/edit modal's own dropdowns need are fetched once, lazily, the
+ * first time that modal is actually opened (`LocationsTable`'s own note
+ * has why).
+ */
 export default async function LocationsPage({ searchParams }) {
   const params = await searchParams;
   const page = Number(params.page ?? 1);
@@ -14,15 +25,9 @@ export default async function LocationsPage({ searchParams }) {
   if (search) query.set("search", search);
   if (factoryId) query.set("factory_id", factoryId);
 
-  const [locations, factories, buildings, floors, departments, sections, productionLines, workstations] = await Promise.all([
+  const [locations, factories] = await Promise.all([
     apiFetch(`/locations?${query.toString()}`, { includeMeta: true }),
     apiFetch("/factories?per_page=100"),
-    apiFetch("/master-data/buildings?per_page=200"),
-    apiFetch("/master-data/floors?per_page=200"),
-    apiFetch("/master-data/departments?per_page=200"),
-    apiFetch("/master-data/sections?per_page=200"),
-    apiFetch("/master-data/production-lines?per_page=200"),
-    apiFetch("/master-data/workstations?per_page=200"),
   ]);
 
   return (
@@ -40,12 +45,6 @@ export default async function LocationsPage({ searchParams }) {
         search={search}
         factoryId={factoryId}
         factories={factories}
-        buildings={buildings}
-        floors={floors}
-        departments={departments}
-        sections={sections}
-        productionLines={productionLines}
-        workstations={workstations}
         actions={{ createLocation, updateLocation, toggleLocation, deleteLocation }}
       />
     </>

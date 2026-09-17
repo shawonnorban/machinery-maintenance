@@ -12,16 +12,53 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Card, CardBody } from "@/components/ui/card";
 import { useToastManager } from "@/components/ui/toast";
 import { LocationFormModal } from "@/components/locations/location-form-modal";
+import { getLocationFormLists } from "@/app/(app)/settings/locations/actions";
 
-/** Mirrors `AssetLocationController::index` (ADR-052) — where machines actually live, configuration rather than day-to-day work. Create/edit happen in a modal over this list rather than a separate page. */
-function LocationsTable({ locations, meta, page, search, factoryId, factories, buildings, floors, departments, sections, productionLines, workstations, actions }) {
+/**
+ * Mirrors `AssetLocationController::index` (ADR-052) — where machines
+ * actually live, configuration rather than day-to-day work. Create/edit
+ * happen in a modal over this list rather than a separate page.
+ *
+ * The six master-data lists (`buildings`/`floors`/.../`workstations`) the
+ * modal's own dropdowns need are fetched once here, lazily, the first
+ * time "New location" or an "Edit" row action is actually clicked — not
+ * by the page on every load, most of whose visits never open that modal
+ * at all. `formLists` doubles as the guard: the modal only ever opens
+ * once it's populated, so neither `LocationFormModal` nor its dropdowns
+ * have to handle an empty-list loading state of their own.
+ */
+function LocationsTable({ locations, meta, page, search, factoryId, factories, actions }) {
   const router = useRouter();
   const [searchInput, setSearchInput] = useState(search);
   const [deleting, setDeleting] = useState(null);
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [formLists, setFormLists] = useState(null);
+  const [loadingFormLists, setLoadingFormLists] = useState(false);
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
+
+  async function ensureFormLists() {
+    if (formLists) {
+      return formLists;
+    }
+
+    setLoadingFormLists(true);
+    const lists = await getLocationFormLists();
+    setFormLists(lists);
+    setLoadingFormLists(false);
+    return lists;
+  }
+
+  async function openCreate() {
+    await ensureFormLists();
+    setCreating(true);
+  }
+
+  async function openEdit(location) {
+    await ensureFormLists();
+    setEditing(location);
+  }
 
   useEffect(() => {
     if (searchInput === search) return undefined;
@@ -63,8 +100,6 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, b
     });
   }
 
-  const formLists = { factories, buildings, floors, departments, sections, productionLines, workstations };
-
   return (
     <div className="flex flex-col gap-4">
       <Card>
@@ -85,7 +120,7 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, b
               onValueChange={(value) => navigate({ factory_id: value, page: 1 })}
             />
           </div>
-          <Button size="sm" onClick={() => setCreating(true)}>
+          <Button size="sm" onClick={openCreate} loading={loadingFormLists}>
             <Plus /> New location
           </Button>
         </CardBody>
@@ -98,7 +133,7 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, b
             header: "Location",
             render: (l) => (
               <div>
-                <button type="button" onClick={() => setEditing(l)} className="font-medium text-brand hover:underline">
+                <button type="button" onClick={() => openEdit(l)} className="font-medium text-brand hover:underline">
                   {l.name}
                 </button>
                 <div className="text-xs text-foreground-muted">{l.full_path ?? l.code}</div>
@@ -113,7 +148,7 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, b
         rowKey={(l) => l.id}
         emptyTitle="No locations found."
         rowActions={(l) => [
-          { label: "Edit", onSelect: () => setEditing(l) },
+          { label: "Edit", onSelect: () => openEdit(l) },
           { label: l.status === "ACTIVE" ? "Deactivate" : "Activate", onSelect: () => runToggle(l) },
           { label: "Delete", destructive: true, onSelect: () => setDeleting(l) },
         ]}
@@ -121,22 +156,28 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, b
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
 
-      <LocationFormModal
-        key="create"
-        open={creating}
-        onOpenChange={setCreating}
-        location={null}
-        action={actions.createLocation}
-        {...formLists}
-      />
-      <LocationFormModal
-        key={editing?.id ?? "edit"}
-        open={Boolean(editing)}
-        onOpenChange={(open) => !open && setEditing(null)}
-        location={editing}
-        action={editing ? actions.updateLocation.bind(null, editing.id) : actions.updateLocation}
-        {...formLists}
-      />
+      {formLists ? (
+        <>
+          <LocationFormModal
+            key="create"
+            open={creating}
+            onOpenChange={setCreating}
+            location={null}
+            action={actions.createLocation}
+            factories={factories}
+            {...formLists}
+          />
+          <LocationFormModal
+            key={editing?.id ?? "edit"}
+            open={Boolean(editing)}
+            onOpenChange={(open) => !open && setEditing(null)}
+            location={editing}
+            action={editing ? actions.updateLocation.bind(null, editing.id) : actions.updateLocation}
+            factories={factories}
+            {...formLists}
+          />
+        </>
+      ) : null}
 
       <ConfirmDialog
         open={Boolean(deleting)}
