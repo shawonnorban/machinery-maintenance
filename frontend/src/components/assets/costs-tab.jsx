@@ -13,13 +13,7 @@ import { useToastManager } from "@/components/ui/toast";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { DateTimeField } from "@/components/ui/date-time-field";
 import { formatCurrency } from "@/lib/format";
-
-const SOURCE_OPTIONS = [
-  { value: "EXTERNAL_SERVICE", label: "External service" },
-  { value: "VENDOR", label: "Vendor" },
-  { value: "TRANSPORT", label: "Transport" },
-  { value: "MANUAL", label: "Manual" },
-];
+import { useT } from "@/lib/i18n";
 
 // Written by the system from the work order underneath — posting one by
 // hand would charge the machine twice, so the form never offers them.
@@ -36,17 +30,18 @@ const NOT_MANUALLY_POSTABLE = ["LABOR", "PARTS"];
  * server page as props.
  */
 function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverseAction, onMutated }) {
+  const t = useT("asset");
   const postableCategories = categories.filter((c) => !NOT_MANUALLY_POSTABLE.includes(c.code));
 
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Acquisition" value={formatCurrency(lifecycle.acquisition, lifecycle.currency)} />
-        <StatCard label="Total spend" value={formatCurrency(lifecycle.total_spend, lifecycle.currency)} />
-        <StatCard label="Lifetime total" value={formatCurrency(lifecycle.lifetime_total, lifecycle.currency)} />
+        <StatCard label={t("acquisition")} value={formatCurrency(lifecycle.acquisition, lifecycle.currency)} />
+        <StatCard label={t("total_spend")} value={formatCurrency(lifecycle.total_spend, lifecycle.currency)} />
+        <StatCard label={t("lifetime_total")} value={formatCurrency(lifecycle.lifetime_total, lifecycle.currency)} />
         <StatCard
-          label="Spend vs. value"
-          value={lifecycle.spend_against_value_percent === null ? "N/A" : `${lifecycle.spend_against_value_percent}%`}
+          label={t("spend_vs_value")}
+          value={lifecycle.spend_against_value_percent === null ? t("not_applicable") : `${lifecycle.spend_against_value_percent}%`}
         />
       </div>
 
@@ -54,18 +49,18 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
         <div className="flex flex-col gap-4 lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>By category</CardTitle>
+              <CardTitle>{t("by_category")}</CardTitle>
             </CardHeader>
             <CardBody className="p-0">
               {lifecycle.by_category.length === 0 ? (
-                <p className="p-5 text-sm text-foreground-muted">No entries yet.</p>
+                <p className="p-5 text-sm text-foreground-muted">{t("no_cost_entries")}</p>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs text-foreground-muted">
-                      <th className="px-5 pt-4 pb-2">Category</th>
-                      <th className="px-5 pt-4 pb-2 text-right">Entries</th>
-                      <th className="px-5 pt-4 pb-2 text-right">Amount</th>
+                      <th className="px-5 pt-4 pb-2">{t("category")}</th>
+                      <th className="px-5 pt-4 pb-2 text-right">{t("entries")}</th>
+                      <th className="px-5 pt-4 pb-2 text-right">{t("amount")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -81,7 +76,7 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
               )}
             </CardBody>
             <CardFooter>
-              <p className="text-xs text-foreground-muted">Depreciation is not included in these figures.</p>
+              <p className="text-xs text-foreground-muted">{t("depreciation_note")}</p>
             </CardFooter>
           </Card>
 
@@ -93,22 +88,22 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
         <div className="lg:col-span-3">
           <Card>
             <CardHeader>
-              <CardTitle>Costs</CardTitle>
+              <CardTitle>{t("costs")}</CardTitle>
               <span className="text-sm text-foreground-muted">{lifecycle.entry_count}</span>
             </CardHeader>
             <CardBody className="p-0">
               {entries.length === 0 ? (
-                <p className="p-5 text-sm text-foreground-muted">Nothing posted against this machine yet.</p>
+                <p className="p-5 text-sm text-foreground-muted">{t("nothing_posted_yet")}</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-left text-xs text-foreground-muted">
-                        <th className="px-5 pt-4 pb-2">Occurred</th>
-                        <th className="px-5 pt-4 pb-2">Category</th>
-                        <th className="px-5 pt-4 pb-2">Source</th>
-                        <th className="px-5 pt-4 pb-2">Description</th>
-                        <th className="px-5 pt-4 pb-2 text-right">Amount</th>
+                        <th className="px-5 pt-4 pb-2">{t("occurred")}</th>
+                        <th className="px-5 pt-4 pb-2">{t("category")}</th>
+                        <th className="px-5 pt-4 pb-2">{t("source")}</th>
+                        <th className="px-5 pt-4 pb-2">{t("description")}</th>
+                        <th className="px-5 pt-4 pb-2 text-right">{t("amount")}</th>
                         <th className="px-5 pt-4 pb-2"></th>
                       </tr>
                     </thead>
@@ -122,8 +117,8 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
                             </td>
                             <td className="px-5 py-2">{entry.category ?? "—"}</td>
                             <td className="px-5 py-2">
-                              {entry.source_type}
-                              {isDerived ? <div className="text-xs text-foreground-muted">Derived</div> : null}
+                              {t(`source_${entry.source_type?.toLowerCase()}`)}
+                              {isDerived ? <div className="text-xs text-foreground-muted">{t("derived")}</div> : null}
                             </td>
                             <td className="px-5 py-2 text-xs">
                               {entry.description ?? "—"}
@@ -152,7 +147,7 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
               )}
             </CardBody>
             <CardFooter>
-              <p className="text-xs text-foreground-muted">A correction is a reversal row, never an edit — the original stays exactly as posted.</p>
+              <p className="text-xs text-foreground-muted">{t("reversal_note")}</p>
             </CardFooter>
           </Card>
         </div>
@@ -162,6 +157,13 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
 }
 
 function PostCostForm({ categories, currency, action, onMutated }) {
+  const t = useT("asset");
+  const SOURCE_OPTIONS = [
+    { value: "EXTERNAL_SERVICE", label: t("source_external_service") },
+    { value: "VENDOR", label: t("source_vendor") },
+    { value: "TRANSPORT", label: t("source_transport") },
+    { value: "MANUAL", label: t("source_manual") },
+  ];
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
@@ -175,7 +177,7 @@ function PostCostForm({ categories, currency, action, onMutated }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Cost posted", type: "success" });
+      toastManager.add({ title: t("cost_posted_toast"), type: "success" });
       queueMicrotask(() => {
         setAmount("");
         setOccurredAt("");
@@ -206,29 +208,29 @@ function PostCostForm({ categories, currency, action, onMutated }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Post a cost</CardTitle>
+        <CardTitle>{t("post_a_cost")}</CardTitle>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <FormField label="Category" required error={state?.errors?.cost_category_id?.[0]}>
+          <FormField label={t("category")} required error={state?.errors?.cost_category_id?.[0]}>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
                 value={categoryId}
                 onValueChange={setCategoryId}
                 options={categories.map((c) => ({ value: c.id, label: c.name }))}
-                placeholder="Select a category"
+                placeholder={t("select_a_category")}
               />
             )}
           </FormField>
 
           <div className="grid grid-cols-2 gap-3">
-            <FormField label="Amount" required error={state?.errors?.amount?.[0]}>
+            <FormField label={t("amount")} required error={state?.errors?.amount?.[0]}>
               {(fieldProps) => (
                 <Input {...fieldProps} type="number" step="0.0001" value={amount} onChange={(e) => setAmount(e.target.value)} required />
               )}
             </FormField>
-            <FormField label="Currency" required error={state?.errors?.currency?.[0]}>
+            <FormField label={t("currency")} required error={state?.errors?.currency?.[0]}>
               {(fieldProps) => (
                 <Input {...fieldProps} maxLength={3} value={entryCurrency} onChange={(e) => setEntryCurrency(e.target.value)} required />
               )}
@@ -236,19 +238,19 @@ function PostCostForm({ categories, currency, action, onMutated }) {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <FormField label="Source" required>
+            <FormField label={t("source")} required>
               {(fieldProps) => <Select {...fieldProps} value={sourceType} onValueChange={setSourceType} options={SOURCE_OPTIONS} />}
             </FormField>
-            <FormField label="Occurred at" error={state?.errors?.occurred_at?.[0]}>
+            <FormField label={t("occurred_at")} error={state?.errors?.occurred_at?.[0]}>
               {(fieldProps) => <DateTimeField {...fieldProps} value={occurredAt} onChange={setOccurredAt} />}
             </FormField>
           </div>
 
-          <FormField label="Description" error={state?.errors?.description?.[0]}>
+          <FormField label={t("description")} error={state?.errors?.description?.[0]}>
             {(fieldProps) => <Input {...fieldProps} maxLength={255} value={description} onChange={(e) => setDescription(e.target.value)} />}
           </FormField>
 
-          <FormField label="Invoice reference" error={state?.errors?.invoice_reference?.[0]}>
+          <FormField label={t("invoice_reference")} error={state?.errors?.invoice_reference?.[0]}>
             {(fieldProps) => (
               <Input {...fieldProps} maxLength={255} value={invoiceReference} onChange={(e) => setInvoiceReference(e.target.value)} />
             )}
@@ -258,7 +260,7 @@ function PostCostForm({ categories, currency, action, onMutated }) {
 
           <div>
             <Button type="submit" loading={pending}>
-              Post cost
+              {t("post_cost")}
             </Button>
           </div>
         </form>
@@ -268,6 +270,7 @@ function PostCostForm({ categories, currency, action, onMutated }) {
 }
 
 function ReverseCostCell({ entryId, reverseAction, onMutated }) {
+  const t = useT("asset");
   const [reason, setReason] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
@@ -279,7 +282,7 @@ function ReverseCostCell({ entryId, reverseAction, onMutated }) {
     const result = await reverseAction(entryId, reason);
     setPending(false);
     if (result?.status === "success") {
-      toastManager.add({ title: "Reversed", type: "success" });
+      toastManager.add({ title: t("reversed_toast"), type: "success" });
       router.refresh();
       onMutated?.();
     } else if (result?.status === "error") {
@@ -292,11 +295,11 @@ function ReverseCostCell({ entryId, reverseAction, onMutated }) {
       <Input
         value={reason}
         onChange={(e) => setReason(e.target.value)}
-        placeholder="Reason"
+        placeholder={t("reason")}
         className="h-8 w-32 text-xs"
       />
       <Button variant="outline" size="sm" loading={pending} disabled={!reason.trim()} onClick={handleReverse}>
-        Reverse
+        {t("reverse")}
       </Button>
     </div>
   );

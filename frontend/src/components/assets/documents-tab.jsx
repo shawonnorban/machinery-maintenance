@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToastManager } from "@/components/ui/toast";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `asset::assets.show.blade.php`'s documents card (SRS 8) — the
@@ -18,6 +19,7 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
  * regenerate button), so both actions are always shown.
  */
 function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMutated }) {
+  const t = useT("asset");
   const router = useRouter();
   const formRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -32,7 +34,7 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMuta
     const result = await uploadAction(formData);
     setUploading(false);
     if (result?.status === "success") {
-      toastManager.add({ title: "Document uploaded", type: "success" });
+      toastManager.add({ title: t("document_uploaded"), type: "success" });
       formRef.current?.reset();
       router.refresh();
       onMutated?.();
@@ -46,7 +48,7 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMuta
     const result = await deleteAction(pendingDelete.id);
     setDeleting(false);
     if (result?.status === "success") {
-      toastManager.add({ title: "Document removed", type: "success" });
+      toastManager.add({ title: t("document_removed"), type: "success" });
       setPendingDelete(null);
       router.refresh();
       onMutated?.();
@@ -60,8 +62,8 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMuta
       {documents.length === 0 ? (
         <EmptyState
           icon={<FileText />}
-          title="No documents yet."
-          description="The manual, the wiring diagram, the calibration certificate — anything a technician standing at this machine would need."
+          title={t("no_documents_title")}
+          description={t("no_documents_hint")}
         />
       ) : (
         <div className="divide-y divide-border rounded-sm border border-border">
@@ -83,7 +85,7 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMuta
                   type="button"
                   onClick={() => setPendingDelete(file)}
                   className="shrink-0 text-foreground-muted hover:text-danger"
-                  aria-label={`Remove ${file.original_name}`}
+                  aria-label={t("remove")}
                 >
                   <Trash2 className="size-4" />
                 </button>
@@ -103,7 +105,7 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMuta
             <FileInput name="file" required />
           </div>
           <Button type="submit" loading={uploading}>
-            <Upload /> Upload
+            <Upload /> {t("upload")}
           </Button>
         </form>
       ) : null}
@@ -111,9 +113,9 @@ function DocumentsTab({ documents, uploadAction, deleteAction, canManage, onMuta
       <ConfirmDialog
         open={pendingDelete !== null}
         onOpenChange={(open) => !open && setPendingDelete(null)}
-        title="Remove this document?"
-        description={pendingDelete ? `"${pendingDelete.original_name}" will be deleted permanently.` : ""}
-        confirmLabel="Remove"
+        title={t("document_delete_confirm")}
+        description={pendingDelete ? t("document_delete_description", { name: pendingDelete.original_name }) : ""}
+        confirmLabel={t("remove")}
         destructive
         loading={deleting}
         onConfirm={handleDelete}
