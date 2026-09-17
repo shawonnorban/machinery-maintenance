@@ -4,28 +4,30 @@ import { Card, CardBody } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { RoleForm } from "@/components/roles/role-form";
 import { DeleteRoleButton } from "@/components/roles/delete-role-button";
+import { getT } from "@/lib/i18n-server";
 import { updateRole, deleteRole } from "../actions";
 
 export default async function EditRolePage({ params }) {
   const { roleId } = await params;
 
-  const [role, permissionGroups] = await Promise.all([
+  const [role, permissionGroups, t, tn] = await Promise.all([
     apiFetch(`/roles/${roleId}`),
     apiFetch("/permissions"),
+    getT("user"),
+    getT("nav"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "Roles", href: "/settings/roles" }, { label: role.name }]}
+        breadcrumb={[{ label: tn("settings") }, { label: t("roles"), href: "/settings/roles" }, { label: role.name }]}
         title={role.name}
         actions={!role.is_system ? <DeleteRoleButton roleName={role.name} action={deleteRole.bind(null, roleId)} /> : null}
       />
 
       {role.is_system ? (
-        <Alert variant="info" title="Seeded role" className="mb-4">
-          Seeded roles aren&apos;t editable — clone this one from the New role screen to build a customized version.
-          What&apos;s shown below is exactly what it grants.
+        <Alert variant="info" title={t("seeded_role")} className="mb-4">
+          {t("seeded_role_alert")}
         </Alert>
       ) : null}
 

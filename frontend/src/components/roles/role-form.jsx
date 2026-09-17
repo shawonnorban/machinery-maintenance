@@ -9,11 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-
-const SCOPE_OPTIONS = [
-  { value: "FACTORY", label: "Factory" },
-  { value: "COMPANY", label: "Company" },
-];
+import { useT } from "@/lib/i18n";
 
 /** `useActionState` needs a real function even when nothing can ever be submitted (the form's own submit button is hidden in read-only mode, but the hook itself still has to be called). */
 async function noopAction() {
@@ -39,6 +35,12 @@ async function noopAction() {
  * }} props
  */
 function RoleForm({ role = null, permissionGroups, cloneableRoles = [], action, readOnly = false }) {
+  const t = useT("user");
+  const tc = useT("common");
+  const SCOPE_OPTIONS = [
+    { value: "FACTORY", label: t("factory_scope") },
+    { value: "COMPANY", label: t("company_scope") },
+  ];
   const isEdit = role !== null;
   const [state, dispatch, pending] = useActionState(readOnly ? noopAction : action, null);
   const [code, setCode] = useState(role?.code ?? "");
@@ -80,25 +82,25 @@ function RoleForm({ role = null, permissionGroups, cloneableRoles = [], action, 
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Code" required helperText="Uppercase, machine-readable — how this role is addressed everywhere else." error={state?.errors?.code?.[0]}>
+        <FormField label={t("code")} required helperText={t("code_hint")} error={state?.errors?.code?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} maxLength={64} required disabled={readOnly} />}
         </FormField>
-        <FormField label="Name" required error={state?.errors?.name?.[0]}>
+        <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required disabled={readOnly} />}
         </FormField>
 
         {isEdit && readOnly ? (
-          <FormField label="Scope">
+          <FormField label={t("scope")}>
             {(fieldProps) => <Select {...fieldProps} value={scope} options={SCOPE_OPTIONS} disabled />}
           </FormField>
         ) : null}
 
         {!isEdit ? (
           <>
-            <FormField label="Scope" required>
+            <FormField label={t("scope")} required>
               {(fieldProps) => <Select {...fieldProps} value={scope} onValueChange={setScope} options={SCOPE_OPTIONS} />}
             </FormField>
-            <FormField label="Clone from" helperText="Starts with that role's own permissions, unless you change them below.">
+            <FormField label={t("clone_from")} helperText={t("clone_from_hint")}>
               {(fieldProps) => (
                 <Select
                   {...fieldProps}
@@ -107,7 +109,7 @@ function RoleForm({ role = null, permissionGroups, cloneableRoles = [], action, 
                     setCloneFrom(value);
                     setSelectedPermissions([]);
                   }}
-                  placeholder="Start from scratch"
+                  placeholder={t("start_from_scratch")}
                   options={cloneableRoles.map((r) => ({ value: String(r.id), label: r.name }))}
                 />
               )}
@@ -116,13 +118,11 @@ function RoleForm({ role = null, permissionGroups, cloneableRoles = [], action, 
         ) : null}
       </div>
 
-      <FormField label="Permissions" required error={state?.errors?.permissions?.[0]}>
+      <FormField label={t("permissions")} required error={state?.errors?.permissions?.[0]}>
         {() => (
           <div className="flex max-h-[28rem] flex-col gap-4 overflow-y-auto rounded-sm border border-border-strong p-3">
             {cloning && selectedPermissions.length === 0 ? (
-              <p className="text-xs text-foreground-muted">
-                Leave every box unchecked to copy the source role&apos;s permissions exactly. Check any box to build the set from scratch instead.
-              </p>
+              <p className="text-xs text-foreground-muted">{t("copy_permissions_hint")}</p>
             ) : null}
             {Object.entries(permissionGroups).map(([module, permissions]) => {
               const codes = permissions.map((p) => p.code);
@@ -138,7 +138,7 @@ function RoleForm({ role = null, permissionGroups, cloneableRoles = [], action, 
                       <label key={permission.code} className="flex items-center gap-2 text-sm text-foreground">
                         <Checkbox checked={selectedPermissions.includes(permission.code)} onCheckedChange={() => togglePermission(permission.code)} disabled={readOnly} />
                         {permission.name}
-                        {permission.is_elevated ? <Badge variant="warning">Elevated</Badge> : null}
+                        {permission.is_elevated ? <Badge variant="warning">{t("elevated")}</Badge> : null}
                       </label>
                     ))}
                   </div>
@@ -151,11 +151,11 @@ function RoleForm({ role = null, permissionGroups, cloneableRoles = [], action, 
 
       <div className="flex justify-end gap-2">
         <Link href="/settings/roles" className="inline-flex h-10 items-center rounded-sm border border-border-strong px-4 text-sm font-medium hover:bg-surface-muted">
-          {readOnly ? "Back" : "Cancel"}
+          {readOnly ? tc("back") : tc("cancel")}
         </Link>
         {readOnly ? null : (
           <Button type="submit" loading={pending}>
-            {isEdit ? "Save changes" : "Create role"}
+            {isEdit ? t("save_changes") : t("create_role")}
           </Button>
         )}
       </div>
