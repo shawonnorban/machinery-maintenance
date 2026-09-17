@@ -9,6 +9,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `asset::assets.show.blade.php`'s "QR token" card — the scannable
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils";
  * client-side guess.
  */
 function QrCard({ assetId, qr, regenerateAction }) {
+  const t = useT("asset");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -29,7 +31,7 @@ function QrCard({ assetId, qr, regenerateAction }) {
     startTransition(async () => {
       const result = await regenerateAction();
       if (result?.status === "success") {
-        toastManager.add({ title: "QR code regenerated", description: "The old printed label will no longer scan.", type: "success" });
+        toastManager.add({ title: t("qr_regenerated_toast"), description: t("qr_regenerated_desc"), type: "success" });
         setConfirmOpen(false);
         router.refresh();
       } else if (result?.status === "error") {
@@ -41,7 +43,7 @@ function QrCard({ assetId, qr, regenerateAction }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>QR token</CardTitle>
+        <CardTitle>{t("qr_token")}</CardTitle>
       </CardHeader>
       <CardBody className="flex flex-col items-center gap-3 text-center">
         <div className="size-36 shrink-0 [&_svg]:size-full" dangerouslySetInnerHTML={{ __html: qr.svg }} />
@@ -52,10 +54,10 @@ function QrCard({ assetId, qr, regenerateAction }) {
             href={`/assets/labels?ids[]=${assetId}`}
             className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
           >
-            Print label
+            {t("print_label")}
           </Link>
           <Button variant="outline" size="sm" onClick={() => setConfirmOpen(true)}>
-            <RefreshCw /> Regenerate QR
+            <RefreshCw /> {t("regenerate_qr")}
           </Button>
         </div>
       </CardBody>
@@ -63,9 +65,9 @@ function QrCard({ assetId, qr, regenerateAction }) {
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Regenerate this QR code?"
-        description="The printed label stuck to the machine will stop scanning immediately — it must be reprinted and replaced."
-        confirmLabel="Regenerate"
+        title={t("regenerate_qr_confirm_title")}
+        description={t("regenerate_qr_confirm_desc")}
+        confirmLabel={t("regenerate")}
         destructive
         loading={pending}
         onConfirm={regenerate}

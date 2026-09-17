@@ -7,13 +7,14 @@ import { Card, CardBody } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
-import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { TransferActionsMenu } from "@/components/assets/transfer-actions-menu";
 import { CostsTab } from "@/components/assets/costs-tab";
 import { MeteringTab } from "@/components/assets/metering-tab";
 import { DocumentsTab } from "@/components/assets/documents-tab";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useLazyTabData } from "@/lib/use-lazy-tab-data";
+import { useT } from "@/lib/i18n";
 import {
   getStatusHistory, getMaintenanceHistory, getTransferHistory, getMeters, getCostsData, getDocumentsData,
 } from "@/app/(app)/assets/[assetId]/actions";
@@ -49,6 +50,7 @@ const TAB_VALUES = ["overview", "status-history", "maintenance-history", "transf
  * `tenant-tabs.jsx` for the same fix).
  */
 function AssetDetailTabs({ asset, transferActions, meteringActions, costActions, documentActions }) {
+  const t = useT("asset");
   const searchParams = useSearchParams();
   const requestedTab = searchParams.get("tab");
   const initialTab = TAB_VALUES.includes(requestedTab) ? requestedTab : "overview";
@@ -58,13 +60,13 @@ function AssetDetailTabs({ asset, transferActions, meteringActions, costActions,
       <CardBody>
         <Tabs defaultValue={initialTab}>
           <TabsList>
-            <TabsTab value="overview">Overview</TabsTab>
-            <TabsTab value="status-history">Status history</TabsTab>
-            <TabsTab value="maintenance-history">Maintenance history</TabsTab>
-            <TabsTab value="transfers">Transfers</TabsTab>
-            <TabsTab value="metering">Metering</TabsTab>
-            <TabsTab value="costs">Costs</TabsTab>
-            <TabsTab value="documents">Documents</TabsTab>
+            <TabsTab value="overview">{t("overview")}</TabsTab>
+            <TabsTab value="status-history">{t("history")}</TabsTab>
+            <TabsTab value="maintenance-history">{t("maintenance_history")}</TabsTab>
+            <TabsTab value="transfers">{t("transfers")}</TabsTab>
+            <TabsTab value="metering">{t("metering")}</TabsTab>
+            <TabsTab value="costs">{t("costs")}</TabsTab>
+            <TabsTab value="documents">{t("documents")}</TabsTab>
             <TabsIndicator />
           </TabsList>
 
@@ -117,6 +119,7 @@ function TabLoadState({ loading, error, onRetry, rows = 6 }) {
 }
 
 function StatusHistoryPanel({ assetId }) {
+  const t = useT("asset");
   const { data, loading, error, refetch } = useLazyTabData(() => getStatusHistory(assetId));
 
   if (loading || error) {
@@ -128,31 +131,36 @@ function StatusHistoryPanel({ assetId }) {
       columns={[
         {
           key: "changed_at",
-          header: "Changed at",
+          header: t("changed_at"),
           render: (row) => <FormattedDateTime value={row.changed_at} />,
         },
         {
           key: "transition",
-          header: "Transition",
+          header: t("transition"),
           render: (row) => (
             <span className="flex items-center gap-2">
-              {row.from_status ? <StatusBadge status={row.from_status} /> : <span className="text-foreground-muted">—</span>}
+              {row.from_status ? (
+                <StatusBadge status={row.from_status} label={t(`status_${row.from_status.toLowerCase()}`)} />
+              ) : (
+                <span className="text-foreground-muted">—</span>
+              )}
               <span className="text-foreground-muted">→</span>
-              <StatusBadge status={row.to_status} />
+              <StatusBadge status={row.to_status} label={t(`status_${row.to_status.toLowerCase()}`)} />
             </span>
           ),
         },
-        { key: "changed_by", header: "Changed by", render: (row) => row.changed_by?.name ?? "System" },
-        { key: "reason", header: "Reason", render: (row) => row.reason ?? "—" },
+        { key: "changed_by", header: t("changed_by"), render: (row) => row.changed_by?.name ?? t("system") },
+        { key: "reason", header: t("reason"), render: (row) => row.reason ?? "—" },
       ]}
       rows={data}
       rowKey={(row) => row.id}
-      emptyTitle="No status changes recorded yet."
+      emptyTitle={t("no_history")}
     />
   );
 }
 
 function MaintenanceHistoryPanel({ assetId }) {
+  const t = useT("asset");
   const { data, loading, error, refetch } = useLazyTabData(() => getMaintenanceHistory(assetId));
 
   if (loading || error) {
@@ -164,30 +172,35 @@ function MaintenanceHistoryPanel({ assetId }) {
       columns={[
         {
           key: "work_order_number",
-          header: "Work order",
+          header: t("work_order"),
           render: (row) => (
             <Link href={`/work-orders/${row.id}`} className="font-medium text-brand hover:underline">
               {row.work_order_number}
             </Link>
           ),
         },
-        { key: "type", header: "Type", render: (row) => row.type ?? "—" },
-        { key: "status", header: "Status", render: (row) => <StatusBadge status={row.status} /> },
-        { key: "priority", header: "Priority", render: (row) => formatStatus(row.priority) },
+        { key: "type", header: t("type"), render: (row) => row.type ?? "—" },
+        {
+          key: "status",
+          header: t("status"),
+          render: (row) => <StatusBadge status={row.status} label={t(`status_${row.status?.toLowerCase()}`)} />,
+        },
+        { key: "priority", header: t("priority"), render: (row) => t(`criticality_${row.priority?.toLowerCase()}`) },
         {
           key: "scheduled_start",
-          header: "Scheduled",
+          header: t("scheduled"),
           render: (row) => <FormattedDateTime value={row.scheduled_start} mode="date" />,
         },
       ]}
       rows={data}
       rowKey={(row) => row.id}
-      emptyTitle="No work orders recorded against this machine yet."
+      emptyTitle={t("no_maintenance_history")}
     />
   );
 }
 
 function TransfersPanel({ assetId, transferActions }) {
+  const t = useT("asset");
   const { data, loading, error, refetch } = useLazyTabData(() => getTransferHistory(assetId));
 
   if (loading || error) {
@@ -197,10 +210,10 @@ function TransfersPanel({ assetId, transferActions }) {
   return (
     <DataTable
       columns={[
-        { key: "transfer_number", header: "Transfer" },
+        { key: "transfer_number", header: t("transfer") },
         {
           key: "route",
-          header: "Route",
+          header: t("route"),
           render: (row) => (
             <span className="flex items-center gap-2">
               {row.from_factory?.name ?? "—"}
@@ -209,11 +222,15 @@ function TransfersPanel({ assetId, transferActions }) {
             </span>
           ),
         },
-        { key: "status", header: "Status", render: (row) => <StatusBadge status={row.status} /> },
-        { key: "reason", header: "Reason", render: (row) => row.reason ?? "—" },
+        {
+          key: "status",
+          header: t("status"),
+          render: (row) => <StatusBadge status={row.status} label={t(`transfer_status_${row.status?.toLowerCase()}`)} />,
+        },
+        { key: "reason", header: t("reason"), render: (row) => row.reason ?? "—" },
         {
           key: "requested_at",
-          header: "Requested",
+          header: t("requested"),
           render: (row) => <FormattedDateTime value={row.requested_at} mode="date" />,
         },
         {
@@ -225,7 +242,7 @@ function TransfersPanel({ assetId, transferActions }) {
       ]}
       rows={data}
       rowKey={(row) => row.id}
-      emptyTitle="No transfers recorded yet."
+      emptyTitle={t("no_transfers")}
     />
   );
 }
@@ -279,14 +296,16 @@ function DocumentsPanel({ assetId, documentActions }) {
 }
 
 function Overview({ asset }) {
+  const t = useT("asset");
+
   return (
     <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-      <Field label="Type">{asset.type?.name ?? "—"}</Field>
-      <Field label="Category">{asset.category?.name ?? "—"}</Field>
-      <Field label="Manufacturer">{asset.manufacturer?.name ?? "—"}</Field>
-      <Field label="Model">{asset.model ?? "—"}</Field>
-      <Field label="Serial number">{asset.serial_number ?? "—"}</Field>
-      <Field label="Parent asset">
+      <Field label={t("type")}>{asset.type?.name ?? "—"}</Field>
+      <Field label={t("category")}>{asset.category?.name ?? "—"}</Field>
+      <Field label={t("manufacturer")}>{asset.manufacturer?.name ?? "—"}</Field>
+      <Field label={t("model")}>{asset.model ?? "—"}</Field>
+      <Field label={t("serial_number")}>{asset.serial_number ?? "—"}</Field>
+      <Field label={t("parent_asset")}>
         {asset.parent ? (
           <Link href={`/assets/${asset.parent.id}`} className="text-brand hover:underline">
             {asset.parent.asset_code}
@@ -295,12 +314,12 @@ function Overview({ asset }) {
           "—"
         )}
       </Field>
-      <Field label="Commissioned">{asset.commissioning_date ?? "—"}</Field>
-      <Field label="Warranty">
+      <Field label={t("commissioning_date")}>{asset.commissioning_date ?? "—"}</Field>
+      <Field label={t("warranty")}>
         {asset.warranty?.end ? (
           <span className={asset.warranty.active ? "text-success" : "text-foreground-muted"}>
-            Until {asset.warranty.end}
-            {asset.warranty.active ? " (active)" : " (expired)"}
+            {t("warranty_until", { date: asset.warranty.end })}{" "}
+            {asset.warranty.active ? t("warranty_active_suffix") : t("warranty_expired_suffix")}
           </span>
         ) : (
           "—"
@@ -308,7 +327,7 @@ function Overview({ asset }) {
       </Field>
       {asset.description ? (
         <div className="sm:col-span-2">
-          <Field label="Description">{asset.description}</Field>
+          <Field label={t("description")}>{asset.description}</Field>
         </div>
       ) : null}
     </div>

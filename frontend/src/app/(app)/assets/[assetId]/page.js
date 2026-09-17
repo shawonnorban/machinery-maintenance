@@ -4,13 +4,14 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { AssetDetailTabs } from "@/components/assets/asset-detail-tabs";
 import { ChangeStatusModal } from "@/components/assets/change-status-modal";
 import { TransferRequestModal } from "@/components/assets/transfer-request-modal";
 import { QrCard } from "@/components/assets/qr-card";
+import { getT } from "@/lib/i18n-server";
 import {
   changeStatus, requestTransfer, approveTransfer, receiveTransfer, rejectTransfer, postCost, reverseCost, regenerateQr,
   uploadDocument, deleteDocument, recordReading,
@@ -37,16 +38,18 @@ const CRITICALITY_BORDER = { CRITICAL: "border-l-danger", HIGH: "border-l-warnin
 export default async function AssetDetailPage({ params }) {
   const { assetId } = await params;
 
-  const [asset, formOptions, qr] = await Promise.all([
+  const [asset, formOptions, qr, t, tc] = await Promise.all([
     apiFetch(`/assets/${assetId}`),
     apiFetch("/assets/form-options"),
     apiFetch(`/assets/${assetId}/qr`),
+    getT("asset"),
+    getT("common"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Assets", href: "/assets" }, { label: asset.asset_code }]}
+        breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: asset.asset_code }]}
         title={asset.asset_code}
         description={asset.name}
         actions={
@@ -64,26 +67,26 @@ export default async function AssetDetailPage({ params }) {
               action={requestTransfer.bind(null, assetId)}
             />
             <Link href={`/assets/${assetId}/edit`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <Pencil /> Edit
+              <Pencil /> {tc("edit")}
             </Link>
             <Link href="/assets" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <ArrowLeft /> Back
+              <ArrowLeft /> {tc("back")}
             </Link>
           </div>
         }
       />
 
       <Card className={cn("mb-6 flex flex-wrap items-center gap-x-8 gap-y-3 border-l-4 p-4", CRITICALITY_BORDER[asset.criticality] ?? "border-l-border-strong")}>
-        <SummaryItem label="Status">
-          <StatusBadge status={asset.status} />
+        <SummaryItem label={t("status")}>
+          <StatusBadge status={asset.status} label={t(`status_${asset.status?.toLowerCase()}`)} />
         </SummaryItem>
-        <SummaryItem label="Criticality">
-          <Badge variant={CRITICALITY_TONE[asset.criticality] ?? "neutral"}>{formatStatus(asset.criticality)}</Badge>
+        <SummaryItem label={t("criticality")}>
+          <Badge variant={CRITICALITY_TONE[asset.criticality] ?? "neutral"}>{t(`criticality_${asset.criticality?.toLowerCase()}`)}</Badge>
         </SummaryItem>
-        <SummaryItem label="Factory">
+        <SummaryItem label={t("factory")}>
           <span className="text-sm text-foreground">{asset.factory?.name ?? "—"}</span>
         </SummaryItem>
-        <SummaryItem label="Location">
+        <SummaryItem label={t("location")}>
           <span className="text-sm text-foreground">{asset.location?.name ?? "—"}</span>
         </SummaryItem>
       </Card>

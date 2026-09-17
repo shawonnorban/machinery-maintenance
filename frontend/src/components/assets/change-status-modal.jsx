@@ -9,14 +9,15 @@ import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useToastManager } from "@/components/ui/toast";
-import { formatStatus } from "@/components/ui/status-badge";
 import { ASSET_TRANSITIONS } from "@/lib/asset-transitions";
+import { useT } from "@/lib/i18n";
 
 function SubmitButton() {
+  const t = useT("asset");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" loading={pending}>
-      Change status
+      {t("change_status")}
     </Button>
   );
 }
@@ -31,6 +32,8 @@ function SubmitButton() {
  * @param {{ assetId: string, currentStatus: string, version: number, action: (prevState: any, formData: FormData) => Promise<any> }} props
  */
 function ChangeStatusModal({ assetId, currentStatus, version, action }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const [open, setOpen] = useState(false);
   const [state, formAction] = useActionState(action, null);
   const router = useRouter();
@@ -39,7 +42,7 @@ function ChangeStatusModal({ assetId, currentStatus, version, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Status updated", type: "success" });
+      toastManager.add({ title: t("status_updated"), type: "success" });
       queueMicrotask(() => setOpen(false));
       router.refresh();
     }
@@ -59,25 +62,25 @@ function ChangeStatusModal({ assetId, currentStatus, version, action }) {
   return (
     <>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        Change status
+        {t("change_status")}
       </Button>
 
-      <Modal open={open} onOpenChange={setOpen} title="Change status" description={`Currently ${formatStatus(currentStatus)}.`}>
+      <Modal open={open} onOpenChange={setOpen} title={t("change_status")} description={t("currently", { status: t(`status_${currentStatus?.toLowerCase()}`) })}>
         <form action={formAction} className="flex flex-col gap-4">
           <input type="hidden" name="version" value={version} />
 
-          <FormField label="New status" required error={state?.errors?.status?.[0]}>
+          <FormField label={t("new_status")} required error={state?.errors?.status?.[0]}>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
                 name="status"
-                placeholder="Select a status"
-                options={options.map((status) => ({ value: status, label: formatStatus(status) }))}
+                placeholder={t("select_a_status")}
+                options={options.map((status) => ({ value: status, label: t(`status_${status.toLowerCase()}`) }))}
               />
             )}
           </FormField>
 
-          <FormField label="Reason" error={state?.errors?.reason?.[0]}>
+          <FormField label={t("reason")} error={state?.errors?.reason?.[0]}>
             {(fieldProps) => <Input {...fieldProps} name="reason" type="text" maxLength={255} />}
           </FormField>
 
@@ -85,7 +88,7 @@ function ChangeStatusModal({ assetId, currentStatus, version, action }) {
 
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <SubmitButton />
           </div>
