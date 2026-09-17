@@ -10,17 +10,14 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
-
-const TRANSACTION_TYPES = [
-  { value: "ADJUSTMENT_OUT", label: "Adjustment out (physical count)" },
-  { value: "SCRAP", label: "Scrap" },
-];
+import { useT } from "@/lib/i18n";
 
 function SubmitButton() {
+  const t = useT("inventory");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" variant="danger" loading={pending}>
-      Record adjustment
+      {t("record_adjustment")}
     </Button>
   );
 }
@@ -32,6 +29,12 @@ function SubmitButton() {
  * has no separate "adjust up" endpoint on the web either.
  */
 function AdjustStockModal({ bins, action }) {
+  const t = useT("inventory");
+  const tc = useT("common");
+  const TRANSACTION_TYPES = [
+    { value: "ADJUSTMENT_OUT", label: t("adjustment_out_physical_count") },
+    { value: "SCRAP", label: t("scrap") },
+  ];
   const [open, setOpen] = useState(false);
   const [state, formAction] = useActionState(action, null);
   const router = useRouter();
@@ -39,7 +42,7 @@ function AdjustStockModal({ bins, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Adjustment recorded", type: "success" });
+      toastManager.add({ title: t("adjustment_recorded_toast"), type: "success" });
       queueMicrotask(() => setOpen(false));
       router.refresh();
     }
@@ -52,26 +55,26 @@ function AdjustStockModal({ bins, action }) {
   return (
     <>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        Adjust
+        {t("adjust")}
       </Button>
 
-      <Modal open={open} onOpenChange={setOpen} title="Adjust stock" description="A physical-count correction. Stock that moves without an explanation is indistinguishable from loss.">
+      <Modal open={open} onOpenChange={setOpen} title={t("adjust_stock")} description={t("adjust_stock_hint")}>
         <form action={formAction} className="flex flex-col gap-4">
-          <FormField label="Bin" required error={state?.errors?.bin_id?.[0]}>
+          <FormField label={t("bin")} required error={state?.errors?.bin_id?.[0]}>
             {(fieldProps) => (
-              <Select {...fieldProps} name="bin_id" placeholder="Select a bin" options={bins.map((bin) => ({ value: bin.id, label: bin.full_path }))} />
+              <Select {...fieldProps} name="bin_id" placeholder={t("select_a_bin")} options={bins.map((bin) => ({ value: bin.id, label: bin.full_path }))} />
             )}
           </FormField>
 
-          <FormField label="Type" required>
+          <FormField label={t("transaction_type")} required>
             {(fieldProps) => <Select {...fieldProps} name="transaction_type" options={TRANSACTION_TYPES} />}
           </FormField>
 
-          <FormField label="Quantity" required error={state?.errors?.quantity?.[0]}>
+          <FormField label={t("quantity")} required error={state?.errors?.quantity?.[0]}>
             {(fieldProps) => <Input {...fieldProps} name="quantity" type="number" step="0.0001" min="0.0001" required />}
           </FormField>
 
-          <FormField label="Reason" required error={state?.errors?.notes?.[0]}>
+          <FormField label={t("reason")} required error={state?.errors?.notes?.[0]}>
             {(fieldProps) => <Textarea {...fieldProps} name="notes" rows={2} maxLength={2000} required />}
           </FormField>
 
@@ -79,7 +82,7 @@ function AdjustStockModal({ bins, action }) {
 
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <SubmitButton />
           </div>

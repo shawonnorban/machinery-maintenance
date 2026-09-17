@@ -10,6 +10,7 @@ import { CompatibilityTab } from "@/components/inventory/compatibility-tab";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { formatNumber } from "@/lib/format";
 import { useLazyTabData, withRefetch } from "@/lib/use-lazy-tab-data";
+import { useT } from "@/lib/i18n";
 import { addCompatibility, deleteCompatibility, getTransactions, getCompatibilityData } from "@/app/(app)/inventory/parts/[partId]/actions";
 
 /**
@@ -25,30 +26,33 @@ import { addCompatibility, deleteCompatibility, getTransactions, getCompatibilit
  * page ever painted.
  */
 function SparePartDetailTabs({ part, partId, stock, reverseAction }) {
+  const t = useT("inventory");
+  const tc = useT("common");
+
   return (
     <Card>
       <CardBody>
         <Tabs defaultValue="overview">
           <TabsList>
-            <TabsTab value="overview">Overview</TabsTab>
-            <TabsTab value="stock">Stock</TabsTab>
-            <TabsTab value="transactions">Transactions</TabsTab>
-            <TabsTab value="compatibility">Compatibility</TabsTab>
+            <TabsTab value="overview">{tc("overview")}</TabsTab>
+            <TabsTab value="stock">{t("stock")}</TabsTab>
+            <TabsTab value="transactions">{t("transactions")}</TabsTab>
+            <TabsTab value="compatibility">{t("compatibility_tab")}</TabsTab>
             <TabsIndicator />
           </TabsList>
 
           <TabsPanel value="overview">
             <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-              <Field label="Unit">{part.unit}</Field>
-              <Field label="Brand">{part.brand ?? "—"}</Field>
-              <Field label="Manufacturer">{part.manufacturer ?? "—"}</Field>
-              <Field label="Minimum stock">{formatNumber(part.minimum_stock)}</Field>
-              <Field label="Reorder level">{formatNumber(part.reorder_level)}</Field>
-              <Field label="Lead time">{part.lead_time_days ? `${part.lead_time_days} days` : "—"}</Field>
-              <Field label="Shelf life">{part.shelf_life_days ? `${part.shelf_life_days} days` : "—"}</Field>
+              <Field label={t("unit")}>{part.unit}</Field>
+              <Field label={t("brand")}>{part.brand ?? "—"}</Field>
+              <Field label={t("manufacturer")}>{part.manufacturer ?? "—"}</Field>
+              <Field label={t("minimum_stock")}>{formatNumber(part.minimum_stock)}</Field>
+              <Field label={t("reorder_level")}>{formatNumber(part.reorder_level)}</Field>
+              <Field label={t("lead_time")}>{part.lead_time_days ? t("days_count", { count: part.lead_time_days }) : "—"}</Field>
+              <Field label={t("shelf_life")}>{part.shelf_life_days ? t("days_count", { count: part.shelf_life_days }) : "—"}</Field>
               {part.notes ? (
                 <div className="sm:col-span-2">
-                  <Field label="Notes">{part.notes}</Field>
+                  <Field label={t("notes")}>{part.notes}</Field>
                 </div>
               ) : null}
             </div>
@@ -56,21 +60,21 @@ function SparePartDetailTabs({ part, partId, stock, reverseAction }) {
 
           <TabsPanel value="stock">
             <div className="mb-4 flex items-baseline gap-2">
-              <span className="text-xs text-foreground-muted">Total on hand:</span>
+              <span className="text-xs text-foreground-muted">{t("total_on_hand")}</span>
               <span className="tabular text-lg font-semibold text-foreground">
                 {formatNumber(stock.total_on_hand)} {stock.unit}
               </span>
             </div>
             <DataTable
               columns={[
-                { key: "bin", header: "Bin", render: (row) => (row.in_transit ? `${row.bin} (in transit)` : row.bin) },
-                { key: "on_hand", header: "On hand", align: "right", render: (row) => formatNumber(row.on_hand) },
-                { key: "reserved", header: "Reserved", align: "right", render: (row) => formatNumber(row.reserved) },
-                { key: "available", header: "Available", align: "right", render: (row) => formatNumber(row.available) },
+                { key: "bin", header: t("bin"), render: (row) => (row.in_transit ? `${row.bin} (${t("in_transit")})` : row.bin) },
+                { key: "on_hand", header: t("on_hand"), align: "right", render: (row) => formatNumber(row.on_hand) },
+                { key: "reserved", header: t("reserved"), align: "right", render: (row) => formatNumber(row.reserved) },
+                { key: "available", header: t("available"), align: "right", render: (row) => formatNumber(row.available) },
               ]}
               rows={stock.locations}
               rowKey={(row) => row.bin_id}
-              emptyTitle="No stock recorded for this part yet."
+              emptyTitle={t("no_stock")}
             />
           </TabsPanel>
 
@@ -103,6 +107,7 @@ function TabLoadState({ loading, error, onRetry, rows = 4 }) {
 }
 
 function TransactionsPanel({ partId, reverseAction }) {
+  const t = useT("inventory");
   const { data, loading, error, refetch } = useLazyTabData(() => getTransactions(partId));
 
   if (loading || error) {
@@ -114,21 +119,21 @@ function TransactionsPanel({ partId, reverseAction }) {
       columns={[
         {
           key: "transaction_at",
-          header: "Date",
+          header: t("date"),
           render: (row) => <FormattedDateTime value={row.transaction_at} />,
         },
-        { key: "transaction_type", header: "Type" },
-        { key: "bin", header: "Bin", render: (row) => row.bin ?? "—" },
-        { key: "signed_quantity", header: "Quantity", align: "right", render: (row) => formatNumber(row.signed_quantity) },
-        { key: "balance_after", header: "Balance after", align: "right", render: (row) => formatNumber(row.balance_after) },
-        { key: "work_order", header: "Work order", render: (row) => row.work_order ?? "—" },
+        { key: "transaction_type", header: t("transaction_type"), render: (row) => t(`type_${row.transaction_type?.toLowerCase()}`) },
+        { key: "bin", header: t("bin"), render: (row) => row.bin ?? "—" },
+        { key: "signed_quantity", header: t("quantity"), align: "right", render: (row) => formatNumber(row.signed_quantity) },
+        { key: "balance_after", header: t("balance_after"), align: "right", render: (row) => formatNumber(row.balance_after) },
+        { key: "work_order", header: t("work_order"), render: (row) => row.work_order ?? "—" },
         {
           key: "notes",
-          header: "Notes",
+          header: t("notes"),
           render: (row) => (
             <>
               {row.notes ?? "—"}
-              {row.reverses ? <div className="text-xs text-foreground-muted">Reverses #{row.reverses}</div> : null}
+              {row.reverses ? <div className="text-xs text-foreground-muted">{t("reverses_hash", { id: row.reverses })}</div> : null}
             </>
           ),
         },
@@ -141,7 +146,7 @@ function TransactionsPanel({ partId, reverseAction }) {
       ]}
       rows={data}
       rowKey={(row) => row.id}
-      emptyTitle="No transactions recorded yet."
+      emptyTitle={t("no_transactions")}
     />
   );
 }

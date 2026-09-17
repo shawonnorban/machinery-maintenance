@@ -7,9 +7,12 @@ import { Modal } from "@/components/ui/modal";
 import { FormField } from "@/components/ui/form-field";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `StockController::reverse` — an opposing row, never an edit of the original. */
 function ReverseTransactionButton({ action }) {
+  const t = useT("inventory");
+  const tc = useT("common");
   const [open, setOpen] = useState(false);
   const [state, formAction] = useActionState(action, null);
   const router = useRouter();
@@ -17,7 +20,7 @@ function ReverseTransactionButton({ action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Transaction reversed", type: "success" });
+      toastManager.add({ title: t("transaction_reversed_toast"), type: "success" });
       queueMicrotask(() => setOpen(false));
       router.refresh();
     }
@@ -30,12 +33,12 @@ function ReverseTransactionButton({ action }) {
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className="text-xs font-medium text-brand hover:underline">
-        Reverse
+        {t("reverse")}
       </button>
 
-      <Modal open={open} onOpenChange={setOpen} title="Reverse this transaction?" description="Posts an opposing row — the original stays exactly as it was.">
+      <Modal open={open} onOpenChange={setOpen} title={t("reverse_confirm_title")} description={t("reverse_confirm_desc")}>
         <form action={formAction} className="flex flex-col gap-4">
-          <FormField label="Reason" required error={state?.errors?.reason?.[0]}>
+          <FormField label={t("reason")} required error={state?.errors?.reason?.[0]}>
             {(fieldProps) => <Textarea {...fieldProps} name="reason" rows={2} maxLength={2000} required />}
           </FormField>
 
@@ -43,10 +46,10 @@ function ReverseTransactionButton({ action }) {
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" variant="danger">
-              Reverse
+              {t("reverse")}
             </Button>
           </div>
         </form>
