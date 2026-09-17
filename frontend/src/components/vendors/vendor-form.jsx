@@ -8,13 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { formatStatus } from "@/components/ui/status-badge";
-
-const TYPE_OPTIONS = ["SUPPLIER", "SERVICE", "BOTH"].map((value) => ({ value, label: formatStatus(value) }));
-const STATUS_OPTIONS = ["ACTIVE", "INACTIVE", "BLACKLISTED"].map((value) => ({ value, label: formatStatus(value) }));
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `vendor::vendors._form` — code is required on both create and edit (unlike Asset/Factory's immutable-after-create pattern), since `VendorApiController::validated()` accepts it either way. */
 function VendorForm({ vendor = null, action }) {
+  const t = useT("vendor");
+  const tc = useT("common");
+  const TYPE_OPTIONS = ["SUPPLIER", "SERVICE", "BOTH"].map((value) => ({ value, label: t(`type_${value.toLowerCase()}`) }));
+  const STATUS_OPTIONS = ["ACTIVE", "INACTIVE", "BLACKLISTED"].map((value) => ({ value, label: t(`status_${value.toLowerCase()}`) }));
   const isEdit = vendor !== null;
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
@@ -52,46 +53,46 @@ function VendorForm({ vendor = null, action }) {
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Name" required error={state?.errors?.name?.[0]}>
+        <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
         </FormField>
-        <FormField label="Code" required error={state?.errors?.code?.[0]}>
+        <FormField label={t("code")} required error={state?.errors?.code?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={code} onChange={(e) => setCode(e.target.value)} maxLength={48} required />}
         </FormField>
-        <FormField label="Type" required>
+        <FormField label={t("type")} required>
           {(fieldProps) => <Select {...fieldProps} value={vendorType} onValueChange={setVendorType} options={TYPE_OPTIONS} />}
         </FormField>
-        <FormField label="Status" required>
+        <FormField label={t("status")} required>
           {(fieldProps) => <Select {...fieldProps} value={status} onValueChange={setStatus} options={STATUS_OPTIONS} />}
         </FormField>
-        <FormField label="Contact name">
+        <FormField label={t("contact_name")}>
           {(fieldProps) => <Input {...fieldProps} value={contactName} onChange={(e) => setContactName(e.target.value)} maxLength={255} />}
         </FormField>
-        <FormField label="Phone">
+        <FormField label={t("phone")}>
           {(fieldProps) => <Input {...fieldProps} value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={32} />}
         </FormField>
-        <FormField label="Email" error={state?.errors?.email?.[0]}>
+        <FormField label={t("email")} error={state?.errors?.email?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />}
         </FormField>
-        <FormField label="Tax reference">
+        <FormField label={t("tax_reference")}>
           {(fieldProps) => <Input {...fieldProps} value={taxReference} onChange={(e) => setTaxReference(e.target.value)} maxLength={64} />}
         </FormField>
       </div>
 
-      <FormField label="Address">
+      <FormField label={t("address")}>
         {(fieldProps) => <Textarea {...fieldProps} value={address} onChange={(e) => setAddress(e.target.value)} rows={2} maxLength={1000} />}
       </FormField>
 
-      <FormField label="Notes">
+      <FormField label={t("notes")}>
         {(fieldProps) => <Textarea {...fieldProps} value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={2000} />}
       </FormField>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? "Save changes" : "Create vendor"}
+          {isEdit ? t("save_changes") : t("create_vendor")}
         </Button>
       </div>
     </form>

@@ -7,20 +7,23 @@ import { Search } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Card, CardBody } from "@/components/ui/card";
 import { useToastManager } from "@/components/ui/toast";
-
-const STATUS_OPTIONS = [
-  { value: "", label: "All statuses" },
-  { value: "ACTIVE", label: "Active" },
-  { value: "INACTIVE", label: "Inactive" },
-  { value: "BLACKLISTED", label: "Blacklisted" },
-];
+import { useT } from "@/lib/i18n";
 
 function VendorsTable({ vendors, meta, page, search, status, archiveVendor }) {
+  const t = useT("vendor");
+  const tc = useT("common");
   const router = useRouter();
+
+  const statusOptions = [
+    { value: "", label: t("all_statuses") },
+    { value: "ACTIVE", label: t("status_active") },
+    { value: "INACTIVE", label: t("status_inactive") },
+    { value: "BLACKLISTED", label: t("status_blacklisted") },
+  ];
   const [searchInput, setSearchInput] = useState(search);
   const [archiving, setArchiving] = useState(null);
   const [pending, startTransition] = useTransition();
@@ -51,7 +54,7 @@ function VendorsTable({ vendors, meta, page, search, status, archiveVendor }) {
     startTransition(async () => {
       const result = await archiveVendor(archiving.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Vendor archived", type: "success" });
+        toastManager.add({ title: t("archived_toast"), type: "success" });
         setArchiving(null);
         router.refresh();
       } else if (result?.status === "error") {
@@ -69,12 +72,12 @@ function VendorsTable({ vendors, meta, page, search, status, archiveVendor }) {
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search name or code…"
+              placeholder={t("search")}
               className="pl-9"
             />
           </div>
           <div className="w-full max-w-[200px]">
-            <Select options={STATUS_OPTIONS} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
+            <Select options={statusOptions} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
           </div>
         </CardBody>
       </Card>
@@ -83,7 +86,7 @@ function VendorsTable({ vendors, meta, page, search, status, archiveVendor }) {
         columns={[
           {
             key: "name",
-            header: "Vendor",
+            header: t("vendor"),
             render: (v) => (
               <div>
                 <Link href={`/vendors/${v.id}/edit`} className="font-medium text-brand hover:underline">
@@ -93,18 +96,22 @@ function VendorsTable({ vendors, meta, page, search, status, archiveVendor }) {
               </div>
             ),
           },
-          { key: "vendor_type", header: "Type", render: (v) => formatStatus(v.vendor_type) },
-          { key: "contact_name", header: "Contact", render: (v) => v.contact_name ?? "—" },
-          { key: "warranties_count", header: "Warranties", align: "right", render: (v) => v.warranties_count ?? 0 },
-          { key: "contracts_count", header: "Contracts", align: "right", render: (v) => v.contracts_count ?? 0 },
-          { key: "status", header: "Status", render: (v) => <StatusBadge status={v.status} /> },
+          { key: "vendor_type", header: t("type"), render: (v) => t(`type_${v.vendor_type?.toLowerCase()}`) },
+          { key: "contact_name", header: t("contact"), render: (v) => v.contact_name ?? "—" },
+          { key: "warranties_count", header: t("warranties"), align: "right", render: (v) => v.warranties_count ?? 0 },
+          { key: "contracts_count", header: t("contracts"), align: "right", render: (v) => v.contracts_count ?? 0 },
+          {
+            key: "status",
+            header: t("status"),
+            render: (v) => <StatusBadge status={v.status} label={t(`status_${v.status?.toLowerCase()}`)} />,
+          },
         ]}
         rows={vendors}
         rowKey={(v) => v.id}
-        emptyTitle="No vendors found."
+        emptyTitle={t("no_vendors_found")}
         rowActions={(v) => [
-          { label: "Edit", onSelect: () => router.push(`/vendors/${v.id}/edit`) },
-          { label: "Archive", destructive: true, onSelect: () => setArchiving(v) },
+          { label: tc("edit"), onSelect: () => router.push(`/vendors/${v.id}/edit`) },
+          { label: t("archive"), destructive: true, onSelect: () => setArchiving(v) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
@@ -113,9 +120,9 @@ function VendorsTable({ vendors, meta, page, search, status, archiveVendor }) {
       <ConfirmDialog
         open={Boolean(archiving)}
         onOpenChange={() => setArchiving(null)}
-        title={`Archive ${archiving?.name}?`}
-        description="Kept for history — a vendor named on a past cost entry has to stay resolvable."
-        confirmLabel="Archive"
+        title={t("archive_confirm_title", { name: archiving?.name })}
+        description={t("archive_confirm")}
+        confirmLabel={t("archive")}
         loading={pending}
         onConfirm={runArchive}
       />
