@@ -44,5 +44,21 @@
     "factory_delete_confirm": "Remove :name? Only a factory with no machines in it can be removed; one that has run should be closed instead.",
     "factory_in_use": ":count machines are registered in this factory, so it cannot be removed. Close it instead — it still owns everything that ever happened in it.",
     "no_factories": "No factories yet.",
-    "no_factories_hint": "Add the first one before registering machines: every machine, work order and shift belongs to a factory."
+    "no_factories_hint": "Add the first one before registering machines: every machine, work order and shift belongs to a factory.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "assets": "Assets",
+    "search_name_or_code": "Search name or code…",
+    "all_statuses": "All statuses",
+    "no_factories_found": "No factories found.",
+    "factory_deleted_toast": "Factory deleted",
+    "save_changes": "Save changes",
+    "create_factory": "Create factory",
+    "code_hint_short": "Up to 5 letters/numbers.",
+    "code_readonly_hint": "Not changeable — everything else references it.",
+    "edit_factory_named": "Edit :name",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "delete_factory_title": "Delete :name?",
+    "delete_factory_description": "Only possible while nothing has ever run in it — a factory that has is closed instead."
 }

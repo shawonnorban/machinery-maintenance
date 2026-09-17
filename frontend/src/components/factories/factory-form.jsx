@@ -10,11 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useToastManager } from "@/components/ui/toast";
 import { TIMEZONES } from "@/lib/timezones";
+import { useT } from "@/lib/i18n";
 
 const TIMEZONE_OPTIONS = TIMEZONES.map((tz) => ({ value: tz, label: tz }));
 
 /** Mirrors `factories/_form.blade.php` — `code` is create-only, immutable after (it's how everything else references this factory). Runs inside `FactoryFormModal`; `onDone` closes it once the save actually succeeds. */
 function FactoryForm({ factory = null, action, onDone, onCancel }) {
+  const t = useT("settings");
+  const tc = useT("common");
   const isEdit = factory !== null;
   const router = useRouter();
   const toastManager = useToastManager();
@@ -26,7 +29,7 @@ function FactoryForm({ factory = null, action, onDone, onCancel }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: isEdit ? "Factory saved" : "Factory created", type: "success" });
+      toastManager.add({ title: isEdit ? t("factory_updated", { name }) : t("factory_created", { name }), type: "success" });
       queueMicrotask(() => onDone?.());
       router.refresh();
     }
@@ -53,29 +56,29 @@ function FactoryForm({ factory = null, action, onDone, onCancel }) {
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Code" required helperText={isEdit ? "Not changeable — everything else references it." : "Up to 5 letters/numbers."} error={state?.errors?.code?.[0]}>
+        <FormField label={t("code")} required helperText={isEdit ? t("code_readonly_hint") : t("code_hint_short")} error={state?.errors?.code?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={code} onChange={(e) => setCode(e.target.value)} disabled={isEdit} maxLength={5} required />}
         </FormField>
 
-        <FormField label="Name" required error={state?.errors?.name?.[0]}>
+        <FormField label={t("factory_name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
         </FormField>
 
-        <FormField label="Timezone" required error={state?.errors?.timezone?.[0]}>
+        <FormField label={t("timezone")} required error={state?.errors?.timezone?.[0]}>
           {(fieldProps) => <Select {...fieldProps} value={timezone} onValueChange={setTimezone} options={TIMEZONE_OPTIONS} />}
         </FormField>
       </div>
 
-      <FormField label="Address" error={state?.errors?.address?.[0]}>
+      <FormField label={t("address")} error={state?.errors?.address?.[0]}>
         {(fieldProps) => <Textarea {...fieldProps} value={address} onChange={(e) => setAddress(e.target.value)} rows={2} maxLength={2000} />}
       </FormField>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? "Save changes" : "Create factory"}
+          {isEdit ? t("save_changes") : t("create_factory")}
         </Button>
       </div>
     </form>

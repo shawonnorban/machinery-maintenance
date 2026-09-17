@@ -12,15 +12,17 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Card, CardBody } from "@/components/ui/card";
 import { useToastManager } from "@/components/ui/toast";
 import { FactoryFormModal } from "@/components/factories/factory-form-modal";
-
-const STATUS_OPTIONS = [
-  { value: "", label: "All statuses" },
-  { value: "ACTIVE", label: "Active" },
-  { value: "INACTIVE", label: "Inactive" },
-];
+import { useT } from "@/lib/i18n";
 
 function FactoriesTable({ factories, meta, page, search, status, actions }) {
+  const t = useT("settings");
+  const tc = useT("common");
   const router = useRouter();
+  const STATUS_OPTIONS = [
+    { value: "", label: t("all_statuses") },
+    { value: "ACTIVE", label: t("active") },
+    { value: "INACTIVE", label: t("inactive") },
+  ];
   const [searchInput, setSearchInput] = useState(search);
   const [deleting, setDeleting] = useState(null);
   const [creating, setCreating] = useState(false);
@@ -64,7 +66,7 @@ function FactoriesTable({ factories, meta, page, search, status, actions }) {
     startTransition(async () => {
       const result = await actions.deleteFactory(deleting.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Factory deleted", type: "success" });
+        toastManager.add({ title: t("factory_deleted_toast"), type: "success" });
         setDeleting(null);
         router.refresh();
       } else if (result?.status === "error") {
@@ -82,7 +84,7 @@ function FactoriesTable({ factories, meta, page, search, status, actions }) {
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search name or code…"
+              placeholder={t("search_name_or_code")}
               className="pl-9"
             />
           </div>
@@ -90,7 +92,7 @@ function FactoriesTable({ factories, meta, page, search, status, actions }) {
             <Select options={STATUS_OPTIONS} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
           </div>
           <Button size="sm" onClick={() => setCreating(true)}>
-            <Plus /> New factory
+            <Plus /> {t("new_factory")}
           </Button>
         </CardBody>
       </Card>
@@ -99,7 +101,7 @@ function FactoriesTable({ factories, meta, page, search, status, actions }) {
         columns={[
           {
             key: "name",
-            header: "Factory",
+            header: t("factory_name"),
             render: (f) => (
               <div>
                 <button type="button" onClick={() => setEditing(f)} className="font-medium text-brand hover:underline">
@@ -109,17 +111,21 @@ function FactoriesTable({ factories, meta, page, search, status, actions }) {
               </div>
             ),
           },
-          { key: "timezone", header: "Timezone" },
-          { key: "asset_count", header: "Assets", align: "right", render: (f) => f.asset_count ?? "—" },
-          { key: "status", header: "Status", render: (f) => <StatusBadge status={f.status} /> },
+          { key: "timezone", header: t("timezone") },
+          { key: "asset_count", header: t("assets"), align: "right", render: (f) => f.asset_count ?? "—" },
+          {
+            key: "status",
+            header: t("status"),
+            render: (f) => <StatusBadge status={f.status} label={f.status === "ACTIVE" ? t("active") : t("inactive")} />,
+          },
         ]}
         rows={factories}
         rowKey={(f) => f.id}
-        emptyTitle="No factories found."
+        emptyTitle={t("no_factories_found")}
         rowActions={(f) => [
-          { label: "Edit", onSelect: () => setEditing(f) },
-          { label: f.status === "ACTIVE" ? "Deactivate" : "Activate", onSelect: () => runToggle(f) },
-          { label: "Delete", destructive: true, onSelect: () => setDeleting(f) },
+          { label: tc("edit"), onSelect: () => setEditing(f) },
+          { label: f.status === "ACTIVE" ? t("deactivate") : t("activate"), onSelect: () => runToggle(f) },
+          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(f) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
@@ -137,9 +143,9 @@ function FactoriesTable({ factories, meta, page, search, status, actions }) {
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={() => setDeleting(null)}
-        title={`Delete ${deleting?.name}?`}
-        description="Only possible while nothing has ever run in it — a factory that has is closed instead."
-        confirmLabel="Delete"
+        title={t("delete_factory_title", { name: deleting?.name })}
+        description={t("delete_factory_description")}
+        confirmLabel={tc("delete")}
         loading={pending}
         onConfirm={runDelete}
       />
