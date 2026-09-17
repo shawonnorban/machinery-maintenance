@@ -237,14 +237,18 @@ function PostCostForm({ categories, currency, action, onMutated }) {
             </FormField>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <FormField label={t("source")} required>
-              {(fieldProps) => <Select {...fieldProps} value={sourceType} onValueChange={setSourceType} options={SOURCE_OPTIONS} />}
-            </FormField>
-            <FormField label={t("occurred_at")} error={state?.errors?.occurred_at?.[0]}>
-              {(fieldProps) => <DateTimeField {...fieldProps} value={occurredAt} onChange={setOccurredAt} />}
-            </FormField>
-          </div>
+          <FormField label={t("source")} required>
+            {(fieldProps) => <Select {...fieldProps} value={sourceType} onValueChange={setSourceType} options={SOURCE_OPTIONS} />}
+          </FormField>
+
+          {/* Its own row, not paired in a 2-col grid — `DateTimeField` is
+              itself a two-part date+time layout, and this card runs only
+              2/5 of the tab's width (`lg:col-span-2`) on top of that; halving
+              it again left the date button a few px wide and its "Pick a
+              date" label wrapping onto three lines. */}
+          <FormField label={t("occurred_at")} error={state?.errors?.occurred_at?.[0]}>
+            {(fieldProps) => <DateTimeField {...fieldProps} value={occurredAt} onChange={setOccurredAt} />}
+          </FormField>
 
           <FormField label={t("description")} error={state?.errors?.description?.[0]}>
             {(fieldProps) => <Input {...fieldProps} maxLength={255} value={description} onChange={(e) => setDescription(e.target.value)} />}

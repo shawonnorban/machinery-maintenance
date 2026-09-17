@@ -90,5 +90,6 @@
     "all_work_synced": "সব কাজ সিঙ্ক হয়েছে",
     "sync_pending_failed_summary": ":pending টি বাকি, :failed টি ব্যর্থ",
     "sync_item_pending": ":label — বাকি",
-    "sync_item_failed": ":label — ব্যর্থ, বাতিল করতে ট্যাপ করুন"
+    "sync_item_failed": ":label — ব্যর্থ, বাতিল করতে ট্যাপ করুন",
+    "pick_a_date": "একটি তারিখ বাছুন"
 }

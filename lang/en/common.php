@@ -112,4 +112,5 @@ return [
     'sync_pending_failed_summary' => ':pending pending, :failed failed',
     'sync_item_pending' => ':label — pending',
     'sync_item_failed' => ':label — failed, tap to discard',
+    'pick_a_date' => 'Pick a date',
 ];

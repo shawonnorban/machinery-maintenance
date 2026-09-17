@@ -6,6 +6,7 @@ import { DayPicker } from "react-day-picker";
 import { format, parse, isValid } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 const VALUE_FORMAT = "yyyy-MM-dd";
 
@@ -17,9 +18,15 @@ const VALUE_FORMAT = "yyyy-MM-dd";
  *
  * Always full width — never pass a width class, size the wrapping element.
  *
+ * `placeholder` defaults to a translated "Pick a date" — no call site in
+ * the app currently overrides it, so this is the one leaf UI primitive
+ * that reads `useT` itself rather than taking pre-translated text as a
+ * prop, the same as every other component in this design system.
+ *
  * @param {{ value: string | null, onChange: (value: string | null) => void, placeholder?: string, disabled?: boolean, className?: string }} props
  */
-function DatePicker({ value, onChange, placeholder = "Pick a date", disabled, className, ...rest }) {
+function DatePicker({ value, onChange, placeholder, disabled, className, ...rest }) {
+  const t = useT("common");
   const [open, setOpen] = useState(false);
   const selected = value ? parse(value, VALUE_FORMAT, new Date()) : undefined;
   // Fixed dd/MM/yyyy rather than `date-fns`'s locale-dependent "PP" — the
@@ -44,7 +51,7 @@ function DatePicker({ value, onChange, placeholder = "Pick a date", disabled, cl
           className,
         )}
       >
-        {displayValue ?? placeholder}
+        <span className="truncate">{displayValue ?? placeholder ?? t("pick_a_date")}</span>
         <CalendarIcon className="size-4 shrink-0 text-foreground-muted" />
       </Popover.Trigger>
       <Popover.Portal>
