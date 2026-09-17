@@ -9,28 +9,30 @@ import { Card } from "@/components/ui/card";
 import { SparePartDetailTabs } from "@/components/inventory/spare-part-detail-tabs";
 import { ReceiveStockModal } from "@/components/inventory/receive-stock-modal";
 import { AdjustStockModal } from "@/components/inventory/adjust-stock-modal";
-import { receiveStock, adjustStock, reverseTransaction, addCompatibility, deleteCompatibility } from "./actions";
+import { receiveStock, adjustStock, reverseTransaction } from "./actions";
 import { formatNumber, formatCurrency } from "@/lib/format";
 
 /**
  * Mirrors `SparePartController::show`'s core (catalogue info, stock by
  * bin, transaction ledger, receive/adjust/reverse, compatibility
  * management). Create/edit live at `../create` and `./edit`.
+ *
+ * Only three calls up front — the part itself, its stock summary (shown
+ * eagerly in the always-visible header card), and bins (needed by the
+ * header's Receive/Adjust actions) — rather than the seven this page
+ * used to fire in one `Promise.all`. Transactions and Compatibility are
+ * fetched by their own tab, lazily, the first time each is actually
+ * opened (`SparePartDetailTabs`'s own note has why): the same problem
+ * already found and fixed on the asset/work-order/breakdown detail pages.
  */
 export default async function SparePartDetailPage({ params }) {
   const { partId } = await params;
 
-  const [part, stock, transactionsPage, bins, compatibilityRows, formOptions, otherPartsPage] = await Promise.all([
+  const [part, stock, bins] = await Promise.all([
     apiFetch(`/spare-parts/${partId}`),
     apiFetch(`/spare-parts/${partId}/stock`),
-    apiFetch(`/spare-parts/${partId}/transactions?per_page=50`),
     apiFetch("/spare-parts/bins"),
-    apiFetch(`/spare-parts/${partId}/compatibility`),
-    apiFetch("/spare-parts/form-options"),
-    apiFetch("/spare-parts?per_page=100"),
   ]);
-
-  const otherParts = otherPartsPage.filter((p) => p.id !== partId);
 
   return (
     <>
@@ -74,19 +76,7 @@ export default async function SparePartDetailPage({ params }) {
         </SummaryItem>
       </Card>
 
-      <SparePartDetailTabs
-        part={part}
-        stock={stock}
-        transactions={transactionsPage}
-        reverseAction={reverseTransaction.bind(null, partId)}
-        compatibility={{
-          rows: compatibilityRows,
-          assetModels: formOptions.asset_models,
-          otherParts,
-          addAction: addCompatibility.bind(null, partId),
-          deleteAction: deleteCompatibility.bind(null, partId),
-        }}
-      />
+      <SparePartDetailTabs part={part} partId={partId} stock={stock} reverseAction={reverseTransaction.bind(null, partId)} />
     </>
   );
 }

@@ -109,4 +109,31 @@ async function deleteCompatibility(partId, compatibilityId) {
   }
 }
 
-export { receiveStock, adjustStock, reverseTransaction, addCompatibility, deleteCompatibility };
+/**
+ * The two fetches behind this page's less-often-opened tabs (Transactions,
+ * Compatibility) — see `SparePartDetailTabs`'s own note for why: the same
+ * problem already found and fixed on the asset/work-order/breakdown detail
+ * pages, a slow all-at-once fetch on this product's actual shared hosting.
+ */
+async function getTransactions(partId) {
+  return apiFetch(`/spare-parts/${partId}/transactions?per_page=50`);
+}
+
+async function getCompatibilityData(partId) {
+  const [rows, formOptions, otherPartsPage] = await Promise.all([
+    apiFetch(`/spare-parts/${partId}/compatibility`),
+    apiFetch("/spare-parts/form-options"),
+    apiFetch("/spare-parts?per_page=100"),
+  ]);
+
+  return {
+    rows,
+    assetModels: formOptions.asset_models,
+    otherParts: otherPartsPage.filter((p) => p.id !== partId),
+  };
+}
+
+export {
+  receiveStock, adjustStock, reverseTransaction, addCompatibility, deleteCompatibility,
+  getTransactions, getCompatibilityData,
+};
