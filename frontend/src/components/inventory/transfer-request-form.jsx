@@ -10,11 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Trash2, Plus } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 let nextRowId = 1;
 
 /** Mirrors `TransferController::store`'s form — one factory asks, an item line per part/bin/quantity. */
 function TransferRequestForm({ factories, bins, spareParts, action }) {
+  const t = useT("inventory");
+  const tc = useT("common");
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
 
@@ -59,21 +62,21 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Route</CardTitle>
+          <CardTitle>{t("route")}</CardTitle>
         </CardHeader>
         <CardBody className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="From factory" required error={state?.errors?.from_factory_id?.[0]}>
+          <FormField label={t("from_factory")} required error={state?.errors?.from_factory_id?.[0]}>
             {(fieldProps) => (
-              <Select {...fieldProps} value={fromFactoryId} onValueChange={setFromFactoryId} options={factoryOptions} placeholder="Select a factory" />
+              <Select {...fieldProps} value={fromFactoryId} onValueChange={setFromFactoryId} options={factoryOptions} placeholder={t("select_a_factory")} />
             )}
           </FormField>
-          <FormField label="To factory" required error={state?.errors?.to_factory_id?.[0]}>
+          <FormField label={t("to_factory")} required error={state?.errors?.to_factory_id?.[0]}>
             {(fieldProps) => (
-              <Select {...fieldProps} value={toFactoryId} onValueChange={setToFactoryId} options={factoryOptions} placeholder="Select a factory" />
+              <Select {...fieldProps} value={toFactoryId} onValueChange={setToFactoryId} options={factoryOptions} placeholder={t("select_a_factory")} />
             )}
           </FormField>
           <div className="sm:col-span-2">
-            <FormField label="Notes" error={state?.errors?.notes?.[0]}>
+            <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
               {(fieldProps) => <Textarea {...fieldProps} value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={2000} />}
             </FormField>
           </div>
@@ -82,39 +85,39 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Items</CardTitle>
+          <CardTitle>{t("items")}</CardTitle>
         </CardHeader>
         <CardBody className="flex flex-col gap-3">
           {items.map((item, index) => (
             <div key={item.rowId} className="grid grid-cols-1 gap-2 border-b border-border pb-3 sm:grid-cols-12 sm:items-end sm:border-0 sm:pb-0">
               <div className="sm:col-span-6">
-                <FormField label={index === 0 ? "Part" : undefined}>
+                <FormField label={index === 0 ? t("part") : undefined}>
                   {(fieldProps) => (
                     <Select
                       {...fieldProps}
                       value={item.spare_part_id}
                       onValueChange={(value) => updateItem(item.rowId, "spare_part_id", value)}
                       options={partOptions}
-                      placeholder="Select a part"
+                      placeholder={t("select_a_part")}
                     />
                   )}
                 </FormField>
               </div>
               <div className="sm:col-span-3">
-                <FormField label={index === 0 ? "From bin" : undefined}>
+                <FormField label={index === 0 ? t("from_bin") : undefined}>
                   {(fieldProps) => (
                     <Select
                       {...fieldProps}
                       value={item.from_bin_id}
                       onValueChange={(value) => updateItem(item.rowId, "from_bin_id", value)}
                       options={binOptions}
-                      placeholder="Select a bin"
+                      placeholder={t("select_a_bin")}
                     />
                   )}
                 </FormField>
               </div>
               <div className="sm:col-span-2">
-                <FormField label={index === 0 ? "Quantity" : undefined}>
+                <FormField label={index === 0 ? t("quantity") : undefined}>
                   {(fieldProps) => (
                     <Input
                       {...fieldProps}
@@ -128,7 +131,7 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
                 </FormField>
               </div>
               <div className="sm:col-span-1">
-                <Button type="button" variant="ghost" size="icon" aria-label="Remove item" onClick={() => removeItem(item.rowId)} disabled={items.length === 1}>
+                <Button type="button" variant="ghost" size="icon" aria-label={t("remove_item")} onClick={() => removeItem(item.rowId)} disabled={items.length === 1}>
                   <Trash2 className="text-danger" />
                 </Button>
               </div>
@@ -139,7 +142,7 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
 
           <div>
             <Button type="button" variant="outline" size="sm" onClick={addItem}>
-              <Plus /> Add item
+              <Plus /> {t("add_item")}
             </Button>
           </div>
         </CardBody>
@@ -147,10 +150,10 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          Request transfer
+          {t("request_transfer")}
         </Button>
       </div>
     </form>

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TransfersTable } from "@/components/inventory/transfers-table";
+import { getT } from "@/lib/i18n-server";
 
 /** Mirrors `InventoryTransferApiController::index` — either end of the move: the sending factory sees it leave, the receiving one sees it coming. */
 export default async function InventoryTransfersPage({ searchParams }) {
@@ -15,17 +16,20 @@ export default async function InventoryTransfersPage({ searchParams }) {
   const query = new URLSearchParams({ page: String(page) });
   if (status) query.set("status", status);
 
-  const transfers = await apiFetch(`/inventory-transfers?${query.toString()}`, { includeMeta: true });
+  const [transfers, t] = await Promise.all([
+    apiFetch(`/inventory-transfers?${query.toString()}`, { includeMeta: true }),
+    getT("inventory"),
+  ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Transfers" }]}
-        title="Transfers"
-        description="Stock moving between factories — requested, approved, dispatched, received."
+        breadcrumb={[{ label: t("transfers") }]}
+        title={t("transfers")}
+        description={t("transfers_intro")}
         actions={
           <Link href="/inventory/transfers/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> New transfer
+            <Plus /> {t("new_transfer")}
           </Link>
         }
       />
