@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `account/index.blade.php`'s "Signed-in devices" card — every
@@ -17,6 +18,7 @@ import { useToastManager } from "@/components/ui/toast";
  * session is offered a "Sign out" button.
  */
 function SessionsTable({ sessions, actions }) {
+  const t = useT("account");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
@@ -25,7 +27,7 @@ function SessionsTable({ sessions, actions }) {
     startTransition(async () => {
       const result = await actions.revokeSession(sessionId);
       if (result?.status === "success") {
-        toastManager.add({ title: "Device signed out", type: "success" });
+        toastManager.add({ title: t("session_revoked"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -36,21 +38,21 @@ function SessionsTable({ sessions, actions }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Signed-in devices</CardTitle>
+        <CardTitle>{t("signed_in_devices")}</CardTitle>
       </CardHeader>
       <CardBody className="p-0">
         {sessions.length === 0 ? (
           <div className="p-5">
-            <EmptyState title="No sessions to show." description="A cookie-session driver keeps no index of where you're signed in." />
+            <EmptyState title={t("no_sessions")} description={t("no_sessions_hint")} />
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="text-xs font-medium text-foreground-muted">
                 <tr>
-                  <th className="px-5 py-2.5 text-left">Device</th>
-                  <th className="px-5 py-2.5 text-left">IP address</th>
-                  <th className="px-5 py-2.5 text-left">Last active</th>
+                  <th className="px-5 py-2.5 text-left">{t("device")}</th>
+                  <th className="px-5 py-2.5 text-left">{t("ip_address")}</th>
+                  <th className="px-5 py-2.5 text-left">{t("last_active")}</th>
                   <th className="px-5 py-2.5 text-right"></th>
                 </tr>
               </thead>
@@ -64,7 +66,7 @@ function SessionsTable({ sessions, actions }) {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <Button size="sm" variant="outline" loading={pending} onClick={() => runRevoke(session.id)}>
-                        Sign out
+                        {t("sign_out_device")}
                       </Button>
                     </td>
                   </tr>

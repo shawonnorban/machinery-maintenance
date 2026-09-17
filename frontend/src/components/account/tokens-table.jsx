@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `account/index.blade.php`'s "API tokens" card — every live
@@ -21,6 +22,7 @@ import { useToastManager } from "@/components/ui/toast";
  * its own revoke button — revoking it would end this session mid-click.
  */
 function TokensTable({ tokens, actions }) {
+  const t = useT("account");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
@@ -33,7 +35,7 @@ function TokensTable({ tokens, actions }) {
     startTransition(async () => {
       const result = await actions.revokeToken(tokenId);
       if (result?.status === "success") {
-        toastManager.add({ title: "Token revoked", type: "success" });
+        toastManager.add({ title: t("token_revoked"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -44,16 +46,16 @@ function TokensTable({ tokens, actions }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>API tokens</CardTitle>
+        <CardTitle>{t("api_tokens")}</CardTitle>
       </CardHeader>
       <CardBody className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="text-xs font-medium text-foreground-muted">
               <tr>
-                <th className="px-5 py-2.5 text-left">Token</th>
-                <th className="px-5 py-2.5 text-left">Last used</th>
-                <th className="px-5 py-2.5 text-left">Expires</th>
+                <th className="px-5 py-2.5 text-left">{t("token_name")}</th>
+                <th className="px-5 py-2.5 text-left">{t("last_used")}</th>
+                <th className="px-5 py-2.5 text-left">{t("expires")}</th>
                 <th className="px-5 py-2.5 text-right"></th>
               </tr>
             </thead>
@@ -64,18 +66,18 @@ function TokensTable({ tokens, actions }) {
                     {token.name}
                     {/* The last four characters, so revoking one of six can be told apart without ever showing one in full again. */}
                     <span className="ml-1 text-xs text-foreground-muted">…{token.last_four}</span>
-                    {token.is_current ? <Badge variant="info" className="ml-2">This session</Badge> : null}
+                    {token.is_current ? <Badge variant="info" className="ml-2">{t("this_device")}</Badge> : null}
                   </td>
                   <td className="px-5 py-3 text-foreground-muted">
                     <FormattedDateTime value={token.last_used_at} fallback="—" />
                   </td>
                   <td className="px-5 py-3 text-foreground-muted">
-                    <FormattedDateTime value={token.expires_at} fallback="Never" />
+                    <FormattedDateTime value={token.expires_at} fallback={t("never")} />
                   </td>
                   <td className="px-5 py-3 text-right">
                     {!token.is_current ? (
                       <Button size="sm" variant="outline" loading={pending} onClick={() => runRevoke(token.id)}>
-                        Revoke
+                        {t("revoke")}
                       </Button>
                     ) : null}
                   </td>

@@ -45,4 +45,5 @@ return [
     'expires' => 'Expires',
     'revoke' => 'Revoke',
     'token_revoked' => 'That token has been revoked.',
+    'never' => 'Never',
 ];

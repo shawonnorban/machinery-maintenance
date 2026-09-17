@@ -26,5 +26,6 @@
     "last_used": "Last used",
     "expires": "Expires",
     "revoke": "Revoke",
-    "token_revoked": "That token has been revoked."
+    "token_revoked": "That token has been revoked.",
+    "never": "Never"
 }
