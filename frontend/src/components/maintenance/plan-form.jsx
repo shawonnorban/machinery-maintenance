@@ -9,30 +9,33 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { formatStatus } from "@/components/ui/status-badge";
 import { PlanPreviewPanel } from "@/components/maintenance/plan-preview-panel";
+import { useT } from "@/lib/i18n";
 
-const TRIGGER_OPTIONS = ["TIME", "METER", "COMBINED"].map((value) => ({ value, label: formatStatus(value) }));
-const MODE_OPTIONS = [
-  { value: "ROLLING", label: "Rolling — from when it was last done" },
-  { value: "FIXED", label: "Fixed — from the calendar, regardless of when it was last done" },
-];
-const LOGIC_OPTIONS = [
-  { value: "OR", label: "Whichever comes first" },
-  { value: "AND", label: "Both required" },
-];
 const INTERVAL_UNITS = ["DAY", "WEEK", "MONTH", "QUARTER", "YEAR", "HOUR"].map((value) => ({ value, label: value }));
-const PRIORITY_OPTIONS = ["CRITICAL", "HIGH", "MEDIUM", "LOW"].map((value) => ({ value, label: formatStatus(value) }));
-const NON_WORKING_DAY_OPTIONS = [
-  { value: "NEXT_WORKING_DAY", label: "Move to the next working day" },
-  { value: "PREVIOUS_WORKING_DAY", label: "Move to the previous working day" },
-  { value: "NONE", label: "Leave it on the calendar date" },
-];
 
 /** Mirrors `plans::_form.blade.php`, including its live due-date preview panel. */
 function PlanForm({ plan = null, options, action, previewAction }) {
+  const t = useT("maintenance");
+  const tc = useT("common");
   const isEdit = plan !== null;
   const router = useRouter();
+
+  const TRIGGER_OPTIONS = ["TIME", "METER", "COMBINED"].map((value) => ({ value, label: t(`trigger_${value.toLowerCase()}`) }));
+  const MODE_OPTIONS = [
+    { value: "ROLLING", label: t("mode_rolling") },
+    { value: "FIXED", label: t("mode_fixed") },
+  ];
+  const LOGIC_OPTIONS = [
+    { value: "OR", label: t("logic_or") },
+    { value: "AND", label: t("logic_and") },
+  ];
+  const PRIORITY_OPTIONS = ["CRITICAL", "HIGH", "MEDIUM", "LOW"].map((value) => ({ value, label: t(`priority_${value.toLowerCase()}`) }));
+  const NON_WORKING_DAY_OPTIONS = [
+    { value: "NEXT_WORKING_DAY", label: t("policy_next") },
+    { value: "PREVIOUS_WORKING_DAY", label: t("policy_previous") },
+    { value: "NONE", label: t("policy_none") },
+  ];
   const [state, dispatch, pending] = useActionState(action, null);
 
   const timeRule = plan?.rules?.find((r) => r.rule_type === "TIME");
@@ -98,12 +101,12 @@ function PlanForm({ plan = null, options, action, previewAction }) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <FormField label="Name" required error={state?.errors?.name?.[0]}>
+      <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
         {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
       </FormField>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Target asset" error={state?.errors?.asset_id?.[0]}>
+        <FormField label={t("target_asset")} error={state?.errors?.asset_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -117,7 +120,7 @@ function PlanForm({ plan = null, options, action, previewAction }) {
             />
           )}
         </FormField>
-        <FormField label="Target asset type" helperText="Exactly one of asset or asset type — never both, never neither.">
+        <FormField label={t("target_asset_type")} helperText={t("target_asset_hint")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -127,31 +130,31 @@ function PlanForm({ plan = null, options, action, previewAction }) {
                 if (value) setAssetId("");
               }}
               placeholder="—"
-              options={options.asset_types.map((t) => ({ value: t.id, label: t.name }))}
+              options={options.asset_types.map((type) => ({ value: type.id, label: type.name }))}
             />
           )}
         </FormField>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Maintenance type" required error={state?.errors?.maintenance_type_id?.[0]}>
+        <FormField label={t("maintenance_type")} required error={state?.errors?.maintenance_type_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={maintenanceTypeId}
               onValueChange={setMaintenanceTypeId}
-              options={options.maintenance_types.map((t) => ({ value: t.id, label: t.name }))}
+              options={options.maintenance_types.map((type) => ({ value: type.id, label: type.name }))}
             />
           )}
         </FormField>
-        <FormField label="Template" helperText="Only published versions are listed.">
+        <FormField label={t("template")} helperText={t("template_hint")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={templateVersionId}
               onValueChange={setTemplateVersionId}
               placeholder="—"
-              options={options.templates.map((t) => ({ value: t.current_version_id, label: t.name }))}
+              options={options.templates.map((tpl) => ({ value: tpl.current_version_id, label: tpl.name }))}
             />
           )}
         </FormField>
@@ -160,14 +163,14 @@ function PlanForm({ plan = null, options, action, previewAction }) {
       <hr className="border-border" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="Trigger" required>
+        <FormField label={t("trigger")} required>
           {(fieldProps) => <Select {...fieldProps} value={triggerType} onValueChange={setTriggerType} options={TRIGGER_OPTIONS} />}
         </FormField>
-        <FormField label="Schedule mode" required>
+        <FormField label={t("schedule_mode")} required>
           {(fieldProps) => <Select {...fieldProps} value={scheduleMode} onValueChange={setScheduleMode} options={MODE_OPTIONS} />}
         </FormField>
         {triggerType === "COMBINED" ? (
-          <FormField label="Rule logic" required error={state?.errors?.rule_logic?.[0]}>
+          <FormField label={t("rule_logic")} required error={state?.errors?.rule_logic?.[0]}>
             {(fieldProps) => <Select {...fieldProps} value={ruleLogic} onValueChange={setRuleLogic} options={LOGIC_OPTIONS} />}
           </FormField>
         ) : null}
@@ -175,12 +178,12 @@ function PlanForm({ plan = null, options, action, previewAction }) {
 
       {triggerType === "TIME" || triggerType === "COMBINED" ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Every" required error={state?.errors?.interval_value?.[0]}>
+          <FormField label={t("every")} required error={state?.errors?.interval_value?.[0]}>
             {(fieldProps) => (
               <Input {...fieldProps} type="number" min="1" max="9999" value={intervalValue} onChange={(e) => setIntervalValue(e.target.value)} required />
             )}
           </FormField>
-          <FormField label="Interval">
+          <FormField label={t("interval")}>
             {(fieldProps) => <Select {...fieldProps} value={intervalUnit} onValueChange={setIntervalUnit} options={INTERVAL_UNITS} />}
           </FormField>
         </div>
@@ -188,19 +191,19 @@ function PlanForm({ plan = null, options, action, previewAction }) {
 
       {triggerType === "METER" || triggerType === "COMBINED" ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Meter threshold" required error={state?.errors?.meter_threshold?.[0]}>
+          <FormField label={t("meter_threshold")} required error={state?.errors?.meter_threshold?.[0]}>
             {(fieldProps) => (
               <Input {...fieldProps} type="number" step="0.0001" min="0" value={meterThreshold} onChange={(e) => setMeterThreshold(e.target.value)} required />
             )}
           </FormField>
-          <FormField label="Meter type">
+          <FormField label={t("meter_type")}>
             {(fieldProps) => (
               <Select
                 {...fieldProps}
                 value={meterTypeId}
                 onValueChange={setMeterTypeId}
                 placeholder="—"
-                options={options.meter_types.map((t) => ({ value: t.id, label: t.name }))}
+                options={options.meter_types.map((type) => ({ value: type.id, label: type.name }))}
               />
             )}
           </FormField>
@@ -210,38 +213,38 @@ function PlanForm({ plan = null, options, action, previewAction }) {
       <hr className="border-border" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="Start date" required error={state?.errors?.start_date?.[0]}>
+        <FormField label={t("start_date")} required error={state?.errors?.start_date?.[0]}>
           {() => <DatePicker value={startDate} onChange={setStartDate} />}
         </FormField>
-        <FormField label="End date" error={state?.errors?.end_date?.[0]}>
+        <FormField label={t("end_date")} error={state?.errors?.end_date?.[0]}>
           {() => <DatePicker value={endDate} onChange={setEndDate} />}
         </FormField>
-        <FormField label="Priority" required>
+        <FormField label={t("priority")} required>
           {(fieldProps) => <Select {...fieldProps} value={priority} onValueChange={setPriority} options={PRIORITY_OPTIONS} />}
         </FormField>
-        <FormField label="Non-working day">
+        <FormField label={t("non_working_day_short")}>
           {(fieldProps) => <Select {...fieldProps} value={nonWorkingDayPolicy} onValueChange={setNonWorkingDayPolicy} options={NON_WORKING_DAY_OPTIONS} />}
         </FormField>
-        <FormField label="Grace (minutes)">
+        <FormField label={t("grace_minutes")}>
           {(fieldProps) => (
             <Input {...fieldProps} type="number" min="0" max="43200" value={gracePeriodMinutes} onChange={(e) => setGracePeriodMinutes(e.target.value)} />
           )}
         </FormField>
-        <FormField label="Lead time (days)">
+        <FormField label={t("lead_time_days_short")}>
           {(fieldProps) => <Input {...fieldProps} type="number" min="1" max="730" value={leadTimeDays} onChange={(e) => setLeadTimeDays(e.target.value)} />}
         </FormField>
-        <FormField label="Team">
+        <FormField label={t("team")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={assignedTeamId}
               onValueChange={setAssignedTeamId}
-              placeholder="Unassigned"
-              options={options.teams.map((t) => ({ value: t.id, label: t.name }))}
+              placeholder={t("unassigned")}
+              options={options.teams.map((team) => ({ value: team.id, label: team.name }))}
             />
           )}
         </FormField>
-        <FormField label="Estimated duration (minutes)">
+        <FormField label={t("estimated_duration_minutes")}>
           {(fieldProps) => (
             <Input {...fieldProps} type="number" min="1" max="10080" value={estimatedDurationMinutes} onChange={(e) => setEstimatedDurationMinutes(e.target.value)} />
           )}
@@ -249,15 +252,15 @@ function PlanForm({ plan = null, options, action, previewAction }) {
       </div>
 
       <label className="flex items-center gap-2 text-sm text-foreground">
-        <Checkbox checked={requiresShutdown} onCheckedChange={setRequiresShutdown} /> Requires the machine to be shut down
+        <Checkbox checked={requiresShutdown} onCheckedChange={setRequiresShutdown} /> {t("requires_shutdown_checkbox")}
       </label>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? "Save changes" : "Create plan"}
+          {isEdit ? t("save_changes") : t("create_plan")}
         </Button>
       </div>
       </form>

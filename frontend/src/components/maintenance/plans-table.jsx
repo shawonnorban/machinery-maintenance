@@ -9,19 +9,22 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
-
-const ACTIVE_OPTIONS = [
-  { value: "", label: "All plans" },
-  { value: "true", label: "Active" },
-  { value: "false", label: "Inactive" },
-];
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `PlanController::index` — when maintenance is due, and the rule that decides it. */
 function PlansTable({ plans, meta, page, active, actions }) {
+  const t = useT("maintenance");
+  const tc = useT("common");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [deleting, setDeleting] = useState(null);
   const toastManager = useToastManager();
+
+  const activeOptions = [
+    { value: "", label: t("all_plans") },
+    { value: "true", label: t("active") },
+    { value: "false", label: t("inactive") },
+  ];
 
   function navigate(next) {
     const params = new URLSearchParams({
@@ -46,7 +49,7 @@ function PlansTable({ plans, meta, page, active, actions }) {
     startTransition(async () => {
       const result = await actions.deletePlan(deleting.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Plan deleted", type: "success" });
+        toastManager.add({ title: t("plan_deleted_toast"), type: "success" });
         setDeleting(null);
         router.refresh();
       } else if (result?.status === "error") {
@@ -59,14 +62,14 @@ function PlansTable({ plans, meta, page, active, actions }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="w-full max-w-[220px]">
-        <Select options={ACTIVE_OPTIONS} value={active} onValueChange={(value) => navigate({ active: value, page: 1 })} />
+        <Select options={activeOptions} value={active} onValueChange={(value) => navigate({ active: value, page: 1 })} />
       </div>
 
       <DataTable
         columns={[
           {
             key: "name",
-            header: "Plan",
+            header: t("plan"),
             render: (p) => (
               <div>
                 <Link href={`/maintenance/plans/${p.id}`} className="font-medium text-brand hover:underline">
@@ -78,21 +81,25 @@ function PlansTable({ plans, meta, page, active, actions }) {
           },
           {
             key: "trigger_type",
-            header: "Trigger",
-            render: (p) => p.trigger_type.charAt(0) + p.trigger_type.slice(1).toLowerCase(),
+            header: t("trigger"),
+            render: (p) => t(`trigger_${p.trigger_type?.toLowerCase()}`),
           },
-          { key: "next_due_at", header: "Next due", render: (p) => <FormattedDateTime value={p.next_due_at} mode="date" /> },
-          { key: "open_schedules_count", header: "Open", align: "right", render: (p) => p.open_schedules_count ?? 0 },
-          { key: "status", header: "Status", render: (p) => <StatusBadge status={p.active ? "ACTIVE" : "INACTIVE"} /> },
+          { key: "next_due_at", header: t("next_due"), render: (p) => <FormattedDateTime value={p.next_due_at} mode="date" /> },
+          { key: "open_schedules_count", header: t("open_occurrences"), align: "right", render: (p) => p.open_schedules_count ?? 0 },
+          {
+            key: "status",
+            header: t("status"),
+            render: (p) => <StatusBadge status={p.active ? "ACTIVE" : "INACTIVE"} label={p.active ? t("active") : t("inactive")} />,
+          },
         ]}
         rows={plans}
         rowKey={(p) => p.id}
-        emptyTitle="No maintenance plans yet."
+        emptyTitle={t("no_plans")}
         rowActions={(p) => [
-          { label: "View", onSelect: () => router.push(`/maintenance/plans/${p.id}`) },
-          { label: "Edit", onSelect: () => router.push(`/maintenance/plans/${p.id}/edit`) },
-          { label: p.active ? "Deactivate" : "Activate", onSelect: () => runToggle(p) },
-          { label: "Delete", destructive: true, onSelect: () => setDeleting(p) },
+          { label: tc("view"), onSelect: () => router.push(`/maintenance/plans/${p.id}`) },
+          { label: tc("edit"), onSelect: () => router.push(`/maintenance/plans/${p.id}/edit`) },
+          { label: p.active ? t("deactivate") : t("activate"), onSelect: () => runToggle(p) },
+          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(p) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
@@ -101,9 +108,9 @@ function PlansTable({ plans, meta, page, active, actions }) {
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={() => setDeleting(null)}
-        title={`Delete ${deleting?.name}?`}
-        description="Only possible while the plan has never generated an occurrence."
-        confirmLabel="Delete"
+        title={t("delete_plan_confirm", { name: deleting?.name })}
+        description={t("delete_plan_hint")}
+        confirmLabel={tc("delete")}
         loading={pending}
         onConfirm={runDelete}
       />

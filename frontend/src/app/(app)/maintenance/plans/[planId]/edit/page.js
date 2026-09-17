@@ -2,25 +2,28 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { PlanForm } from "@/components/maintenance/plan-form";
+import { getT } from "@/lib/i18n-server";
 import { updatePlan } from "../actions";
 import { previewPlan } from "../../actions";
 
 export default async function EditMaintenancePlanPage({ params }) {
   const { planId } = await params;
 
-  const [plan, options] = await Promise.all([
+  const [plan, options, t, tc] = await Promise.all([
     apiFetch(`/maintenance-plans/${planId}`),
     apiFetch("/maintenance-plans/form-options"),
+    getT("maintenance"),
+    getT("common"),
   ]);
 
   return (
     <>
       <PageHeader
         breadcrumb={[
-          { label: "Maintenance" },
-          { label: "Plans", href: "/maintenance/plans" },
+          { label: t("maintenance") },
+          { label: t("plans"), href: "/maintenance/plans" },
           { label: plan.name, href: `/maintenance/plans/${planId}` },
-          { label: "Edit" },
+          { label: tc("edit") },
         ]}
         title={plan.name}
       />

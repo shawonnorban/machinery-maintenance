@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `plans::_form.blade.php`'s own live preview panel (Frontend 5.4)
@@ -10,6 +11,7 @@ import { useEffect, useState } from "react";
  * Blade script's own catch that just clears the list on error.
  */
 function PlanPreviewPanel({ scheduleMode, startDate, intervalValue, intervalUnit, nonWorkingDayPolicy, previewAction }) {
+  const t = useT("maintenance");
   const [result, setResult] = useState(null);
 
   useEffect(() => {
@@ -41,17 +43,17 @@ function PlanPreviewPanel({ scheduleMode, startDate, intervalValue, intervalUnit
 
   return (
     <div className="sticky top-20 flex flex-col rounded-sm border border-border bg-surface p-4">
-      <h3 className="mb-3 text-sm font-semibold text-foreground">Preview</h3>
+      <h3 className="mb-3 text-sm font-semibold text-foreground">{t("preview")}</h3>
 
       {dates.length === 0 ? (
-        <p className="text-sm text-foreground-muted">{result?.note || "Set an interval to see the dates."}</p>
+        <p className="text-sm text-foreground-muted">{result?.note || t("preview_needs_interval")}</p>
       ) : (
         <>
           <ol className="flex flex-col divide-y divide-border">
             {dates.map((entry) => (
               <li key={entry.date} className="flex items-center justify-between py-1.5 text-sm">
                 <span className="text-foreground">{entry.date}</span>
-                {entry.moved ? <span className="text-xs text-foreground-muted">moved off a non-working day</span> : null}
+                {entry.moved ? <span className="text-xs text-foreground-muted">{t("preview_moved")}</span> : null}
               </li>
             ))}
           </ol>
@@ -59,7 +61,7 @@ function PlanPreviewPanel({ scheduleMode, startDate, intervalValue, intervalUnit
         </>
       )}
 
-      <p className="mt-3 text-xs text-foreground-muted">A dry run. Nothing is saved until you submit.</p>
+      <p className="mt-3 text-xs text-foreground-muted">{t("preview_hint")}</p>
     </div>
   );
 }
