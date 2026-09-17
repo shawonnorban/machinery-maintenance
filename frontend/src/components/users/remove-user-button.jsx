@@ -6,6 +6,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /**
  * Ends this company's membership (`ManageCompanyUser::remove` — the
@@ -15,6 +16,7 @@ import { useToastManager } from "@/components/ui/toast";
  * off stay; only the row disappears from this company's own list.
  */
 function RemoveUserButton({ userId, userName, action }) {
+  const t = useT("user");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -24,7 +26,7 @@ function RemoveUserButton({ userId, userName, action }) {
     startTransition(async () => {
       const result = await action(userId);
       if (result?.status === "success") {
-        toastManager.add({ title: "User removed", type: "success" });
+        toastManager.add({ title: t("user_removed_toast"), type: "success" });
         router.push("/settings/users");
         router.refresh();
       } else if (result?.status === "error") {
@@ -37,14 +39,14 @@ function RemoveUserButton({ userId, userName, action }) {
   return (
     <>
       <Button size="sm" variant="danger" onClick={() => setOpen(true)}>
-        <Trash2 /> Remove
+        <Trash2 /> {t("remove_button")}
       </Button>
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title={`Remove ${userName}?`}
-        description="Ends their membership of this company. Their account and everything they've signed off stay exactly as they are — they simply lose access here."
-        confirmLabel="Remove"
+        title={t("remove_user_title", { name: userName })}
+        description={t("remove_user_description")}
+        confirmLabel={t("remove_button")}
         loading={pending}
         onConfirm={confirm}
       />

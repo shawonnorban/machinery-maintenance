@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Modal } from "@/components/ui/modal";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `user::users.index.blade.php`'s own password-reissue flow: a
@@ -14,6 +15,7 @@ import { useToastManager } from "@/components/ui/toast";
  * a stray click before it's been copied down.
  */
 function ResetPasswordButton({ userId, action }) {
+  const t = useT("user");
   const [confirming, setConfirming] = useState(false);
   const [password, setPassword] = useState(null);
   const [pending, startTransition] = useTransition();
@@ -34,15 +36,15 @@ function ResetPasswordButton({ userId, action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setConfirming(true)}>
-        <KeyRound /> Reset password
+        <KeyRound /> {t("reset_password")}
       </Button>
 
       <ConfirmDialog
         open={confirming}
         onOpenChange={setConfirming}
-        title="Reset this user's password?"
-        description="A new password is generated immediately. Their current one stops working."
-        confirmLabel="Reset password"
+        title={t("reset_password_title")}
+        description={t("reset_password_description")}
+        confirmLabel={t("reset_password")}
         loading={pending}
         onConfirm={confirm}
       />
@@ -50,8 +52,8 @@ function ResetPasswordButton({ userId, action }) {
       <Modal
         open={password !== null}
         onOpenChange={(open) => !open && setPassword(null)}
-        title="Password reset"
-        description="Share this with them — it will not be shown again."
+        title={t("password_reset_title")}
+        description={t("password_created_hint")}
       >
         <div className="rounded-sm border border-border bg-surface-muted px-4 py-3 font-mono text-sm">{password}</div>
       </Modal>

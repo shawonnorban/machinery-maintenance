@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useT } from "@/lib/i18n";
 
 const LOCALE_OPTIONS = [
   { value: "en", label: "English" },
@@ -32,6 +33,8 @@ const LOCALE_OPTIONS = [
  * assignment on any save regardless of which screen calls it.
  */
 function UserForm({ user = null, roles, factories, departments = [], productionLines = [], action }) {
+  const t = useT("user");
+  const tc = useT("common");
   const isEdit = user !== null;
   const [state, dispatch, pending] = useActionState(action, null);
   const [name, setName] = useState(user?.name ?? "");
@@ -46,13 +49,13 @@ function UserForm({ user = null, roles, factories, departments = [], productionL
   if (!isEdit && state?.status === "success") {
     return (
       <div className="flex flex-col gap-4">
-        <Alert variant="success" title="User created">
-          Share this password with them — it will not be shown again.
+        <Alert variant="success" title={t("user_created")}>
+          {t("password_created_hint")}
         </Alert>
         <div className="rounded-sm border border-border bg-surface-muted px-4 py-3 font-mono text-sm">{state.password}</div>
         <div>
           <Link href={`/settings/users/${state.userId}`} className="text-sm font-medium text-brand hover:underline">
-            Go to their profile →
+            {t("go_to_profile")} →
           </Link>
         </div>
       </div>
@@ -84,42 +87,38 @@ function UserForm({ user = null, roles, factories, departments = [], productionL
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Name" required error={state?.errors?.name?.[0]}>
+        <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
         </FormField>
-        <FormField label="Email" required={!isEdit} helperText={isEdit ? "The address identifies the account — not this company's to change." : undefined} error={state?.errors?.email?.[0]}>
+        <FormField label={t("email")} required={!isEdit} helperText={isEdit ? t("email_is_the_account") : undefined} error={state?.errors?.email?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isEdit} required={!isEdit} />}
         </FormField>
-        <FormField label="Phone">
+        <FormField label={t("phone")}>
           {(fieldProps) => <Input {...fieldProps} value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={32} />}
         </FormField>
-        <FormField label="Locale">
+        <FormField label={t("language")}>
           {(fieldProps) => <Select {...fieldProps} value={locale} onValueChange={setLocale} options={LOCALE_OPTIONS} />}
         </FormField>
-        <FormField label="Factory" helperText="Only factory-scoped roles use it; a company role covers every factory whatever is chosen here.">
+        <FormField label={t("factory")} helperText={t("factory_hint")}>
           {(fieldProps) => (
-            <Select {...fieldProps} value={factoryId} onValueChange={setFactoryId} placeholder="Company-wide" options={factories.map((f) => ({ value: f.id, label: f.name }))} />
+            <Select {...fieldProps} value={factoryId} onValueChange={setFactoryId} placeholder={t("company_wide")} options={factories.map((f) => ({ value: f.id, label: f.name }))} />
           )}
         </FormField>
-        <FormField label="Department" helperText="Only used by Line Chief — restricts which machines they may report a breakdown against to this department.">
+        <FormField label={t("department")} helperText={t("coverage_hint")}>
           {(fieldProps) => (
-            <Select {...fieldProps} value={departmentId} onValueChange={setDepartmentId} placeholder="Whole factory" options={departments.map((d) => ({ value: d.id, label: d.name }))} />
+            <Select {...fieldProps} value={departmentId} onValueChange={setDepartmentId} placeholder={t("whole_factory")} options={departments.map((d) => ({ value: d.id, label: d.name }))} />
           )}
         </FormField>
-        <FormField label="Production line" helperText="Narrower than department — leave unset unless this person covers one specific line.">
+        <FormField label={t("production_line")} helperText={t("production_line_hint")}>
           {(fieldProps) => (
-            <Select {...fieldProps} value={productionLineId} onValueChange={setProductionLineId} placeholder="Whole department" options={productionLines.map((l) => ({ value: l.id, label: l.name }))} />
+            <Select {...fieldProps} value={productionLineId} onValueChange={setProductionLineId} placeholder={t("whole_department")} options={productionLines.map((l) => ({ value: l.id, label: l.name }))} />
           )}
         </FormField>
       </div>
 
-      {!isEdit ? (
-        <p className="text-xs text-foreground-muted">
-          Most people on a factory floor have no working email address, so a password is generated rather than sent as a reset link.
-        </p>
-      ) : null}
+      {!isEdit ? <p className="text-xs text-foreground-muted">{t("password_will_be_generated")}</p> : null}
 
-      <FormField label="Roles" required error={state?.errors?.roles?.[0]}>
+      <FormField label={t("roles")} required error={state?.errors?.roles?.[0]}>
         {() => (
           <div className="grid grid-cols-1 gap-2 rounded-sm border border-border-strong p-3 sm:grid-cols-2">
             {roles.map((role) => (
@@ -127,7 +126,7 @@ function UserForm({ user = null, roles, factories, departments = [], productionL
                 <Checkbox checked={selectedRoles.includes(role.id)} onCheckedChange={() => toggleRole(role.id)} className="mt-0.5" />
                 <span>
                   <span className="font-medium">{role.name}</span>
-                  <span className="ml-1.5 text-xs text-foreground-muted">{role.scope === "FACTORY" ? "Factory" : "Company"}</span>
+                  <span className="ml-1.5 text-xs text-foreground-muted">{role.scope === "FACTORY" ? t("factory_scope") : t("company_scope")}</span>
                 </span>
               </label>
             ))}
@@ -137,10 +136,10 @@ function UserForm({ user = null, roles, factories, departments = [], productionL
 
       <div className="flex justify-end gap-2">
         <Link href={isEdit ? `/settings/users/${user.id}` : "/settings/users"} className="inline-flex h-10 items-center rounded-sm border border-border-strong px-4 text-sm font-medium hover:bg-surface-muted">
-          Cancel
+          {tc("cancel")}
         </Link>
         <Button type="submit" loading={pending} disabled={selectedRoles.length === 0}>
-          {isEdit ? "Save changes" : "Invite user"}
+          {isEdit ? t("save_changes") : t("invite_user")}
         </Button>
       </div>
     </form>

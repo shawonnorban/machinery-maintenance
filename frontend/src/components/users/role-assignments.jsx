@@ -9,9 +9,11 @@ import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors the web's granular per-assignment add/remove (not the bulk `roles` array `UserApiController::update` also accepts) — one role, one factory scope, one action at a time. */
 function RoleAssignments({ userId, assignments, roles, factories, assign, remove }) {
+  const t = useT("user");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -36,21 +38,21 @@ function RoleAssignments({ userId, assignments, roles, factories, assign, remove
             <li key={a.id} className="flex items-center justify-between gap-2 rounded-sm border border-border px-3 py-2">
               <div className="flex items-center gap-2">
                 <Badge variant="brand">{a.role}</Badge>
-                <span className="text-xs text-foreground-muted">{a.factory ?? "Company-wide"}</span>
+                <span className="text-xs text-foreground-muted">{a.factory ?? t("company_wide")}</span>
               </div>
-              <button type="button" onClick={() => runRemove(a.id)} disabled={pending} className="text-foreground-muted hover:text-danger" aria-label="Remove role">
+              <button type="button" onClick={() => runRemove(a.id)} disabled={pending} className="text-foreground-muted hover:text-danger" aria-label={t("remove_role_aria")}>
                 <X className="size-4" />
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-foreground-muted">No roles assigned.</p>
+        <p className="text-sm text-foreground-muted">{t("no_roles_assigned")}</p>
       )}
 
       <div>
         <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-          <Plus className="size-4" /> Add role
+          <Plus className="size-4" /> {t("add_role")}
         </Button>
       </div>
 
@@ -60,13 +62,15 @@ function RoleAssignments({ userId, assignments, roles, factories, assign, remove
 }
 
 function AddRoleModal({ open, onOpenChange, roles, factories, action }) {
+  const t = useT("user");
+  const tc = useT("common");
   const [state, formAction] = useActionState(action, null);
   const router = useRouter();
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Role assigned", type: "success" });
+      toastManager.add({ title: t("role_assigned_toast"), type: "success" });
       queueMicrotask(() => onOpenChange(false));
       router.refresh();
     }
@@ -74,23 +78,23 @@ function AddRoleModal({ open, onOpenChange, roles, factories, action }) {
   }, [state]);
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title="Add role">
+    <Modal open={open} onOpenChange={onOpenChange} title={t("add_role")}>
       <form action={formAction} className="flex flex-col gap-4">
-        <FormField label="Role" required error={state?.errors?.role_id?.[0]}>
-          {(fieldProps) => <Select {...fieldProps} name="role_id" placeholder="Select a role" options={roles.map((r) => ({ value: String(r.id), label: r.name }))} />}
+        <FormField label={t("role")} required error={state?.errors?.role_id?.[0]}>
+          {(fieldProps) => <Select {...fieldProps} name="role_id" placeholder={t("select_a_role")} options={roles.map((r) => ({ value: String(r.id), label: r.name }))} />}
         </FormField>
 
-        <FormField label="Factory" helperText="Leave blank for a company-wide role." error={state?.errors?.factory_id?.[0]}>
-          {(fieldProps) => <Select {...fieldProps} name="factory_id" placeholder="Company-wide" options={factories.map((f) => ({ value: f.id, label: f.name }))} />}
+        <FormField label={t("factory")} helperText={t("factory_role_hint")} error={state?.errors?.factory_id?.[0]}>
+          {(fieldProps) => <Select {...fieldProps} name="factory_id" placeholder={t("company_wide")} options={factories.map((f) => ({ value: f.id, label: f.name }))} />}
         </FormField>
 
         {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
 
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tc("cancel")}
           </Button>
-          <Button type="submit">Add role</Button>
+          <Button type="submit">{t("add_role")}</Button>
         </div>
       </form>
     </Modal>

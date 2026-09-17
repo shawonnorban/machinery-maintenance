@@ -10,14 +10,16 @@ import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody } from "@/components/ui/card";
-
-const STATUS_OPTIONS = [
-  { value: "", label: "All statuses" },
-  { value: "ACTIVE", label: "Active" },
-  { value: "SUSPENDED", label: "Suspended" },
-];
+import { useT } from "@/lib/i18n";
 
 function UsersTable({ users, meta, page, search, status }) {
+  const t = useT("user");
+  const tc = useT("common");
+  const STATUS_OPTIONS = [
+    { value: "", label: t("all_statuses") },
+    { value: "ACTIVE", label: t("active") },
+    { value: "SUSPENDED", label: t("suspended") },
+  ];
   const router = useRouter();
   const [searchInput, setSearchInput] = useState(search);
 
@@ -51,7 +53,7 @@ function UsersTable({ users, meta, page, search, status }) {
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search name or email…"
+              placeholder={t("search")}
               className="pl-9"
             />
           </div>
@@ -65,7 +67,7 @@ function UsersTable({ users, meta, page, search, status }) {
         columns={[
           {
             key: "name",
-            header: "Name",
+            header: t("name"),
             render: (user) => (
               <div>
                 <Link href={`/settings/users/${user.id}`} className="font-medium text-brand hover:underline">
@@ -77,19 +79,23 @@ function UsersTable({ users, meta, page, search, status }) {
           },
           {
             key: "roles",
-            header: "Roles",
+            header: t("roles"),
             render: (user) => (
               <div className="flex flex-wrap gap-1">
                 {user.roles.length > 0 ? user.roles.map((role) => <Badge key={role} variant="neutral">{role}</Badge>) : "—"}
               </div>
             ),
           },
-          { key: "status", header: "Status", render: (user) => <StatusBadge status={user.status} /> },
+          {
+            key: "status",
+            header: t("status"),
+            render: (user) => <StatusBadge status={user.status} label={user.status === "ACTIVE" ? t("active") : t("suspended")} />,
+          },
         ]}
         rows={users}
         rowKey={(user) => user.id}
-        emptyTitle="No users found."
-        rowActions={(user) => [{ label: "View", onSelect: () => router.push(`/settings/users/${user.id}`) }]}
+        emptyTitle={t("no_users_found")}
+        rowActions={(user) => [{ label: tc("view"), onSelect: () => router.push(`/settings/users/${user.id}`) }]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />

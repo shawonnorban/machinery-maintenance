@@ -10,6 +10,7 @@ import { UserStatusToggle } from "@/components/users/user-status-toggle";
 import { RoleAssignments } from "@/components/users/role-assignments";
 import { ResetPasswordButton } from "@/components/users/reset-password-button";
 import { RemoveUserButton } from "@/components/users/remove-user-button";
+import { getT } from "@/lib/i18n-server";
 import { activateUser, deactivateUser, assignRole, removeRoleAssignment, resetPassword, removeUser } from "./actions";
 
 /**
@@ -24,16 +25,19 @@ import { activateUser, deactivateUser, assignRole, removeRoleAssignment, resetPa
 export default async function UserDetailPage({ params }) {
   const { userId } = await params;
 
-  const [user, roles, factories] = await Promise.all([
+  const [user, roles, factories, t, tc, tn] = await Promise.all([
     apiFetch(`/users/${userId}`),
     apiFetch("/roles?per_page=100"),
     apiFetch("/factories?per_page=100"),
+    getT("user"),
+    getT("common"),
+    getT("nav"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "Users", href: "/settings/users" }, { label: user.name }]}
+        breadcrumb={[{ label: tn("settings") }, { label: t("users"), href: "/settings/users" }, { label: user.name }]}
         title={user.name}
         description={user.email}
         actions={
@@ -41,10 +45,10 @@ export default async function UserDetailPage({ params }) {
             <UserStatusToggle userId={userId} status={user.status} activate={activateUser} deactivate={deactivateUser} />
             <ResetPasswordButton userId={userId} action={resetPassword} />
             <Link href={`/settings/users/${userId}/edit`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <Pencil /> Edit
+              <Pencil /> {tc("edit")}
             </Link>
             <Link href="/settings/users" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <ArrowLeft /> Back
+              <ArrowLeft /> {tc("back")}
             </Link>
             <RemoveUserButton userId={userId} userName={user.name} action={removeUser} />
           </div>
@@ -54,20 +58,20 @@ export default async function UserDetailPage({ params }) {
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Profile</CardTitle>
+            <CardTitle>{t("profile")}</CardTitle>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
-            <Field label="Status">
-              <StatusBadge status={user.status} />
+            <Field label={t("status")}>
+              <StatusBadge status={user.status} label={user.status === "ACTIVE" ? t("active") : t("suspended")} />
             </Field>
-            <Field label="Phone">{user.phone ?? "—"}</Field>
-            <Field label="Locale">{user.locale === "bn" ? "বাংলা" : "English"}</Field>
+            <Field label={t("phone")}>{user.phone ?? "—"}</Field>
+            <Field label={t("language")}>{user.locale === "bn" ? "বাংলা" : "English"}</Field>
           </CardBody>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Roles</CardTitle>
+            <CardTitle>{t("roles")}</CardTitle>
           </CardHeader>
           <CardBody>
             <RoleAssignments
