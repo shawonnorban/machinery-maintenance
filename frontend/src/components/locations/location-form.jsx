@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `AssetLocationController`'s create/edit form — a location names a
@@ -21,6 +22,8 @@ import { useToastManager } from "@/components/ui/toast";
  * pattern the technician form already uses for department → production line.
  */
 function LocationForm({ location, factories, buildings, floors, departments, sections, productionLines, workstations, action, onDone, onCancel }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const isEdit = location != null;
   const [state, dispatch, pending] = useActionState(action, null);
   const [factoryId, setFactoryId] = useState(location?.factory_id ?? factories[0]?.id ?? "");
@@ -32,7 +35,7 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: isEdit ? "Location saved" : "Location created", type: "success" });
+      toastManager.add({ title: isEdit ? t("location_saved_toast") : t("location_created_toast"), type: "success" });
       queueMicrotask(() => onDone?.());
       router.refresh();
     }
@@ -67,7 +70,7 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
   return (
     <form action={dispatch} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Factory" required error={state?.errors?.factory_id?.[0]}>
+        <FormField label={t("factory")} required error={state?.errors?.factory_id?.[0]}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -78,17 +81,17 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
             />
           )}
         </FormField>
-        <FormField label="Code" required helperText="Letters, digits, . _ - only." error={state?.errors?.code?.[0]}>
+        <FormField label={t("location_code")} required helperText={t("location_code_hint")} error={state?.errors?.code?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="code" defaultValue={location?.code} required />}
         </FormField>
       </div>
 
-      <FormField label="Name" required error={state?.errors?.name?.[0]}>
+      <FormField label={t("location_name")} required error={state?.errors?.name?.[0]}>
         {(fieldProps) => <Input {...fieldProps} name="name" defaultValue={location?.name} required />}
       </FormField>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="Building">
+        <FormField label={t("building")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -99,7 +102,7 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
             />
           )}
         </FormField>
-        <FormField label="Department">
+        <FormField label={t("department")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -110,7 +113,7 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
             />
           )}
         </FormField>
-        <FormField label="Production line" helperText={departmentId ? undefined : "Select a department first."}>
+        <FormField label={t("production_line")} helperText={departmentId ? undefined : t("select_a_department_first")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -125,7 +128,7 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="Floor" helperText={buildingId ? undefined : "Select a building first."}>
+        <FormField label={t("floor")} helperText={buildingId ? undefined : t("select_a_building_first")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -136,7 +139,7 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
             />
           )}
         </FormField>
-        <FormField label="Section" helperText={departmentId ? undefined : "Select a department first."}>
+        <FormField label={t("section")} helperText={departmentId ? undefined : t("select_a_department_first")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -147,7 +150,7 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
             />
           )}
         </FormField>
-        <FormField label="Workstation" helperText={productionLineId ? undefined : "Select a production line first."}>
+        <FormField label={t("workstation")} helperText={productionLineId ? undefined : t("select_a_production_line_first")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
@@ -164,10 +167,10 @@ function LocationForm({ location, factories, buildings, floors, departments, sec
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          Save
+          {tc("save")}
         </Button>
       </div>
     </form>

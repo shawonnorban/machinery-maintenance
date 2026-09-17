@@ -1,6 +1,7 @@
 import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { LocationsTable } from "@/components/locations/locations-table";
+import { getT } from "@/lib/i18n-server";
 import { createLocation, updateLocation, toggleLocation, deleteLocation } from "./actions";
 
 /**
@@ -25,17 +26,19 @@ export default async function LocationsPage({ searchParams }) {
   if (search) query.set("search", search);
   if (factoryId) query.set("factory_id", factoryId);
 
-  const [locations, factories] = await Promise.all([
+  const [locations, factories, t, tn] = await Promise.all([
     apiFetch(`/locations?${query.toString()}`, { includeMeta: true }),
     apiFetch("/factories?per_page=100"),
+    getT("asset"),
+    getT("nav"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "Locations" }]}
-        title="Locations"
-        description="Where machines actually live — a specific building, department and line named as one place."
+        breadcrumb={[{ label: tn("settings") }, { label: t("locations") }]}
+        title={t("locations")}
+        description={t("locations_intro")}
       />
 
       <LocationsTable

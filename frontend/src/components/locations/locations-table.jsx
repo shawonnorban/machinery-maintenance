@@ -13,6 +13,7 @@ import { Card, CardBody } from "@/components/ui/card";
 import { useToastManager } from "@/components/ui/toast";
 import { LocationFormModal } from "@/components/locations/location-form-modal";
 import { getLocationFormLists } from "@/app/(app)/settings/locations/actions";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `AssetLocationController::index` (ADR-052) — where machines
@@ -28,6 +29,8 @@ import { getLocationFormLists } from "@/app/(app)/settings/locations/actions";
  * have to handle an empty-list loading state of their own.
  */
 function LocationsTable({ locations, meta, page, search, factoryId, factories, actions }) {
+  const t = useT("asset");
+  const tc = useT("common");
   const router = useRouter();
   const [searchInput, setSearchInput] = useState(search);
   const [deleting, setDeleting] = useState(null);
@@ -91,7 +94,7 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, a
     startTransition(async () => {
       const result = await actions.deleteLocation(deleting.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Location deleted", type: "success" });
+        toastManager.add({ title: t("location_deleted_toast"), type: "success" });
         setDeleting(null);
         router.refresh();
       } else if (result?.status === "error") {
@@ -109,19 +112,19 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, a
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search name or code…"
+              placeholder={t("location_search")}
               className="pl-9"
             />
           </div>
           <div className="w-full max-w-[220px]">
             <Select
-              options={[{ value: "", label: "All factories" }, ...factories.map((f) => ({ value: f.id, label: f.name }))]}
+              options={[{ value: "", label: t("all_factories") }, ...factories.map((f) => ({ value: f.id, label: f.name }))]}
               value={factoryId}
               onValueChange={(value) => navigate({ factory_id: value, page: 1 })}
             />
           </div>
           <Button size="sm" onClick={openCreate} loading={loadingFormLists}>
-            <Plus /> New location
+            <Plus /> {t("new_location")}
           </Button>
         </CardBody>
       </Card>
@@ -130,7 +133,7 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, a
         columns={[
           {
             key: "name",
-            header: "Location",
+            header: t("location_name"),
             render: (l) => (
               <div>
                 <button type="button" onClick={() => openEdit(l)} className="font-medium text-brand hover:underline">
@@ -140,17 +143,21 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, a
               </div>
             ),
           },
-          { key: "factory", header: "Factory", render: (l) => l.factory?.name ?? "—" },
-          { key: "asset_count", header: "Assets", align: "right", render: (l) => l.asset_count ?? "—" },
-          { key: "status", header: "Status", render: (l) => <StatusBadge status={l.status} /> },
+          { key: "factory", header: t("factory"), render: (l) => l.factory?.name ?? "—" },
+          { key: "asset_count", header: t("assets"), align: "right", render: (l) => l.asset_count ?? "—" },
+          {
+            key: "status",
+            header: t("status"),
+            render: (l) => <StatusBadge status={l.status} label={l.status === "ACTIVE" ? t("active") : t("inactive")} />,
+          },
         ]}
         rows={locations}
         rowKey={(l) => l.id}
-        emptyTitle="No locations found."
+        emptyTitle={t("no_locations_found")}
         rowActions={(l) => [
-          { label: "Edit", onSelect: () => openEdit(l) },
-          { label: l.status === "ACTIVE" ? "Deactivate" : "Activate", onSelect: () => runToggle(l) },
-          { label: "Delete", destructive: true, onSelect: () => setDeleting(l) },
+          { label: tc("edit"), onSelect: () => openEdit(l) },
+          { label: l.status === "ACTIVE" ? t("deactivate") : t("activate"), onSelect: () => runToggle(l) },
+          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(l) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
@@ -182,9 +189,9 @@ function LocationsTable({ locations, meta, page, search, factoryId, factories, a
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={() => setDeleting(null)}
-        title={`Delete ${deleting?.name}?`}
-        description="Only possible while nothing references it — a location machines have stood in stays readable instead."
-        confirmLabel="Delete"
+        title={deleting ? t("location_delete_title", { name: deleting.name }) : ""}
+        description={t("location_delete_description")}
+        confirmLabel={tc("delete")}
         loading={pending}
         onConfirm={runDelete}
       />
