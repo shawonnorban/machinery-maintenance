@@ -9,10 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 import { formatEntityType } from "./new-workflow-form";
 
 /** Mirrors `workflows/index.blade.php`'s per-chain card — steps, in the order signatures are collected, then the form that appends the next one. */
 function WorkflowCard({ workflow, roles, toggleAction, addRuleAction, removeRuleAction }) {
+  const t = useT("approval");
   const [, startTransition] = useTransition();
   const [togglePending, setTogglePending] = useState(false);
   const toastManager = useToastManager();
@@ -23,7 +25,7 @@ function WorkflowCard({ workflow, roles, toggleAction, addRuleAction, removeRule
       const result = await toggleAction();
       setTogglePending(false);
       if (result?.status === "success") {
-        toastManager.add({ title: workflow.active ? "Chain paused" : "Chain resumed", type: "success" });
+        toastManager.add({ title: workflow.active ? t("chain_paused") : t("chain_resumed"), type: "success" });
       }
     });
   }
@@ -33,21 +35,19 @@ function WorkflowCard({ workflow, roles, toggleAction, addRuleAction, removeRule
       <CardHeader className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <CardTitle>{workflow.name}</CardTitle>
-          <Badge variant="neutral">{formatEntityType(workflow.entity_type)}</Badge>
-          {!workflow.active ? <Badge variant="warning">Inactive</Badge> : null}
+          <Badge variant="neutral">{formatEntityType(workflow.entity_type, t)}</Badge>
+          {!workflow.active ? <Badge variant="warning">{t("inactive")}</Badge> : null}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-foreground-muted">
-            Used {workflow.request_count} time{workflow.request_count === 1 ? "" : "s"}
-          </span>
+          <span className="text-xs text-foreground-muted">{t("used_times", { count: workflow.request_count })}</span>
           <Button size="sm" variant="outline" loading={togglePending} onClick={handleToggle}>
-            {workflow.active ? "Pause" : "Resume"}
+            {workflow.active ? t("pause") : t("resume")}
           </Button>
         </div>
       </CardHeader>
       <CardBody className="flex flex-col gap-4">
         {workflow.rules.length === 0 ? (
-          <p className="text-sm text-foreground-muted">No steps yet — nothing will be routed for approval until one is added.</p>
+          <p className="text-sm text-foreground-muted">{t("no_rules_hint")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {workflow.rules.map((rule) => (
@@ -63,6 +63,7 @@ function WorkflowCard({ workflow, roles, toggleAction, addRuleAction, removeRule
 }
 
 function RuleRow({ rule, removeAction }) {
+  const t = useT("approval");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
@@ -72,7 +73,7 @@ function RuleRow({ rule, removeAction }) {
       const result = await removeAction();
       setOpen(false);
       if (result?.status === "success") {
-        toastManager.add({ title: "Step removed", type: "success" });
+        toastManager.add({ title: t("rule_removed"), type: "success" });
       }
     });
   }
@@ -80,21 +81,21 @@ function RuleRow({ rule, removeAction }) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-b-0">
       <div className="text-sm">
-        <span className="mr-2 text-xs font-medium text-foreground-muted">Step {rule.sequence}</span>
+        <span className="mr-2 text-xs font-medium text-foreground-muted">{t("step_label", { n: rule.sequence })}</span>
         <span className="font-medium text-foreground">{rule.name}</span>
         <div className="text-xs text-foreground-muted">
-          {conditionsLabel(rule.conditions)} — signed by {rule.role?.description ?? "—"}
+          {conditionsLabel(rule.conditions, t)} — {t("signed_by_inline", { name: rule.role?.description ?? "—" })}
         </div>
       </div>
       <Button size="sm" variant="ghost" onClick={() => setOpen(true)}>
-        Remove
+        {t("remove")}
       </Button>
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title={`Remove step "${rule.name}"?`}
-        description="The chain resequences — a change removed cleanly, not a gap."
-        confirmLabel="Remove"
+        title={t("remove_step_title", { name: rule.name })}
+        description={t("remove_step_description")}
+        confirmLabel={t("remove")}
         loading={pending}
         onConfirm={confirm}
       />
@@ -102,23 +103,24 @@ function RuleRow({ rule, removeAction }) {
   );
 }
 
-function conditionsLabel(conditions) {
+function conditionsLabel(conditions, t) {
   const parts = [];
-  if (conditions.min_cost) parts.push(`from ${conditions.min_cost}`);
-  if (conditions.max_cost) parts.push(`up to ${conditions.max_cost}`);
-  if (conditions.criticality) parts.push(`criticality: ${conditions.criticality.join(", ")}`);
-  if (conditions.priority) parts.push(`priority: ${conditions.priority.join(", ")}`);
-  if (conditions.factory_id) parts.push("one factory");
-  return parts.length ? parts.join(", ") : "always";
+  if (conditions.min_cost) parts.push(t("condition_from", { amount: conditions.min_cost }));
+  if (conditions.max_cost) parts.push(t("condition_up_to", { amount: conditions.max_cost }));
+  if (conditions.criticality) parts.push(t("condition_criticality_list", { list: conditions.criticality.join(", ") }));
+  if (conditions.priority) parts.push(t("condition_priority_list", { list: conditions.priority.join(", ") }));
+  if (conditions.factory_id) parts.push(t("condition_one_factory"));
+  return parts.length ? parts.join(", ") : t("condition_always");
 }
 
 function AddRuleForm({ roles, action }) {
+  const t = useT("approval");
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Step added", type: "success" });
+      toastManager.add({ title: t("rule_added"), type: "success" });
     }
     // toastManager is not a stable reference across renders — see
     // NewWorkflowForm's own comment.
@@ -128,29 +130,29 @@ function AddRuleForm({ roles, action }) {
   return (
     <form action={dispatch} className="flex flex-wrap items-end gap-2 rounded-sm border border-border p-3">
       <div className="w-48">
-        <FormField label="Step name" required error={state?.errors?.name?.[0]}>
+        <FormField label={t("rule_name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="name" required />}
         </FormField>
       </div>
       <div className="w-32">
-        <FormField label="From">
+        <FormField label={t("condition_min_cost")}>
           {(fieldProps) => <Input {...fieldProps} type="number" step="0.01" min="0" name="min_cost" />}
         </FormField>
       </div>
       <div className="w-32">
-        <FormField label="Up to">
+        <FormField label={t("condition_max_cost")}>
           {(fieldProps) => <Input {...fieldProps} type="number" step="0.01" min="0" name="max_cost" />}
         </FormField>
       </div>
       <div className="w-48">
-        <FormField label="Signed by" required error={state?.errors?.role_id?.[0]}>
+        <FormField label={t("signed_by")} required error={state?.errors?.role_id?.[0]}>
           {(fieldProps) => (
             <Select {...fieldProps} name="role_id" options={roles.map((r) => ({ value: String(r.id), label: r.name }))} />
           )}
         </FormField>
       </div>
       <Button type="submit" size="sm" variant="outline" loading={pending}>
-        Add step
+        {t("add_step")}
       </Button>
       {state?.status === "error" && !state.errors ? <p className="w-full text-sm text-danger">{state.message}</p> : null}
     </form>

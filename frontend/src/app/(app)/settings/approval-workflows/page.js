@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { WorkflowCard } from "@/components/approval/workflow-card";
 import { NewWorkflowForm } from "@/components/approval/new-workflow-form";
+import { getT } from "@/lib/i18n-server";
 import { createWorkflow, toggleWorkflow, addRule, removeRule } from "./actions";
 
 const ENTITY_TYPES = ["WORK_ORDER", "INVENTORY_TRANSFER", "COST_ENTRY"];
@@ -13,24 +14,26 @@ const ENTITY_TYPES = ["WORK_ORDER", "INVENTORY_TRANSFER", "COST_ENTRY"];
  * this admin-config side existed before, only the runtime `/approvals` inbox).
  */
 export default async function ApprovalWorkflowsPage() {
-  const [workflows, roles] = await Promise.all([
+  const [workflows, roles, t, tn] = await Promise.all([
     apiFetch("/approval-workflows"),
     apiFetch("/roles?per_page=100"),
+    getT("approval"),
+    getT("nav"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "Approval workflows" }]}
-        title="Approval workflows"
-        description="Who has to sign, and above what. Each chain is a role, not a person — a chain that names one employee stops working the week they're on leave."
+        breadcrumb={[{ label: tn("settings") }, { label: t("workflows") }]}
+        title={t("workflows")}
+        description={t("workflows_intro")}
       />
 
       <div className="flex flex-col gap-4">
         <NewWorkflowForm entityTypes={ENTITY_TYPES} action={createWorkflow} />
 
         {workflows.length === 0 ? (
-          <EmptyState title="No chains yet." description="Add one above to start routing approvals." />
+          <EmptyState title={t("no_workflows")} description={t("no_workflows_hint")} />
         ) : (
           workflows.map((workflow) => (
             <WorkflowCard

@@ -6,15 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `workflows/index.blade.php`'s "Add a chain" form. */
 function NewWorkflowForm({ entityTypes, action }) {
+  const t = useT("approval");
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Chain created", type: "success" });
+      toastManager.add({ title: t("workflow_created"), type: "success" });
     }
     // toastManager is not a stable reference across renders, so including
     // it re-fires this effect (adding another toast) every render once
@@ -25,35 +27,31 @@ function NewWorkflowForm({ entityTypes, action }) {
   return (
     <form action={dispatch} className="flex flex-wrap items-end gap-3">
       <div className="w-64">
-        <FormField label="Chain name" required error={state?.errors?.name?.[0]}>
+        <FormField label={t("workflow_name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} name="name" required />}
         </FormField>
       </div>
       <div className="w-48">
-        <FormField label="Applies to" required>
+        <FormField label={t("applies_to")} required>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               name="entity_type"
               defaultValue={entityTypes[0]}
-              options={entityTypes.map((t) => ({ value: t, label: formatEntityType(t) }))}
+              options={entityTypes.map((type) => ({ value: type, label: formatEntityType(type, t) }))}
             />
           )}
         </FormField>
       </div>
       <Button type="submit" loading={pending}>
-        Add chain
+        {t("new_workflow")}
       </Button>
     </form>
   );
 }
 
-function formatEntityType(type) {
-  return type
-    .toLowerCase()
-    .split("_")
-    .map((w) => w[0].toUpperCase() + w.slice(1))
-    .join(" ");
+function formatEntityType(type, t) {
+  return t(`entity_${type.toLowerCase()}`);
 }
 
 export { NewWorkflowForm, formatEntityType };

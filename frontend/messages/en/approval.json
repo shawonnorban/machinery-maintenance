@@ -85,5 +85,22 @@
     "nothing_in_this_view": "Nothing is waiting in this view.",
     "approval_fallback": "Approval",
     "no_decisions_yet": "No decisions yet.",
-    "frozen_figures_note": "These figures are frozen from when the request was raised."
+    "frozen_figures_note": "These figures are frozen from when the request was raised.",
+    "remove": "Remove",
+    "pause": "Pause",
+    "resume": "Resume",
+    "chain_paused": "Chain paused",
+    "chain_resumed": "Chain resumed",
+    "used_times": "Used :count times",
+    "no_rules_hint": "No steps yet — nothing will be routed for approval until one is added.",
+    "step_label": "Step :n",
+    "signed_by_inline": "signed by :name",
+    "remove_step_title": "Remove step \":name\"?",
+    "remove_step_description": "The chain resequences — a change removed cleanly, not a gap.",
+    "condition_from": "from :amount",
+    "condition_up_to": "up to :amount",
+    "condition_criticality_list": "criticality: :list",
+    "condition_priority_list": "priority: :list",
+    "condition_one_factory": "one factory",
+    "condition_always": "always"
 }
