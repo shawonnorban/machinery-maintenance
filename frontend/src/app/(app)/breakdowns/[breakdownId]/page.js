@@ -6,20 +6,12 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardBody } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTab, TabsIndicator, TabsPanel } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 import { BreakdownActions } from "@/components/breakdowns/breakdown-actions";
-import { BreakdownTimelineTab } from "@/components/breakdowns/breakdown-timeline-tab";
-import { FormattedDateTime } from "@/components/ui/formatted-date-time";
-import { ChecklistTab } from "@/components/work-orders/checklist-tab";
-import { LaborTab } from "@/components/work-orders/labor-tab";
-import { PartsTab } from "@/components/work-orders/parts-tab";
-import { AttachmentsTab } from "@/components/work-orders/attachments-tab";
+import { BreakdownDetailTabs } from "@/components/breakdowns/breakdown-detail-tabs";
 import {
   acknowledge, arrive, startRepair, completeRepair, resumeProduction, resume, assign, hold, close, cancel,
-  raiseWorkOrder, startWorkOrder, correctTimestamp,
-  recordChecklistAnswer, recordLabor, deleteLabor, requestPart, issuePart, issueRequestedPart, consumePart, returnPart,
-  uploadAttachment,
+  raiseWorkOrder, startWorkOrder,
 } from "./actions";
 
 const WORK_ORDER_TERMINAL_STATUSES = ["CLOSED", "CANCELLED"];
@@ -32,21 +24,23 @@ const PRIORITY_BORDER = { CRITICAL: "border-l-danger", HIGH: "border-l-warning",
  * current status, downtime so far, and the full repair chain (acknowledge,
  * record arrival, assign, start repair, hold/resume, complete repair,
  * resume production, close, cancel, raising an additional work order, and
- * correcting a chain timestamp). No separate Client Component wrapper
- * needed for the checklist/labor/parts tabs here (unlike Asset/Metering/
- * Inventory's detail pages): neither panel needs a `DataTable` or any
- * other function-holding child, so this Server Component can pass plain
- * rendered JSX straight into `<TabsPanel>` — the Server→Client boundary
- * only blocks functions, never elements.
+ * correcting a chain timestamp).
+ *
+ * Only two calls up front — the breakdown itself and `form-options`
+ * (needed by the always-visible header actions) — rather than the up to
+ * ten this page used to fire in one `Promise.all` once a repair work
+ * order existed. Attachments, downtime, and (when a work order exists)
+ * checklist/labor/parts are fetched by their own tab, lazily, the first
+ * time each is actually opened (`BreakdownDetailTabs`'s own note has
+ * why): the same problem already found and fixed on the asset and
+ * work-order detail pages.
  */
 export default async function BreakdownDetailPage({ params }) {
   const { breakdownId } = await params;
 
-  const [breakdown, downtime, formOptions, attachments] = await Promise.all([
+  const [breakdown, formOptions] = await Promise.all([
     apiFetch(`/breakdowns/${breakdownId}`),
-    apiFetch(`/breakdowns/${breakdownId}/downtime`),
     apiFetch(`/breakdowns/${breakdownId}/form-options`),
-    apiFetch(`/breakdowns/${breakdownId}/attachments`),
   ]);
 
   // Raised via the "Raise work order" action (`RaiseBreakdownWorkOrder`,
@@ -54,18 +48,6 @@ export default async function BreakdownDetailPage({ params }) {
   // works from this one screen rather than being sent to a separate work
   // order page to log labor, request parts or answer a checklist.
   const workOrderId = breakdown.work_order?.id ?? null;
-
-  const [checklist, labor, parts, workOrderTechnicians, spareParts, bins] = workOrderId
-    ? await Promise.all([
-        apiFetch(`/work-orders/${workOrderId}/checklist`),
-        apiFetch(`/work-orders/${workOrderId}/labor`),
-        apiFetch(`/work-orders/${workOrderId}/parts`),
-        apiFetch(`/work-orders/${workOrderId}/assignable-technicians`),
-        apiFetch("/spare-parts?per_page=100"),
-        apiFetch("/spare-parts/bins"),
-      ])
-    : [null, [], [], [], [], []];
-
   const workOrderIsTerminal = WORK_ORDER_TERMINAL_STATUSES.includes(breakdown.work_order?.status);
   const canExecuteChecklist = breakdown.work_order?.status === "IN_PROGRESS";
 
@@ -124,129 +106,13 @@ export default async function BreakdownDetailPage({ params }) {
         ) : null}
       </Card>
 
-      <Card>
-        <CardBody>
-          <Tabs defaultValue="overview">
-            <TabsList>
-              <TabsTab value="overview">Overview</TabsTab>
-              <TabsTab value="attachments">Attachments</TabsTab>
-              <TabsTab value="timeline">Timeline</TabsTab>
-              <TabsTab value="downtime">Downtime</TabsTab>
-              {workOrderId ? (
-                <>
-                  <TabsTab value="checklist">Checklist</TabsTab>
-                  <TabsTab value="labor">Labor</TabsTab>
-                  <TabsTab value="parts">Parts</TabsTab>
-                </>
-              ) : null}
-              <TabsIndicator />
-            </TabsList>
-
-            <TabsPanel value="overview">
-              <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-                <Field label="Severity">{formatStatus(breakdown.severity) || "—"}</Field>
-                <Field label="Production order">{breakdown.production_order_reference ?? "—"}</Field>
-                <Field label="Reported at"><FormattedDateTime value={breakdown.reported_at} /></Field>
-                <Field label="Failure at"><FormattedDateTime value={breakdown.failure_at} /></Field>
-                <div className="sm:col-span-2">
-                  <Field label="Problem description">{breakdown.problem_description}</Field>
-                </div>
-                {breakdown.failure_category || breakdown.failure_code || breakdown.failure_code_other || breakdown.root_cause ? (
-                  <>
-                    <Field label="Failure category">{breakdown.failure_category ?? "—"}</Field>
-                    <Field label="Failure code">
-                      {breakdown.failure_code ?? (breakdown.failure_code_other ? `Other: ${breakdown.failure_code_other}` : "—")}
-                    </Field>
-                    <Field label="Root cause">{breakdown.root_cause ?? "—"}</Field>
-                  </>
-                ) : null}
-                {breakdown.downtime_reason || breakdown.downtime_reason_other ? (
-                  <Field label="Reason">
-                    {breakdown.downtime_reason ?? `Other: ${breakdown.downtime_reason_other}`}
-                  </Field>
-                ) : null}
-              </div>
-            </TabsPanel>
-
-            <TabsPanel value="attachments">
-              <AttachmentsTab
-                attachments={attachments}
-                isTerminal={breakdown.is_terminal}
-                action={uploadAttachment.bind(null, breakdownId)}
-              />
-            </TabsPanel>
-
-            <TabsPanel value="timeline">
-              <BreakdownTimelineTab
-                timestamps={breakdown.timestamps}
-                isTerminal={breakdown.is_terminal}
-                action={correctTimestamp.bind(null, breakdownId)}
-              />
-            </TabsPanel>
-
-            <TabsPanel value="downtime">
-              {downtime ? (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                  <Field label="Response">{formatMinutes(downtime.response_minutes)}</Field>
-                  <Field label="Repair">{formatMinutes(downtime.repair_minutes)}</Field>
-                  <Field label="On hold">{formatMinutes(downtime.hold_minutes)}</Field>
-                  <Field label="Total downtime">{formatMinutes(downtime.total_downtime_minutes)}</Field>
-                  <Field label="Class">{downtime.downtime_class ?? "—"}</Field>
-                  <Field label="Counts against availability">{downtime.counts_against_availability ? "Yes" : "No"}</Field>
-                  {downtime.needs_review ? (
-                    <div className="col-span-2">
-                      <Badge variant="warning">Needs review</Badge>
-                    </div>
-                  ) : null}
-                </div>
-              ) : (
-                <p className="text-sm text-foreground-muted">No downtime record yet — this breakdown hasn&apos;t reached a completed repair.</p>
-              )}
-            </TabsPanel>
-
-            {workOrderId ? (
-              <>
-                <TabsPanel value="checklist">
-                  <ChecklistTab
-                    progress={checklist.progress}
-                    items={checklist.items}
-                    canExecute={canExecuteChecklist}
-                    action={recordChecklistAnswer.bind(null, breakdownId, workOrderId)}
-                  />
-                </TabsPanel>
-
-                <TabsPanel value="labor">
-                  <LaborTab
-                    entries={labor}
-                    technicians={workOrderTechnicians}
-                    canManage
-                    isTerminal={workOrderIsTerminal}
-                    recordAction={recordLabor.bind(null, breakdownId, workOrderId)}
-                    deleteAction={deleteLabor.bind(null, breakdownId, workOrderId)}
-                  />
-                </TabsPanel>
-
-                <TabsPanel value="parts">
-                  <PartsTab
-                    lines={parts}
-                    spareParts={spareParts}
-                    bins={bins}
-                    isTerminal={workOrderIsTerminal}
-                    showCosts={false}
-                    actions={{
-                      requestPart: requestPart.bind(null, breakdownId, workOrderId),
-                      issuePart: issuePart.bind(null, breakdownId, workOrderId),
-                      issueRequestedPart: issueRequestedPart.bind(null, breakdownId, workOrderId),
-                      consumePart: consumePart.bind(null, breakdownId, workOrderId),
-                      returnPart: returnPart.bind(null, breakdownId, workOrderId),
-                    }}
-                  />
-                </TabsPanel>
-              </>
-            ) : null}
-          </Tabs>
-        </CardBody>
-      </Card>
+      <BreakdownDetailTabs
+        breakdown={breakdown}
+        breakdownId={breakdownId}
+        workOrderId={workOrderId}
+        workOrderIsTerminal={workOrderIsTerminal}
+        canExecuteChecklist={canExecuteChecklist}
+      />
     </>
   );
 }
@@ -256,24 +122,6 @@ function SummaryItem({ label, children }) {
     <div className="flex flex-col gap-1">
       <span className="text-xs font-medium text-foreground-muted">{label}</span>
       {children}
-    </div>
-  );
-}
-
-function formatMinutes(minutes) {
-  if (minutes === null || minutes === undefined) {
-    return "—";
-  }
-  const hours = Math.floor(minutes / 60);
-  const rest = Math.round(minutes % 60);
-  return hours > 0 ? `${hours}h ${rest}m` : `${rest}m`;
-}
-
-function Field({ label, children }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium text-foreground-muted">{label}</span>
-      <span className="text-sm text-foreground">{children}</span>
     </div>
   );
 }

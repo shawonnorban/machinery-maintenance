@@ -300,9 +300,53 @@ async function uploadAttachment(breakdownId, formData) {
   }
 }
 
+/**
+ * The lazy fetches behind this page's less-often-opened tabs (downtime,
+ * attachments, and — when a repair work order exists — its checklist/
+ * labor/parts) — see `BreakdownDetailTabs`'s own note for why: the same
+ * problem already found and fixed on the asset and work-order detail
+ * pages, a slow all-at-once fetch timing out on a poor connection before
+ * the page ever painted. The checklist/labor/parts ones take
+ * `workOrderId`, not `breakdownId` — these proxy straight through to the
+ * linked work order's own endpoints, which is all a plain GET needs; only
+ * the mutations above need `breakdownId` too, to know which page to
+ * revalidate.
+ */
+async function getDowntime(breakdownId) {
+  return apiFetch(`/breakdowns/${breakdownId}/downtime`);
+}
+
+async function getAttachments(breakdownId) {
+  return apiFetch(`/breakdowns/${breakdownId}/attachments`);
+}
+
+async function getChecklist(workOrderId) {
+  return apiFetch(`/work-orders/${workOrderId}/checklist`);
+}
+
+async function getLaborData(workOrderId) {
+  const [labor, technicians] = await Promise.all([
+    apiFetch(`/work-orders/${workOrderId}/labor`),
+    apiFetch(`/work-orders/${workOrderId}/assignable-technicians`),
+  ]);
+
+  return { labor, technicians };
+}
+
+async function getPartsData(workOrderId) {
+  const [parts, spareParts, bins] = await Promise.all([
+    apiFetch(`/work-orders/${workOrderId}/parts`),
+    apiFetch("/spare-parts?per_page=100"),
+    apiFetch("/spare-parts/bins"),
+  ]);
+
+  return { parts, spareParts, bins };
+}
+
 export {
   acknowledge, arrive, startRepair, completeRepair, resumeProduction, resume, assign, hold, close, cancel,
   raiseWorkOrder, startWorkOrder, correctTimestamp,
   recordChecklistAnswer, recordLabor, deleteLabor, requestPart, issuePart, issueRequestedPart, consumePart, returnPart,
   uploadAttachment,
+  getDowntime, getAttachments, getChecklist, getLaborData, getPartsData,
 };
