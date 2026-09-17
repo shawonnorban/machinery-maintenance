@@ -4,6 +4,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useT } from "@/lib/i18n";
 
 /**
  * Renders the one control a `Field` (app/Modules/Settings/MasterData/
@@ -13,6 +14,8 @@ import { Checkbox } from "@/components/ui/checkbox";
  * reason the backend is one controller for all of them.
  */
 function DynamicField({ field, value, onChange, referenceOptions, error }) {
+  const t = useT("masterdata");
+
   if (field.type === "BOOLEAN") {
     return (
       <label className="flex items-center gap-2 text-sm text-foreground">
@@ -47,7 +50,7 @@ function DynamicField({ field, value, onChange, referenceOptions, error }) {
             {...fieldProps}
             value={value ?? ""}
             onValueChange={onChange}
-            placeholder="Select…"
+            placeholder={t("select_placeholder")}
             options={options.map((option) => ({ value: option.id, label: option.label }))}
           />
         )}

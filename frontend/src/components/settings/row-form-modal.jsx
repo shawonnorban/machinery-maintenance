@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { useToastManager } from "@/components/ui/toast";
 import { DynamicField } from "@/components/settings/dynamic-field";
+import { useT } from "@/lib/i18n";
 
 /**
  * One form for every master-data type's create and edit — driven entirely
@@ -21,6 +22,8 @@ import { DynamicField } from "@/components/settings/dynamic-field";
  * in the effect body, which React's own lint flags as a smell.
  */
 function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row, action }) {
+  const t = useT("masterdata");
+  const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action, null);
   const [values, setValues] = useState(() => initialValues(schema, row));
   const router = useRouter();
@@ -28,7 +31,7 @@ function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: row ? "Saved" : "Created", type: "success" });
+      toastManager.add({ title: row ? t("updated") : t("created"), type: "success" });
       queueMicrotask(() => onOpenChange(false));
       router.refresh();
     }
@@ -72,10 +75,10 @@ function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row
 
         <div className="mt-2 flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" loading={pending}>
-            {row ? "Save" : "Create"}
+            {row ? tc("save") : t("create")}
           </Button>
         </div>
       </form>

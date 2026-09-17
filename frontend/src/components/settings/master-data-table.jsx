@@ -9,9 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToastManager } from "@/components/ui/toast";
 import { RowFormModal } from "@/components/settings/row-form-modal";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `MasterDataType::display()` — a reference/belongs-to value shows its parent's label, never a bare ulid. */
-function displayValue(field, row, referenceOptions) {
+function displayValue(field, row, referenceOptions, t) {
   const value = row[field.name];
 
   if (value === null || value === undefined || value === "") {
@@ -19,7 +20,7 @@ function displayValue(field, row, referenceOptions) {
   }
 
   if (field.type === "BOOLEAN") {
-    return value ? "Yes" : "No";
+    return value ? t("yes") : t("no");
   }
 
   if (field.type === "REFERENCE" || field.type === "BELONGS_TO") {
@@ -37,6 +38,8 @@ function displayValue(field, row, referenceOptions) {
  * for all two dozen of these.
  */
 function MasterDataTable({ typeKey, rows, schema, referenceOptions, actions }) {
+  const t = useT("masterdata");
+  const tc = useT("common");
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -61,7 +64,7 @@ function MasterDataTable({ typeKey, rows, schema, referenceOptions, actions }) {
     startTransition(async () => {
       const result = await actions.deleteRow(typeKey, deleting.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Deleted", type: "success" });
+        toastManager.add({ title: t("deleted"), type: "success" });
         setDeleting(null);
         router.refresh();
       } else if (result?.status === "error") {
@@ -74,7 +77,7 @@ function MasterDataTable({ typeKey, rows, schema, referenceOptions, actions }) {
     <div className="flex flex-col gap-4">
       <div className="flex justify-end">
         <Button size="sm" onClick={() => setCreateOpen(true)}>
-          <Plus /> New
+          <Plus /> {t("new_row")}
         </Button>
       </div>
 
@@ -82,20 +85,20 @@ function MasterDataTable({ typeKey, rows, schema, referenceOptions, actions }) {
         columns={listFields.map((field) => ({
           key: field.name,
           header: field.label,
-          render: (row) => displayValue(field, row, referenceOptions),
+          render: (row) => displayValue(field, row, referenceOptions, t),
         }))}
         rows={rows}
         rowKey={(row) => row.id}
-        emptyTitle="Nothing here yet."
+        emptyTitle={t("empty")}
         rowActions={(row) =>
           row.is_platform
-            ? [{ label: "Use as a starting point", onSelect: () => setCreateOpen(row) }]
+            ? [{ label: t("use_as_starting_point"), onSelect: () => setCreateOpen(row) }]
             : [
-                { label: "Edit", onSelect: () => setEditing(row) },
+                { label: tc("edit"), onSelect: () => setEditing(row) },
                 ...(schema.supports_active
-                  ? [{ label: row.active ? "Deactivate" : "Activate", onSelect: () => runToggle(row) }]
+                  ? [{ label: row.active ? t("deactivate") : t("activate"), onSelect: () => runToggle(row) }]
                   : []),
-                { label: "Delete", destructive: true, onSelect: () => setDeleting(row) },
+                { label: tc("delete"), destructive: true, onSelect: () => setDeleting(row) },
               ]
         }
       />
@@ -104,7 +107,7 @@ function MasterDataTable({ typeKey, rows, schema, referenceOptions, actions }) {
         key={createOpen && createOpen !== true ? `copy-${createOpen.id}` : "create"}
         open={Boolean(createOpen)}
         onOpenChange={() => setCreateOpen(false)}
-        title={`New ${schema.title}`}
+        title={t("new_entry_named", { type: schema.title })}
         schema={schema}
         referenceOptions={referenceOptions}
         row={createOpen && createOpen !== true ? { ...createOpen, id: undefined } : null}
@@ -116,7 +119,7 @@ function MasterDataTable({ typeKey, rows, schema, referenceOptions, actions }) {
           key={editing.id}
           open
           onOpenChange={() => setEditing(null)}
-          title={`Edit ${schema.title}`}
+          title={t("edit_entry_named", { type: schema.title })}
           schema={schema}
           referenceOptions={referenceOptions}
           row={editing}
@@ -127,9 +130,9 @@ function MasterDataTable({ typeKey, rows, schema, referenceOptions, actions }) {
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={() => setDeleting(null)}
-        title={`Delete this ${schema.title.toLowerCase()} entry?`}
-        description="Only possible while nothing points at it."
-        confirmLabel="Delete"
+        title={t("delete_entry_title", { type: schema.title.toLowerCase() })}
+        description={t("delete_entry_description")}
+        confirmLabel={tc("delete")}
         loading={pending}
         onConfirm={runDelete}
       />

@@ -2,31 +2,24 @@ import Link from "next/link";
 import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card } from "@/components/ui/card";
+import { getT } from "@/lib/i18n-server";
 
 // Mirrors MasterDataRegistry::GROUPS' order and lang/en/masterdata.php's group labels.
 const GROUP_ORDER = ["organisation", "asset", "breakdown", "maintenance", "inventory", "cost"];
-const GROUP_LABELS = {
-  organisation: "Organisation",
-  asset: "Machines",
-  breakdown: "Breakdowns",
-  maintenance: "Maintenance",
-  inventory: "Spare parts",
-  cost: "Cost",
-};
 
 /** Mirrors `MasterDataController::index` — one screen for two dozen lists, grouped the same way the registry itself groups them. */
 export default async function MasterDataIndexPage() {
-  const types = await apiFetch("/master-data");
+  const [types, t, tn] = await Promise.all([apiFetch("/master-data"), getT("masterdata"), getT("nav")]);
 
   const grouped = GROUP_ORDER.map((group) => ({
     group,
-    label: GROUP_LABELS[group] ?? group,
-    types: types.filter((t) => t.group === group),
+    label: t(`groups.${group}`),
+    types: types.filter((tp) => tp.group === group),
   })).filter((g) => g.types.length > 0);
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Settings" }, { label: "Master Data" }]} title="Master Data" description="The reference lists the rest of the system is written in." />
+      <PageHeader breadcrumb={[{ label: tn("settings") }, { label: t("master_data") }]} title={t("master_data")} description={t("intro")} />
 
       <div className="flex flex-col gap-6">
         {grouped.map((section) => (

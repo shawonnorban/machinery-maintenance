@@ -1,6 +1,7 @@
 import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { MasterDataTable } from "@/components/settings/master-data-table";
+import { getT } from "@/lib/i18n-server";
 import { createRow, updateRow, setActive, deleteRow } from "./actions";
 
 /**
@@ -13,12 +14,19 @@ import { createRow, updateRow, setActive, deleteRow } from "./actions";
 export default async function MasterDataTypePage({ params }) {
   const { type } = await params;
 
-  const response = await apiFetch(`/master-data/${type}`, { includeMeta: true });
+  const [response, t, tn] = await Promise.all([
+    apiFetch(`/master-data/${type}`, { includeMeta: true }),
+    getT("masterdata"),
+    getT("nav"),
+  ]);
   const { schema, reference_options: referenceOptions } = response.meta;
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Settings" }, { label: "Master Data", href: "/settings/master-data" }, { label: schema.title }]} title={schema.title} />
+      <PageHeader
+        breadcrumb={[{ label: tn("settings") }, { label: t("master_data"), href: "/settings/master-data" }, { label: schema.title }]}
+        title={schema.title}
+      />
 
       <MasterDataTable
         typeKey={type}
