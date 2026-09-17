@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     'reports' => 'রিপোর্ট',
     'report' => 'রিপোর্ট',
+    'page_description' => 'কী চলছে, তাতে কী খরচ হচ্ছে, এবং ফ্লিটের অবস্থা কেমন।',
     'run' => 'রিপোর্ট চালান',
     'export' => 'এক্সপোর্ট',
     'generated_reports' => 'তৈরি হওয়া রিপোর্ট',
@@ -30,6 +31,12 @@ return [
     'status' => 'অবস্থা',
     'all_statuses' => 'সব অবস্থা',
     'scoped_by_header' => 'উপরে নির্বাচিত কারখানা অনুযায়ী সীমিত।',
+    'apply' => 'প্রয়োগ করুন',
+    'any' => 'যেকোনো',
+    'format' => 'ফরম্যাট',
+    'export_queued_toast' => 'এক্সপোর্ট সারিতে যুক্ত হয়েছে',
+    'export_ready_toast' => 'এক্সপোর্ট প্রস্তুত',
+    'my_exports' => 'আমার এক্সপোর্ট',
     'groups' => [
         'asset' => 'সম্পদ',
         'maintenance' => 'রক্ষণাবেক্ষণ',

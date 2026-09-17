@@ -4,6 +4,7 @@ import { Card, CardBody } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { ReportFilters } from "@/components/reports/report-filters";
 import { ExportButton } from "@/components/reports/export-button";
+import { getT } from "@/lib/i18n-server";
 import { requestExport } from "./actions";
 
 /** Mirrors `ReportController::run` — the same capped preview the export button is asking for the full version of. */
@@ -18,11 +19,27 @@ export default async function ReportDetailPage({ params, searchParams }) {
   if (sp.status) query.status = sp.status;
 
   const search = new URLSearchParams(query);
-  const preview = await apiFetch(`/reports/${key}?${search.toString()}`);
+  const [preview, t] = await Promise.all([
+    apiFetch(`/reports/${key}?${search.toString()}`),
+    getT("report"),
+  ]);
+
+  function translated(path, fallback) {
+    const value = t(`${key}.${path}`);
+    return value === `${key}.${path}` ? fallback : value;
+  }
+
+  function columnLabel(columnKey, fallback) {
+    const value = t(`columns.${columnKey}`);
+    return value === `columns.${columnKey}` ? fallback : value;
+  }
+
+  const title = translated("title", preview.report.title);
+  const description = translated("description", preview.report.description);
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: "Reports", href: "/reports" }, { label: preview.report.title }]} title={preview.report.title} description={preview.report.description} />
+      <PageHeader breadcrumb={[{ label: t("reports"), href: "/reports" }, { label: title }]} title={title} description={description} />
 
       <div className="flex flex-col gap-4">
         <Card>
@@ -41,13 +58,13 @@ export default async function ReportDetailPage({ params, searchParams }) {
         </Card>
 
         {preview.truncated ? (
-          <Alert variant="warning">Showing the first {preview.rows.length} rows — export the full report to see everything.</Alert>
+          <Alert variant="warning">{t("preview_note", { count: preview.rows.length })}</Alert>
         ) : null}
 
         <Card>
           <CardBody>
             {preview.rows.length === 0 ? (
-              <p className="text-sm text-foreground-muted">Nothing matches these filters.</p>
+              <p className="text-sm text-foreground-muted">{t("no_rows")}</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -55,7 +72,7 @@ export default async function ReportDetailPage({ params, searchParams }) {
                     <tr>
                       {Object.entries(preview.columns).map(([columnKey, column]) => (
                         <th key={columnKey} className={`px-3 py-2 ${column.numeric ? "text-right" : "text-left"}`}>
-                          {column.label}
+                          {columnLabel(columnKey, column.label)}
                         </th>
                       ))}
                     </tr>

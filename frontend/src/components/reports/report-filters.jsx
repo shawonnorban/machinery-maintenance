@@ -6,9 +6,11 @@ import { Select } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `reports::run.blade.php`'s own filter bar — `filters()`'s fixed vocabulary of period/factory/asset/status. */
 function ReportFilters({ reportKey, filters, factories, from, to, factoryId, assetId, status }) {
+  const t = useT("report");
   const router = useRouter();
   const [fromValue, setFromValue] = useState(from);
   const [toValue, setToValue] = useState(to);
@@ -29,13 +31,13 @@ function ReportFilters({ reportKey, filters, factories, from, to, factoryId, ass
       {filters.includes("period") ? (
         <>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-foreground">From</label>
+            <label className="text-sm font-medium text-foreground">{t("from")}</label>
             <div className="w-40">
               <DatePicker value={fromValue} onChange={setFromValue} />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-foreground">To</label>
+            <label className="text-sm font-medium text-foreground">{t("to")}</label>
             <div className="w-40">
               <DatePicker value={toValue} onChange={setToValue} />
             </div>
@@ -45,12 +47,12 @@ function ReportFilters({ reportKey, filters, factories, from, to, factoryId, ass
 
       {filters.includes("factory") ? (
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-foreground">Factory</label>
+          <label className="text-sm font-medium text-foreground">{t("factory")}</label>
           <div className="w-48">
             <Select
               value={factoryValue}
               onValueChange={setFactoryValue}
-              placeholder="All factories"
+              placeholder={t("all_factories")}
               options={factories.map((f) => ({ value: f.id, label: f.name }))}
             />
           </div>
@@ -59,15 +61,15 @@ function ReportFilters({ reportKey, filters, factories, from, to, factoryId, ass
 
       {filters.includes("status") ? (
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-foreground">Status</label>
+          <label className="text-sm font-medium text-foreground">{t("status")}</label>
           <div className="w-40">
-            <Input value={statusValue} onChange={(e) => setStatusValue(e.target.value)} placeholder="Any" />
+            <Input value={statusValue} onChange={(e) => setStatusValue(e.target.value)} placeholder={t("any")} />
           </div>
         </div>
       ) : null}
 
       <Button size="default" onClick={apply}>
-        Apply
+        {t("apply")}
       </Button>
     </div>
   );

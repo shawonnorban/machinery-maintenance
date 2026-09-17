@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     'reports' => 'Reports',
     'report' => 'Report',
+    'page_description' => "What's running, what it costs, and how the fleet is holding up.",
     'run' => 'Run report',
     'export' => 'Export',
     'generated_reports' => 'Generated reports',
@@ -30,6 +31,12 @@ return [
     'status' => 'Status',
     'all_statuses' => 'All statuses',
     'scoped_by_header' => 'Scoped to the factory selected in the header.',
+    'apply' => 'Apply',
+    'any' => 'Any',
+    'format' => 'Format',
+    'export_queued_toast' => 'Export queued',
+    'export_ready_toast' => 'Export ready',
+    'my_exports' => 'My exports',
     'groups' => [
         'asset' => 'Assets',
         'maintenance' => 'Maintenance',
