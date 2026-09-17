@@ -4,25 +4,29 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
-import { StatusBadge, formatStatus } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
+import { useT } from "@/lib/i18n";
 
-const OPEN_OPTIONS = [
-  { value: "true", label: "Open only" },
-  { value: "false", label: "All work orders" },
-];
-const PRIORITY_OPTIONS = [
-  { value: "", label: "All priorities" },
-  { value: "CRITICAL", label: "Critical" },
-  { value: "HIGH", label: "High" },
-  { value: "MEDIUM", label: "Medium" },
-  { value: "LOW", label: "Low" },
-];
 const PRIORITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", LOW: "neutral" };
 
 function WorkOrdersTable({ workOrders, meta, page, open, priority }) {
+  const t = useT("work_order");
+  const tc = useT("common");
   const router = useRouter();
+
+  const openOptions = [
+    { value: "true", label: t("open_only") },
+    { value: "false", label: t("all_work_orders") },
+  ];
+  const priorityOptions = [
+    { value: "", label: t("all_priorities") },
+    { value: "CRITICAL", label: t("priority_critical") },
+    { value: "HIGH", label: t("priority_high") },
+    { value: "MEDIUM", label: t("priority_medium") },
+    { value: "LOW", label: t("priority_low") },
+  ];
 
   function navigate(next) {
     const params = new URLSearchParams({
@@ -40,10 +44,10 @@ function WorkOrdersTable({ workOrders, meta, page, open, priority }) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-3">
         <div className="w-full max-w-[180px]">
-          <Select options={OPEN_OPTIONS} value={open} onValueChange={(value) => navigate({ open: value, page: 1 })} />
+          <Select options={openOptions} value={open} onValueChange={(value) => navigate({ open: value, page: 1 })} />
         </div>
         <div className="w-full max-w-[180px]">
-          <Select options={PRIORITY_OPTIONS} value={priority} onValueChange={(value) => navigate({ priority: value, page: 1 })} placeholder="All priorities" />
+          <Select options={priorityOptions} value={priority} onValueChange={(value) => navigate({ priority: value, page: 1 })} placeholder={t("all_priorities")} />
         </div>
       </div>
 
@@ -51,7 +55,7 @@ function WorkOrdersTable({ workOrders, meta, page, open, priority }) {
         columns={[
           {
             key: "work_order_number",
-            header: "Work order",
+            header: t("work_order"),
             render: (row) => (
               <div>
                 <Link href={`/work-orders/${row.id}`} className="font-medium text-brand hover:underline">
@@ -63,26 +67,30 @@ function WorkOrdersTable({ workOrders, meta, page, open, priority }) {
           },
           {
             key: "asset",
-            header: "Asset",
+            header: t("asset"),
             render: (row) => row.asset?.asset_code ?? "—",
           },
-          { key: "factory", header: "Factory", render: (row) => row.factory?.name ?? "—" },
+          { key: "factory", header: tc("factory_scope"), render: (row) => row.factory?.name ?? "—" },
           {
             key: "priority",
-            header: "Priority",
-            render: (row) => <Badge variant={PRIORITY_TONE[row.priority] ?? "neutral"}>{formatStatus(row.priority)}</Badge>,
+            header: t("priority"),
+            render: (row) => <Badge variant={PRIORITY_TONE[row.priority] ?? "neutral"}>{t(`priority_${row.priority?.toLowerCase()}`)}</Badge>,
           },
-          { key: "status", header: "Status", render: (row) => <StatusBadge status={row.status} /> },
+          {
+            key: "status",
+            header: t("status"),
+            render: (row) => <StatusBadge status={row.status} label={t(`status_${row.status?.toLowerCase()}`)} />,
+          },
           {
             key: "scheduled_start",
-            header: "Scheduled",
+            header: t("scheduled_start"),
             render: (row) => <FormattedDateTime value={row.scheduled_start} mode="date" />,
           },
         ]}
         rows={workOrders}
         rowKey={(row) => row.id}
-        emptyTitle={open === "true" ? "No open work orders." : "No work orders found."}
-        rowActions={(row) => [{ label: "View", onSelect: () => router.push(`/work-orders/${row.id}`) }]}
+        emptyTitle={t("no_work_orders")}
+        rowActions={(row) => [{ label: tc("view"), onSelect: () => router.push(`/work-orders/${row.id}`) }]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
