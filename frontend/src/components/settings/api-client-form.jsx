@@ -9,6 +9,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `ApiClientController`'s create/edit form. Nothing is ticked by
@@ -18,6 +19,8 @@ import { Alert } from "@/components/ui/alert";
  * one-time secret reveal).
  */
 function ApiClientForm({ client = null, modules, action }) {
+  const t = useT("api");
+  const tc = useT("common");
   const isEdit = client !== null;
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
@@ -45,8 +48,8 @@ function ApiClientForm({ client = null, modules, action }) {
   if (!isEdit && state?.status === "success") {
     return (
       <div className="flex flex-col gap-4">
-        <Alert variant="success" title="Credential created">
-          Copy the client id and secret now — the secret will not be shown again.
+        <Alert variant="success" title={t("credential_created")}>
+          {t("credential_created_hint")}
         </Alert>
         <div className="flex flex-col gap-2">
           <div className="rounded-sm border border-border bg-surface-muted px-4 py-3 font-mono text-sm break-all">{state.clientId}</div>
@@ -54,7 +57,7 @@ function ApiClientForm({ client = null, modules, action }) {
         </div>
         <div>
           <Link href="/settings/api-clients" className="text-sm font-medium text-brand hover:underline">
-            Back to API clients →
+            {t("back_to_clients")} →
           </Link>
         </div>
       </div>
@@ -67,16 +70,16 @@ function ApiClientForm({ client = null, modules, action }) {
 
       {!isEdit ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Name" required error={state?.errors?.name?.[0]}>
-            {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required placeholder="Dye house controller" />}
+          <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
+            {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required placeholder={t("name_example")} />}
           </FormField>
-          <FormField label="Expires" helperText="Leave blank for no expiry." error={state?.errors?.expires_at?.[0]}>
+          <FormField label={t("expires_at")} helperText={t("expires_hint")} error={state?.errors?.expires_at?.[0]}>
             {() => <DatePicker value={expiresAt} onChange={setExpiresAt} />}
           </FormField>
         </div>
       ) : null}
 
-      <FormField label="Scopes" required error={state?.errors?.scopes?.[0]} helperText="Nothing is ticked by default — a credential that can do nothing is the safe reading.">
+      <FormField label={t("scopes")} required error={state?.errors?.scopes?.[0]} helperText={t("scopes_default_hint")}>
         {() => (
           <div className="flex flex-col gap-4 rounded-sm border border-border-strong p-4">
             {modules.map((group) => (
@@ -101,10 +104,10 @@ function ApiClientForm({ client = null, modules, action }) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending} disabled={scopes.length === 0}>
-          {isEdit ? "Save scopes" : "Create credential"}
+          {isEdit ? t("save_scopes") : t("create_credential")}
         </Button>
       </div>
     </form>

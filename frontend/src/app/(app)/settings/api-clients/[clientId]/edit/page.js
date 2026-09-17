@@ -3,14 +3,17 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { ApiClientForm } from "@/components/settings/api-client-form";
+import { getT } from "@/lib/i18n-server";
 import { updateScopes } from "../actions";
 
 export default async function EditApiClientPage({ params }) {
   const { clientId } = await params;
 
-  const [clients, options] = await Promise.all([
+  const [clients, options, t, tn] = await Promise.all([
     apiFetch("/api-clients"),
     apiFetch("/api-clients/form-options"),
+    getT("api"),
+    getT("nav"),
   ]);
 
   const client = clients.find((c) => c.id === clientId);
@@ -19,9 +22,9 @@ export default async function EditApiClientPage({ params }) {
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "API clients", href: "/settings/api-clients" }, { label: client.name }]}
+        breadcrumb={[{ label: tn("settings") }, { label: t("api_clients"), href: "/settings/api-clients" }, { label: client.name }]}
         title={client.name}
-        description="Narrowing removes the wider access from every token already minted."
+        description={t("narrowing_hint")}
       />
 
       <Card>
