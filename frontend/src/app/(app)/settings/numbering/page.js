@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api-server";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { NumberingRow } from "@/components/settings/numbering-row";
+import { getT } from "@/lib/i18n-server";
 import { updateFormat, resetFormat } from "./actions";
 
 /**
@@ -10,14 +11,14 @@ import { updateFormat, resetFormat } from "./actions";
  * built this pass to back it).
  */
 export default async function NumberingPage() {
-  const rows = await apiFetch("/numbering");
+  const [rows, t, tn] = await Promise.all([apiFetch("/numbering"), getT("numbering"), getT("nav")]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Settings" }, { label: "Numbering" }]}
-        title="Document numbering"
-        description="What this company's work orders, breakdowns and transfers are called. A change here renumbers nothing — it takes effect when the counter next restarts."
+        breadcrumb={[{ label: tn("settings") }, { label: t("numbering") }]}
+        title={t("numbering")}
+        description={t("intro")}
       />
 
       <Card>
