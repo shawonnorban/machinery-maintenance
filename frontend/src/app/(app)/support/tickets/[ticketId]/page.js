@@ -5,19 +5,23 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { ReplyForm } from "@/components/support/reply-form";
 import { cn } from "@/lib/utils";
+import { getT } from "@/lib/i18n-server";
 import { replyTicket } from "../actions";
 
 /** Mirrors `tickets/show.blade.php` — the conversation itself. */
 export default async function SupportTicketDetailPage({ params }) {
   const { ticketId } = await params;
-  const ticket = await apiFetch(`/support/tickets/${ticketId}`);
+  const [ticket, t] = await Promise.all([
+    apiFetch(`/support/tickets/${ticketId}`),
+    getT("support"),
+  ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Support" }, { label: "Tickets", href: "/support/tickets" }, { label: ticket.subject }]}
+        breadcrumb={[{ label: t("support") }, { label: t("tickets"), href: "/support/tickets" }, { label: ticket.subject }]}
         title={ticket.subject}
-        actions={<StatusBadge status={ticket.status} />}
+        actions={<StatusBadge status={ticket.status} label={t(`status_${ticket.status?.toLowerCase()}`)} />}
       />
 
       <div className="flex flex-col gap-4">
@@ -28,7 +32,7 @@ export default async function SupportTicketDetailPage({ params }) {
                 <div className="mb-2 flex items-center justify-between text-xs text-foreground-muted">
                   <span className="font-medium text-foreground">
                     {message.author?.name ?? "—"}
-                    {message.author_is_platform ? " · Platform support" : null}
+                    {message.author_is_platform ? ` · ${t("platform_support")}` : null}
                   </span>
                   <FormattedDateTime value={message.created_at} mode="datetime" />
                 </div>
@@ -45,7 +49,7 @@ export default async function SupportTicketDetailPage({ params }) {
             </CardBody>
           </Card>
         ) : (
-          <p className="text-sm text-foreground-muted">This ticket is closed.</p>
+          <p className="text-sm text-foreground-muted">{t("closed_hint")}</p>
         )}
       </div>
     </>

@@ -7,9 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `tickets/create.blade.php`. */
 function NewTicketForm({ action }) {
+  const t = useT("support");
+  const tc = useT("common");
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
 
@@ -17,20 +20,20 @@ function NewTicketForm({ action }) {
     <form action={dispatch} className="flex flex-col gap-5">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <FormField label="Subject" required error={state?.errors?.subject?.[0]}>
+      <FormField label={t("subject")} required error={state?.errors?.subject?.[0]}>
         {(fieldProps) => <Input {...fieldProps} name="subject" maxLength={255} required />}
       </FormField>
 
-      <FormField label="Message" required error={state?.errors?.body?.[0]}>
+      <FormField label={t("message")} required error={state?.errors?.body?.[0]}>
         {(fieldProps) => <Textarea {...fieldProps} name="body" rows={6} maxLength={5000} required />}
       </FormField>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          Open ticket
+          {t("open_ticket")}
         </Button>
       </div>
     </form>

@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'support' => 'সাপোর্ট',
+    'tickets' => 'টিকিট',
+    'ticket' => 'টিকিট',
+    'page_title' => 'সাপোর্ট টিকিট',
+    'page_description' => 'প্ল্যাটফর্মের নজর দেওয়া প্রয়োজন এমন কিছুর জন্য লিখিত কথোপকথন।',
+    'new_ticket' => 'নতুন টিকিট',
+    'new_ticket_title' => 'নতুন সাপোর্ট টিকিট',
+    'no_tickets' => 'এখনো কোনো সাপোর্ট টিকিট নেই',
+    'no_tickets_hint' => 'প্ল্যাটফর্মের নজর দেওয়া প্রয়োজন এমন কিছু হলেই একটি খুলুন।',
+    'subject' => 'বিষয়',
+    'opened_by' => 'যিনি খুলেছেন',
+    'last_activity' => 'সর্বশেষ কার্যকলাপ',
+    'status' => 'অবস্থা',
+    'message' => 'বার্তা',
+    'open_ticket' => 'টিকিট খুলুন',
+    'platform_support' => 'প্ল্যাটফর্ম সাপোর্ট',
+    'closed_hint' => 'এই টিকিটটি বন্ধ করা হয়েছে।',
+    'reply_placeholder' => 'একটি উত্তর লিখুন…',
+    'send_reply' => 'উত্তর পাঠান',
+    'reply_sent_toast' => 'উত্তর পাঠানো হয়েছে',
+
+    'status_open' => 'খোলা',
+    'status_closed' => 'বন্ধ',
+];
