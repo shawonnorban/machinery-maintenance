@@ -9,15 +9,18 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody } from "@/components/ui/card";
-
-const ACTIVE_OPTIONS = [
-  { value: "", label: "All parts" },
-  { value: "1", label: "Active only" },
-  { value: "0", label: "Inactive only" },
-];
+import { useT } from "@/lib/i18n";
 
 function SparePartsTable({ parts, meta, page, search, active, sort, direction }) {
+  const t = useT("inventory");
+  const tc = useT("common");
   const router = useRouter();
+
+  const activeOptions = [
+    { value: "", label: t("all_parts") },
+    { value: "1", label: t("active_only") },
+    { value: "0", label: t("inactive_only") },
+  ];
   const [searchInput, setSearchInput] = useState(search);
 
   useEffect(() => {
@@ -56,12 +59,12 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search part number, name, brand…"
+              placeholder={t("search_part_placeholder")}
               className="pl-9"
             />
           </div>
           <div className="w-full max-w-[200px]">
-            <Select options={ACTIVE_OPTIONS} value={active} onValueChange={(value) => navigate({ active: value, page: 1 })} />
+            <Select options={activeOptions} value={active} onValueChange={(value) => navigate({ active: value, page: 1 })} />
           </div>
         </CardBody>
       </Card>
@@ -70,7 +73,7 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
         columns={[
           {
             key: "part_number",
-            header: "Part",
+            header: t("part"),
             sortable: true,
             render: (part) => (
               <div>
@@ -81,11 +84,11 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
               </div>
             ),
           },
-          { key: "category", header: "Category", render: (part) => part.category?.name ?? "—" },
-          { key: "unit", header: "Unit" },
+          { key: "category", header: t("category"), render: (part) => part.category?.name ?? "—" },
+          { key: "unit", header: t("unit") },
           {
             key: "reorder_level",
-            header: "Reorder level",
+            header: t("reorder_level"),
             align: "right",
             render: (part) => `${part.reorder_level ?? "—"}`,
           },
@@ -94,8 +97,8 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
             header: "",
             render: (part) => (
               <div className="flex gap-1">
-                {part.is_critical_spare ? <Badge variant="danger">Critical</Badge> : null}
-                {!part.active ? <Badge variant="neutral">Inactive</Badge> : null}
+                {part.is_critical_spare ? <Badge variant="danger">{t("critical")}</Badge> : null}
+                {!part.active ? <Badge variant="neutral">{t("inactive")}</Badge> : null}
               </div>
             ),
           },
@@ -104,9 +107,9 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
         rowKey={(part) => part.id}
         sort={{ key: sort, direction }}
         onSortChange={toggleSort}
-        emptyTitle="No parts found."
-        emptyDescription="Try a different search or filter."
-        rowActions={(part) => [{ label: "View", onSelect: () => router.push(`/inventory/parts/${part.id}`) }]}
+        emptyTitle={t("no_parts")}
+        emptyDescription={t("try_different_filter")}
+        rowActions={(part) => [{ label: tc("view"), onSelect: () => router.push(`/inventory/parts/${part.id}`) }]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SparePartsTable } from "@/components/inventory/spare-parts-table";
+import { getT } from "@/lib/i18n-server";
 
 /**
  * The spare-parts catalogue (docs/03-API-Specification.md §13; behaviour
@@ -24,17 +25,20 @@ export default async function SparePartsPage({ searchParams }) {
   if (search) query.set("search", search);
   if (active) query.set("active", active);
 
-  const parts = await apiFetch(`/spare-parts?${query.toString()}`, { includeMeta: true });
+  const [parts, t] = await Promise.all([
+    apiFetch(`/spare-parts?${query.toString()}`, { includeMeta: true }),
+    getT("inventory"),
+  ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Spare Parts" }]}
-        title="Spare Parts"
-        description="The catalogue of every part the stores carry."
+        breadcrumb={[{ label: t("spare_parts") }]}
+        title={t("spare_parts")}
+        description={t("spare_parts_page_description")}
         actions={
           <Link href="/inventory/parts/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> New part
+            <Plus /> {t("new_part")}
           </Link>
         }
       />

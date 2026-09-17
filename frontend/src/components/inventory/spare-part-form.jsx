@@ -10,6 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useT } from "@/lib/i18n";
 
 const UNIT_OPTIONS = ["PCS", "SET", "MTR", "LTR", "KG", "BOX", "ROLL", "PAIR"].map((u) => ({ value: u, label: u }));
 
@@ -20,6 +21,8 @@ const UNIT_OPTIONS = ["PCS", "SET", "MTR", "LTR", "KG", "BOX", "ROLL", "PAIR"].m
  * every unit has a movement behind it.
  */
 function SparePartForm({ part = null, categories, action }) {
+  const t = useT("inventory");
+  const tc = useT("common");
   const isEdit = part !== null;
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
@@ -68,24 +71,24 @@ function SparePartForm({ part = null, categories, action }) {
       <div className="lg:col-span-7">
         <Card>
           <CardHeader>
-            <CardTitle>Details</CardTitle>
+            <CardTitle>{t("details")}</CardTitle>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Part number" required error={state?.errors?.part_number?.[0]}>
+              <FormField label={t("part_number")} required error={state?.errors?.part_number?.[0]}>
                 {(fieldProps) => <Input {...fieldProps} value={partNumber} onChange={(e) => setPartNumber(e.target.value)} maxLength={64} required />}
               </FormField>
-              <FormField label="Unit" required>
+              <FormField label={t("unit")} required>
                 {(fieldProps) => <Select {...fieldProps} value={unit} onValueChange={setUnit} options={UNIT_OPTIONS} />}
               </FormField>
             </div>
 
-            <FormField label="Name" required error={state?.errors?.name?.[0]}>
+            <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
               {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
             </FormField>
 
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Category" error={state?.errors?.category_id?.[0]}>
+              <FormField label={t("category")} error={state?.errors?.category_id?.[0]}>
                 {(fieldProps) => (
                   <Select
                     {...fieldProps}
@@ -95,16 +98,16 @@ function SparePartForm({ part = null, categories, action }) {
                   />
                 )}
               </FormField>
-              <FormField label="Brand" error={state?.errors?.brand?.[0]}>
+              <FormField label={t("brand")} error={state?.errors?.brand?.[0]}>
                 {(fieldProps) => <Input {...fieldProps} value={brand} onChange={(e) => setBrand(e.target.value)} maxLength={255} />}
               </FormField>
             </div>
 
-            <FormField label="Manufacturer" error={state?.errors?.manufacturer?.[0]}>
+            <FormField label={t("manufacturer")} error={state?.errors?.manufacturer?.[0]}>
               {(fieldProps) => <Input {...fieldProps} value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} maxLength={255} />}
             </FormField>
 
-            <FormField label="Notes" error={state?.errors?.notes?.[0]}>
+            <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
               {(fieldProps) => <Textarea {...fieldProps} value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={2000} />}
             </FormField>
           </CardBody>
@@ -114,32 +117,30 @@ function SparePartForm({ part = null, categories, action }) {
       <div className="lg:col-span-5">
         <Card>
           <CardHeader>
-            <CardTitle>Stock</CardTitle>
+            <CardTitle>{t("stock")}</CardTitle>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Minimum stock" error={state?.errors?.minimum_stock?.[0]}>
+              <FormField label={t("minimum_stock")} error={state?.errors?.minimum_stock?.[0]}>
                 {(fieldProps) => (
                   <Input {...fieldProps} type="number" step="0.0001" min="0" value={minimumStock} onChange={(e) => setMinimumStock(e.target.value)} />
                 )}
               </FormField>
-              <FormField label="Reorder level" error={state?.errors?.reorder_level?.[0]}>
+              <FormField label={t("reorder_level")} error={state?.errors?.reorder_level?.[0]}>
                 {(fieldProps) => (
                   <Input {...fieldProps} type="number" step="0.0001" min="0" value={reorderLevel} onChange={(e) => setReorderLevel(e.target.value)} />
                 )}
               </FormField>
             </div>
-            <p className="-mt-2 text-xs text-foreground-muted">
-              Below the reorder level is the useful signal — by the time stock is out, the lead time has already been lost.
-            </p>
+            <p className="-mt-2 text-xs text-foreground-muted">{t("reorder_hint")}</p>
 
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Lead time (days)" error={state?.errors?.lead_time_days?.[0]}>
+              <FormField label={t("lead_time_days")} error={state?.errors?.lead_time_days?.[0]}>
                 {(fieldProps) => (
                   <Input {...fieldProps} type="number" min="0" max="3650" value={leadTimeDays} onChange={(e) => setLeadTimeDays(e.target.value)} />
                 )}
               </FormField>
-              <FormField label="Shelf life (days)" error={state?.errors?.shelf_life_days?.[0]}>
+              <FormField label={t("shelf_life_days")} error={state?.errors?.shelf_life_days?.[0]}>
                 {(fieldProps) => (
                   <Input {...fieldProps} type="number" min="0" max="36500" value={shelfLifeDays} onChange={(e) => setShelfLifeDays(e.target.value)} />
                 )}
@@ -149,28 +150,26 @@ function SparePartForm({ part = null, categories, action }) {
             <div className="flex flex-col gap-2">
               <label className="flex items-center gap-2 text-sm text-foreground">
                 <Checkbox checked={isCriticalSpare} onCheckedChange={setIsCriticalSpare} />
-                Critical spare
+                {t("is_critical_spare")}
               </label>
-              <p className="pl-7 text-xs text-foreground-muted">A machine that cannot run without this part on hand.</p>
+              <p className="pl-7 text-xs text-foreground-muted">{t("critical_hint")}</p>
 
               <label className="flex items-center gap-2 text-sm text-foreground">
                 <Checkbox checked={hazardous} onCheckedChange={setHazardous} />
-                Hazardous
+                {t("hazardous")}
               </label>
             </div>
 
-            <p className="text-xs text-foreground-muted">
-              No opening quantity here — stock enters through the ledger, so every unit has a movement behind it.
-            </p>
+            <p className="text-xs text-foreground-muted">{t("no_opening_quantity_hint")}</p>
           </CardBody>
         </Card>
 
         <div className="mt-4 flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" loading={pending}>
-            {isEdit ? "Save changes" : "Create part"}
+            {isEdit ? t("save_changes") : t("create_part")}
           </Button>
         </div>
       </div>
