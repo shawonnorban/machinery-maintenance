@@ -7,12 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { NotificationsList } from "@/components/notifications/notifications-list";
 import { MarkAllReadButton } from "@/components/notifications/mark-all-read-button";
+import { getT } from "@/lib/i18n-server";
 import { markRead, markAllRead, acknowledge } from "./actions";
-
-const TABS = [
-  { value: "UNREAD", label: "Unread" },
-  { value: "ALL", label: "All" },
-];
 
 /** Mirrors `NotificationController::index` — no permission beyond being signed in, since these are scoped to the caller by ownership rather than a role. */
 export default async function NotificationsPage({ searchParams }) {
@@ -20,18 +16,26 @@ export default async function NotificationsPage({ searchParams }) {
   const filter = params.filter ?? "UNREAD";
   const page = Number(params.page ?? 1);
 
-  const notifications = await apiFetch(`/notifications?filter=${filter}&page=${page}`, { includeMeta: true });
+  const [notifications, t] = await Promise.all([
+    apiFetch(`/notifications?filter=${filter}&page=${page}`, { includeMeta: true }),
+    getT("notification"),
+  ]);
   const { unread_count: unreadCount, current_page: currentPage, last_page: lastPage, total } = notifications.meta;
+
+  const TABS = [
+    { value: "UNREAD", label: t("unread") },
+    { value: "ALL", label: t("all") },
+  ];
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Notifications" }]}
-        title="Notifications"
+        breadcrumb={[{ label: t("notifications") }]}
+        title={t("notifications")}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Link href="/notifications/preferences" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <Settings /> Preferences
+              <Settings /> {t("preferences_short")}
             </Link>
             {unreadCount > 0 ? <MarkAllReadButton action={markAllRead} /> : null}
           </div>
@@ -59,7 +63,7 @@ export default async function NotificationsPage({ searchParams }) {
       {total > notifications.meta.per_page ? (
         <div className="mt-3 flex items-center justify-between gap-2 text-xs text-foreground-muted">
           <span>
-            Page {currentPage} of {lastPage} · {total} total
+            {t("page_summary", { current: currentPage, last: lastPage, total })}
           </span>
           <div className="flex gap-2">
             <Link
@@ -67,14 +71,14 @@ export default async function NotificationsPage({ searchParams }) {
               aria-disabled={currentPage <= 1}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }), currentPage <= 1 && "pointer-events-none opacity-50")}
             >
-              Previous
+              {t("previous")}
             </Link>
             <Link
               href={`/notifications?filter=${filter}&page=${currentPage + 1}`}
               aria-disabled={currentPage >= lastPage}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }), currentPage >= lastPage && "pointer-events-none opacity-50")}
             >
-              Next
+              {t("next")}
             </Link>
           </div>
         </div>

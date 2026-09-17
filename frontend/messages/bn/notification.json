@@ -132,5 +132,11 @@
             "body": ":vendor-এর চুক্তি :end_date তারিখে শেষ হচ্ছে, আর :days দিন বাকি।"
         }
     },
-    "view_all": "সব বিজ্ঞপ্তি দেখুন"
+    "view_all": "সব বিজ্ঞপ্তি দেখুন",
+    "all_marked_read_toast": "সব পঠিত চিহ্নিত হয়েছে",
+    "preferences_short": "পছন্দসমূহ",
+    "page_summary": "পৃষ্ঠা :current এর :last · মোট :total",
+    "previous": "পূর্ববর্তী",
+    "next": "পরবর্তী",
+    "preferences_page_description": "প্রতিটি ধরনের ঘটনা আপনার কাছে কোন চ্যানেলে পৌঁছায়।"
 }

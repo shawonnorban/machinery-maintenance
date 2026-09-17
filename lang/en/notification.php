@@ -147,4 +147,10 @@ return [
         ],
     ],
     'view_all' => 'View all notifications',
+    'all_marked_read_toast' => 'All marked read',
+    'preferences_short' => 'Preferences',
+    'page_summary' => 'Page :current of :last · :total total',
+    'previous' => 'Previous',
+    'next' => 'Next',
+    'preferences_page_description' => 'Which channel each kind of event reaches you on.',
 ];
