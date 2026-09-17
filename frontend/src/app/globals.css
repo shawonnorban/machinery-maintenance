@@ -52,15 +52,16 @@
   --foreground-muted: #475569;
   --foreground-subtle: #94a3b8;
 
-  /* Typography — Segoe UI, the project's default face. Not shippable as a
-   * web font (Microsoft-licensed, Windows-only), so this is a stack rather
-   * than a next/font entry: Segoe UI where the OS has it, each other
-   * platform's own native UI face otherwise. Windows' own font-linking
-   * already substitutes Nirmala UI for Bengali runs within Segoe UI, and
-   * system-ui/-apple-system do the equivalent on macOS/Linux, so no
-   * separate Bengali-specific fallback is listed here. */
-  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
+  /* Typography — Segoe UI for Latin text, Anek Bangla for Bengali, both
+   * self-hosted via next/font/local (see layout.js) so every platform sees
+   * the same glyphs rather than relying on Windows' own Segoe UI + its
+   * Nirmala UI font-linking for Bengali. The two variables are stacked
+   * rather than merged into one face: the browser renders each run of text
+   * from whichever font actually has its glyphs, Latin from Segoe UI and
+   * Bengali from Anek Bangla, falling through to the system stack only if
+   * neither self-hosted font has covered a character. */
+  --font-sans: var(--font-segoe-ui), var(--font-anek-bangla), system-ui, -apple-system, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
   /* Radius — the only three values a screen may use. Every surface in the
    * codebase (buttons, inputs, dropdowns, cards, KPI cards, modals) already

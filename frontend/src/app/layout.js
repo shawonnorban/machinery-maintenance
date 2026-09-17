@@ -1,15 +1,31 @@
 import { Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
-// The UI's default face is Segoe UI (see the --font-sans stack in
-// globals.css's :root) — a Windows system font with no licence to ship as a
-// web font, so there is no next/font/google entry for it the way Geist Sans
-// used to have one. Geist Mono stays: monospace contexts (secrets, codes)
-// are a separate, unrelated design choice from the general UI typeface.
+// The UI's default face is Segoe UI, self-hosted here rather than left to
+// each OS's own copy (see the --font-sans stack in globals.css's :root) —
+// a Windows visitor sees exactly the same glyphs as a factory-floor Android
+// tablet or a Linux desktop. This .ttf carries no Bengali glyphs of its
+// own (that's Windows' own font-linking to Nirmala UI, which only exists
+// on Windows), so Anek Bangla is stacked right after it — the browser
+// renders every Latin run from Segoe UI and falls through to Anek Bangla,
+// glyph by glyph, for anything in Bengali script.
+const segoeUI = localFont({
+  src: "./fonts/Segoe UI.ttf",
+  variable: "--font-segoe-ui",
+  display: "swap",
+});
+
+const anekBangla = localFont({
+  src: "./fonts/AnekBangla-Regular.ttf",
+  variable: "--font-anek-bangla",
+  display: "swap",
+});
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -40,7 +56,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistMono.variable} h-full antialiased`}
+      className={`${segoeUI.variable} ${anekBangla.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
