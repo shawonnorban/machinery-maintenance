@@ -1522,6 +1522,7 @@
         "release": "Release",
         "released": "Reservation released.",
         "reason": "Reason",
+        "notes_no_work_order_hint": "Stock moving with no work order behind it is indistinguishable from loss without one.",
         "quantity_must_be_positive": "The quantity must be greater than zero.",
         "cost_must_not_be_negative": "The cost cannot be negative.",
         "unknown_transaction_type": "Unknown movement type.",

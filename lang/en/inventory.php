@@ -209,6 +209,7 @@ return [
     'release' => 'Release',
     'released' => 'Reservation released.',
     'reason' => 'Reason',
+    'notes_no_work_order_hint' => 'Stock moving with no work order behind it is indistinguishable from loss without one.',
 
     // --- rules and refusals ---
     'quantity_must_be_positive' => 'The quantity must be greater than zero.',

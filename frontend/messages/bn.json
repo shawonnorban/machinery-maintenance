@@ -1522,6 +1522,7 @@
         "release": "ছেড়ে দিন",
         "released": "সংরক্ষণ ছেড়ে দেওয়া হয়েছে।",
         "reason": "কারণ",
+        "notes_no_work_order_hint": "কাজের আদেশ ছাড়া সরে যাওয়া স্টক ব্যাখ্যা ছাড়া ক্ষতির মতোই।",
         "quantity_must_be_positive": "পরিমাণ শূন্যের বেশি হতে হবে।",
         "cost_must_not_be_negative": "খরচ ঋণাত্মক হতে পারে না।",
         "unknown_transaction_type": "লেনদেনের ধরনটি অজানা।",
