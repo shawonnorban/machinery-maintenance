@@ -10,6 +10,7 @@ import { DateTimeField } from "@/components/ui/date-time-field";
 import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `breakdown::breakdowns._chain.blade.php` — the seven-timestamp
@@ -24,27 +25,28 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
  * while the breakdown is open, same as everywhere else in this file).
  */
 const CHAIN_FIELDS = [
-  ["failure_at", "Machine stopped"],
-  ["reported_at", "Reported"],
-  ["acknowledged_at", "Acknowledged"],
-  ["technician_arrival_at", "Technician arrived"],
-  ["repair_started_at", "Repair started"],
-  ["repair_completed_at", "Repair completed"],
-  ["production_resumed_at", "Production resumed"],
+  "failure_at",
+  "reported_at",
+  "acknowledged_at",
+  "technician_arrival_at",
+  "repair_started_at",
+  "repair_completed_at",
+  "production_resumed_at",
 ];
 
 function BreakdownTimelineTab({ timestamps, isTerminal, action }) {
+  const t = useT("breakdown");
   const [editingField, setEditingField] = useState(null);
 
   return (
     <div className="overflow-hidden rounded-sm border border-border">
       <table className="w-full text-sm">
         <tbody className="divide-y divide-border">
-          {CHAIN_FIELDS.map(([field, label]) => (
+          {CHAIN_FIELDS.map((field) => (
             <tr key={field}>
-              <td className="w-56 p-3 text-foreground-muted">{label}</td>
+              <td className="w-56 p-3 text-foreground-muted">{t(field)}</td>
               <td className={timestamps[field] ? "p-3 font-medium text-foreground" : "p-3 text-foreground-muted"}>
-                {timestamps[field] ? <FormattedDateTime value={timestamps[field]} /> : "Not recorded"}
+                {timestamps[field] ? <FormattedDateTime value={timestamps[field]} /> : t("not_recorded")}
               </td>
               <td className="w-12 p-3 text-right">
                 {!isTerminal ? (
@@ -52,8 +54,8 @@ function BreakdownTimelineTab({ timestamps, isTerminal, action }) {
                     type="button"
                     onClick={() => setEditingField(field)}
                     className="text-foreground-muted hover:text-foreground"
-                    aria-label={`Correct ${label}`}
-                    title="Correct a time"
+                    aria-label={t("correct_timestamp")}
+                    title={t("correct_timestamp")}
                   >
                     <Pencil className="size-4" />
                   </button>
@@ -67,7 +69,7 @@ function BreakdownTimelineTab({ timestamps, isTerminal, action }) {
       <CorrectTimestampModal
         key={editingField ?? "none"}
         field={editingField}
-        label={CHAIN_FIELDS.find(([f]) => f === editingField)?.[1]}
+        label={editingField ? t(editingField) : null}
         value={editingField ? timestamps[editingField] : null}
         onOpenChange={(open) => !open && setEditingField(null)}
         action={action}
@@ -83,13 +85,15 @@ function toLocalInputValue(iso) {
 }
 
 function CorrectTimestampModal({ field, label, value, onOpenChange, action }) {
+  const t = useT("breakdown");
+  const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action, null);
   const router = useRouter();
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Time corrected", type: "success" });
+      toastManager.add({ title: t("timestamp_corrected"), type: "success" });
       queueMicrotask(() => onOpenChange(false));
       router.refresh();
     }
@@ -109,7 +113,7 @@ function CorrectTimestampModal({ field, label, value, onOpenChange, action }) {
     <Modal open={field !== null} onOpenChange={onOpenChange} title={label ?? ""}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input type="hidden" name="field" value={field ?? ""} />
-        <FormField label="Correct a time" required error={state?.errors?.value?.[0]}>
+        <FormField label={t("correct_timestamp")} required error={state?.errors?.value?.[0]}>
           {(fieldProps) => (
             <DateTimeField {...fieldProps} name="value" defaultValue={toLocalInputValue(value)} />
           )}
@@ -117,10 +121,10 @@ function CorrectTimestampModal({ field, label, value, onOpenChange, action }) {
         {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
         <div className="mt-2 flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tc("cancel")}
           </Button>
           <Button type="submit" loading={pending}>
-            Save
+            {tc("save")}
           </Button>
         </div>
       </form>
