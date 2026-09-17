@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useToastManager } from "@/components/ui/toast";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { Trash2 } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `work_order::work-orders._labor.blade.php` — time, and nothing
@@ -19,27 +20,28 @@ import { Trash2 } from "lucide-react";
  * instead, not here.
  */
 function LaborTab({ entries, technicians, canManage, isTerminal, recordAction, deleteAction }) {
+  const t = useT("work_order");
   const totalMinutes = entries.reduce((sum, entry) => sum + (entry.minutes ?? 0), 0);
   // See parts-tab.jsx's PartsTab for why this is memoized rather than built
   // inline in RecordLaborForm's render.
-  const technicianOptions = useMemo(() => technicians.map((t) => ({ value: t.id, label: t.name })), [technicians]);
+  const technicianOptions = useMemo(() => technicians.map((tech) => ({ value: tech.id, label: tech.name })), [technicians]);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between text-sm">
-        <span className="text-foreground-muted">Time on the job</span>
-        <span className="font-medium text-foreground">{totalMinutes.toLocaleString()} minutes total</span>
+        <span className="text-foreground-muted">{t("time_on_the_job")}</span>
+        <span className="font-medium text-foreground">{t("total_minutes", { count: totalMinutes.toLocaleString() })}</span>
       </div>
 
       <div className="overflow-x-auto rounded-sm border border-border">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-xs text-foreground-muted">
-              <th className="px-4 py-3">Technician</th>
-              <th className="px-4 py-3">Started</th>
-              <th className="px-4 py-3">Ended</th>
-              <th className="px-4 py-3 text-right">Minutes</th>
-              <th className="px-4 py-3">Notes</th>
+              <th className="px-4 py-3">{t("technician")}</th>
+              <th className="px-4 py-3">{t("started_at")}</th>
+              <th className="px-4 py-3">{t("ended_at")}</th>
+              <th className="px-4 py-3 text-right">{t("minutes")}</th>
+              <th className="px-4 py-3">{t("notes")}</th>
               {canManage && !isTerminal ? <th className="px-4 py-3" /> : null}
             </tr>
           </thead>
@@ -47,7 +49,7 @@ function LaborTab({ entries, technicians, canManage, isTerminal, recordAction, d
             {entries.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-6 text-center text-foreground-muted">
-                  No time recorded yet.
+                  {t("no_labor")}
                 </td>
               </tr>
             ) : (
@@ -65,6 +67,8 @@ function LaborTab({ entries, technicians, canManage, isTerminal, recordAction, d
 }
 
 function LaborRow({ entry, canManage, isTerminal, deleteAction }) {
+  const t = useT("work_order");
+  const tc = useT("common");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
@@ -73,7 +77,7 @@ function LaborRow({ entry, canManage, isTerminal, deleteAction }) {
     startTransition(async () => {
       const result = await deleteAction(entry.id);
       if (result?.status === "success") {
-        toastManager.add({ title: "Removed", type: "success" });
+        toastManager.add({ title: t("removed"), type: "success" });
         router.refresh();
       } else if (result?.status === "error") {
         toastManager.add({ title: result.message, type: "danger" });
@@ -90,7 +94,7 @@ function LaborRow({ entry, canManage, isTerminal, deleteAction }) {
       <td className="px-4 py-3 text-xs text-foreground-muted">{entry.notes ?? "—"}</td>
       {canManage && !isTerminal ? (
         <td className="px-4 py-3 text-right">
-          <Button variant="ghost" size="icon" aria-label="Delete" loading={pending} onClick={runDelete}>
+          <Button variant="ghost" size="icon" aria-label={tc("delete")} loading={pending} onClick={runDelete}>
             <Trash2 className="text-danger" />
           </Button>
         </td>
@@ -100,12 +104,13 @@ function LaborRow({ entry, canManage, isTerminal, deleteAction }) {
 }
 
 function RecordLaborForm({ technicianOptions, action }) {
+  const t = useT("work_order");
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: "Time recorded", type: "success" });
+      toastManager.add({ title: t("labor_recorded"), type: "success" });
     }
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes
@@ -115,20 +120,20 @@ function RecordLaborForm({ technicianOptions, action }) {
 
   return (
     <form action={dispatch} className="grid grid-cols-1 gap-3 rounded-sm border border-border p-4 sm:grid-cols-5 sm:items-end">
-      <FormField label="Technician" required error={state?.errors?.technician_id?.[0]}>
-        {(fieldProps) => <Select {...fieldProps} name="technician_id" options={technicianOptions} placeholder="Select a technician" />}
+      <FormField label={t("technician")} required error={state?.errors?.technician_id?.[0]}>
+        {(fieldProps) => <Select {...fieldProps} name="technician_id" options={technicianOptions} placeholder={t("select_technician")} />}
       </FormField>
-      <FormField label="Started" required error={state?.errors?.started_at?.[0]}>
+      <FormField label={t("started_at")} required error={state?.errors?.started_at?.[0]}>
         {(fieldProps) => <DateTimeField {...fieldProps} name="started_at" />}
       </FormField>
-      <FormField label="Ended" required error={state?.errors?.ended_at?.[0]}>
+      <FormField label={t("ended_at")} required error={state?.errors?.ended_at?.[0]}>
         {(fieldProps) => <DateTimeField {...fieldProps} name="ended_at" />}
       </FormField>
-      <FormField label="Notes" error={state?.errors?.notes?.[0]}>
+      <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
         {(fieldProps) => <Input {...fieldProps} name="notes" maxLength={500} />}
       </FormField>
       <Button type="submit" loading={pending}>
-        Record
+        {t("record_time")}
       </Button>
       {state?.status === "error" && !state.errors ? <p className="col-span-full text-sm text-danger">{state.message}</p> : null}
     </form>

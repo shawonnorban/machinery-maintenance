@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { FileInput } from "@/components/ui/file-input";
 import { Select } from "@/components/ui/select";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 
 const RESULT_TONE = { PASS: "success", FAIL: "danger", NA: "neutral" };
 
@@ -21,16 +22,18 @@ const RESULT_TONE = { PASS: "success", FAIL: "danger", NA: "neutral" };
  * fifteenth failed.
  */
 function ChecklistTab({ progress, items, canExecute, action }) {
+  const t = useT("work_order");
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span className="text-foreground-muted">
-          {progress.answered} of {progress.total} answered
+          {t("checklist_progress", { answered: progress.answered, total: progress.total })}
         </span>
         {progress.required_remaining > 0 ? (
-          <Badge variant="warning">{progress.required_remaining} required remaining</Badge>
+          <Badge variant="warning">{t("checklist_required_remaining", { count: progress.required_remaining })}</Badge>
         ) : null}
-        {progress.failed > 0 ? <Badge variant="danger">{progress.failed} failed</Badge> : null}
+        {progress.failed > 0 ? <Badge variant="danger">{t("checklist_failed_badge", { count: progress.failed })}</Badge> : null}
       </div>
 
       <div className="overflow-x-auto rounded-sm border border-border">
@@ -38,11 +41,11 @@ function ChecklistTab({ progress, items, canExecute, action }) {
           <thead>
             <tr className="border-b border-border text-left text-xs text-foreground-muted">
               <th className="px-4 py-3">#</th>
-              <th className="px-4 py-3">Item</th>
+              <th className="px-4 py-3">{t("checklist_item")}</th>
               <th className="px-4 py-3" style={{ minWidth: "18rem" }}>
-                Answer
+                {t("answer")}
               </th>
-              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">{t("status")}</th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +60,7 @@ function ChecklistTab({ progress, items, canExecute, action }) {
 }
 
 function SubmitButton() {
+  const t = useT("work_order");
   const { pending } = useFormStatus();
   return (
     <button
@@ -64,12 +68,13 @@ function SubmitButton() {
       disabled={pending}
       className="inline-flex h-8 items-center rounded-sm bg-brand px-3 text-xs font-medium text-brand-foreground hover:bg-brand-hover disabled:opacity-50"
     >
-      {pending ? "…" : "Record"}
+      {pending ? "…" : t("record")}
     </button>
   );
 }
 
 function ChecklistRow({ item, canExecute, action }) {
+  const t = useT("work_order");
   const result = item.result;
   const [state, dispatch] = useActionState(action, null);
   const formRef = useRef(null);
@@ -77,7 +82,7 @@ function ChecklistRow({ item, canExecute, action }) {
 
   useEffect(() => {
     if (state?.status === "success") {
-      toastManager.add({ title: `${item.label} recorded`, type: "success" });
+      toastManager.add({ title: t("action_recorded", { action: item.label }), type: "success" });
     } else if (state?.status === "error") {
       toastManager.add({ title: state.message, type: "danger" });
     }
@@ -96,12 +101,12 @@ function ChecklistRow({ item, canExecute, action }) {
         {item.help_text ? <div className="text-xs text-foreground-muted">{item.help_text}</div> : null}
         {item.is_safety_item ? (
           <Badge variant="danger" className="mt-1">
-            Safety
+            {t("safety_item")}
           </Badge>
         ) : null}
         {item.tolerance_min !== undefined && (item.tolerance_min !== null || item.tolerance_max !== null) ? (
           <div className="mt-1 text-xs text-foreground-muted">
-            Tolerance: {item.tolerance_min ?? "−∞"} to {item.tolerance_max ?? "∞"} {item.unit}
+            {t("checklist_tolerance_range", { min: item.tolerance_min ?? "−∞", max: item.tolerance_max ?? "∞" })} {item.unit}
           </div>
         ) : null}
       </td>
@@ -141,11 +146,11 @@ function ChecklistRow({ item, canExecute, action }) {
                 className="h-9 w-28 rounded-sm border border-border-strong bg-surface px-2 text-sm"
               >
                 <option value="" disabled>
-                  Result
+                  {t("select_result")}
                 </option>
-                <option value="PASS">Pass</option>
-                <option value="FAIL">Fail</option>
-                {!item.required ? <option value="NA">N/A</option> : null}
+                <option value="PASS">{t("result_pass")}</option>
+                <option value="FAIL">{t("result_fail")}</option>
+                {!item.required ? <option value="NA">{t("result_na")}</option> : null}
               </select>
 
               <SubmitButton />
@@ -159,7 +164,7 @@ function ChecklistRow({ item, canExecute, action }) {
                     type="text"
                     defaultValue={result?.observation ?? ""}
                     maxLength={2000}
-                    placeholder="Observation (if fail)"
+                    placeholder={t("observation_if_fail_placeholder")}
                     className="w-56"
                   />
                 ) : null}
@@ -188,11 +193,11 @@ function ChecklistRow({ item, canExecute, action }) {
       <td className="px-4 py-3 align-top">
         {result ? (
           <div className="flex flex-col gap-1">
-            <Badge variant={RESULT_TONE[result.result] ?? "neutral"}>{result.result}</Badge>
-            {result.is_within_tolerance === false ? <span className="text-xs text-danger">Out of tolerance</span> : null}
+            <Badge variant={RESULT_TONE[result.result] ?? "neutral"}>{t(`result_${result.result?.toLowerCase()}`)}</Badge>
+            {result.is_within_tolerance === false ? <span className="text-xs text-danger">{t("checklist_out_of_tolerance")}</span> : null}
             {result.followup_work_order_id ? (
               <Link href={`/work-orders/${result.followup_work_order_id}`} className="text-xs text-brand hover:underline">
-                Follow-up raised
+                {t("followup_raised")}
               </Link>
             ) : null}
           </div>

@@ -8,6 +8,7 @@ import { FileInput } from "@/components/ui/file-input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useToastManager } from "@/components/ui/toast";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
+import { useT } from "@/lib/i18n";
 
 /**
  * Read-only on the web (a list at the bottom of the show page, no upload
@@ -18,6 +19,7 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
  * Transfer detail page.
  */
 function AttachmentsTab({ attachments, isTerminal, action }) {
+  const t = useT("work_order");
   const router = useRouter();
   const formRef = useRef(null);
   const [pending, setPending] = useState(false);
@@ -30,7 +32,7 @@ function AttachmentsTab({ attachments, isTerminal, action }) {
     const result = await action(formData);
     setPending(false);
     if (result?.status === "success") {
-      toastManager.add({ title: "Uploaded", type: "success" });
+      toastManager.add({ title: t("uploaded"), type: "success" });
       formRef.current?.reset();
       router.refresh();
     } else if (result?.status === "error") {
@@ -41,7 +43,7 @@ function AttachmentsTab({ attachments, isTerminal, action }) {
   return (
     <div className="flex flex-col gap-4">
       {attachments.length === 0 ? (
-        <EmptyState icon={<Paperclip />} title="No attachments yet." description="Photos of the finished job, a vendor's note, anything worth keeping with this record." />
+        <EmptyState icon={<Paperclip />} title={t("no_attachments")} description={t("no_attachments_hint")} />
       ) : (
         <div className="divide-y divide-border rounded-sm border border-border">
           {attachments.map((file) => (
@@ -71,7 +73,7 @@ function AttachmentsTab({ attachments, isTerminal, action }) {
             <FileInput name="file" required />
           </div>
           <Button type="submit" loading={pending}>
-            <Upload /> Upload
+            <Upload /> {t("upload")}
           </Button>
         </form>
       ) : null}

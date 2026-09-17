@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToastManager } from "@/components/ui/toast";
 import { formatQuantity, formatCurrency } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 /**
  * Mirrors `inventory::work-orders._parts.blade.php` — issued, fitted and
@@ -19,6 +20,7 @@ import { formatQuantity, formatCurrency } from "@/lib/format";
  * are not shown here (deliberately out of this pass's scope).
  */
 function PartsTab({ lines, spareParts, bins, isTerminal, showCosts, currency, actions }) {
+  const t = useT("work_order");
   // Base UI's Select re-derives its own internal state off `items` identity —
   // building this array inline in each render (as the two forms below used
   // to) hands it a new reference every time either form re-renders (e.g. on
@@ -37,13 +39,13 @@ function PartsTab({ lines, spareParts, bins, isTerminal, showCosts, currency, ac
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-xs text-foreground-muted">
-              <th className="px-4 py-3">Part</th>
-              <th className="px-4 py-3 text-right">Requested</th>
-              <th className="px-4 py-3 text-right">Issued</th>
-              <th className="px-4 py-3 text-right">Consumed</th>
-              <th className="px-4 py-3 text-right">Returned</th>
-              <th className="px-4 py-3 text-right">Outstanding</th>
-              {showCosts ? <th className="px-4 py-3 text-right">Unit cost</th> : null}
+              <th className="px-4 py-3">{t("part")}</th>
+              <th className="px-4 py-3 text-right">{t("requested")}</th>
+              <th className="px-4 py-3 text-right">{t("issued")}</th>
+              <th className="px-4 py-3 text-right">{t("consumed")}</th>
+              <th className="px-4 py-3 text-right">{t("returned")}</th>
+              <th className="px-4 py-3 text-right">{t("outstanding")}</th>
+              {showCosts ? <th className="px-4 py-3 text-right">{t("unit_cost")}</th> : null}
               <th className="px-4 py-3" />
             </tr>
           </thead>
@@ -51,7 +53,7 @@ function PartsTab({ lines, spareParts, bins, isTerminal, showCosts, currency, ac
             {lines.length === 0 ? (
               <tr>
                 <td colSpan={showCosts ? 8 : 7} className="px-4 py-6 text-center text-foreground-muted">
-                  No parts on this work order yet.
+                  {t("no_parts")}
                 </td>
               </tr>
             ) : (
@@ -86,6 +88,7 @@ function outstanding(line) {
 }
 
 function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, actions }) {
+  const t = useT("work_order");
   const remaining = outstanding(line);
   const hasOutstanding = Number(remaining) > 0;
   const [consumeQty, setConsumeQty] = useState(remaining);
@@ -115,8 +118,8 @@ function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, action
           {line.spare_part?.part_number}
         </Link>
         <div className="text-xs text-foreground-muted">{line.spare_part?.name}</div>
-        {line.status === "REQUESTED" ? <Badge variant="warning">Awaiting store</Badge> : null}
-        {line.status === "CANCELLED" ? <Badge variant="neutral">Cancelled</Badge> : null}
+        {line.status === "REQUESTED" ? <Badge variant="warning">{t("awaiting_store")}</Badge> : null}
+        {line.status === "CANCELLED" ? <Badge variant="neutral">{t("status_cancelled")}</Badge> : null}
       </td>
       <td className="px-4 py-3 text-right">{formatQuantity(line.quantity_requested, line.spare_part?.unit)}</td>
       <td className="px-4 py-3 text-right">{formatQuantity(line.quantity_issued, line.spare_part?.unit)}</td>
@@ -133,7 +136,7 @@ function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, action
               value={issueBinId}
               onValueChange={setIssueBinId}
               options={binOptions}
-              placeholder="Bin"
+              placeholder={t("bin")}
               className="h-8 w-36 text-xs"
             />
             <Input
@@ -148,9 +151,9 @@ function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, action
               size="sm"
               loading={pending}
               disabled={!issueBinId}
-              onClick={() => run(actions.issueRequestedPart(line.id, issueBinId, issueQty), "Issued")}
+              onClick={() => run(actions.issueRequestedPart(line.id, issueBinId, issueQty), t("issued"))}
             >
-              Issue
+              {t("issue")}
             </Button>
           </div>
         ) : null}
@@ -170,9 +173,9 @@ function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, action
                 size="sm"
                 variant="outline"
                 loading={pending}
-                onClick={() => run(actions.consumePart(line.id, consumeQty), "Consumed")}
+                onClick={() => run(actions.consumePart(line.id, consumeQty), t("consumed"))}
               >
-                Consume
+                {t("consume")}
               </Button>
             </div>
             <div className="flex items-center gap-1">
@@ -189,9 +192,9 @@ function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, action
                 size="sm"
                 variant="outline"
                 loading={pending}
-                onClick={() => run(actions.returnPart(line.id, returnQty), "Returned")}
+                onClick={() => run(actions.returnPart(line.id, returnQty), t("returned"))}
               >
-                Return
+                {t("return")}
               </Button>
             </div>
           </div>
@@ -202,11 +205,12 @@ function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, action
 }
 
 function RequestPartForm({ sparePartOptions, action }) {
+  const t = useT("work_order");
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
   useEffect(() => {
-    if (state?.status === "success") toastManager.add({ title: "Requested", type: "success" });
+    if (state?.status === "success") toastManager.add({ title: t("requested"), type: "success" });
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes
     // "success", stacking duplicate toasts.
@@ -215,18 +219,18 @@ function RequestPartForm({ sparePartOptions, action }) {
 
   return (
     <form action={dispatch} className="flex flex-col gap-3 rounded-sm border border-border p-4">
-      <p className="text-sm font-semibold text-foreground">Request a part</p>
-      <p className="text-xs text-foreground-muted">Asks for it — only the store can hand one over.</p>
-      <FormField label="Part" required error={state?.errors?.spare_part_id?.[0]}>
-        {(fieldProps) => <Select {...fieldProps} name="spare_part_id" options={sparePartOptions} placeholder="Select a part" />}
+      <p className="text-sm font-semibold text-foreground">{t("request_a_part")}</p>
+      <p className="text-xs text-foreground-muted">{t("request_a_part_hint")}</p>
+      <FormField label={t("part")} required error={state?.errors?.spare_part_id?.[0]}>
+        {(fieldProps) => <Select {...fieldProps} name="spare_part_id" options={sparePartOptions} placeholder={t("select_a_part")} />}
       </FormField>
-      <FormField label="Quantity" required error={state?.errors?.quantity?.[0]}>
+      <FormField label={t("quantity")} required error={state?.errors?.quantity?.[0]}>
         {(fieldProps) => <Input {...fieldProps} name="quantity" type="number" step="0.0001" min="0.0001" defaultValue="1" required />}
       </FormField>
       {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
       <div>
         <Button type="submit" variant="outline" loading={pending}>
-          Request
+          {t("request")}
         </Button>
       </div>
     </form>
@@ -234,11 +238,12 @@ function RequestPartForm({ sparePartOptions, action }) {
 }
 
 function IssuePartForm({ sparePartOptions, binOptions, action }) {
+  const t = useT("work_order");
   const [state, dispatch, pending] = useActionState(action, null);
   const toastManager = useToastManager();
 
   useEffect(() => {
-    if (state?.status === "success") toastManager.add({ title: "Issued", type: "success" });
+    if (state?.status === "success") toastManager.add({ title: t("issued"), type: "success" });
     // toastManager is not a stable reference across renders — including it
     // re-fires this effect every render once state first becomes
     // "success", stacking duplicate toasts.
@@ -247,21 +252,21 @@ function IssuePartForm({ sparePartOptions, binOptions, action }) {
 
   return (
     <form action={dispatch} className="flex flex-col gap-3 rounded-sm border border-border p-4">
-      <p className="text-sm font-semibold text-foreground">Issue a part</p>
-      <p className="text-xs text-foreground-muted">The store handing one over directly, with nothing requested first.</p>
-      <FormField label="Part" required error={state?.errors?.spare_part_id?.[0]}>
-        {(fieldProps) => <Select {...fieldProps} name="spare_part_id" options={sparePartOptions} placeholder="Select a part" />}
+      <p className="text-sm font-semibold text-foreground">{t("issue_a_part")}</p>
+      <p className="text-xs text-foreground-muted">{t("issue_a_part_hint")}</p>
+      <FormField label={t("part")} required error={state?.errors?.spare_part_id?.[0]}>
+        {(fieldProps) => <Select {...fieldProps} name="spare_part_id" options={sparePartOptions} placeholder={t("select_a_part")} />}
       </FormField>
-      <FormField label="Bin" required error={state?.errors?.bin_id?.[0]}>
-        {(fieldProps) => <Select {...fieldProps} name="bin_id" options={binOptions} placeholder="Select a bin" />}
+      <FormField label={t("bin")} required error={state?.errors?.bin_id?.[0]}>
+        {(fieldProps) => <Select {...fieldProps} name="bin_id" options={binOptions} placeholder={t("select_a_bin")} />}
       </FormField>
-      <FormField label="Quantity" required error={state?.errors?.quantity?.[0]}>
+      <FormField label={t("quantity")} required error={state?.errors?.quantity?.[0]}>
         {(fieldProps) => <Input {...fieldProps} name="quantity" type="number" step="0.0001" min="0.0001" required />}
       </FormField>
       {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
       <div>
         <Button type="submit" loading={pending}>
-          Issue
+          {t("issue")}
         </Button>
       </div>
     </form>
