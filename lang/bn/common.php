@@ -104,4 +104,7 @@ return [
     'sync_item_pending' => ':label — বাকি',
     'sync_item_failed' => ':label — ব্যর্থ, বাতিল করতে ট্যাপ করুন',
     'pick_a_date' => 'একটি তারিখ বাছুন',
+    'language_saved_toast' => 'ভাষা পছন্দ সংরক্ষিত হয়েছে',
+    'language_saved_hint' => 'আপনার অ্যাকাউন্টে সংরক্ষিত হয়েছে।',
+    'could_not_save' => 'সংরক্ষণ করা যায়নি',
 ];

@@ -1,57 +1,68 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Languages } from "lucide-react";
+import { Globe, ChevronDown } from "lucide-react";
+import { Dropdown } from "@/components/ui/dropdown";
 import { useToastManager } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n";
 import { setLocale } from "@/app/(app)/locale-actions";
 
-const LABEL = { en: "EN", bn: "বাং" };
-const NEXT = { en: "bn", bn: "en" };
+// Each language's own name, in its own script, regardless of the current
+// UI locale — same convention as `LocaleSwitcher` (the signed-out login
+// page's own counterpart) and `UserForm`'s locale field.
+const LOCALES = [
+  { value: "en", code: "EN", label: "English" },
+  { value: "bn", code: "বাং", label: "বাংলা" },
+];
 
 /**
- * The topbar had no language control at all — not broken, never built (the
- * companion to the web's own factory-scope switcher, `PreferenceController
- * ::locale`, is the other half of "the two global scope controls in the
- * header" that never got ported). This saves the account-level preference
- * for real; it doesn't retranslate the screen, since no page here has
- * Bengali strings wired up yet (`next-intl` is set up as infrastructure —
- * see docs/12-Stack-Migration-Implementation-Plan.md Phase C §6 — but no
- * component calls `useTranslations()` yet).
+ * The topbar's language control — the companion to the web's own
+ * factory-scope switcher, `PreferenceController::locale`, and now a
+ * dropdown rather than a click-to-flip toggle so a third language could be
+ * added later without changing the interaction. Saves the choice to the
+ * account (`PATCH /auth/locale` via `setLocale`) and sets the `locale`
+ * cookie next-intl reads, so the whole app re-renders in the chosen
+ * language on the next request.
  */
 function LocaleToggle({ locale: initialLocale }) {
+  const t = useT("common");
   const [locale, setLocaleState] = useState(initialLocale ?? "en");
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
+  const current = LOCALES.find((option) => option.value === locale) ?? LOCALES[0];
 
-  function toggle() {
-    const next = NEXT[locale] ?? "en";
+  function choose(next) {
+    if (next === locale) return;
     startTransition(async () => {
       const result = await setLocale(next);
       if (result?.status === "success") {
         setLocaleState(next);
-        toastManager.add({
-          title: next === "bn" ? "ভাষা পছন্দ সংরক্ষিত হয়েছে" : "Language preference saved",
-          description: "Saved to your account. Screens still read in English — Bengali text isn't wired up yet.",
-          type: "success",
-        });
+        toastManager.add({ title: t("language_saved_toast"), description: t("language_saved_hint"), type: "success" });
       } else if (result?.status === "error") {
-        toastManager.add({ title: result.message ?? "Could not save", type: "danger" });
+        toastManager.add({ title: result.message ?? t("could_not_save"), type: "danger" });
       }
     });
   }
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      disabled={pending}
-      className="flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-medium text-foreground-muted hover:bg-surface-muted hover:text-foreground disabled:opacity-50"
-      aria-label={`Language: ${LABEL[locale] ?? locale}. Click to change.`}
-      title={`Language: ${LABEL[locale] ?? locale}`}
-    >
-      <Languages className="size-[18px]" />
-      {LABEL[locale] ?? locale}
-    </button>
+    <Dropdown
+      trigger={
+        <span
+          className="flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-medium text-foreground-muted hover:bg-surface-muted hover:text-foreground disabled:opacity-50"
+          aria-label={`${t("language")}: ${current.code}`}
+          title={`${t("language")}: ${current.code}`}
+        >
+          <Globe className="size-[18px]" />
+          {current.code}
+          <ChevronDown className="size-3.5" />
+        </span>
+      }
+      items={LOCALES.map((option) => ({
+        label: option.label,
+        onSelect: () => choose(option.value),
+        disabled: pending,
+      }))}
+    />
   );
 }
 

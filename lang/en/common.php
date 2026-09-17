@@ -113,4 +113,7 @@ return [
     'sync_item_pending' => ':label — pending',
     'sync_item_failed' => ':label — failed, tap to discard',
     'pick_a_date' => 'Pick a date',
+    'language_saved_toast' => 'Language preference saved',
+    'language_saved_hint' => 'Saved to your account.',
+    'could_not_save' => 'Could not save',
 ];
