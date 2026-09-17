@@ -8,9 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useT } from "@/lib/i18n";
 
 /** Mirrors `templates::form.blade.php`. The code ties every version of a checklist together, so it's set once on create and never edited. */
 function TemplateForm({ template = null, options, action }) {
+  const t = useT("maintenance");
+  const tc = useT("common");
   const isEdit = template !== null;
   const router = useRouter();
   const [state, dispatch, pending] = useActionState(action, null);
@@ -40,36 +43,36 @@ function TemplateForm({ template = null, options, action }) {
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField label="Name" required error={state?.errors?.name?.[0]}>
+        <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
         </FormField>
-        <FormField label="Code" required={!isEdit} error={state?.errors?.code?.[0]} helperText={isEdit ? "Ties every version together — never editable." : undefined}>
+        <FormField label={t("code")} required={!isEdit} error={state?.errors?.code?.[0]} helperText={isEdit ? t("code_readonly_hint") : undefined}>
           {(fieldProps) => <Input {...fieldProps} value={code} onChange={(e) => setCode(e.target.value)} maxLength={64} required={!isEdit} disabled={isEdit} />}
         </FormField>
-        <FormField label="Asset type">
+        <FormField label={t("asset_type")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={assetTypeId}
               onValueChange={setAssetTypeId}
               placeholder="—"
-              options={options.asset_types.map((t) => ({ value: t.id, label: t.name }))}
+              options={options.asset_types.map((type) => ({ value: type.id, label: type.name }))}
             />
           )}
         </FormField>
-        <FormField label="Maintenance type">
+        <FormField label={t("maintenance_type")}>
           {(fieldProps) => (
             <Select
               {...fieldProps}
               value={maintenanceTypeId}
               onValueChange={setMaintenanceTypeId}
               placeholder="—"
-              options={options.maintenance_types.map((t) => ({ value: t.id, label: t.name }))}
+              options={options.maintenance_types.map((type) => ({ value: type.id, label: type.name }))}
             />
           )}
         </FormField>
         {!isEdit ? (
-          <FormField label="Estimated duration (minutes)">
+          <FormField label={t("estimated_minutes")}>
             {(fieldProps) => (
               <Input {...fieldProps} type="number" min="1" max="10080" value={estimatedDurationMinutes} onChange={(e) => setEstimatedDurationMinutes(e.target.value)} />
             )}
@@ -77,16 +80,16 @@ function TemplateForm({ template = null, options, action }) {
         ) : null}
       </div>
 
-      <FormField label="Description">
+      <FormField label={t("description")}>
         {(fieldProps) => <Textarea {...fieldProps} value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={2000} />}
       </FormField>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? "Save changes" : "Create checklist"}
+          {isEdit ? t("save_changes") : t("create_checklist")}
         </Button>
       </div>
     </form>

@@ -5,23 +5,27 @@ import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TemplatesTable } from "@/components/maintenance/templates-table";
+import { getT } from "@/lib/i18n-server";
 
 /** Mirrors `TemplateController::index` (SRS 12). */
 export default async function MaintenanceTemplatesPage({ searchParams }) {
   const params = await searchParams;
   const page = Number(params.page ?? 1);
 
-  const templates = await apiFetch(`/maintenance-templates?page=${page}`, { includeMeta: true });
+  const [templates, t] = await Promise.all([
+    apiFetch(`/maintenance-templates?page=${page}`, { includeMeta: true }),
+    getT("maintenance"),
+  ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Maintenance" }, { label: "Templates" }]}
-        title="Checklist templates"
-        description="What a technician actually works through — versioned, so a published one is frozen the moment it's signed against."
+        breadcrumb={[{ label: t("maintenance") }, { label: t("templates_page_title") }]}
+        title={t("templates_page_title")}
+        description={t("templates_page_description")}
         actions={
           <Link href="/maintenance/templates/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> New checklist
+            <Plus /> {t("new_checklist")}
           </Link>
         }
       />

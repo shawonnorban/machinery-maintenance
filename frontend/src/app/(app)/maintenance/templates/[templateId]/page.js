@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TemplateHeaderActions } from "@/components/maintenance/template-header-actions";
 import { TemplateVersionPanel } from "@/components/maintenance/template-version-panel";
+import { getT } from "@/lib/i18n-server";
 import { startDraft, publishVersion, addItem, removeItem } from "./actions";
 
 /** Mirrors `TemplateController::show`/`::version`. */
@@ -14,15 +15,16 @@ export default async function MaintenanceTemplateDetailPage({ params, searchPara
   const sp = await searchParams;
   const versionId = sp.version;
 
-  const [template, options] = await Promise.all([
+  const [template, options, t] = await Promise.all([
     apiFetch(`/maintenance-templates/${templateId}${versionId ? `?version=${versionId}` : ""}`),
     apiFetch("/maintenance-templates/form-options"),
+    getT("maintenance"),
   ]);
 
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Maintenance" }, { label: "Templates", href: "/maintenance/templates" }, { label: template.name }]}
+        breadcrumb={[{ label: t("maintenance") }, { label: t("templates_page_title"), href: "/maintenance/templates" }, { label: template.name }]}
         title={template.name}
         description={template.code}
         actions={<TemplateHeaderActions template={template} actions={{ startDraft, publishVersion }} />}
@@ -42,7 +44,7 @@ export default async function MaintenanceTemplateDetailPage({ params, searchPara
         <div className="flex flex-col gap-4 lg:col-span-3">
           <Card>
             <CardBody>
-              <h2 className="mb-3 text-sm font-medium text-foreground">Versions</h2>
+              <h2 className="mb-3 text-sm font-medium text-foreground">{t("versions")}</h2>
               <div className="flex flex-col gap-1">
                 {template.versions.map((v) => (
                   <Link
@@ -53,8 +55,8 @@ export default async function MaintenanceTemplateDetailPage({ params, searchPara
                       v.id === template.version?.id ? "bg-brand-subtle text-brand-hover" : "text-foreground-muted hover:bg-surface-muted",
                     )}
                   >
-                    <span>Version {v.version_number}</span>
-                    <StatusBadge status={v.status} />
+                    <span>{t("version_label", { number: v.version_number })}</span>
+                    <StatusBadge status={v.status} label={t(`status_${v.status?.toLowerCase()}`)} />
                   </Link>
                 ))}
               </div>
@@ -64,29 +66,27 @@ export default async function MaintenanceTemplateDetailPage({ params, searchPara
           <Card>
             <CardBody className="flex flex-col gap-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-foreground-muted">Asset type</span>
+                <span className="text-foreground-muted">{t("asset_type")}</span>
                 <span className="text-foreground">{template.asset_type ?? "—"}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-foreground-muted">Maintenance type</span>
+                <span className="text-foreground-muted">{t("maintenance_type")}</span>
                 <span className="text-foreground">{template.maintenance_type ?? "—"}</span>
               </div>
               {template.version?.estimated_duration_minutes ? (
                 <div className="flex justify-between">
-                  <span className="text-foreground-muted">Duration</span>
-                  <span className="text-foreground">{template.version.estimated_duration_minutes} min</span>
+                  <span className="text-foreground-muted">{t("duration")}</span>
+                  <span className="text-foreground">{t("minutes", { count: template.version.estimated_duration_minutes })}</span>
                 </div>
               ) : null}
               {template.version?.published_at ? (
                 <div className="flex justify-between">
-                  <span className="text-foreground-muted">Published</span>
+                  <span className="text-foreground-muted">{t("published_at")}</span>
                   <span className="text-foreground">{template.version.published_at.slice(0, 10)}</span>
                 </div>
               ) : null}
               {!template.is_editable ? (
-                <p className="mt-2 border-t border-border pt-2 text-xs text-foreground-muted">
-                  A platform checklist — shared with every tenant, editable by none. Clone it to write your own wording.
-                </p>
+                <p className="mt-2 border-t border-border pt-2 text-xs text-foreground-muted">{t("platform_checklist_hint")}</p>
               ) : null}
             </CardBody>
           </Card>
