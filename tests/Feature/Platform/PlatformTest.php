@@ -1,0 +1,388 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\Platform;
+
+use App\Modules\Api\Actions\IssueApiToken;
+use App\Modules\Audit\Models\AuditLog;
+use App\Modules\Billing\Models\SubscriptionContract;
+use App\Modules\Identity\Models\User;
+use App\Modules\Notification\Models\Notification;
+use App\Modules\Platform\Models\SupportGrant;
+use App\Modules\Tenancy\Models\Company;
+use App\Modules\Tenancy\Models\Factory;
+use App\Shared\Scopes\TenantScope;
+use Database\Seeders\DatabaseSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\PlatformFixture;
+use Tests\Support\TenantFixture;
+use Tests\TestCase;
+
+/**
+ * The side of the product that runs the business (SRS 3.1, 5, 5.4, 40).
+ *
+ * Two properties matter more than the screens themselves. A platform
+ * administrator can see that a customer exists and how large they are, and
+ * nothing whatever about their machines. And every route into a customer's
+ * data leaves a trail the customer can read.
+ *
+ * The admin console this file used to exercise over `/platform/*` web routes
+ * is decommissioned (`routes/web.php`) — replaced by the Next.js console
+ * against `/api/v1/platform/*`, which is what every test here now drives.
+ * Coverage that would simply duplicate `tests/Feature/Api/PlatformApiTest.php`
+ * (plain onboarding, the gate itself, a support grant's basic open/enter/
+ * leave cycle) isn't repeated here; what's left is what that file doesn't
+ * already prove — the audit trail specifics, the edge cases around who a
+ * grant may be used by and against, and the two-step contract/onboarding
+ * transactional guarantees.
+ */
+class PlatformTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private User $staff;
+
+    private string $staffToken;
+
+    private Company $delta;
+
+    private User $owner;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(DatabaseSeeder::class);
+
+        $this->delta = TenantFixture::company('Delta Apparels Ltd', 'DAL');
+        TenantFixture::factory($this->delta, 'Dhaka Unit 1', 'DHK');
+        TenantFixture::actingAsTenant($this->delta);
+
+        $this->owner = TenantFixture::user($this->delta, 'COMPANY_OWNER', 'owner@delta.test');
+        TenantFixture::actingAsTenant($this->delta);
+
+        // Platform staff belong to no company at all. That is the point: every
+        // role in this system hangs off a company or a factory, and giving
+        // platform staff one would put them inside a tenant.
+        $this->staff = PlatformFixture::staff();
+        $this->staffToken = PlatformFixture::token($this->staff);
+    }
+
+    // -- The gate -------------------------------------------------------------
+
+    public function test_a_customer_cannot_find_the_platform_area(): void
+    {
+        $token = app(IssueApiToken::class)->forUser($this->owner, $this->delta->id, 'Owner device')['plain'];
+
+        // 404, not 403. A company owner has no business learning that a
+        // platform area exists, let alone that they were refused entry to it.
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/v1/platform/tenants')
+            ->assertNotFound();
+
+        $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
+            ->where('entity_label', 'PLATFORM_ACCESS_DENIED')
+            ->count());
+    }
+
+    // -- Onboarding -------------------------------------------------------------
+
+    public function test_a_customer_can_be_taken_on_and_the_owner_can_actually_sign_in(): void
+    {
+        $response = $this->asStaff()
+            ->postJson('/api/v1/platform/tenants', [
+                'name' => 'Rival Textiles Ltd',
+                'code' => 'RTL',
+                'base_currency' => 'BDT',
+                'timezone' => 'Asia/Dhaka',
+                'default_locale' => 'bn',
+                'factory_name' => 'Savar Unit',
+                'factory_code' => 'SAV',
+                'owner_name' => 'Nusrat Jahan',
+                'owner_email' => 'nusrat@rival.test',
+            ])
+            ->assertCreated();
+
+        $company = Company::withoutGlobalScope(TenantScope::class)
+            ->where('code', 'RTL')
+            ->firstOrFail();
+
+        // All three, or the customer cannot use what they bought: a company
+        // with no owner is a tenant nobody can sign in to, and one with no
+        // factory cannot hold a machine.
+        $this->assertSame(1, Factory::withoutGlobalScope(TenantScope::class)
+            ->where('company_id', $company->id)->count());
+
+        $owner = User::where('email', 'nusrat@rival.test')->firstOrFail();
+
+        $this->assertTrue($owner->belongsToCompany($company->id));
+
+        // The password is readable exactly once, in this response.
+        $password = $response->json('data.password');
+
+        $this->assertIsString($password);
+
+        // The whole point of onboarding: somebody can sign in and reach the
+        // product. Proven the same way it signs in for real, by exchanging
+        // the generated password for a token.
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'nusrat@rival.test',
+            'password' => $password,
+        ])->assertCreated();
+    }
+
+    public function test_a_duplicate_code_is_refused(): void
+    {
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants', [
+                'name' => 'Another Delta',
+                'code' => 'DAL',
+                'base_currency' => 'BDT',
+                'timezone' => 'Asia/Dhaka',
+                'default_locale' => 'en',
+                'factory_name' => 'Unit',
+                'factory_code' => 'U1',
+                'owner_name' => 'Somebody',
+                'owner_email' => 'somebody@delta2.test',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('code');
+    }
+
+    public function test_nothing_is_half_created_when_onboarding_fails(): void
+    {
+        $before = Company::withoutGlobalScope(TenantScope::class)->count();
+
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants', [
+                'name' => 'Rival Textiles Ltd',
+                'code' => 'RTL',
+                'base_currency' => 'BDT',
+                'timezone' => 'Asia/Dhaka',
+                'default_locale' => 'en',
+                'factory_name' => 'Savar Unit',
+                'factory_code' => 'SAV',
+                'owner_name' => 'Nusrat Jahan',
+                // Already taken by the fixture owner.
+                'owner_email' => 'owner@delta.test',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('owner_email');
+
+        // A company with no owner would need somebody with database access to
+        // finish the job, which is the position this action exists to end.
+        $this->assertSame($before, Company::withoutGlobalScope(TenantScope::class)->count());
+    }
+
+    // -- Contract (SRS 40) -----------------------------------------------------
+
+    public function test_a_contract_supersedes_rather_than_edits(): void
+    {
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/contracts', [
+            'contract_number' => 'SUB-0001',
+            'start_date' => '2026-01-01',
+            'billing_cycle' => 'MONTHLY',
+            'amount' => '25000',
+            'currency' => 'BDT',
+            'grace_period_days' => 14,
+            'overage_policy' => 'WARN_ONLY',
+        ])->assertCreated();
+
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/contracts', [
+            'contract_number' => 'SUB-0002',
+            'start_date' => '2026-07-01',
+            'billing_cycle' => 'YEARLY',
+            'amount' => '270000',
+            'currency' => 'BDT',
+            'grace_period_days' => 30,
+            'overage_policy' => 'ALLOW_AND_BILL',
+        ])->assertCreated();
+
+        $contracts = SubscriptionContract::withoutGlobalScope(TenantScope::class)
+            ->where('company_id', $this->delta->id)
+            ->orderBy('contract_number')
+            ->get();
+
+        // An invoice already raised under the old terms has been sent to
+        // somebody. Editing what it was calculated from makes it
+        // unexplainable, so the old one is archived instead.
+        $this->assertSame(2, $contracts->count());
+        $this->assertSame('ARCHIVED', $contracts[0]->status);
+        $this->assertSame('ACTIVE', $contracts[1]->status);
+    }
+
+    // -- Support access (SRS 5.4) -----------------------------------------------
+
+    public function test_opening_access_needs_a_real_reason(): void
+    {
+        $this->asStaff()
+            ->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/support-grants', [
+                'reason' => 'looking',
+                'hours' => 2,
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reason');
+
+        $this->assertSame(0, SupportGrant::count());
+    }
+
+    public function test_opening_access_tells_the_customer_and_the_audit_log(): void
+    {
+        $this->openGrant();
+
+        $grant = SupportGrant::firstOrFail();
+
+        $this->assertTrue($grant->isActive());
+        // Time-boxed by construction: there is no "until revoked".
+        $this->assertTrue($grant->expires_at->lessThanOrEqualTo(now()->addHours(2)->addMinute()));
+
+        $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
+            ->where('entity_label', 'SUPPORT_GRANT_OPENED')->count());
+
+        // The customer is told, in the product, by name and with the reason.
+        $notification = Notification::withoutGlobalScope(TenantScope::class)
+            ->where('event_type', 'SUPPORT_ACCESS')
+            ->where('user_id', $this->owner->id)
+            ->firstOrFail();
+
+        $this->assertStringContainsString('Platform Support', $notification->body);
+        $this->assertStringContainsString('Ticket 4471', $notification->body);
+    }
+
+    public function test_entering_acts_as_a_named_user_and_is_audited(): void
+    {
+        $grant = $this->openGrant();
+
+        $enter = $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertCreated();
+
+        $this->withHeader('Authorization', 'Bearer '.$enter->json('data.access_token'))
+            ->getJson('/api/v1/auth/me')
+            ->assertOk()
+            ->assertJsonPath('data.user.id', $this->owner->id);
+
+        $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
+            ->where('entity_label', 'SUPPORT_SESSION_STARTED')->count());
+    }
+
+    public function test_work_done_during_support_records_who_was_really_behind_it(): void
+    {
+        $grant = $this->openGrant();
+
+        $enter = $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertCreated();
+
+        // An ordinary write, using the impersonation token exactly as the
+        // staff member's own browser would. The point is not the part; it is
+        // that the write carries the trail on its own, with nothing in the
+        // inventory module knowing support exists — `AuditRecorder` reads
+        // `impersonated_by` off the token itself (`SanctumTokenHandle::
+        // impersonatedBy()`), same as it reads `session('impersonated_by')`
+        // for a web request.
+        $this->withHeader('Authorization', 'Bearer '.$enter->json('data.access_token'))
+            ->postJson('/api/v1/spare-parts', [
+                'part_number' => 'JK-DDL9000-HOOK',
+                'name' => 'Rotary hook',
+                'unit' => 'PCS',
+            ])
+            ->assertCreated();
+
+        // The column the audit screen has always shown in red, finally
+        // populated by something.
+        $this->assertSame($this->staff->id, AuditLog::withoutGlobalScope(TenantScope::class)
+            ->where('company_id', $this->delta->id)
+            ->whereNotNull('impersonated_by')
+            ->value('impersonated_by'));
+    }
+
+    public function test_leaving_ends_the_session_and_is_audited(): void
+    {
+        $grant = $this->openGrant();
+
+        $enter = $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertCreated();
+
+        $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/leave')
+            ->assertNoContent();
+
+        // The token this session was using is gone — "leaving" an
+        // impersonation session has nothing else to give back, unlike the
+        // old Blade flow's session swap.
+        $this->withHeader('Authorization', 'Bearer '.$enter->json('data.access_token'))
+            ->getJson('/api/v1/auth/me')
+            ->assertStatus(401);
+
+        // "When did they leave" is half the answer to "what could they have
+        // seen"; a grant that only records its beginning tells a customer
+        // nothing about how long somebody was inside.
+        $this->assertSame(1, AuditLog::withoutGlobalScope(TenantScope::class)
+            ->where('entity_label', 'SUPPORT_SESSION_ENDED')->count());
+    }
+
+    public function test_another_administrators_grant_cannot_be_used(): void
+    {
+        $grant = $this->openGrant();
+
+        $other = PlatformFixture::staff('second@platform.test', 'Second Support');
+        $otherToken = PlatformFixture::token($other);
+
+        // A grant names one person. Sharing one would make the audit trail say
+        // somebody was inside who was not.
+        $this->withHeader('Authorization', 'Bearer '.$otherToken)
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertNotFound();
+    }
+
+    public function test_an_expired_grant_cannot_be_entered(): void
+    {
+        $grant = $this->openGrant();
+
+        $grant->forceFill(['expires_at' => now()->subMinute()])->save();
+
+        // 409, not a field-level validation error: `PlatformSupportGrantApi
+        // Controller::enter` catches `ManageSupportAccess::enter()`'s
+        // `ValidationException` and re-throws it as a plain conflict.
+        $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $this->owner->id])
+            ->assertStatus(409);
+    }
+
+    public function test_a_person_outside_the_company_cannot_be_acted_as(): void
+    {
+        $grant = $this->openGrant();
+
+        $outsider = User::create([
+            'name' => 'Outsider',
+            'email' => 'outsider@elsewhere.test',
+            'password' => 'correct-horse-battery',
+            'status' => 'ACTIVE',
+            'locale' => 'en',
+        ]);
+
+        $this->asStaff()
+            ->postJson('/api/v1/platform/support-grants/'.$grant->id.'/enter', ['user_id' => $outsider->id])
+            ->assertStatus(409);
+    }
+
+    private function asStaff(): self
+    {
+        $this->withHeader('Authorization', 'Bearer '.$this->staffToken);
+
+        return $this;
+    }
+
+    private function openGrant(): SupportGrant
+    {
+        $this->asStaff()->postJson('/api/v1/platform/tenants/'.$this->delta->id.'/support-grants', [
+            'reason' => 'Ticket 4471: work orders missing after a factory transfer.',
+            'hours' => 2,
+        ]);
+
+        return SupportGrant::firstOrFail();
+    }
+}

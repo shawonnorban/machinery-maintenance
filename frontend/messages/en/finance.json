@@ -1,0 +1,39 @@
+{
+    "gl": "General ledger",
+    "gl_mapping": "GL account mapping",
+    "gl_mapping_hint": "Which two accounts each business event moves. Nothing in the system writes an account code, so pointing these at a real chart of accounts is a change here and nowhere else.",
+    "gl_entries": "GL postings",
+    "gl_entries_hint": "What each event has actually posted, looked up by the document number it came from.",
+    "placeholder_notice": "Every event starts pointed at a placeholder account so nothing is lost while the chart of accounts is being agreed. Re-point them here when finance signs off — no deployment is needed.",
+    "debit_account": "Debit",
+    "credit_account": "Credit",
+    "secondary_credit_account": "Second credit",
+    "post_this_event": "Post this event",
+    "not_postable": "Not posting",
+    "entries_posted": ":count posted",
+    "mapping_saved": ":event mapping saved.",
+    "events": {
+        "GRN_COMPLETE": "Goods receipt completed",
+        "LANDED_COST_POST": "Landed cost posted",
+        "ISSUE_TO_PRODUCTION": "Issued to production",
+        "PURCHASE_RETURN": "Returned to supplier",
+        "ADVANCE_PAYMENT": "Advance paid",
+        "INVOICE_SETTLEMENT": "Bill settled against an advance"
+    },
+    "event_hints": {
+        "GRN_COMPLETE": "Stock arrives at the provisional rate on the receipt; the clearing account holds it until the supplier is billed.",
+        "LANDED_COST_POST": "Freight, duty and clearing lift what the stock is worth, against whoever is owed for them.",
+        "ISSUE_TO_PRODUCTION": "Material leaves the store for a cutting programme: out of stock, into work in progress.",
+        "PURCHASE_RETURN": "Goods go back out of the gate and the supplier is debited for them.",
+        "ADVANCE_PAYMENT": "Money paid to a mill before anything is delivered — owed back in goods.",
+        "INVOICE_SETTLEMENT": "A bill settled partly out of an advance already paid and partly from the bank."
+    },
+    "entry_no": "Posting",
+    "entry_date": "Date",
+    "source_document": "Document",
+    "amount": "Amount",
+    "balanced": "Balanced",
+    "out_of_balance": "Out of balance",
+    "no_entries": "Nothing has been posted to the books yet.",
+    "entries_search_placeholder": "Search by document number…"
+}

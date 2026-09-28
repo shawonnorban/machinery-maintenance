@@ -1,0 +1,732 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\Breakdown\Actions;
+
+use App\Modules\Asset\Actions\ChangeAssetStatus;
+use App\Modules\Asset\Models\Asset;
+use App\Modules\Breakdown\Models\Breakdown;
+use App\Modules\Breakdown\Models\BreakdownStatusHistory;
+use App\Modules\Breakdown\Services\BreakdownScopeGuard;
+use App\Modules\Breakdown\Services\DowntimeCalculator;
+use App\Modules\Identity\Models\User;
+use App\Modules\Notification\Services\MaintenanceNotifier;
+use App\Modules\WorkOrder\Actions\AssignTechnicians;
+use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
+use App\Modules\WorkOrder\Models\Technician;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+
+/**
+ * The breakdown lifecycle (SRS 15, ERD Section 10).
+ *
+ * Each step stamps its own timestamp, and every stamp is checked against the
+ * chain before it is written. An out-of-order chain does not throw at read
+ * time; it quietly produces a negative response time or an impossible repair
+ * duration, and those numbers end up in a management report.
+ */
+class TransitionBreakdown
+{
+    public function __construct(
+        private readonly ChangeAssetStatus $assetStatus,
+        private readonly DowntimeCalculator $downtime,
+        private readonly RaiseBreakdownWorkOrder $raiseWorkOrder,
+        private readonly AssignTechnicians $assignTechnicians,
+        private readonly TransitionWorkOrder $workOrderTransition,
+        private readonly MaintenanceNotifier $notifier,
+    ) {}
+
+    public function acknowledge(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $at ??= CarbonImmutable::now();
+
+        $breakdown = $this->stamp($breakdown, 'ACKNOWLEDGED', $userId, [
+            'acknowledged_at' => $at,
+            'acknowledged_by' => $userId,
+        ]);
+
+        // Raises the repair work and puts the line/department's whole
+        // roster on it in the same step, so acknowledging is the only click
+        // an Engineer/Manager needs before a technician can start — no
+        // separate manual "Assign"/"Start Work Order" step in the normal
+        // case (that still exists via `assign()`, kept for the 2am
+        // named-technician override).
+        $this->syncWorkOrder($breakdown->fresh(), null, $userId);
+
+        return $breakdown->fresh();
+    }
+
+    public function assign(Breakdown $breakdown, string $technicianId, string $userId): Breakdown
+    {
+        $technician = Technician::find($technicianId);
+
+        if ($technician === null || ! $technician->isActive()) {
+            throw ValidationException::withMessages([
+                'assigned_technician_id' => __('breakdown.technician_unavailable'),
+            ]);
+        }
+
+        if ($technician->factory_id !== $breakdown->factory_id) {
+            throw ValidationException::withMessages([
+                'assigned_technician_id' => __('breakdown.technician_other_factory', [
+                    'name' => $technician->name,
+                ]),
+            ]);
+        }
+
+        $breakdown = $this->stamp($breakdown, 'ASSIGNED', $userId, [
+            'assigned_technician_id' => $technician->id,
+            'assigned_at' => CarbonImmutable::now(),
+        ]);
+
+        // From here the technician works from one screen: the repair work
+        // this assignment calls for is raised and put on their plate
+        // automatically, rather than making them (or a manager) click a
+        // separate "raise work order" button before labor, parts or a
+        // checklist can be recorded against it.
+        $this->syncWorkOrder($breakdown, $technician, $userId);
+
+        return $breakdown->fresh();
+    }
+
+    /**
+     * Arrival is recorded separately from repair start. The walk to the machine
+     * is response time; the work on it is repair time. A team that arrives fast
+     * and repairs slowly has a different problem from one that does the reverse,
+     * and one combined figure hides which.
+     */
+    public function recordArrival(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $at ??= CarbonImmutable::now();
+
+        $this->assertChain($breakdown, ['technician_arrival_at' => $at]);
+
+        return DB::transaction(function () use ($breakdown, $at): Breakdown {
+            $breakdown->forceFill(['technician_arrival_at' => $at])->save();
+            $this->downtime->forBreakdown($breakdown->fresh());
+
+            return $breakdown->fresh();
+        });
+    }
+
+    public function startRepair(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $at ??= CarbonImmutable::now();
+
+        // Arriving is implied by starting work. Requiring a separate tap for it
+        // means it gets skipped and the arrival timestamp stays empty.
+        $fields = ['repair_started_at' => $at];
+
+        if ($breakdown->technician_arrival_at === null) {
+            $fields['technician_arrival_at'] = $at;
+        }
+
+        // This is normally reached by the technician who just started the
+        // linked *work order* (see the sync in `WorkOrderApiController::
+        // start()`/`WorkOrderController::start()`, which calls back into
+        // this method) — the line's whole roster was already put on the
+        // work order when it was raised (`RaiseBreakdownWorkOrder::
+        // assignRoster()`), so nobody has picked *one* name for the
+        // breakdown itself yet. Whoever's start actually landed becomes
+        // that name, the same field a manager's explicit `assign()` sets.
+        if ($breakdown->assigned_technician_id === null) {
+            $actor = User::find($userId);
+            $technician = $actor === null ? null : Technician::forUser($actor);
+
+            if ($technician !== null) {
+                $fields['assigned_technician_id'] = $technician->id;
+                $fields['assigned_at'] = $at;
+            }
+        }
+
+        $breakdown = $this->stamp($breakdown, 'IN_REPAIR', $userId, $fields);
+
+        $asset = Asset::find($breakdown->asset_id);
+
+        if ($asset !== null && $asset->canTransitionTo('UNDER_REPAIR')) {
+            $this->assetStatus->handle(
+                $asset, 'UNDER_REPAIR', $userId,
+                "Breakdown {$breakdown->breakdown_number} repair started",
+                'BREAKDOWN',
+            );
+        }
+
+        // The linked work order is what's actually driving this call in the
+        // normal case (see the docblock above) — already IN_PROGRESS by the
+        // time we're here, so this is a no-op — but `assign()`'s manager-
+        // override path can also reach `startRepair()` with the work order
+        // still sitting on ASSIGNED, so this still needs to move it along.
+        $this->syncWorkOrderOnStartRepair($breakdown->fresh(), $userId);
+
+        return $breakdown->fresh();
+    }
+
+    public function hold(Breakdown $breakdown, string $reasonCode, string $userId, ?string $notes = null): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        if (! in_array($reasonCode, Breakdown::HOLD_REASONS, true)) {
+            throw ValidationException::withMessages([
+                'reason_code' => __('breakdown.hold_reason_unknown'),
+            ]);
+        }
+
+        $now = CarbonImmutable::now();
+
+        return $this->stamp($breakdown, 'ON_HOLD', $userId, [
+            'on_hold_since' => $now,
+            'hold_reason_code' => $reasonCode,
+        ], $notes === null ? $reasonCode : "{$reasonCode}: {$notes}");
+    }
+
+    public function resume(Breakdown $breakdown, string $userId): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $now = CarbonImmutable::now();
+        $minutes = 0;
+
+        if ($breakdown->on_hold_since !== null) {
+            $minutes = (int) round($breakdown->on_hold_since->diffInMinutes($now, absolute: true));
+        }
+
+        return $this->stamp($breakdown, 'IN_REPAIR', $userId, [
+            // Accumulated so repair time can exclude it (ADR-051).
+            'hold_minutes' => $breakdown->hold_minutes + $minutes,
+            'on_hold_since' => null,
+            'hold_reason_code' => null,
+        ]);
+    }
+
+    /**
+     * The technician who diagnosed and fixed it is the one who names why it
+     * broke — captured here rather than later at closure, since by the time
+     * a Line Chief verifies or an Engineer/Manager gives final approval,
+     * neither of them did the actual diagnosis.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function completeRepair(Breakdown $breakdown, array $data, string $userId, ?CarbonImmutable $at = null): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $at ??= CarbonImmutable::now();
+
+        if ($breakdown->repair_started_at === null) {
+            throw ValidationException::withMessages([
+                'repair_completed_at' => __('breakdown.repair_never_started'),
+            ])->status(409);
+        }
+
+        $breakdown->fill(array_filter([
+            'failure_code_id' => $data['failure_code_id'] ?? null,
+            'failure_category_id' => $data['failure_category_id'] ?? null,
+            'root_cause_id' => $data['root_cause_id'] ?? null,
+            'corrective_action' => $data['corrective_action'] ?? null,
+            'preventive_action' => $data['preventive_action'] ?? null,
+        ], fn ($value) => $value !== null));
+
+        $missing = array_diff($breakdown->missingForClosure(), ['repair_completed_at']);
+
+        if ($missing !== []) {
+            // Same reasoning as `close()`'s own check (ERD Section 10 rule
+            // 3) — a machine repaired with no recorded cause makes the whole
+            // failure-analysis half of the product produce nothing. Checked
+            // here now, not just at final approval, since this is the
+            // moment the person who actually knows the cause is looking at
+            // the screen.
+            throw ValidationException::withMessages(
+                array_combine(
+                    $missing,
+                    array_map(fn (string $field) => __("breakdown.closure_needs_{$field}"), $missing),
+                ),
+            )->status(422);
+        }
+
+        $breakdown = DB::transaction(function () use ($breakdown, $at, $userId): Breakdown {
+            $breakdown->save();
+
+            return $this->stamp($breakdown, 'REPAIRED', $userId, ['repair_completed_at' => $at]);
+        });
+
+        $this->notifier->breakdownAwaitingVerification($breakdown);
+
+        return $breakdown;
+    }
+
+    /**
+     * The machine being fixed and the line running again are different events.
+     * The gap between them is real lost output, and it belongs to nobody unless
+     * it is measured.
+     */
+    public function resumeProduction(Breakdown $breakdown, string $userId, ?CarbonImmutable $at = null): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $at ??= CarbonImmutable::now();
+
+        $breakdown = $this->stamp($breakdown, 'PRODUCTION_RESUMED', $userId, [
+            'production_resumed_at' => $at,
+        ]);
+
+        $asset = Asset::find($breakdown->asset_id);
+
+        if ($asset !== null && $asset->canTransitionTo('RUNNING')) {
+            $this->assetStatus->handle(
+                $asset, 'RUNNING', $userId,
+                "Breakdown {$breakdown->breakdown_number} resolved",
+                'BREAKDOWN',
+            );
+        }
+
+        $breakdown = $breakdown->fresh();
+
+        $this->notifier->breakdownAwaitingVerification($breakdown);
+
+        return $breakdown;
+    }
+
+    /**
+     * The Line Chief's own sign-off — a second pair of eyes confirming the
+     * technician's repair actually holds and the machine runs normally,
+     * before it goes anywhere near an Engineer/Manager's final approval.
+     */
+    public function verify(Breakdown $breakdown, string $userId, ?string $notes = null): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $now = CarbonImmutable::now();
+
+        return $this->stamp($breakdown, 'VERIFIED', $userId, [
+            'verified_by' => $userId,
+            'verified_at' => $now,
+        ], $notes);
+    }
+
+    /**
+     * The Line Chief's second, separate step from `verify()` — submits the
+     * verified repair for the Engineer/Manager's own final approval. Kept
+     * apart from `verify()` itself (rather than one combined action) so the
+     * audit trail shows the moment somebody actually decided this was ready
+     * to close, not just that it was looked at.
+     */
+    public function submitForApproval(Breakdown $breakdown, string $userId): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        $breakdown = $this->stamp($breakdown, 'PENDING_APPROVAL', $userId, []);
+
+        $this->notifier->breakdownAwaitingApproval($breakdown);
+
+        return $breakdown;
+    }
+
+    /**
+     * The Engineer/Manager's final approval — what actually closes it. The
+     * failure code/root cause/corrective/preventive action were already
+     * captured back at `completeRepair()`, by whoever actually diagnosed
+     * it; this step only re-checks they're still there (ERD Section 10 rule
+     * 3), which matters for a breakdown that reached `PENDING_APPROVAL`
+     * from before this check existed at completion time — see `reject()`
+     * for what happens if one is missing.
+     */
+    public function close(Breakdown $breakdown, ?string $closureNotes, string $userId): Breakdown
+    {
+        $missing = $breakdown->missingForClosure();
+
+        if ($missing !== []) {
+            throw ValidationException::withMessages(
+                array_combine(
+                    $missing,
+                    array_map(fn (string $field) => __("breakdown.closure_needs_{$field}"), $missing),
+                ),
+            )->status(422);
+        }
+
+        return DB::transaction(function () use ($breakdown, $closureNotes, $userId): Breakdown {
+            $breakdown = $this->move($breakdown, 'CLOSED', $userId, $closureNotes);
+
+            $breakdown->forceFill([
+                'closed_by' => $userId,
+                'closed_at' => CarbonImmutable::now(),
+                'closure_notes' => $closureNotes,
+            ])->save();
+
+            $this->downtime->forBreakdown($breakdown->fresh());
+
+            return $breakdown->fresh();
+        });
+    }
+
+    /**
+     * The Engineer/Manager's final approval, refused — sent back to repair
+     * rather than left sitting in `PENDING_APPROVAL`. This is also the
+     * migration-safety valve for a breakdown that reached this step from
+     * before `completeRepair()` required a cause: `close()`'s own
+     * `missingForClosure()` check refuses it, and this is the only path
+     * back to fix that.
+     */
+    public function reject(Breakdown $breakdown, string $reason, string $userId): Breakdown
+    {
+        return $this->sendBackToRepair($breakdown, $reason, $userId);
+    }
+
+    /**
+     * The Line Chief's own refusal, at their own `verify()` gate rather than
+     * the Engineer/Manager's later one — the second pair of eyes exists so a
+     * repair that does not actually hold can be caught before it ever
+     * reaches final approval, not just after. Same reasoning and same
+     * effect as `reject()`, from the earlier point in the chain a Line
+     * Chief can actually act from (`REPAIRED`/`PRODUCTION_RESUMED`, before
+     * `VERIFIED` — `Breakdown::TRANSITIONS` already allowed the move back to
+     * `IN_REPAIR` from any of the three, this was only ever missing an
+     * action + a button).
+     */
+    public function rejectVerification(Breakdown $breakdown, string $reason, string $userId): Breakdown
+    {
+        $this->assertCoverage($breakdown, $userId);
+
+        return $this->sendBackToRepair($breakdown, $reason, $userId);
+    }
+
+    /**
+     * Shared by both rejection points. Beyond moving the status back, this
+     * clears the timing fields the rejected attempt set —
+     * `repair_completed_at`/`production_resumed_at`/`verified_by`/
+     * `verified_at` — so a breakdown sitting back in `IN_REPAIR` never shows
+     * a completion or verification timestamp it no longer has (found while
+     * auditing the downtime report: a record rejected via the old `reject()`
+     * kept showing its stale `repair_completed_at`/`production_resumed_at`
+     * until the next `completeRepair()`/`resumeProduction()` happened to
+     * overwrite them, and `move()` — unlike `stamp()` — never re-ran the
+     * downtime calculation, so `GET .../downtime` could read a rejected
+     * attempt's numbers while the record sat back in repair). Routed through
+     * `stamp()` rather than `move()` for exactly that: it forces both the
+     * chain-order check and the downtime recalculation `verify()`/
+     * `completeRepair()` already get.
+     */
+    private function sendBackToRepair(Breakdown $breakdown, string $reason, string $userId): Breakdown
+    {
+        if (blank($reason)) {
+            throw ValidationException::withMessages([
+                'rejection_reason' => __('breakdown.reject_needs_reason'),
+            ]);
+        }
+
+        return $this->stamp($breakdown, 'IN_REPAIR', $userId, [
+            'repair_completed_at' => null,
+            'production_resumed_at' => null,
+            'verified_by' => null,
+            'verified_at' => null,
+        ], $reason);
+    }
+
+    public function cancel(Breakdown $breakdown, string $reason, string $userId): Breakdown
+    {
+        if (blank($reason)) {
+            throw ValidationException::withMessages([
+                'cancellation_reason' => __('breakdown.cancel_needs_reason'),
+            ]);
+        }
+
+        return DB::transaction(function () use ($breakdown, $reason, $userId): Breakdown {
+            $breakdown = $this->move($breakdown, 'CANCELLED', $userId, $reason);
+
+            $breakdown->forceFill([
+                'cancelled_by' => $userId,
+                'cancelled_at' => CarbonImmutable::now(),
+                'cancellation_reason' => $reason,
+            ])->save();
+
+            // A machine reported down in error goes back to running; one that
+            // was genuinely worked on is left where the repair put it.
+            $asset = Asset::find($breakdown->asset_id);
+
+            if ($asset !== null && $asset->status === 'BREAKDOWN' && $asset->canTransitionTo('UNDER_REPAIR')) {
+                $this->assetStatus->handle(
+                    $asset, 'UNDER_REPAIR', $userId,
+                    "Breakdown {$breakdown->breakdown_number} cancelled",
+                    'BREAKDOWN',
+                );
+
+                $asset = Asset::find($breakdown->asset_id);
+
+                if ($asset->canTransitionTo('RUNNING')) {
+                    $this->assetStatus->handle(
+                        $asset, 'RUNNING', $userId,
+                        "Breakdown {$breakdown->breakdown_number} cancelled",
+                        'BREAKDOWN',
+                    );
+                }
+            }
+
+            $this->downtime->forBreakdown($breakdown->fresh());
+
+            return $breakdown->fresh();
+        });
+    }
+
+    /**
+     * Corrects one chain timestamp without changing status.
+     *
+     * A machine that stopped at 21:50 and was reported at 06:10 the next
+     * morning is real and common, so the stamps have to be editable. The chain
+     * check still applies, and the correction is recorded: silently rewriting a
+     * timestamp that a downtime figure was derived from is exactly the kind of
+     * change an audit needs to see.
+     */
+    public function correctTimestamp(
+        Breakdown $breakdown,
+        string $field,
+        CarbonImmutable $value,
+        string $userId,
+    ): Breakdown {
+        if (! in_array($field, Breakdown::TIMESTAMP_CHAIN, true)) {
+            throw ValidationException::withMessages([
+                'field' => __('breakdown.unknown_timestamp'),
+            ]);
+        }
+
+        if ($breakdown->isTerminal()) {
+            throw ValidationException::withMessages([
+                'field' => __('breakdown.timestamp_after_close'),
+            ])->status(409);
+        }
+
+        if ($value->isFuture()) {
+            throw ValidationException::withMessages([
+                'value' => __('breakdown.timestamp_in_future'),
+            ]);
+        }
+
+        $this->assertChain($breakdown, [$field => $value]);
+
+        return DB::transaction(function () use ($breakdown, $field, $value, $userId): Breakdown {
+            $previous = $breakdown->{$field};
+
+            $breakdown->forceFill([$field => $value])->save();
+
+            BreakdownStatusHistory::create([
+                'breakdown_id' => $breakdown->id,
+                'from_status' => $breakdown->status,
+                'to_status' => $breakdown->status,
+                'changed_by' => $userId,
+                'changed_at' => CarbonImmutable::now(),
+                'reason' => __('breakdown.timestamp_correction', [
+                    'field' => __("breakdown.{$field}"),
+                    'from' => $previous?->toDateTimeString() ?? '—',
+                    'to' => $value->toDateTimeString(),
+                ]),
+            ]);
+
+            $this->downtime->forBreakdown($breakdown->fresh());
+
+            return $breakdown->fresh();
+        });
+    }
+
+    /**
+     * The hard line/department restriction (see `BreakdownScopeGuard`'s own
+     * docblock). Checked against the breakdown's asset location, not the
+     * technician's assignment on the breakdown itself — a Line Chief acting
+     * on a report before anyone is assigned still has no technician row to
+     * check against.
+     */
+    private function assertCoverage(Breakdown $breakdown, string $userId): void
+    {
+        $actor = User::find($userId);
+
+        if ($actor === null) {
+            return;
+        }
+
+        // A manager assigning someone outside their normal line is a
+        // deliberate override (the 2am "send whoever is awake" case) — once
+        // made, it IS the authorization. The line/department check below
+        // only gates the default case: acting on a breakdown nobody has
+        // assigned this technician to at all.
+        $technician = Technician::forUser($actor);
+
+        if ($technician !== null && $breakdown->assigned_technician_id === $technician->id) {
+            return;
+        }
+
+        $location = $breakdown->asset?->location;
+
+        if (! BreakdownScopeGuard::assertCovers($actor, $location?->department_id, $location?->production_line_id)) {
+            throw ValidationException::withMessages([
+                'breakdown' => __('breakdown.outside_coverage'),
+            ])->status(403);
+        }
+    }
+
+    /**
+     * Raises the repair work a breakdown calls for and, if a specific
+     * technician is named, puts them on it — so a screen showing this
+     * breakdown can also show its labor/parts/checklist without anyone
+     * manually raising a work order first (SRS 13.4 already treats a
+     * breakdown's attachments as first-class in their own right; this
+     * extends the same idea to the rest of the job). Called with a null
+     * technician from `acknowledge()` (raise + roster only, nobody named
+     * yet — `RaiseBreakdownWorkOrder::handle()` already puts the line's
+     * whole roster on it), and with one from `assign()`'s own manual
+     * override (the 2am "send whoever is awake" case).
+     *
+     * Guarded like `MaintenanceNotifier`'s dispatches: a failure here (no
+     * maintenance type configured, an approval workflow rejecting the draft,
+     * whatever) must not undo the acknowledgement/assignment that already
+     * succeeded. The existing manual "raise work order" action remains as
+     * the fallback.
+     */
+    private function syncWorkOrder(Breakdown $breakdown, ?Technician $technician, string $userId): void
+    {
+        try {
+            $workOrder = $breakdown->activeWorkOrder() ?? $this->raiseWorkOrder->handle($breakdown, $userId);
+
+            // Scheduling only belongs here when a *specific* technician is
+            // about to be put on it (`assign()`'s own manual override) — a
+            // null technician means this came from `acknowledge()`, and
+            // `RaiseBreakdownWorkOrder::assignRoster()` already decided
+            // DRAFT-vs-SCHEDULED for that case on its own (SCHEDULED only
+            // if the line's roster wasn't empty). Found live: this used to
+            // schedule unconditionally, which left a work order SCHEDULED
+            // with nobody on it whenever a line had no technician of its
+            // own to roster — the manual "Assign" override remained the
+            // only way to reach a scheduled state, silently, rather than
+            // this auto-sync respecting the same empty-roster decision.
+            if ($technician !== null && $workOrder->activeAssignments()->where('technician_id', $technician->id)->doesntExist()) {
+                if ($workOrder->status === 'DRAFT') {
+                    $workOrder = $this->workOrderTransition->schedule($workOrder, $userId);
+                }
+
+                $this->assignTechnicians->handle($workOrder, [$technician->id], $userId);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Auto-raising a breakdown work order failed', [
+                'breakdown_id' => $breakdown->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /** Moves the linked work order to IN_PROGRESS alongside the breakdown, guarded the same way. */
+    private function syncWorkOrderOnStartRepair(Breakdown $breakdown, string $userId): void
+    {
+        try {
+            $workOrder = $breakdown->activeWorkOrder();
+
+            if ($workOrder !== null && $workOrder->status === 'ASSIGNED') {
+                $this->workOrderTransition->start($workOrder, $userId);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Auto-starting a breakdown work order failed', [
+                'breakdown_id' => $breakdown->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Moves status and writes the timestamps in one guarded step.
+     *
+     * @param  array<string, mixed>  $fields
+     */
+    private function stamp(
+        Breakdown $breakdown,
+        string $to,
+        string $userId,
+        array $fields,
+        ?string $reason = null,
+    ): Breakdown {
+        $this->assertChain($breakdown, $fields);
+
+        return DB::transaction(function () use ($breakdown, $to, $userId, $fields, $reason): Breakdown {
+            $breakdown = $this->move($breakdown, $to, $userId, $reason);
+
+            $breakdown->forceFill($fields)->save();
+
+            // Every stamp changes a derived figure, so the record is refreshed
+            // with it rather than left stale until closure.
+            $this->downtime->forBreakdown($breakdown->fresh());
+
+            return $breakdown->fresh();
+        });
+    }
+
+    private function move(Breakdown $breakdown, string $to, string $userId, ?string $reason = null): Breakdown
+    {
+        $from = $breakdown->status;
+
+        if (! $breakdown->canTransitionTo($to)) {
+            throw ValidationException::withMessages([
+                'status' => __('breakdown.invalid_transition', ['from' => $from, 'to' => $to]),
+            ])->status(409);
+        }
+
+        $breakdown->forceFill([
+            'status' => $to,
+            'version' => $breakdown->version + 1,
+        ])->save();
+
+        BreakdownStatusHistory::create([
+            'breakdown_id' => $breakdown->id,
+            'from_status' => $from,
+            'to_status' => $to,
+            'changed_by' => $userId,
+            'changed_at' => CarbonImmutable::now(),
+            'reason' => $reason,
+        ]);
+
+        return $breakdown;
+    }
+
+    /**
+     * Rule 2: the chain must be non-decreasing.
+     *
+     * Checked against the record's existing stamps as well as the incoming
+     * ones, so backdating a repair start to before the report is refused rather
+     * than producing an impossible duration downstream.
+     *
+     * @param  array<string, mixed>  $incoming
+     */
+    private function assertChain(Breakdown $breakdown, array $incoming): void
+    {
+        $chain = [];
+
+        foreach (Breakdown::TIMESTAMP_CHAIN as $field) {
+            $value = array_key_exists($field, $incoming)
+                ? $incoming[$field]
+                : $breakdown->{$field};
+
+            if ($value !== null) {
+                $chain[$field] = CarbonImmutable::parse($value);
+            }
+        }
+
+        $previousField = null;
+        $previousValue = null;
+
+        foreach ($chain as $field => $value) {
+            if ($previousValue !== null && $value->lessThan($previousValue)) {
+                throw ValidationException::withMessages([
+                    $field => __('breakdown.chain_out_of_order', [
+                        'field' => __("breakdown.{$field}"),
+                        'previous' => __("breakdown.{$previousField}"),
+                    ]),
+                ])->status(422);
+            }
+
+            $previousField = $field;
+            $previousValue = $value;
+        }
+    }
+}

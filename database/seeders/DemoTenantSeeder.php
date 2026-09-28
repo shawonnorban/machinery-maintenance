@@ -1,0 +1,1668 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use App\Modules\Approval\Models\ApprovalRule;
+use App\Modules\Approval\Models\ApprovalWorkflow;
+use App\Modules\Asset\Actions\ChangeAssetStatus;
+use App\Modules\Asset\Actions\CreateAsset;
+use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\AssetCategory;
+use App\Modules\Asset\Models\AssetLocation;
+use App\Modules\Asset\Models\AssetModel;
+use App\Modules\Asset\Models\AssetType;
+use App\Modules\Asset\Models\Manufacturer;
+use App\Modules\Asset\Services\QrTokenGenerator;
+use App\Modules\Billing\Models\SubscriptionContract;
+use App\Modules\Billing\Services\InvoiceBuilder;
+use App\Modules\Billing\Services\PaymentRecorder;
+use App\Modules\Billing\Services\UsageMeter;
+use App\Modules\Breakdown\Actions\ReportBreakdown;
+use App\Modules\Breakdown\Actions\TransitionBreakdown;
+use App\Modules\Breakdown\Models\Breakdown;
+use App\Modules\Breakdown\Models\FailureCode;
+use App\Modules\Breakdown\Models\RootCause;
+use App\Modules\Calendar\Models\FactoryCalendar;
+use App\Modules\Calendar\Models\FactoryHoliday;
+use App\Modules\Calendar\Models\Shift;
+use App\Modules\Calendar\Models\ShiftBreak;
+use App\Modules\Costing\Models\CostCategory;
+use App\Modules\Costing\Models\CostEntry;
+use App\Modules\Costing\Services\CostPoster;
+use App\Modules\Identity\Models\CompanyUser;
+use App\Modules\Identity\Models\Role;
+use App\Modules\Identity\Models\User;
+use App\Modules\Identity\Models\UserRole;
+use App\Modules\Inventory\Actions\IssuePartsToWorkOrder;
+use App\Modules\Inventory\Actions\ReceiveStock;
+use App\Modules\Inventory\Models\Bin;
+use App\Modules\Inventory\Models\SparePart;
+use App\Modules\Inventory\Models\SparePartCategory;
+use App\Modules\Inventory\Models\Store;
+use App\Modules\Inventory\Models\Warehouse;
+use App\Modules\Maintenance\Models\ChecklistItem;
+use App\Modules\Maintenance\Models\MaintenancePlan;
+use App\Modules\Maintenance\Models\MaintenancePlanRule;
+use App\Modules\Maintenance\Models\MaintenanceTemplate;
+use App\Modules\Maintenance\Models\MaintenanceTemplateVersion;
+use App\Modules\Maintenance\Models\MaintenanceType;
+use App\Modules\Maintenance\Services\ScheduleGenerator;
+use App\Modules\Metering\Actions\ManageAssetMeter;
+use App\Modules\Metering\Actions\RecordMeterReading;
+use App\Modules\Metering\Models\MeterType;
+use App\Modules\Notification\Models\EscalationRule;
+use App\Modules\Settings\Actions\SetSetting;
+use App\Modules\Tenancy\Models\Building;
+use App\Modules\Tenancy\Models\Company;
+use App\Modules\Tenancy\Models\Department;
+use App\Modules\Tenancy\Models\Factory;
+use App\Modules\Tenancy\Models\Floor;
+use App\Modules\Tenancy\Models\ProductionLine;
+use App\Modules\Tenancy\Models\Section;
+use App\Modules\Vendor\Actions\ManageServiceContract;
+use App\Modules\Vendor\Actions\RecordWarranty;
+use App\Modules\Vendor\Models\Vendor;
+use App\Modules\WorkOrder\Actions\AssignTechnicians;
+use App\Modules\WorkOrder\Actions\CreateWorkOrder;
+use App\Modules\WorkOrder\Actions\RecordChecklistResult;
+use App\Modules\WorkOrder\Actions\TransitionWorkOrder;
+use App\Modules\WorkOrder\Models\Technician;
+use App\Modules\WorkOrder\Models\WorkOrder;
+use App\Modules\WorkOrder\Services\WorkOrderCostCalculator;
+use App\Shared\Scopes\TenantScope;
+use App\Shared\Tenancy\TenantContext;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Seeder;
+
+/**
+ * A realistic tenant for demonstrations, UAT and manual testing
+ * (Seed Catalog 14).
+ *
+ * NEVER installed in production: run explicitly with
+ *   php artisan db:seed --class=Database\\Seeders\\DemoTenantSeeder
+ *
+ * Two companies are created on purpose. Cross-tenant behaviour is invisible
+ * with only one, and the company switcher cannot be exercised.
+ */
+class DemoTenantSeeder extends Seeder
+{
+    public const PASSWORD = 'password123';
+
+    /**
+     * The sections generated straight from the taxonomy: asset type code =>
+     * department code, department name, asset code prefix, acquisition cost,
+     * criticality, and the manufacturers to cycle through.
+     *
+     * Criticality is set per section rather than varied, because in these
+     * sections it genuinely is: a fire pump is CRITICAL whichever one it is,
+     * and a trolley is LOW. Only the sewing floor has a real mix.
+     *
+     * The manufacturer lists are empty where the taxonomy has no makers for
+     * that section — HVAC, safety, material handling, printing and garment
+     * finishing are bought locally or from names the taxonomy does not carry,
+     * and inventing a brand would be worse than leaving the field blank.
+     *
+     * @var array<string, array{0: string, 1: string, 2: string, 3: string, 4: string, 5: list<string>}>
+     */
+    private const TAXONOMY_SECTIONS = [
+        'DYEING' => ['DYE', 'Dyeing and Finishing Section', 'DYE', '12500000', 'CRITICAL',
+            ['THIES', 'FONGS', 'SCLAVOS', 'DILMENLER', 'THEN', 'BRAZZOLI', 'LORIS_BELLINI', 'MCS']],
+
+        'FABRIC_FINISHING' => ['FFIN', 'Fabric Finishing Section', 'FFN', '7500000', 'HIGH',
+            ['MONFORTS', 'BRUCKNER', 'SANTEX', 'TUBE_TEX', 'LAFER', 'FERRARO', 'CORINO', 'BIANCO']],
+
+        'WET_PROCESS' => ['WASH', 'Garment Washing Section', 'WSH', '2800000', 'HIGH', []],
+
+        'PRINTING' => ['PRN', 'Printing Section', 'PRN', '1650000', 'MEDIUM', []],
+
+        'EMBROIDERY' => ['EMB', 'Embroidery Section', 'EMB', '2200000', 'MEDIUM',
+            ['TAJIMA', 'BARUDAN']],
+
+        'FINISHING' => ['FIN', 'Garment Finishing Section', 'FIN', '450000', 'MEDIUM',
+            ['VEIT', 'HASHIMA']],
+
+        'QUALITY_LAB' => ['LAB', 'Quality Assurance Lab', 'LAB', '380000', 'MEDIUM',
+            ['DATACOLOR', 'X_RITE', 'JAMES_HEAL', 'SDL_ATLAS', 'MATHIS']],
+
+        'HVAC' => ['HVAC', 'HVAC and Utilities', 'HVC', '520000', 'HIGH', []],
+
+        'MATERIAL_HANDLING' => ['MTH', 'Material Handling', 'MTH', '310000', 'LOW', []],
+
+        // A fire pump that does not start is the one failure with a body count.
+        'SAFETY' => ['SAFE', 'Safety and Fire', 'SFT', '95000', 'CRITICAL', []],
+    ];
+
+    /**
+     * The named machines: section, asset type, category, asset code prefix,
+     * acquisition cost, and the units — each unit carrying its own maker and
+     * model, because a sewing floor runs four brands side by side.
+     *
+     * The model is matched by name against that maker in the platform
+     * catalogue (AssetModelSeeder) rather than by a code kept here, so the two
+     * lists cannot drift into disagreeing about what a DDL-9000C is called.
+     *
+     * Sewing is first and stays first. Work orders, breakdowns, costs and
+     * coverage are all staged against the first six entries of the returned
+     * list, and a breakdown written about a lockstitch landing on a dye vessel
+     * would make the demo read as nonsense.
+     *
+     * @var list<array{0: string, 1: string, 2: string, 3: string, 4: string, 5: list<array{0: string, 1: string, 2: string}>}>
+     */
+    private const MACHINES = [
+        ['SEW', 'SEWING', 'LOCKSTITCH', 'SEW', '285000', [
+            ['Juki DDL-9000C', 'JUKI', 'DDL-9000C'],
+            ['Juki DDL-8700', 'JUKI', 'DDL-8700'],
+            ['Brother S-7300A', 'BROTHER', 'S-7300A'],
+            ['Juki MO-6714S', 'JUKI', 'MO-6714S'],
+            ['Pegasus M700', 'PEGASUS', 'M700'],
+            ['Siruba F007K', 'SIRUBA', 'F007K'],
+        ]],
+
+        ['KNIT', 'KNITTING', 'CIRCULAR_SINGLE_JERSEY', 'KNT', '4850000', [
+            ['Mayer & Cie Relanit 3.2 II — 30"', 'MAYER_CIE', 'Relanit 3.2 II'],
+            ['Mayer & Cie Relanit 3.2 II — 34"', 'MAYER_CIE', 'Relanit 3.2 II'],
+            ['Terrot I3P 176 — 32"', 'TERROT', 'I3P 176'],
+            ['Fukuhara V-LEC4BW — 30"', 'FUKUHARA', 'V-LEC4BW'],
+            ['Pai Lung LFC-A — 34"', 'PAILUNG', 'LFC-A'],
+        ]],
+
+        ['DYE', 'DYEING', 'SOFT_FLOW_DYEING', 'DYE', '18500000', [
+            ['Thies iMaster H2O — 300 kg', 'THIES', 'iMaster H2O'],
+            ['Thies iMaster H2O — 600 kg', 'THIES', 'iMaster H2O'],
+            ['Fong\'s ALLFIT ECO-6 — 450 kg', 'FONGS', 'ALLFIT ECO-6'],
+            ['Sclavos Venus Nova — 250 kg', 'SCLAVOS', 'Venus Nova'],
+        ]],
+
+        ['CUT', 'CUTTING', 'AUTO_CUTTER', 'CUT', '9200000', [
+            ['Gerber Paragon HX', 'GERBER', 'Paragon HX'],
+            ['Gerber XLc7000', 'GERBER', 'XLc7000'],
+            ['Lectra Vector iQ', 'LECTRA', 'Vector iQ'],
+            ['Hashima HP-450MS fusing', 'HASHIMA', 'HP-450MS'],
+        ]],
+    ];
+
+    /**
+     * A second company, so cross-tenant behaviour and the company switcher can
+     * be exercised. Turned off by DemoCustomerSeeder, which wants one customer
+     * and nothing else.
+     */
+    protected function seedsSecondCompany(): bool
+    {
+        return true;
+    }
+
+    /**
+     * A second factory, so factory scoping is visible. With one factory there
+     * is nothing for a factory-scoped role to be scoped away from, so the
+     * scoped user is skipped along with it.
+     */
+    protected function seedsSecondFactory(): bool
+    {
+        return true;
+    }
+
+    public function run(): void
+    {
+        $delta = $this->company('Delta Apparels Ltd', 'ডেল্টা অ্যাপারেলস লিমিটেড', 'DAL', 'en');
+
+        app(TenantContext::class)->set($delta->id);
+
+        $dhaka = $this->factory($delta, 'Dhaka Unit 1', 'DHK');
+        $this->locations($delta, $dhaka);
+        $this->calendar($delta, $dhaka);
+
+        $gazipur = null;
+
+        if ($this->seedsSecondFactory()) {
+            $gazipur = $this->factory($delta, 'Gazipur Unit 2', 'GAZ');
+            $this->calendar($delta, $gazipur);
+        }
+
+        // Fabric, trims, yarn, chemicals, general and bonded — the rooms a
+        // garment factory actually keeps apart. Idempotent, so it tops up a
+        // database that already has the spare parts store.
+        $this->call(DemoStoreSeeder::class);
+    app(TenantContext::class)->set($delta->id);
+    $this->settings($delta, $dhaka);
+
+        $omega = null;
+
+        if ($this->seedsSecondCompany()) {
+            $omega = $this->company('Omega Textiles Ltd', 'ওমেগা টেক্সটাইলস লিমিটেড', 'OTL', 'en');
+
+            app(TenantContext::class)->set($omega->id);
+            $narayanganj = $this->factory($omega, 'Narayanganj Unit', 'NGJ');
+            $this->calendar($omega, $narayanganj);
+        }
+
+        app(TenantContext::class)->set($delta->id);
+
+        // One user per role, so every permission set can be compared in the UI.
+        $owner = $this->user($delta, 'COMPANY_OWNER', 'owner@delta.test', 'Rahim Uddin');
+        $this->user($delta, 'COMPANY_ADMIN', 'companyadmin@delta.test', 'Ayesha Khatun');
+        $this->user($delta, 'FACTORY_ADMIN', 'factoryadmin@delta.test', 'Delwar Hossain');
+        $this->user($delta, 'FACTORY_MANAGER', 'manager@delta.test', 'Nasrin Akter');
+        $maintenanceManager = $this->user($delta, 'MAINTENANCE_MANAGER', 'maintenance@delta.test', 'Kamrul Hasan');
+        $engineer = $this->user($delta, 'MAINTENANCE_ENGINEER', 'engineer@delta.test', 'Sabbir Ahmed');
+        $technicianUser = $this->user($delta, 'TECHNICIAN', 'technician@delta.test', 'Karim Mia');
+        $lineChiefUser = $this->user($delta, 'LINE_CHIEF', 'linechief@delta.test', 'Moniruzzaman Khan');
+        $this->user($delta, 'STORE_MANAGER', 'store@delta.test', 'Farhana Islam');
+        $storekeeper = $this->user($delta, 'STOREKEEPER', 'storekeeper@delta.test', 'Jashim Uddin');
+        $this->user($delta, 'AUDITOR', 'auditor@delta.test', 'Tanvir Rahman');
+        $this->user($delta, 'VIEWER', 'viewer@delta.test', 'Shirin Sultana');
+
+        $this->technicians($delta, $dhaka, $technicianUser);
+
+        // Line Chief and one technician scoped to a real line (Sewing
+        // Production's own Line 1) rather than left unrestricted — the demo's
+        // whole point is showing `BreakdownScopeGuard`'s hard line/department
+        // restriction actually restrict something. The Juki DDL-9000C (the
+        // first SEW machine `assets()` seeds) lands on this exact line
+        // (`assetLocation()`'s own `$index % $lineCount + 1`, index 0 → Line
+        // 1), so Line 1's Line Chief/technician/machine are the one place in
+        // the demo where the whole sign-off chain can be exercised as a
+        // genuinely restricted scenario, not just an unrestricted one.
+        $this->scopeToLineOne($delta, $dhaka, $lineChiefUser, $technicianUser);
+
+        // Machines and work in every interesting state, so the screens can be
+        // judged against real data rather than against empty tables.
+        $this->approvalWorkflow($delta);
+        $this->escalationRules($delta);
+
+        $assets = $this->assets($delta, $dhaka);
+        $this->maintenancePlans($delta, $dhaka, $assets, $maintenanceManager);
+
+        // After the plans, and its return value deliberately not merged into
+        // $assets: everything below is staged against the six sewing machines,
+        // and a breakdown written about a lockstitch must not land on a fire
+        // extinguisher.
+        $this->taxonomyMachines($delta, $dhaka);
+        // Raised by the engineer so the manager can actually sign them: a
+        // requester may never approve their own request, and a demo where the
+        // only approver is also the requester shows an empty queue.
+        $this->workOrders($delta, $dhaka, $assets, $engineer);
+        $this->breakdowns($delta, $assets, $maintenanceManager);
+        $this->stock($delta, $dhaka, $assets, $storekeeper);
+        $this->costs($delta, $assets, $maintenanceManager);
+        $this->coverage($delta, $dhaka, $assets, $maintenanceManager);
+        $this->subscription($delta, $owner);
+
+        if ($gazipur !== null) {
+            // A factory-scoped role: this manager reaches Dhaka only, which
+            // makes factory scoping visible in the UI. Pointless with a single
+            // factory — there would be nothing it was scoped away from.
+            $this->user($delta, 'MAINTENANCE_MANAGER', 'dhaka-only@delta.test', 'Mizanur Rahman', $dhaka->id);
+        }
+
+        if ($omega !== null) {
+            // The owner also belongs to Omega, so the company switcher appears.
+            $this->addMembership($owner, $omega, 'COMPANY_ADMIN');
+        }
+
+        $accounts = [
+            ['owner@delta.test', 'Company Owner', $omega ? 'Delta + Omega (switcher)' : 'Delta'],
+            ['companyadmin@delta.test', 'Company Admin', 'Delta'],
+            ['factoryadmin@delta.test', 'Factory Admin', 'Delta, all factories'],
+            ['manager@delta.test', 'Factory Manager', 'Delta, all factories'],
+            ['maintenance@delta.test', 'Maintenance Manager', 'Delta, all factories'],
+            ['engineer@delta.test', 'Maintenance Engineer', 'Delta, all factories'],
+            ['technician@delta.test', 'Technician', 'Delta, all factories'],
+            ['linechief@delta.test', 'Line Chief', 'Delta, all factories'],
+            ['store@delta.test', 'Store Manager', 'Delta, all factories'],
+            ['storekeeper@delta.test', 'Storekeeper', 'Delta, all factories'],
+            ['auditor@delta.test', 'Auditor', 'Delta, read-only'],
+            ['viewer@delta.test', 'Viewer', 'Delta, read-only'],
+        ];
+
+        if ($gazipur !== null) {
+            $accounts[] = ['dhaka-only@delta.test', 'Maintenance Manager', 'Delta, Dhaka factory only'];
+        }
+
+        $this->command?->newLine();
+        $this->command?->info('Demo tenant ready. Password for every account: '.self::PASSWORD);
+        $this->command?->table(['Email', 'Role', 'Scope'], $accounts);
+    }
+
+    private function company(string $name, string $nameBn, string $code, string $locale): Company
+    {
+        return Company::updateOrCreate(
+            ['code' => $code],
+            [
+                'name' => $locale === 'bn' ? $nameBn : $name,
+                'legal_name' => $name,
+                'base_currency' => 'BDT',
+                'timezone' => 'Asia/Dhaka',
+                'default_locale' => $locale,
+            ],
+        );
+    }
+
+    private function factory(Company $company, string $name, string $code): Factory
+    {
+        return Factory::withoutGlobalScope(TenantScope::class)->updateOrCreate(
+            ['company_id' => $company->id, 'code' => $code],
+            ['name' => $name, 'timezone' => 'Asia/Dhaka', 'status' => 'ACTIVE'],
+        );
+    }
+
+    /**
+     * The four sections a knit composite actually runs, in the order fabric
+     * moves through them: knitting, dyeing, cutting, sewing.
+     *
+     * Two buildings rather than one, because the wet processes are physically
+     * separate from the dry ones in every mill of this kind — and a demo where
+     * everything sits in "Building A" teaches somebody the wrong shape.
+     */
+    /**
+     * Two floors per building — a ground floor and a first floor, the
+     * shape every multi-storey composite mill actually has, not a flat
+     * single-storey fiction.
+     */
+    private const FLOORS = [
+        'GF' => 'Ground Floor',
+        '1F' => '1st Floor',
+    ];
+
+    /**
+     * The company's real, full organisational chart — every department a
+     * garment manufacturer actually runs, not just the four that happen to
+     * carry machinery. Found live: the seeder previously modelled only
+     * Knitting/Dyeing/Cutting/Sewing, under generic section names invented
+     * for the demo — this data reaches production, not just a demo tenant,
+     * so it has to match the real thing.
+     *
+     * Shape: code => [department name, [section names...], production line
+     * count, line name prefix]. A `0` line count means exactly that — most
+     * departments here (Merchandising, HR, Accounts, IT, ...) are office or
+     * single-location functions with no assembly-line floor to number, and
+     * `RaiseBreakdownWorkOrder::assignRoster()`/`BreakdownScopeGuard` have
+     * nothing to match a "line" against there regardless.
+     *
+     * Codes DYE, FFIN, WASH and FIN are shared with `self::TAXONOMY_
+     * SECTIONS` below deliberately — that's the same real department this
+     * one is, just reached from the machine-taxonomy side; two codes for
+     * one department would eventually disagree (the wrong lesson from
+     * `RaiseBreakdownWorkOrder`'s own docblock about `work_orders.
+     * breakdown_id` vs. a pivot table, applied here instead).
+     *
+     * @var array<string, array{0: string, 1: list<string>, 2: int, 3: ?string}>
+     */
+    private const DEPARTMENTS = [
+        'MERCH' => ['Merchandising Department', ['Merchandising', 'Order Management', 'Costing', 'T&A / Order Follow-up'], 0, null],
+        'DESIGN' => ['Design & Product Development', ['Design', 'Product Development', 'Sample Development', 'Sample Room'], 0, null],
+        'PPC' => ['PPC / Planning Department', ['Production Planning', 'PPC', 'Capacity Planning', 'Production Scheduling'], 0, null],
+        'PROC' => ['Procurement Department', ['Yarn Procurement', 'Fabric Procurement', 'Dyes & Chemicals Procurement', 'Trims & Accessories Procurement'], 0, null],
+        'YARN' => ['Yarn / Yarn Store Department', ['Yarn Store', 'Yarn Inspection', 'Yarn Preparation'], 0, null],
+        'KNIT' => ['Knitting Department', ['Knitting', 'Knitting Production', 'Knitting Quality'], 8, 'Knit M'],
+        'DYE' => ['Dyeing Department', ['Dyeing', 'Dyeing Lab', 'Color Matching', 'Dyeing Quality'], 6, 'Dye M'],
+        'FFIN' => ['Fabric Finishing Department', ['Fabric Finishing', 'Compacting', 'Raising / Brushing', 'Calendaring', 'Fabric Inspection'], 2, 'Fabric Finish Line'],
+        'FABSTORE' => ['Fabric Store Department', ['Grey Fabric Store', 'Finished Fabric Store', 'Fabric Inspection', 'Fabric Dispatch'], 0, null],
+        'CADPAT' => ['CAD & Pattern Department', ['CAD', 'Pattern', 'Grading', 'Marker Making'], 0, null],
+        'CUT' => ['Cutting Department', ['Fabric Spreading', 'Cutting', 'Numbering', 'Bundling', 'Fusing'], 4, 'Cutting Table'],
+        'SEW' => ['Sewing / Production Department', ['Sewing Production', 'Line Production', 'Sewing Input', 'End Line', 'Rework / Alter'], 6, 'Line'],
+        'WASH' => ['Washing / Laundry Department', ['Garment Washing', 'Laundry', 'Wet Process', 'Dry Process'], 3, 'Washing Line'],
+        'FIN' => ['Finishing Department', ['Finishing', 'Thread Trimming', 'Spot Removing', 'Pressing / Ironing', 'Measurement', 'Folding'], 3, 'Finishing Line'],
+        'PACK' => ['Packing Department', ['Poly Packing', 'Assortment', 'Metal Detection', 'Carton Packing', 'Carton Inspection'], 3, 'Packing Line'],
+        'FGSTORE' => ['Finished Goods Store', ['Finished Goods Receiving', 'Finished Goods Storage', 'Shipment Preparation'], 0, null],
+        // Shares its code with `TAXONOMY_SECTIONS`' own `QUALITY_LAB` entry
+        // ('LAB') — same reasoning as DYE/FFIN/WASH/FIN above.
+        'LAB' => ['Quality Assurance / Quality Control', [
+            'Yarn Quality', 'Knitting Quality', 'Dyeing Quality', 'Fabric Quality', 'Cutting Quality',
+            'Sewing / Inline Quality', 'End Line Quality', 'Finishing Quality', 'Final Inspection', 'AQL Inspection',
+        ], 0, null],
+        'IE' => ['Industrial Engineering (IE)', ['Time Study', 'SMV', 'Line Balancing', 'Capacity Study', 'Efficiency', 'Productivity'], 0, null],
+        'MAINT' => ['Maintenance Department', [
+            'Knitting Machine Maintenance', 'Dyeing Machine Maintenance', 'Sewing Machine Maintenance',
+            'Cutting Machine Maintenance', 'Finishing Machine Maintenance', 'Electrical Maintenance', 'Mechanical Maintenance',
+        ], 0, null],
+        // Shares its code with `TAXONOMY_SECTIONS`' own `HVAC` entry — this
+        // is the same Utility department, seen from the org-chart side
+        // rather than the machine-taxonomy side.
+        'HVAC' => ['Utility Department', ['Boiler', 'Generator', 'Compressor', 'Chiller', 'HVAC', 'Water Treatment', 'ETP'], 0, null],
+        'CHEM' => ['Chemical Management', ['Chemical Store', 'Chemical Management', 'Chemical Preparation', 'Chemical Safety'], 0, null],
+        'STORE' => ['Store Department', [
+            'Yarn Store', 'Grey Fabric Store', 'Finished Fabric Store', 'Dyes & Chemicals Store',
+            'Accessories Store', 'General Store', 'Finished Goods Store',
+        ], 0, null],
+        'SCM' => ['Supply Chain / Logistics', ['Material Planning', 'Warehouse', 'Inventory Control', 'Internal Logistics', 'Transport'], 0, null],
+        'COMM' => ['Commercial Department', ['Import', 'Export', 'LC Management', 'Customs', 'Commercial Documentation'], 0, null],
+        'SHIP' => ['Shipping Department', ['Shipment Planning', 'Container Management', 'Shipping Documentation', 'Shipment'], 0, null],
+        'HR' => ['HR & Administration', ['HR', 'Recruitment', 'Attendance & Payroll', 'Training', 'Employee Welfare', 'Administration'], 0, null],
+        'ACCT' => ['Accounts & Finance', ['Accounts', 'Finance', 'Costing', 'Budget & Control', 'Payroll'], 0, null],
+        'COMPL' => ['Compliance', ['Social Compliance', 'Buyer Compliance', 'Ethical Compliance'], 0, null],
+        // Shares its code with `TAXONOMY_SECTIONS`' own `SAFETY` entry
+        // ('SAFE') — the fire pumps and safety equipment that entry seeds
+        // machines for belong to this same department.
+        'SAFE' => ['EHS', ['Environment', 'Health & Safety', 'Fire & Safety', 'Waste Management'], 0, null],
+        'IT' => ['IT', ['IT Support', 'Network', 'ERP', 'System Administration'], 0, null],
+    ];
+
+    private function locations(Company $company, Factory $factory): void
+    {
+        $buildingA = Building::updateOrCreate(
+            ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'A'],
+            ['name' => 'Building A — Knitting and Garments'],
+        );
+
+        $buildingB = Building::updateOrCreate(
+            ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'B'],
+            ['name' => 'Building B — Dyeing and Finishing'],
+        );
+
+        foreach ([$buildingA, $buildingB] as $building) {
+            foreach (self::FLOORS as $floorCode => $floorName) {
+                Floor::updateOrCreate(
+                    ['company_id' => $company->id, 'building_id' => $building->id, 'code' => "{$building->code}-{$floorCode}"],
+                    ['name' => $floorName],
+                );
+            }
+        }
+
+        foreach (self::DEPARTMENTS as $code => [$name, $sections, $lineCount, $linePrefix]) {
+            $department = Department::updateOrCreate(
+                ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => $code],
+                ['name' => $name],
+            );
+
+            for ($n = 1; $n <= $lineCount; $n++) {
+                ProductionLine::updateOrCreate(
+                    [
+                        'company_id' => $company->id,
+                        'department_id' => $department->id,
+                        'code' => $linePrefix.$n,
+                    ],
+                    ['name' => $linePrefix.' '.$n],
+                );
+            }
+
+            foreach ($sections as $i => $sectionName) {
+                Section::updateOrCreate(
+                    ['company_id' => $company->id, 'department_id' => $department->id, 'code' => sprintf('%s-%02d', $code, $i + 1)],
+                    ['name' => $sectionName],
+                );
+            }
+        }
+    }
+
+    /**
+     * One 08:00-22:00 shift, Saturday to Thursday, Friday off, with an unpaid
+     * lunch hour. This is the pattern the ADR-048 overnight case assumes.
+     */
+    private function calendar(Company $company, Factory $factory): void
+    {
+        FactoryCalendar::updateOrCreate(
+            ['company_id' => $company->id, 'factory_id' => $factory->id, 'effective_from' => '2026-01-01'],
+            ['operating_mode' => 'SHIFT_BASED', 'weekly_off_days' => [5]],
+        );
+
+        $shift = Shift::updateOrCreate(
+            ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'DAY', 'effective_from' => '2026-01-01'],
+            [
+                'name' => 'Day shift',
+                'start_time' => '08:00:00',
+                'end_time' => '22:00:00',
+                'days_of_week' => [1, 2, 3, 4, 6, 7],
+                'status' => 'ACTIVE',
+            ],
+        );
+
+        ShiftBreak::updateOrCreate(
+            ['company_id' => $company->id, 'shift_id' => $shift->id, 'name' => 'Lunch break'],
+            ['start_time' => '13:00:00', 'end_time' => '14:00:00', 'counts_as_operating_time' => false],
+        );
+
+        foreach ([
+            '2026-02-21' => 'Language Martyrs Day',
+            '2026-03-26' => 'Independence Day',
+            '2026-12-16' => 'Victory Day',
+        ] as $date => $name) {
+            FactoryHoliday::updateOrCreate(
+                ['company_id' => $company->id, 'factory_id' => $factory->id, 'date' => $date],
+                ['name' => $name, 'is_working_day' => false],
+            );
+        }
+    }
+
+    private function settings(Company $company, Factory $dhaka): void
+    {
+        $set = app(SetSetting::class);
+
+        $set->handle('locale.default', 'en');
+        $set->handle('metrics.downtime_uses_shift_calendar', true);
+        $set->handle('work_order.approval_cost_threshold', '50000');
+        // Gazipur runs continuously; Dhaka keeps the shift calendar. A factory
+        // override makes the resolution order visible in the settings screen.
+        $set->handle('factory.operating_mode', 'SHIFT_BASED', factoryId: $dhaka->id);
+    }
+
+    /**
+     * Technicians, each with the part of the mill they look after.
+     *
+     * A dyeing technician covers the dye house and a sewing mechanic the sewing
+     * floor, which is how a factory actually divides the work — and how the
+     * assignment screen decides who to offer first.
+     */
+    private function technicians(Company $company, Factory $factory, ?User $linkedUser): void
+    {
+        $roster = [
+            ['Karim Mia', 'EMP-1001', 'Sewing machines', 5],
+            ['Jahangir Alam', 'EMP-1002', 'Electrical', 5],
+            ['Sumon Sheikh', 'EMP-1003', 'Knitting machines', 8],
+            ['Ruhul Amin', 'EMP-1004', 'Boiler and generator', 4],
+            ['Abdul Karim', 'EMP-1005', 'Dyeing machines', 3],
+        ];
+
+        foreach ($roster as $index => [$name, $employeeId, $specialisation, $limit]) {
+            Technician::updateOrCreate(
+                ['company_id' => $company->id, 'employee_id' => $employeeId],
+                [
+                    'factory_id' => $factory->id,
+                    // Only the first is linked to a login: a technician may
+                    // exist without an account, and a supervisor records their
+                    // time for them (ERD Section 16).
+                    'user_id' => $index === 0 ? $linkedUser?->id : null,
+                    'name' => $name,
+                    'phone' => '+8801'.str_pad((string) (700000000 + $index), 9, '0'),
+                    'specialization' => $specialisation,
+                    'joining_date' => '2024-01-15',
+                    'max_concurrent_work_orders' => $limit,
+                    'status' => 'ACTIVE',
+                ],
+            );
+        }
+    }
+
+    /**
+     * Restricts the demo's Line Chief and lead sewing technician (Karim Mia,
+     * EMP-1001) to Sewing / Production's own Line 1 — the same line the
+     * first SEW machine (`assets()`'s Juki DDL-9000C) is placed on. Without
+     * this, both carry `BreakdownScopeGuard::coverageFor()`'s "no personal
+     * coverage area" null (unrestricted), which makes the demo unable to show
+     * its own hard line/department restriction actually restrict anything.
+     */
+    private function scopeToLineOne(Company $company, Factory $factory, User $lineChiefUser, User $technicianUser): void
+    {
+        $department = Department::where('company_id', $company->id)
+            ->where('factory_id', $factory->id)
+            ->where('code', 'SEW')
+            ->first();
+
+        $line = $department === null ? null : ProductionLine::where('company_id', $company->id)
+            ->where('department_id', $department->id)
+            ->where('code', 'Line1')
+            ->first();
+
+        if ($department === null || $line === null) {
+            $this->command?->warn('Demo: skipped Line 1 scoping — SEW department or Line 1 not found');
+
+            return;
+        }
+
+        $lineChiefUser->forceFill([
+            'department_id' => $department->id,
+            'production_line_id' => $line->id,
+        ])->save();
+
+        Technician::where('company_id', $company->id)
+            ->where('user_id', $technicianUser->id)
+            ->update([
+                'department_id' => $department->id,
+                'production_line_id' => $line->id,
+            ]);
+    }
+
+    private function user(
+        Company $company,
+        string $roleCode,
+        string $email,
+        string $name,
+        ?string $factoryId = null,
+    ): User {
+        $user = User::updateOrCreate(
+            ['email' => $email],
+            [
+                'name' => $name,
+                'password' => self::PASSWORD,
+                'status' => 'ACTIVE',
+                'timezone' => 'Asia/Dhaka',
+                'locale' => $company->default_locale,
+            ],
+        );
+
+        CompanyUser::updateOrCreate(
+            ['company_id' => $company->id, 'user_id' => $user->id],
+            ['status' => 'ACTIVE', 'is_default' => true],
+        );
+
+        $role = Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail();
+
+        UserRole::withoutGlobalScope(TenantScope::class)->updateOrCreate(
+            [
+                'company_id' => $company->id,
+                'user_id' => $user->id,
+                'role_id' => $role->id,
+                'factory_id' => $factoryId,
+            ],
+            [],
+        );
+
+        return $user;
+    }
+
+    private function addMembership(User $user, Company $company, string $roleCode): void
+    {
+        CompanyUser::updateOrCreate(
+            ['company_id' => $company->id, 'user_id' => $user->id],
+            ['status' => 'ACTIVE', 'is_default' => false],
+        );
+
+        $role = Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail();
+
+        UserRole::withoutGlobalScope(TenantScope::class)->updateOrCreate(
+            ['company_id' => $company->id, 'user_id' => $user->id, 'role_id' => $role->id, 'factory_id' => null],
+            [],
+        );
+    }
+
+    /**
+     * Commissioned machines on Line 3.
+     *
+     * Driven through the real status transitions rather than inserted as
+     * RUNNING, so the status history is populated and the asset timeline on the
+     * detail screen has something in it.
+     *
+     * @return list<Asset>
+     */
+    /**
+     * The mill's machines, across all four sections.
+     *
+     * Every other method here takes the returned list and hangs work orders,
+     * breakdowns, costs and coverage off it, so the sewing machines stay first
+     * in the array — those are the ones the rest of the demo was staged
+     * against, and reordering them would move a breakdown onto a dye vessel
+     * that was written about a lockstitch.
+     *
+     * @return list<Asset>
+     */
+    private function assets(Company $company, Factory $factory): array
+    {
+        $create = app(CreateAsset::class);
+        $status = app(ChangeAssetStatus::class);
+        $assets = [];
+
+        foreach (self::MACHINES as [$section, $typeCode, $categoryCode, $prefix, $cost, $items]) {
+            $type = AssetType::whereNull('company_id')->where('code', $typeCode)->first();
+            $category = AssetCategory::whereNull('company_id')->where('code', $categoryCode)->first();
+
+            if ($type === null || $category === null) {
+                $this->command?->warn("Demo: skipped {$section} machines — unknown type or category");
+
+                continue;
+            }
+
+            [, , $lineCount] = self::DEPARTMENTS[$section];
+
+            foreach ($items as $index => [$name, $makerCode, $modelName]) {
+                $code = sprintf('%s-%s-%05d', $prefix, $factory->code, 401 + $index);
+
+                // One machine, one line — not every machine in a section
+                // sharing "line 1" while the section's other real
+                // production lines sit with nothing placeable on them
+                // (found live: this data is going to production, not just
+                // staying demo-only, so it has to reflect a real factory
+                // layout). Wraps if a section ever gets more machines than
+                // lines, rather than erroring — a machine still needs
+                // somewhere to be.
+                $location = $this->assetLocation($company, $factory, $section, ($index % $lineCount) + 1);
+
+                if (Asset::where('asset_code', $code)->exists()) {
+                    $assets[] = Asset::where('asset_code', $code)->firstOrFail();
+
+                    continue;
+                }
+
+                // Per machine, not per section: the sewing floor runs Juki,
+                // Brother, Pegasus and Siruba side by side, and stamping them
+                // all with one maker would be wrong on four of six.
+                $manufacturer = Manufacturer::whereNull('company_id')
+                    ->where('code', $makerCode)
+                    ->first();
+
+                $asset = $create->handle([
+                    'asset_type_id' => $type->id,
+                    'asset_category_id' => $category->id,
+                    'manufacturer_id' => $manufacturer?->id,
+                    // Matched by model name against that maker, so the demo
+                    // reads the platform catalogue rather than keeping its own
+                    // copy of the codes.
+                    'asset_model_id' => $manufacturer === null ? null : AssetModel::whereNull('company_id')
+                        ->where('manufacturer_id', $manufacturer->id)
+                        ->where('model', $modelName)
+                        ->value('id'),
+                    'asset_code' => $code,
+                    'name' => $name,
+                    // A mix, so the criticality filter and the
+                    // verification-required rule both have something to act on.
+                    // Dye vessels are CRITICAL throughout: a stopped dye house
+                    // stops everything downstream of it, which is the whole
+                    // reason criticality is a field.
+                    'criticality' => $typeCode === 'DYEING' ? 'CRITICAL' : ($index % 3 === 0 ? 'HIGH' : 'MEDIUM'),
+                    'current_factory_id' => $factory->id,
+                    'asset_location_id' => $location->id,
+                    'acquisition_cost' => $cost,
+                    'currency' => 'BDT',
+                ]);
+
+                foreach (['PURCHASED', 'INSTALLED', 'COMMISSIONED', 'RUNNING'] as $step) {
+                    $asset = $status->handle($asset, $step);
+                }
+
+                $assets[] = $asset;
+            }
+        }
+
+        return $assets;
+    }
+
+    /**
+     * Preventive maintenance plans, and the schedules they generate.
+     *
+     * The demo had none, which left the whole maintenance side of the product
+     * — plans, the schedule board, due and overdue work — showing empty tables
+     * to anybody being shown around. That is the half of the product the name
+     * is about.
+     *
+     * Both trigger kinds are here on purpose. A sewing machine is serviced on
+     * a calendar; a dye vessel is serviced every so many batches and a knitting
+     * machine every so many kilograms off the take-down. A demo with only
+     * calendar plans quietly suggests the meter side does not exist.
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function maintenancePlans(Company $company, Factory $factory, array $assets, User $manager): void
+    {
+        $preventive = MaintenanceType::whereNull('company_id')->where('code', 'PREVENTIVE')->first()
+            ?? MaintenanceType::where('company_id', $company->id)->where('code', 'PREVENTIVE')->first();
+
+        if ($preventive === null || $assets === []) {
+            return;
+        }
+
+        $version = MaintenanceTemplate::whereNull('company_id')
+            ->get()
+            ->map(fn (MaintenanceTemplate $t) => $t->currentVersion())
+            ->filter()
+            ->first();
+
+        $byCode = [];
+
+        foreach ($assets as $asset) {
+            $byCode[substr((string) $asset->asset_code, 0, 3)][] = $asset;
+        }
+
+        // section prefix, plan name, trigger, rule, and the meter it counts.
+        $plans = [
+            ['SEW', 'Lockstitch 500-hour service', 'TIME', ['TIME', '3', 'MONTH', null], 120],
+            ['KNT', 'Knitting machine fabric-weight service', 'METER', ['METER', '25000', 'KG', 'FABRIC_WEIGHT'], 240],
+            ['DYE', 'Dye vessel batch service', 'METER', ['METER', '150', 'BATCH', 'BATCH_COUNT'], 480],
+            ['CUT', 'Cutter blade and rail inspection', 'TIME', ['TIME', '1', 'MONTH', null], 90],
+        ];
+
+        $generator = app(ScheduleGenerator::class);
+        $meters = app(ManageAssetMeter::class);
+        $readings = app(RecordMeterReading::class);
+        $created = 0;
+
+        foreach ($plans as [$prefix, $name, $trigger, [$ruleType, $value, $unit, $meterCode], $minutes]) {
+            foreach (array_slice($byCode[$prefix] ?? [], 0, 2) as $asset) {
+                $plan = MaintenancePlan::updateOrCreate(
+                    ['company_id' => $company->id, 'asset_id' => $asset->id, 'name' => $name],
+                    [
+                        'maintenance_type_id' => $preventive->id,
+                        'template_version_id' => $version?->id,
+                        'trigger_type' => $trigger,
+                        // Rolling: the next one is measured from when the last
+                        // was actually done, not from a fixed calendar. A mill
+                        // that runs late does not want six overdue services
+                        // appearing at once when it catches up.
+                        'schedule_mode' => 'ROLLING',
+                        'rule_logic' => 'ALL',
+                        'priority' => $asset->criticality === 'CRITICAL' ? 'HIGH' : 'NORMAL',
+                        'grace_period_minutes' => 1440,
+                        'lead_time_days' => 7,
+                        'non_working_day_policy' => 'NEXT_WORKING_DAY',
+                        'requires_shutdown' => $trigger === 'METER',
+                        'estimated_duration_minutes' => $minutes,
+                        'start_date' => CarbonImmutable::now()->subMonths(6)->toDateString(),
+                        'active' => true,
+                        'timezone' => $factory->timezone,
+                        'created_by' => $manager->id,
+                    ],
+                );
+
+                $meterTypeId = $meterCode === null
+                    ? null
+                    : MeterType::whereNull('company_id')->where('code', $meterCode)->value('id');
+
+                MaintenancePlanRule::updateOrCreate(
+                    ['company_id' => $company->id, 'maintenance_plan_id' => $plan->id, 'rule_type' => $ruleType],
+                    [
+                        'operator' => 'EVERY',
+                        'value' => $value,
+                        'unit' => $unit,
+                        'meter_type_id' => $meterTypeId,
+                    ],
+                );
+
+                // A meter plan cannot work out when it is next due without
+                // something to count. Without these, the knitting and dyeing
+                // plans exist and generate nothing, which reads on screen as
+                // the meter side of the product being broken rather than as
+                // the demo being thin.
+                if ($meterTypeId !== null) {
+                    $meter = $meters->attach($asset, $meterTypeId, '0');
+
+                    // Three months of running, so there is a history to plot
+                    // and a current value the rule can measure against.
+                    $step = (float) $value / 3;
+
+                    foreach ([90, 60, 30, 1] as $i => $daysAgo) {
+                        $readings->handle(
+                            $meter->fresh(),
+                            (string) round($step * ($i + 1), 4),
+                            CarbonImmutable::now()->subDays($daysAgo),
+                            'MANUAL',
+                            $manager->id,
+                        );
+                    }
+                }
+
+                $created++;
+
+                // Generated here rather than left to the nightly command, so
+                // the schedule board has something on it the moment somebody
+                // opens the demo.
+                $generator->generateForPlan($plan->fresh());
+            }
+        }
+
+        $this->command?->info("Demo: {$created} maintenance plans with schedules.");
+    }
+
+    /**
+     * One machine of every kind the taxonomy knows about, for the sections a
+     * composite mill runs beyond knitting and sewing.
+     *
+     * Generated from the taxonomy rather than written out. Eighty-one machines
+     * hand-listed would be eighty-one names to keep true, and the category
+     * names already *are* the machine names — "Stenter and Heat Setting",
+     * "Crockmeter", "Fire Pump" are what the floor calls them. Reading them
+     * back means a category added to the platform taxonomy next year appears
+     * in the demo without anybody remembering to add it here.
+     *
+     * Categories that already have a machine are skipped, so the hand-staged
+     * dye vessels above are not duplicated by their own category.
+     *
+     * @return list<Asset>
+     */
+    private function taxonomyMachines(Company $company, Factory $factory): array
+    {
+        $create = app(CreateAsset::class);
+        $status = app(ChangeAssetStatus::class);
+        $made = [];
+
+        foreach (self::TAXONOMY_SECTIONS as $typeCode => [$deptCode, $deptName, $prefix, $cost, $criticality, $makers]) {
+            $type = AssetType::whereNull('company_id')->where('code', $typeCode)->first();
+
+            if ($type === null) {
+                $this->command?->warn("Demo: skipped {$typeCode} — not in the platform taxonomy");
+
+                continue;
+            }
+
+            // `$deptName` is `TAXONOMY_SECTIONS`'s own label, kept only for
+            // codes `locations()`/`self::DEPARTMENTS` doesn't already own —
+            // for the ones it does (DYE, FFIN, WASH, FIN, LAB, HVAC, SAFE),
+            // the department already exists with the organisation chart's
+            // name, and `updateOrCreate` matching on code alone must not
+            // stomp it back to the taxonomy's own older label.
+            $department = Department::updateOrCreate(
+                ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => $deptCode],
+                ['name' => self::DEPARTMENTS[$deptCode][0] ?? $deptName],
+            );
+
+            // No `production_line_id` here — this is one location shared by
+            // a whole department's worth of generic machines (fire pumps,
+            // trolleys, ...), not any one line's own equipment.
+            $location = AssetLocation::updateOrCreate(
+                ['factory_id' => $factory->id, 'code' => $factory->code.'-'.$deptCode],
+                [
+                    'name' => $deptName,
+                    'department_id' => $department->id,
+                    'qr_code' => app(QrTokenGenerator::class)->forLocation($company->id),
+                    'full_path' => $factory->name.' › '.$deptName,
+                ],
+            );
+
+            $manufacturers = Manufacturer::whereNull('company_id')
+                ->whereIn('code', $makers)
+                ->pluck('id')
+                ->all();
+
+            $categories = AssetCategory::whereNull('company_id')
+                ->where('asset_type_id', $type->id)
+                ->orderBy('name')
+                ->get();
+
+            $n = 0;
+
+            foreach ($categories as $category) {
+                if (Asset::where('asset_category_id', $category->id)->exists()) {
+                    continue;
+                }
+
+                $code = sprintf('%s-%s-%03d', $prefix, $factory->code, ++$n);
+
+                if (Asset::where('asset_code', $code)->exists()) {
+                    continue;
+                }
+
+                $asset = $create->handle([
+                    'asset_type_id' => $type->id,
+                    'asset_category_id' => $category->id,
+                    'manufacturer_id' => $manufacturers === []
+                        ? null
+                        : $manufacturers[$n % count($manufacturers)],
+                    'asset_code' => $code,
+                    'name' => $category->name,
+                    'criticality' => $criticality,
+                    'current_factory_id' => $factory->id,
+                    'asset_location_id' => $location->id,
+                    'acquisition_cost' => $cost,
+                    'currency' => 'BDT',
+                ]);
+
+                foreach (['PURCHASED', 'INSTALLED', 'COMMISSIONED', 'RUNNING'] as $step) {
+                    $asset = $status->handle($asset, $step);
+                }
+
+                $made[] = $asset;
+            }
+
+            unset($department);
+        }
+
+        $this->command?->info('Demo: '.count($made).' machines across the remaining sections.');
+
+        return $made;
+    }
+
+    /**
+     * One location per production line, named and numbered to match it — on
+     * the actual `ProductionLine` row `locations()` already created,
+     * not just a display-only `full_path` string that looks like one.
+     * Without the real `department_id`/`production_line_id` foreign keys, a
+     * machine placed here has no line as far as the Breakdown module's own
+     * line-restriction and roster auto-assign are concerned
+     * (`BreakdownScopeGuard`, `RaiseBreakdownWorkOrder::assignRoster()`) —
+     * found live: the demo's own "Line 1", "Cutting Table 1" etc. locations
+     * carried none of this, so nothing in the roster feature had anything
+     * to match against. This data reaches production, not just a demo
+     * tenant, so it has to be right.
+     */
+    private function assetLocation(Company $company, Factory $factory, string $section, int $lineNumber): AssetLocation
+    {
+        [$departmentName, , , $linePrefix] = self::DEPARTMENTS[$section];
+        $lineName = $linePrefix.' '.$lineNumber;
+
+        $department = Department::where('company_id', $company->id)
+            ->where('factory_id', $factory->id)
+            ->where('code', $section)
+            ->first();
+
+        $line = $department === null ? null : ProductionLine::where('company_id', $company->id)
+            ->where('department_id', $department->id)
+            ->where('code', $linePrefix.$lineNumber)
+            ->first();
+
+        return AssetLocation::updateOrCreate(
+            ['factory_id' => $factory->id, 'code' => $factory->code.'-'.$section.'-'.$lineNumber],
+            [
+                'name' => $lineName,
+                'department_id' => $department?->id,
+                'production_line_id' => $line?->id,
+                'qr_code' => app(QrTokenGenerator::class)->forLocation($company->id),
+                'full_path' => $factory->name.' › '.$departmentName.' › '.$lineName,
+            ],
+        );
+    }
+
+    /**
+     * One work order in each interesting state.
+     *
+     * Every screen in the module is only judgeable against real data: an empty
+     * queue tells you nothing about whether the hold banner, the checklist
+     * progress counter or the disabled Complete button work.
+     *
+     * Driven through the actual transitions for the same reason as the assets —
+     * inserting a row with status IN_PROGRESS would leave no history, no
+     * assignment and no actual_start, which is not what an in-progress work
+     * order looks like.
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function workOrders(Company $company, Factory $factory, array $assets, User $raisedBy): void
+    {
+        if ($assets === [] || WorkOrder::where('factory_id', $factory->id)->exists()) {
+            return;
+        }
+
+        // Matched to what the machines actually are. Taking the first
+        // published template regardless put "Boiler — weekly inspection" on a
+        // row of sewing machines, which makes the demo read as nonsense and
+        // hides whether the checklist wiring works at all.
+        $assetTypeId = $assets[0]->asset_type_id ?? null;
+
+        $template = MaintenanceTemplate::whereNull('company_id')
+            ->where('asset_type_id', $assetTypeId)
+            ->get()
+            ->first(fn (MaintenanceTemplate $t) => $t->currentVersion() !== null)
+            ?? MaintenanceTemplate::whereNull('company_id')
+                ->get()
+                ->first(fn (MaintenanceTemplate $t) => $t->currentVersion() !== null);
+
+        $version = $template?->currentVersion();
+        $preventive = MaintenanceType::whereNull('company_id')->where('code', 'PREVENTIVE')->firstOrFail();
+
+        // The technician who has a login, so "My work" shows something when you
+        // sign in as technician@delta.test.
+        $linked = Technician::whereNotNull('user_id')->orderBy('employee_id')->first();
+        $others = Technician::whereNull('user_id')->orderBy('employee_id')->get();
+
+        $create = app(CreateWorkOrder::class);
+        $transition = app(TransitionWorkOrder::class);
+        $assign = app(AssignTechnicians::class);
+        $record = app(RecordChecklistResult::class);
+
+        // The estimate decides which approval chain a job takes, so one is
+        // deliberately expensive enough to need both signatures and sit in the
+        // approvals queue where it can be judged.
+        foreach ([
+            ['DRAFT', 'HIGH', -2, '0'],
+            ['SCHEDULED', 'MEDIUM', -1, '145000'],
+            ['ASSIGNED', 'CRITICAL', 0, '4000'],
+            ['IN_PROGRESS', 'HIGH', 0, '0'],
+            ['ON_HOLD', 'MEDIUM', 1, '0'],
+            ['COMPLETED', 'LOW', 2, '0'],
+        ] as $index => [$target, $priority, $dayOffset, $estimate]) {
+            $workOrder = $create->handle([
+                'asset_id' => $assets[$index]->id,
+                'maintenance_type_id' => $preventive->id,
+                'template_version_id' => $version?->id,
+                'title' => $template?->name ?? 'Preventive service',
+                'priority' => $priority,
+                'scheduled_start' => CarbonImmutable::now()->addDays($dayOffset)->setTime(9, 0),
+                'estimated_parts_cost' => $estimate,
+            ], $raisedBy->id);
+
+            if ($target === 'DRAFT') {
+                continue;
+            }
+
+            $workOrder = $transition->schedule($workOrder, $raisedBy->id);
+
+            if ($target === 'SCHEDULED') {
+                continue;
+            }
+
+            // The linked technician gets the three states worth looking at on
+            // the mobile screen; the rest are spread across the roster.
+            $technician = in_array($target, ['ASSIGNED', 'IN_PROGRESS', 'ON_HOLD'], true)
+                ? $linked
+                : ($others[$index % max($others->count(), 1)] ?? $linked);
+
+            if ($technician === null) {
+                continue;
+            }
+
+            $assign->handle($workOrder->fresh(), [$technician->id], $raisedBy->id);
+
+            if ($target === 'ASSIGNED') {
+                continue;
+            }
+
+            $workOrder = $transition->start($workOrder->fresh(), $raisedBy->id);
+
+            if ($target === 'IN_PROGRESS') {
+                continue;
+            }
+
+            if ($target === 'ON_HOLD') {
+                // The reason that matters: it makes a spare-part shortage
+                // visible as its own cause rather than as slow repair work.
+                $transition->hold($workOrder, 'AWAITING_PARTS', $raisedBy->id, 'Bobbin case on order from vendor');
+
+                continue;
+            }
+
+            $this->answerChecklist($record, $workOrder, $version, $raisedBy);
+            $transition->complete($workOrder->fresh(), $raisedBy->id);
+        }
+    }
+
+    /**
+     * Answers every required item so the work order can legitimately complete.
+     * Completion is gated on this, and skipping the gate in a seeder would mean
+     * the demo shows a state the application cannot actually produce.
+     */
+    private function answerChecklist(
+        RecordChecklistResult $record,
+        WorkOrder $workOrder,
+        ?MaintenanceTemplateVersion $version,
+        User $user,
+    ): void {
+        if ($version === null) {
+            return;
+        }
+
+        foreach ($version->items()->where('required', true)->orderBy('sequence')->get() as $item) {
+            $record->handle($workOrder->fresh(), [
+                'checklist_item_id' => $item->id,
+                'result' => 'PASS',
+                // A mid-tolerance reading, so nothing is forced to FAIL by the
+                // tolerance rule.
+                'numeric_value' => $item->isNumeric() ? $this->midTolerance($item) : null,
+                'text_value' => match ($item->input_type) {
+                    'TEXT' => 'Checked, no issue found',
+                    'CHOICE' => $item->options_json[0] ?? null,
+                    default => null,
+                },
+            ], $user->id);
+        }
+    }
+
+    /**
+     * Breakdowns in a spread of states, plus a machine with a history of
+     * repeated failures.
+     *
+     * The repeat offender matters most: a list of individual breakdowns hides
+     * the machine that has failed four times this month, and that machine is a
+     * replacement decision nobody has made yet (SRS 16).
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function breakdowns(Company $company, array $assets, User $reporter): void
+    {
+        if ($assets === [] || Breakdown::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $report = app(ReportBreakdown::class);
+        $transition = app(TransitionBreakdown::class);
+        $factoryTimezone = Factory::find($assets[0]->current_factory_id)?->timezone ?? 'Asia/Dhaka';
+        $wear = RootCause::whereNull('company_id')->where('code', 'NORMAL_WEAR')->first();
+
+        // One machine, four closed failures over a month, all the same cause.
+        // This is what the repeat-offender report exists to surface.
+        $repeat = $assets[0];
+        $bearing = FailureCode::whereNull('company_id')->where('code', 'BEARING_FAILURE')->first();
+
+        foreach ([28, 21, 14, 7] as $daysAgo) {
+            // Expressed on the factory clock, then stored as the instant it
+            // names. 10:15 in Dhaka is mid-shift; 10:15 UTC would be a quarter
+            // past four in the afternoon there.
+            $at = CarbonImmutable::now($factoryTimezone)
+                ->subDays($daysAgo)
+                ->setTime(10, 15)
+                ->setTimezone('UTC');
+
+            $breakdown = $report->handle([
+                'asset_id' => $repeat->id,
+                'problem_description' => 'Loud grinding from the head, machine seizes under load',
+                'failure_at' => $at,
+                'reported_at' => $at->addMinutes(4),
+            ], $reporter->id);
+
+            $breakdown = $transition->acknowledge($breakdown, $reporter->id, $at->addMinutes(12));
+            $breakdown = $transition->startRepair($breakdown, $reporter->id, $at->addMinutes(25));
+            $breakdown = $transition->completeRepair($breakdown, [
+                'failure_code_id' => $bearing?->id,
+                'root_cause_id' => $wear?->id,
+                'corrective_action' => 'Head bearing replaced, shaft realigned',
+                'preventive_action' => 'Add weekly lubrication check to the PM checklist',
+            ], $reporter->id, $at->addMinutes(95));
+            $breakdown = $transition->resumeProduction($breakdown, $reporter->id, $at->addMinutes(105));
+            $breakdown = $transition->verify($breakdown, $reporter->id);
+            $breakdown = $transition->submitForApproval($breakdown, $reporter->id);
+
+            $transition->close($breakdown, null, $reporter->id);
+
+            // Back in service, so the next failure counts as its own event
+            // rather than being linked as a recurrence.
+            $machine = Asset::find($repeat->id);
+
+            if ($machine !== null && $machine->status !== 'RUNNING' && $machine->canTransitionTo('RUNNING')) {
+                app(ChangeAssetStatus::class)->handle($machine, 'RUNNING', $reporter->id, 'Back in service', 'BREAKDOWN');
+            }
+        }
+
+        // Two open breakdowns at different points in the chain, so the queue and
+        // the action bar both have something real to show.
+        $open = $report->handle([
+            'asset_id' => $assets[1]->id,
+            'problem_description' => 'Needle bar jammed, thread shredding',
+            'failure_at' => CarbonImmutable::now()->subHours(3),
+            'reported_at' => CarbonImmutable::now()->subHours(3)->addMinutes(6),
+        ], $reporter->id);
+
+        $transition->acknowledge($open, $reporter->id, CarbonImmutable::now()->subHours(2));
+
+        $inRepair = $report->handle([
+            'asset_id' => $assets[2]->id,
+            'problem_description' => 'Motor overheating and cutting out after ten minutes',
+            'failure_at' => CarbonImmutable::now()->subHours(6),
+            'reported_at' => CarbonImmutable::now()->subHours(6)->addMinutes(3),
+        ], $reporter->id);
+
+        $inRepair = $transition->acknowledge($inRepair, $reporter->id, CarbonImmutable::now()->subHours(5));
+        $transition->startRepair($inRepair, $reporter->id, CarbonImmutable::now()->subHours(4));
+    }
+
+    /**
+     * A store with real stock, and a machine that has already drawn from it.
+     *
+     * Every unit enters through the ledger, so the demo shows movements with
+     * balances behind them rather than quantities that appeared from nowhere.
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function stock(Company $company, Factory $factory, array $assets, User $storekeeper): void
+    {
+        if (SparePart::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $warehouse = Warehouse::firstOrCreate(
+            ['company_id' => $company->id, 'code' => $factory->code.'-WH'],
+            ['factory_id' => $factory->id, 'name' => $factory->name.' main store'],
+        );
+
+        $store = Store::firstOrCreate(
+            ['company_id' => $company->id, 'code' => $factory->code.'-ST'],
+            ['warehouse_id' => $warehouse->id, 'name' => 'Spare parts store'],
+        );
+
+        $bins = [];
+
+        foreach (['A1', 'A2', 'B1'] as $code) {
+            $bins[$code] = Bin::firstOrCreate(
+                ['company_id' => $company->id, 'code' => $factory->code.'-SP-'.$code],
+                ['store_id' => $store->id, 'name' => 'Rack '.$code],
+            );
+        }
+
+        $categories = SparePartCategory::whereNull('company_id')->get()->keyBy('code');
+        $receive = app(ReceiveStock::class);
+
+        // Part number, name, category, unit, reorder level, critical, bin, qty, cost.
+        $catalogue = [
+            ['JK-DDL9000-HOOK', 'Rotary hook, Juki DDL-9000C', 'SEWING_PARTS', 'PCS', '5', true, 'A1', '14', '2450'],
+            ['JK-DDL9000-NEEDLE', 'Needle DBx1 #14 (pack of 10)', 'SEWING_PARTS', 'BOX', '20', false, 'A1', '48', '180'],
+            ['JK-BOBBIN-CASE', 'Bobbin case, lockstitch', 'SEWING_PARTS', 'PCS', '10', true, 'A1', '6', '620'],
+            ['BLT-M35-A', 'V-belt A35 motor drive', 'BELTS_CHAINS', 'PCS', '8', false, 'A2', '22', '340'],
+            ['BRG-6203-2RS', 'Ball bearing 6203-2RS', 'BEARINGS', 'PCS', '12', false, 'A2', '30', '210'],
+            ['SRV-750W-JK', 'Servo motor 750W', 'ELECTRICAL', 'PCS', '2', true, 'B1', '3', '9800'],
+            ['OIL-WHITE-5L', 'White sewing machine oil, 5L', 'LUBRICANTS', 'LTR', '15', false, 'B1', '40', '95'],
+            // Deliberately below its reorder level, so the low-stock screen has
+            // something real on it the moment the demo is opened.
+            ['SOL-VALVE-24V', 'Solenoid valve 24V DC', 'PNEUMATIC', 'PCS', '6', true, 'B1', '2', '1450'],
+        ];
+
+        foreach ($catalogue as [$number, $name, $category, $unit, $reorder, $critical, $bin, $quantity, $cost]) {
+            $part = SparePart::create([
+                'company_id' => $company->id,
+                'category_id' => $categories[$category]?->id,
+                'part_number' => $number,
+                'name' => $name,
+                'unit' => $unit,
+                'minimum_stock' => bcdiv($reorder, '2', 4),
+                'reorder_level' => $reorder,
+                'is_critical_spare' => $critical,
+                'currency' => 'BDT',
+                'active' => true,
+            ]);
+
+            // Through the ledger, so the balance has a movement behind it and
+            // the verification on the part screen has something to replay.
+            $receive->handle(
+                $part, $bins[$bin], $quantity, $cost, $storekeeper->id,
+                'Opening stock count', 'OPENING_BALANCE',
+            );
+        }
+
+        $this->issuePartsToOpenWork($company, $bins['A1'], $storekeeper);
+
+        unset($assets);
+    }
+
+    /**
+     * Puts parts against the in-progress work order, one of them left
+     * unaccounted so the "cannot close while stock is out" rule is visible.
+     */
+    private function issuePartsToOpenWork(Company $company, Bin $bin, User $storekeeper): void
+    {
+        $workOrder = WorkOrder::where('company_id', $company->id)
+            ->where('status', 'IN_PROGRESS')
+            ->first();
+
+        if ($workOrder === null) {
+            return;
+        }
+
+        $hook = SparePart::where('company_id', $company->id)
+            ->where('part_number', 'JK-DDL9000-HOOK')
+            ->first();
+
+        if ($hook === null) {
+            return;
+        }
+
+        $line = app(IssuePartsToWorkOrder::class)
+            ->issue($workOrder, $hook, $bin, '2', $storekeeper->id);
+
+        // One fitted, one still in the technician's toolbox.
+        app(IssuePartsToWorkOrder::class)->consume($line, '1', $storekeeper->id);
+
+        app(WorkOrderCostCalculator::class)->recalculate($workOrder->fresh());
+    }
+
+    /**
+     * The SRS 14 example chain: low-cost work needs the maintenance manager,
+     * high-cost work needs the factory manager as well.
+     *
+     * Thresholds rather than a blanket rule, because requiring a signature for
+     * a needle change teaches everybody to approve without reading.
+     */
+    private function approvalWorkflow(Company $company): void
+    {
+        if (ApprovalWorkflow::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $workflow = ApprovalWorkflow::create([
+            'company_id' => $company->id,
+            'name' => 'Work order approval',
+            'entity_type' => 'WORK_ORDER',
+            'active' => true,
+        ]);
+
+        foreach ([
+            [1, 'MAINTENANCE_MANAGER', 'Maintenance manager', ['min_cost' => '20000']],
+            [2, 'FACTORY_MANAGER', 'Factory manager', ['min_cost' => '100000']],
+        ] as [$sequence, $roleCode, $name, $condition]) {
+            ApprovalRule::create([
+                'company_id' => $company->id,
+                'workflow_id' => $workflow->id,
+                'sequence' => $sequence,
+                'role_id' => Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail()->id,
+                'name' => $name,
+                'condition_json' => $condition,
+            ]);
+        }
+    }
+
+    /**
+     * A vendor invoice and a transport charge against the repeat-offender
+     * machine, so its lifetime cost has something in it beyond labour and
+     * parts.
+     *
+     * @param  list<Asset>  $assets
+     */
+    private function costs(Company $company, array $assets, User $manager): void
+    {
+        if ($assets === [] || CostEntry::where('company_id', $company->id)->where('source_type', 'VENDOR')->exists()) {
+            return;
+        }
+
+        $poster = app(CostPoster::class);
+        $categories = CostCategory::whereNull('company_id')->get()->keyBy('code');
+
+        foreach ([
+            ['VENDOR', 'VENDOR', '18500', 'Head overhaul by Juki service centre', 'INV-2026-0412', 21],
+            ['TRANSPORT', 'TRANSPORT', '2400', 'Machine carried to and from the service centre', null, 21],
+            ['EXTERNAL_SERVICE', 'EXTERNAL_SERVICE', '7800', 'Servo driver bench-tested', 'INV-2026-0455', 7],
+        ] as [$categoryCode, $sourceType, $amount, $description, $invoice, $daysAgo]) {
+            $poster->post([
+                'asset_id' => $assets[0]->id,
+                'cost_category_id' => $categories[$categoryCode]->id,
+                'amount' => $amount,
+                'currency' => 'BDT',
+                'source_type' => $sourceType,
+                'description' => $description,
+                'invoice_reference' => $invoice,
+                'occurred_at' => CarbonImmutable::now()->subDays($daysAgo),
+            ], $manager->id);
+        }
+    }
+
+    /**
+     * The SRS 28 escalation chain: technician, then maintenance manager after
+     * thirty minutes, then factory manager after sixty.
+     *
+     * Only for critical breakdowns. Escalating every event teaches everyone to
+     * ignore the channel, and the thing worth waking somebody for is a stopped
+     * line rather than a routine service reminder.
+     */
+    private function escalationRules(Company $company): void
+    {
+        if (EscalationRule::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        foreach ([
+            ['BREAKDOWN_CRITICAL', 1, 30, 'MAINTENANCE_MANAGER'],
+            ['BREAKDOWN_CRITICAL', 2, 60, 'FACTORY_MANAGER'],
+            ['MAINTENANCE_OVERDUE', 1, 1440, 'MAINTENANCE_MANAGER'],
+            ['APPROVAL_REQUESTED', 1, 480, 'FACTORY_MANAGER'],
+        ] as [$event, $level, $delay, $roleCode]) {
+            EscalationRule::create([
+                'company_id' => $company->id,
+                'event_type' => $event,
+                // Measured from the original event, so a stalled chain cannot
+                // drift.
+                'delay_minutes' => $delay,
+                'escalation_level' => $level,
+                'escalation_role_id' => Role::whereNull('company_id')->where('name', $roleCode)->firstOrFail()->id,
+                'max_escalations' => 3,
+                'stop_on_acknowledge' => true,
+                'active' => true,
+            ]);
+        }
+    }
+
+    /**
+     * A vendor, a live warranty and an AMC over the whole factory (SRS 26).
+     *
+     * Three states worth seeing on the screens: cover in force, cover about to
+     * lapse, and a claim in flight. Without them the coverage banner never
+     * appears and the expiry list looks like a feature that does nothing.
+     *
+     * @param  array<string, Asset>  $assets
+     */
+    private function coverage(Company $company, Factory $factory, array $assets, User $manager): void
+    {
+        if (Vendor::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $juki = Vendor::create([
+            'company_id' => $company->id,
+            'name' => 'Juki Bangladesh Ltd',
+            'code' => 'JUKI-BD',
+            'vendor_type' => 'BOTH',
+            'contact_name' => 'Rafiqul Islam',
+            'phone' => '+8801711000000',
+            'email' => 'service@juki-bd.test',
+            'address' => 'Tejgaon Industrial Area, Dhaka',
+            'country_of_origin' => 'Japan',
+            'status' => 'ACTIVE',
+            'created_by' => $manager->id,
+        ]);
+
+        // One machinery-brand vendor per production floor a garment factory
+        // actually runs — knitting through packaging — so the vendor list
+        // and its own filters/reports have more than a single sewing-machine
+        // agent to show. `Thies Bangladesh Ltd` matches the `Thies iMaster
+        // H2O` dyeing machine model this seeder already names elsewhere,
+        // rather than inventing an unrelated brand for the same floor.
+        // `country_of_origin` is the brand's own home country, not this
+        // local distributor's own Bangladesh address (`address`, above) —
+        // the two answer different questions for a buyer.
+        foreach ([
+            ['Pailung Bangladesh Ltd', 'PAILUNG-BD', 'Kamrul Hasan', '+8801712000001', 'sales@pailung-bd.test', 'BSCIC Industrial Area, Konabari, Gazipur', 'Taiwan'],
+            ['Thies Bangladesh Ltd', 'THIES-BD', 'Md. Shahidullah', '+8801712000002', 'service@thies-bd.test', 'Fatullah Industrial Area, Narayanganj', 'Germany'],
+            ['Bullmer Bangladesh Ltd', 'BULLMER-BD', 'Aminul Haque', '+8801712000003', 'support@bullmer-bd.test', 'Ashulia Industrial Zone, Savar, Dhaka', 'Germany'],
+            ['Jack Sewing Machine (BD) Ltd', 'JACK-BD', 'Nurul Amin', '+8801712000004', 'service@jack-bd.test', 'Tejgaon Industrial Area, Dhaka', 'China'],
+            ['Veit Bangladesh Ltd', 'VEIT-BD', 'Shirin Akter', '+8801712000005', 'service@veit-bd.test', 'Konabari, Gazipur', 'Germany'],
+            ['Apex Packaging Machinery Ltd', 'APEX-PACK', 'Delwar Hossain', '+8801712000006', 'sales@apex-pack.test', 'Tongi Industrial Area, Gazipur', 'Bangladesh'],
+        ] as [$name, $code, $contactName, $phone, $email, $address, $countryOfOrigin]) {
+            Vendor::create([
+                'company_id' => $company->id,
+                'name' => $name,
+                'code' => $code,
+                'vendor_type' => 'BOTH',
+                'contact_name' => $contactName,
+                'phone' => $phone,
+                'email' => $email,
+                'address' => $address,
+                'country_of_origin' => $countryOfOrigin,
+                'status' => 'ACTIVE',
+                'created_by' => $manager->id,
+            ]);
+        }
+
+        $first = reset($assets);
+
+        if ($first instanceof Asset) {
+            app(RecordWarranty::class)->handle([
+                'asset_id' => $first->id,
+                'vendor_id' => $juki->id,
+                'warranty_type' => 'MANUFACTURER',
+                'reference' => 'JK-WTY-2025-0412',
+                'start_date' => CarbonImmutable::now()->subMonths(8)->toDateString(),
+                'end_date' => CarbonImmutable::now()->addMonths(16)->toDateString(),
+                'coverage' => 'Parts and labour, on-site',
+                'exclusions' => 'Consumables: needles, belts, oil',
+            ], $manager->id);
+
+            $expiring = next($assets);
+
+            if ($expiring instanceof Asset) {
+                // Twenty days out, so the expiring list and the alert thresholds
+                // have something real to show.
+                app(RecordWarranty::class)->handle([
+                    'asset_id' => $expiring->id,
+                    'vendor_id' => $juki->id,
+                    'warranty_type' => 'EXTENDED',
+                    'start_date' => CarbonImmutable::now()->subYear()->toDateString(),
+                    'end_date' => CarbonImmutable::now()->addDays(20)->toDateString(),
+                    'coverage' => 'Parts only',
+                ], $manager->id);
+            }
+        }
+
+        app(ManageServiceContract::class)->create([
+            'vendor_id' => $juki->id,
+            'factory_id' => $factory->id,
+            'contract_type' => 'AMC',
+            'start_date' => CarbonImmutable::now()->subMonths(4)->toDateString(),
+            'end_date' => CarbonImmutable::now()->addMonths(8)->toDateString(),
+            'value' => '450000',
+            'currency' => 'BDT',
+            'coverage' => 'Quarterly service of all sewing machines, 24-hour response',
+            'visits_per_year' => 4,
+            'response_time_hours' => 24,
+        ], $manager->id);
+    }
+
+    /**
+     * A live contract with one paid invoice and one still open (SRS 40).
+     *
+     * Two invoices rather than one, because a billing screen with everything
+     * settled shows none of the states that matter — a balance, a due date and
+     * a partly paid document are what the screen is for.
+     */
+    private function subscription(Company $company, User $owner): void
+    {
+        if (SubscriptionContract::where('company_id', $company->id)->exists()) {
+            return;
+        }
+
+        $contract = SubscriptionContract::create([
+            'company_id' => $company->id,
+            'contract_number' => 'SUB-'.CarbonImmutable::now()->format('Y').'-0001',
+            'status' => 'ACTIVE',
+            'start_date' => CarbonImmutable::now()->subMonths(8)->toDateString(),
+            'end_date' => CarbonImmutable::now()->addMonths(4)->toDateString(),
+            'billing_cycle' => 'MONTHLY',
+            'amount' => '45000.0000',
+            'currency' => 'BDT',
+            'grace_period_days' => 14,
+            'included_factories' => 3,
+            'included_assets' => 250,
+            'included_users' => 25,
+            'overage_policy' => 'WARN_ONLY',
+        ]);
+
+        $builder = app(InvoiceBuilder::class);
+        $recorder = app(PaymentRecorder::class);
+
+        // Last month: issued and settled.
+        $paid = $builder->issue($builder->draft(
+            $contract,
+            CarbonImmutable::now()->subMonth()->startOfMonth(),
+            CarbonImmutable::now()->subMonth()->endOfMonth(),
+            '15',
+        ));
+
+        $recorder->record($paid, [
+            'amount' => (string) $paid->total,
+            'method' => 'BANK_TRANSFER',
+            'payment_reference' => 'TRF-'.CarbonImmutable::now()->subMonth()->format('Ym'),
+            'paid_at' => CarbonImmutable::now()->subMonth()->endOfMonth(),
+        ], $owner->id);
+
+        // This month: issued, part paid, still open.
+        $open = $builder->issue($builder->draft(
+            $contract,
+            CarbonImmutable::now()->startOfMonth(),
+            CarbonImmutable::now()->endOfMonth(),
+            '15',
+        ));
+
+        $recorder->record($open, [
+            'amount' => '20000',
+            'method' => 'BANK_TRANSFER',
+            'payment_reference' => 'TRF-'.CarbonImmutable::now()->format('Ym'),
+        ], $owner->id);
+
+        app(UsageMeter::class)->measure($company->id);
+    }
+
+    private function midTolerance(ChecklistItem $item): string
+    {
+        $min = $item->tolerance_min !== null ? (float) $item->tolerance_min : null;
+        $max = $item->tolerance_max !== null ? (float) $item->tolerance_max : null;
+
+        $value = match (true) {
+            $min !== null && $max !== null => ($min + $max) / 2,
+            $min !== null => $min + 1,
+            $max !== null => $max - 1,
+            default => 1.0,
+        };
+
+        return number_format($value, 4, '.', '');
+    }
+}

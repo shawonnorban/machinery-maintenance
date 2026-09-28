@@ -1,0 +1,539 @@
+{
+    "reports": "Reports",
+    "report": "Report",
+    "page_description": "What's running, what it costs, and how the fleet is holding up.",
+    "run": "Run report",
+    "export": "Export",
+    "generated_reports": "Generated reports",
+    "back_to_reports": "All reports",
+    "no_reports": "No reports available",
+    "no_reports_hint": "Reports appear here once you have permission to the data behind them.",
+    "no_rows": "Nothing to show for this period and scope",
+    "unclassified": "Unclassified",
+    "not_permitted": "You do not have permission to export this report.",
+    "unknown_format": "That export format is not available.",
+    "ready": "Your report is ready to download.",
+    "queued": "Your report is being generated. It will appear here when it is ready.",
+    "will_queue": "This report is large, so it will be generated in the background.",
+    "preview_note": "Showing the first :count rows. Export to get every row.",
+    "row_count": ":count rows",
+    "filters": "Filters",
+    "from": "From",
+    "to": "To",
+    "factory": "Factory",
+    "all_factories": "All factories",
+    "asset": "Machine",
+    "all_assets": "All machines",
+    "status": "Status",
+    "all_statuses": "All statuses",
+    "search": "Search",
+    "search_placeholder": "Search…",
+    "location": "Location",
+    "all_locations": "All locations",
+    "manufacturer": "Manufacturer",
+    "all_manufacturers": "All manufacturers",
+    "scoped_by_header": "Scoped to the factory selected in the header.",
+    "apply": "Apply",
+    "any": "Any",
+    "format": "Format",
+    "export_queued_toast": "Export queued",
+    "export_ready_toast": "Export ready",
+    "my_exports": "My exports",
+    "groups": {
+        "compliance": "Bond and customs",
+        "procurement": "Buying",
+        "requisition": "Floor requisitions",
+        "asset": "Assets",
+        "maintenance": "Maintenance",
+        "breakdown": "Breakdowns and downtime",
+        "cost": "Cost",
+        "inventory": "Inventory",
+        "people": "Technicians",
+        "vendor": "Vendors and cover"
+    },
+    "job": {
+        "requested_at": "Requested",
+        "format": "Format",
+        "status": "Status",
+        "rows": "Rows",
+        "expires": "Available until",
+        "download": "Download",
+        "expired": "Expired",
+        "none": "You have not generated any reports yet",
+        "none_hint": "Run a report and export it; the file will appear here.",
+        "retention": "Generated files are kept for :days days."
+    },
+    "statuses": {
+        "QUEUED": "Queued",
+        "RUNNING": "Running",
+        "COMPLETED": "Ready",
+        "FAILED": "Failed",
+        "EXPIRED": "Expired"
+    },
+    "meta": {
+        "report": "Report",
+        "generated_at": "Generated at",
+        "period": "Period",
+        "factory": "Factory",
+        "all_factories": "All factories",
+        "asset": "Machine"
+    },
+    "columns": {
+        "licence_no": "Licence no.",
+        "valid_to": "Valid to",
+        "entitled": "Entitled",
+        "imported": "Imported",
+        "remaining": "Remaining",
+        "used_percent": "Used %",
+        "over_entitlement": "Over entitlement",
+        "ud_no": "UD / UP no.",
+        "ud_type": "Type",
+        "issue_date": "Issued",
+        "declared": "Declared",
+        "wastage_percent": "Wastage %",
+        "allowed": "Declared + wastage",
+        "over_allowance": "Over allowance",
+        "assessment_no": "Assessment no.",
+        "assessment_date": "Assessed",
+        "assessable_value": "Assessable value",
+        "hs_code": "HS code",
+        "duty": "Duty",
+        "vat": "VAT",
+        "total_payable": "Total payable",
+        "rated": "Rated",
+        "quantity": "Quantity",
+        "received_qty": "Received",
+        "required_date": "Required by",
+        "lc_no": "LC no.",
+        "lc_date": "LC date",
+        "lc_amount": "LC value",
+        "shipment_no": "Shipment no.",
+        "bl_awb_no": "B/L or AWB",
+        "original_eta": "Original ETA",
+        "eta": "ETA",
+        "days_to_eta": "Days to ETA",
+        "delay_days": "Delay (days)",
+        "document_status": "Documents",
+        "voucher_no": "Voucher no.",
+        "voucher_date": "Voucher date",
+        "total_charges": "Total charges",
+        "debit_note_no": "Debit note",
+        "debit_note_amount": "Debit note amount",
+        "adjusted": "Adjusted",
+        "on_time_percent": "On time %",
+        "price_index": "Price index",
+        "lines": "Lines",
+        "po_no": "PO no.",
+        "po_date": "PO date",
+        "pr_no": "PR no.",
+        "pr_date": "PR date",
+        "pr_type": "Type",
+        "pr_status": "PR status",
+        "grn_no": "GRN no.",
+        "ordered_qty": "Ordered",
+        "pending_qty": "Pending",
+        "pending_value": "Pending value",
+        "due_date": "Due",
+        "days_overdue": "Days overdue",
+        "days_open": "Days open",
+        "waiting_on": "Waiting on",
+        "estimated_total": "Estimated",
+        "booking_no": "Booking no.",
+        "booking_date": "Booking date",
+        "booked_value": "Booked value",
+        "converted_to": "Converted to",
+        "bank": "Bank",
+        "order_value": "Order value",
+        "variance": "Variance",
+        "amendments": "Amendments",
+        "mode": "Mode",
+        "shipped_on": "Shipped on",
+        "arrived_on": "Arrived on",
+        "claim_no": "Claim no.",
+        "claim_date": "Claim date",
+        "claimed": "Claimed",
+        "settled": "Settled",
+        "outstanding": "Outstanding",
+        "advance_no": "Advance no.",
+        "paid_on": "Paid on",
+        "paid": "Paid",
+        "refunded": "Refunded",
+        "days_outstanding": "Days outstanding",
+        "goods_value": "Goods value",
+        "uplift_percent": "Uplift %",
+        "basis": "Distributed by",
+        "receipts": "Receipts",
+        "return_no": "Return no.",
+        "return_date": "Return date",
+        "stock_moved": "Stock moved",
+        "period_start": "From",
+        "period_end": "To",
+        "overall_score": "Overall score",
+        "reject_percent": "Rejected %",
+        "measures_counted": "Measures counted",
+        "rating": "Rating",
+        "fr_no": "FR no.",
+        "requisition_date": "Raised",
+        "department": "Department",
+        "requested_by": "Requested by",
+        "store": "Store",
+        "issued_lines": "Issued lines",
+        "short_lines": "Short lines",
+        "shortage_pr": "Shortage PR",
+        "requested_qty": "Requested",
+        "approved_qty": "Approved",
+        "issued_qty": "Issued",
+        "returned_qty": "Returned",
+        "consumed_qty": "Consumed",
+        "outstanding_qty": "Outstanding",
+        "line_status": "Line status",
+        "days_waiting": "Days waiting",
+        "requisitions": "Requisitions",
+        "issued_at": "Issued",
+        "borrowed_by": "Borrowed by",
+        "still_out": "Still out",
+        "days_out": "Days out",
+        "overdue": "Overdue",
+        "item_code": "Item code",
+        "item_department": "Department",
+        "lot_no": "Lot",
+        "supplier_lot_no": "Supplier lot",
+        "manufactured": "Manufactured",
+        "expiry": "Expires",
+        "days_to_expiry": "Days to expiry",
+        "last_receipt": "Last received",
+        "days_held": "Days held",
+        "age_bracket": "Age",
+        "last_issue": "Last issued",
+        "days_idle": "Days idle",
+        "held_for": "Held for",
+        "earmarked": "Earmarked (not yet arrived)",
+        "roll_no": "Roll no.",
+        "shade": "Shade",
+        "shade_band": "Shade band",
+        "grade": "Grade",
+        "measured_quantity": "Quantity",
+        "received_date": "Received",
+        "roll_count": "Rolls",
+        "reserved_rolls": "Rolls held",
+        "inspected_at": "Inspected",
+        "inspected_by": "Inspected by",
+        "inspection_no": "Inspection no.",
+        "penalty_percent": "Points / 100 sq yd",
+        "inspection_points": "Points",
+        "shade_match": "Shade match",
+        "defect_count": "Defects",
+        "lineage": "Relation",
+        "related_roll": "Related roll",
+        "asset_code": "Machine code",
+        "name": "Name",
+        "asset_type": "Type",
+        "manufacturer": "Manufacturer",
+        "serial_number": "Serial number",
+        "factory": "Factory",
+        "location": "Location",
+        "criticality": "Criticality",
+        "status": "Status",
+        "purchase_date": "Purchase date",
+        "acquisition_cost": "Acquisition cost",
+        "warranty_end": "Warranty ends",
+        "changed_at": "Changed at",
+        "from_status": "From",
+        "to_status": "To",
+        "source": "Source",
+        "reason": "Reason",
+        "transfer_number": "Transfer",
+        "from_factory": "From factory",
+        "to_factory": "To factory",
+        "requested_at": "Requested",
+        "approved_at": "Approved",
+        "received_at": "Received",
+        "work_order": "Work order",
+        "title": "Title",
+        "maintenance_type": "Maintenance type",
+        "scheduled_start": "Scheduled start",
+        "actual_start": "Actual start",
+        "completed_at": "Completed",
+        "parts_cost": "Parts cost",
+        "total_cost": "Total cost",
+        "plan": "Plan",
+        "due_at": "Due",
+        "grace_until": "Grace until",
+        "days_late": "Days late",
+        "pm_due": "Due",
+        "pm_completed": "Completed",
+        "pm_on_time": "On time",
+        "pm_overdue": "Overdue",
+        "compliance": "Compliance %",
+        "breakdown": "Breakdown",
+        "failure_at": "Failed at",
+        "reported_at": "Reported at",
+        "acknowledged_at": "Acknowledged at",
+        "repair_started_at": "Repair started",
+        "production_resumed_at": "Production resumed",
+        "severity": "Severity",
+        "failure_code": "Failure code",
+        "root_cause": "Root cause",
+        "duplicate_report": "Duplicate report",
+        "failures": "Failures",
+        "downtime_minutes": "Downtime (min)",
+        "assets_affected": "Machines affected",
+        "downtime_class": "Class",
+        "downtime_reason": "Reason",
+        "response_minutes": "Response (min)",
+        "repair_minutes": "Repair (min)",
+        "hold_minutes": "On hold (min)",
+        "total_downtime": "Total downtime (min)",
+        "counts_against_availability": "Counts against availability",
+        "mtbf": "MTBF (min)",
+        "mttr": "MTTR (min)",
+        "mtta": "MTTA (min)",
+        "availability": "Availability %",
+        "occurred_at": "Date",
+        "cost_category": "Category",
+        "description": "Description",
+        "currency": "Currency",
+        "amount": "Amount",
+        "exchange_rate": "Rate",
+        "base_amount": "Base amount",
+        "reversal": "Reversal",
+        "repair_cost": "Repair cost",
+        "maintenance_cost": "Maintenance cost",
+        "other_cost": "Other cost",
+        "total_spend": "Total spend",
+        "lifetime_total": "Lifetime total",
+        "part_number": "Part number",
+        "category": "Category",
+        "unit": "Unit",
+        "quantity_consumed": "Quantity consumed",
+        "value_consumed": "Value consumed",
+        "issue_count": "Issues",
+        "bin": "Bin",
+        "on_hand": "On hand",
+        "reserved": "Reserved",
+        "available": "Available",
+        "wac": "Unit cost (WAC)",
+        "stock_value": "Stock value",
+        "critical_spare": "Critical spare",
+        "employee_id": "Employee ID",
+        "technician": "Technician",
+        "specialization": "Specialisation",
+        "jobs_assigned": "Jobs assigned",
+        "jobs_completed": "Jobs completed",
+        "labor_hours": "Labour hours",
+        "vendor": "Vendor",
+        "code": "Code",
+        "vendor_type": "Type",
+        "contracts": "Contracts",
+        "contract_value": "Contract value",
+        "claims_filed": "Claims filed",
+        "claims_settled": "Settled",
+        "claims_rejected": "Rejected",
+        "settlement_rate": "Settlement rate %",
+        "settled_value": "Settled value",
+        "avg_claim_response": "Avg response (days)",
+        "parts_spend": "Spend",
+        "cover_kind": "Cover",
+        "reference": "Reference",
+        "scope": "Scope",
+        "start_date": "Starts",
+        "end_date": "Ends",
+        "days_remaining": "Days remaining",
+        "value": "Value"
+    },
+    "asset_register": {
+        "title": "Asset register",
+        "description": "Every machine on the books, with what it is and where it is."
+    },
+    "asset_status": {
+        "title": "Asset status history",
+        "description": "How machine status changed over a period, and why."
+    },
+    "asset_transfer": {
+        "title": "Asset transfers",
+        "description": "Machines moved between factories and locations, including those still in transit."
+    },
+    "maintenance_history": {
+        "title": "Maintenance history",
+        "description": "What was done to a machine, when, and what it cost."
+    },
+    "pm_compliance": {
+        "title": "PM compliance",
+        "description": "Preventive maintenance completed within its grace period, per machine."
+    },
+    "overdue_maintenance": {
+        "title": "Overdue maintenance",
+        "description": "What is late right now, past its grace period."
+    },
+    "breakdown_analysis": {
+        "title": "Breakdown analysis",
+        "description": "Every stoppage with its full timestamp chain."
+    },
+    "root_cause": {
+        "title": "Root cause analysis",
+        "description": "Failures grouped by cause and failure code, with the downtime each caused."
+    },
+    "downtime": {
+        "title": "Downtime",
+        "description": "Measured downtime per stoppage, split into response, repair and hold time."
+    },
+    "reliability": {
+        "title": "MTBF and MTTR",
+        "description": "Reliability per machine: failures, mean time between them, and mean repair time."
+    },
+    "maintenance_cost": {
+        "title": "Maintenance cost",
+        "description": "Posted cost entries with their currency, rate and base amount."
+    },
+    "lifecycle_cost": {
+        "title": "Lifecycle cost",
+        "description": "What each machine has cost since it arrived."
+    },
+    "parts_consumption": {
+        "title": "Parts consumption",
+        "description": "Which spare parts were consumed, in what quantity and at what value."
+    },
+    "inventory_valuation": {
+        "title": "Inventory valuation",
+        "description": "Current stock on hand at weighted average cost."
+    },
+    "technician_performance": {
+        "title": "Technician workload",
+        "description": "Jobs assigned and completed, and labour hours booked."
+    },
+    "vendor_performance": {
+        "title": "Vendor performance",
+        "description": "Claims filed against each vendor, how many they honoured, and how long they took."
+    },
+    "coverage_expiry": {
+        "title": "Warranty and AMC expiry",
+        "description": "Cover running out, soonest first, with what it will cost to keep."
+    },
+    "item_stock_valuation": {
+        "title": "Item stock valuation",
+        "description": "What the item store holds and what it is worth, at weighted average cost."
+    },
+    "item_reserved_vs_available": {
+        "title": "Reserved vs available",
+        "description": "What is spoken for and by whom, beside what is still free to issue."
+    },
+    "item_stock_ageing": {
+        "title": "Stock ageing",
+        "description": "How long stock has sat, measured from the last time any of it arrived."
+    },
+    "item_slow_moving": {
+        "title": "Slow and non-moving stock",
+        "description": "Stock nobody has drawn on inside the window, and stock never issued at all."
+    },
+    "item_lot_expiry": {
+        "title": "Lot expiry",
+        "description": "Dye and chemical lots still in stock, nearest expiry first."
+    },
+    "fabric_roll_ledger": {
+        "title": "Roll ledger",
+        "description": "Every fabric roll, its shade and lot, where it is and what it is worth."
+    },
+    "fabric_shade_stock": {
+        "title": "Shade-wise stock",
+        "description": "Fabric grouped by shade and band — what can actually be cut together."
+    },
+    "fabric_inspection_register": {
+        "title": "Inspection register",
+        "description": "Rolls inspected in the period, with grade, points and defects."
+    },
+    "fabric_roll_lineage": {
+        "title": "Split and merge history",
+        "description": "Rolls cut from another roll, or merged into one, with the piece they came from."
+    },
+    "age_brackets": {
+        "upto": "Up to :days days",
+        "over": "Over :days days",
+        "unknown": "No arrival recorded"
+    },
+    "lot_states": {
+        "live": "In date",
+        "expired": "Expired",
+        "no_expiry": "No expiry date"
+    },
+    "lineage": {
+        "split_from": "Split from",
+        "merged_into": "Merged into"
+    },
+    "never_issued": "Never issued",
+    "procurement_pending_requisitions": {
+        "title": "Pending purchase requisitions",
+        "description": "Requisitions not yet ordered, and which of them are waiting on approval rather than on buying."
+    },
+    "procurement_pending_orders": {
+        "title": "Pending purchase orders",
+        "description": "Ordered and not yet received, line by line, with what is overdue against the date promised."
+    },
+    "procurement_fabric_bookings": {
+        "title": "Fabric booking status",
+        "description": "Fabric held with a mill, and whether it has turned into a requisition yet."
+    },
+    "procurement_lc_outstanding": {
+        "title": "LC outstanding",
+        "description": "Letters of credit still open, nearest expiry first, with their variance against the order."
+    },
+    "procurement_shipment_eta": {
+        "title": "Shipment ETA",
+        "description": "What is on the water, when it lands, and how it ran against the ETA first promised."
+    },
+    "procurement_landed_cost_summary": {
+        "title": "Landed cost summary",
+        "description": "What freight, duty and clearing added to each consignment, as a percentage of the goods."
+    },
+    "procurement_return_register": {
+        "title": "Purchase return register",
+        "description": "Goods returned to suppliers, including those approved but not yet sent out."
+    },
+    "procurement_claim_register": {
+        "title": "Claim register",
+        "description": "Money claimed from suppliers in the period, and how much has been recovered."
+    },
+    "procurement_advance_outstanding": {
+        "title": "Advance outstanding",
+        "description": "Money paid to suppliers and not yet worked off, oldest first."
+    },
+    "procurement_supplier_scorecard": {
+        "title": "Supplier scorecard",
+        "description": "How each supplier scored on delivery, quality, price and claims, with the measures that counted."
+    },
+    "requisition_register": {
+        "title": "Floor requisition register",
+        "description": "Every floor requisition in the period, by department and by requester."
+    },
+    "requisition_pending": {
+        "title": "Pending floor requisitions",
+        "description": "What the floor is still waiting for, line by line, and how long it has waited."
+    },
+    "requisition_auto_pr_trace": {
+        "title": "Shortage to purchase requisition",
+        "description": "Floor shortages and the purchase requisitions they raised, followed either way."
+    },
+    "requisition_consumption": {
+        "title": "Consumption by person and item",
+        "description": "What each person drew from the store, net of returnable stock that came back."
+    },
+    "requisition_borrowed_items": {
+        "title": "Borrowed items",
+        "description": "Returnable stock still out, with what is overdue against the factory’s own limit."
+    },
+    "waiting": {
+        "approval": "Approval",
+        "ordering": "Buying"
+    },
+    "compliance_bond_utilisation": {
+        "title": "Bond utilisation",
+        "description": "What each licence entitles the factory to import, against what has actually arrived."
+    },
+    "compliance_ud_reconciliation": {
+        "title": "UD/UP vs actual consumption",
+        "description": "What each declaration told customs would be consumed, against what the store actually issued."
+    },
+    "compliance_duty_summary": {
+        "title": "Duty exemption summary",
+        "description": "Duty that fell due when goods left the bond, and what took them out of it."
+    }
+}

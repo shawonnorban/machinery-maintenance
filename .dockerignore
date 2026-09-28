@@ -1,0 +1,19 @@
+# Build context exclusions (both docker/php and docker/node build with
+# `context: .`) — kept out so image builds aren't dragging gigabytes of
+# host-installed dependencies across the Windows filesystem boundary; the
+# real vendor/node_modules live in named volumes instead (see docker-compose.yml).
+.git
+vendor
+node_modules
+frontend/node_modules
+frontend/.next
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+storage/logs
+.phpunit.cache
+.env
+.env.docker
+*.log
+Thumbs.db
+.DS_Store

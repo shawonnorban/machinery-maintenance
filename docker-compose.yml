@@ -1,0 +1,214 @@
+# ---------------------------------------------------------------------------
+# machinery-maintenance — local development stack
+# Laravel API + Next.js + PostgreSQL + Redis + queue/scheduler/realtime workers
+#
+# This is an ALTERNATIVE to the existing WAMP-based local setup, not a
+# replacement for it — both read the same repo. Don't run `php artisan serve`
+# / the native Reverb process / WAMP's MySQL at the same time as this stack
+# unless you've changed the host ports below, since `.env`'s own
+# APP_URL/REVERB_PORT (8000/8082) and WAMP's MySQL (3306) are already in use
+# by that setup.
+#
+# Usage: docker compose up -d --build
+# Then:  docker compose exec backend php artisan migrate --seed
+# ---------------------------------------------------------------------------
+name: machinery-maintenance
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile
+  image: machinery-maintenance/backend:dev
+  volumes:
+    - .:/var/www/html
+    # vendor/ lives in a named volume, not on the bind mount — same reasoning
+    # as frontend-node-modules below: thousands of files that never change
+    # while you work are far cheaper to stat from a container-local volume
+    # than across the Windows filesystem boundary.
+    #
+    # Consequence: run `composer install` INSIDE the container — the host's
+    # own vendor/ is no longer what the application loads.
+    - backend-vendor:/var/www/html/vendor
+    - backend-bootstrap-cache:/var/www/html/bootstrap/cache
+    - backend-storage-framework:/var/www/html/storage/framework
+  env_file:
+    - ./.env
+  # Compose `environment` overrides `env_file`, so everything below is
+  # authoritative over the repo's own `.env`. The repo's `.env` already
+  # names Postgres and is reachable at `127.0.0.1:5432` from the host
+  # (this Compose file publishes that port) for anyone running `artisan`
+  # outside Docker — but `127.0.0.1` inside a container is the container
+  # itself, not the `postgres` service, so the host still has to be
+  # overridden here for the app to actually reach it. Laravel loads `.env`
+  # immutably, so a real environment variable set here always wins; only
+  # the keys actually named below are affected.
+  environment:
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: ${POSTGRES_DB:-machinery_maintenance}
+    DB_USERNAME: ${POSTGRES_USER:-machinery}
+    DB_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    CACHE_STORE: redis
+    QUEUE_CONNECTION: redis
+    REVERB_HOST: reverb
+    REVERB_PORT: 8080
+    REVERB_SERVER_HOST: 0.0.0.0
+    REVERB_SERVER_PORT: 8080
+    REVERB_SCHEME: http
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  networks: [machinery]
+  restart: unless-stopped
+
+services:
+  # --- Data stores ---------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-machinery_maintenance}
+      POSTGRES_USER: ${POSTGRES_USER:-machinery}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    ports:
+      - "${DOCKER_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init-test-db.sh:/docker-entrypoint-initdb.d/init-test-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-machinery} -d ${POSTGRES_DB:-machinery_maintenance}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [machinery]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${DOCKER_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [machinery]
+    restart: unless-stopped
+
+  # --- Laravel API ---------------------------------------------------------
+  backend:
+    <<: *backend
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "${DOCKER_API_PORT:-8010}:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/api/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [machinery]
+    restart: unless-stopped
+
+  # --- Background processing ------------------------------------------------
+  # `horizon` supersedes a plain `queue:work` process: same queues drained
+  # (config/horizon.php's own `queue` list — kept as `['default',
+  # 'broadcasts']` for the exact reason a bare `queue:work` needed the
+  # `--queue=default,broadcasts` flag, see the comment there), plus a
+  # dashboard at /horizon (gated on `is_platform_admin`, see
+  # HorizonServiceProvider) and the auto-scaling/monitoring `queue:work`
+  # alone never had. `horizon:terminate` on container stop lets Horizon
+  # shut its workers down cleanly instead of the process being killed
+  # mid-job.
+  queue:
+    <<: *backend
+    command: ["php", "artisan", "horizon"]
+    stop_signal: SIGTERM
+
+  scheduler:
+    <<: *backend
+    command: ["php", "artisan", "schedule:work"]
+
+  reverb:
+    <<: *backend
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    ports:
+      - "${DOCKER_REVERB_PORT:-8090}:8080"
+
+  # --- Next.js frontend ------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    image: machinery-maintenance/frontend:dev
+    ports:
+      - "${DOCKER_FRONTEND_PORT:-3010}:3000"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+      - frontend-next-cache:/app/.next
+    environment:
+      # Server-side (Server Components/Actions) calls stay in-network;
+      # browser-side Reverb calls go through the host port.
+      LARAVEL_API_URL: http://nginx/api/v1
+      NEXT_PUBLIC_REVERB_HOST: localhost
+      NEXT_PUBLIC_REVERB_PORT: ${DOCKER_REVERB_PORT:-8090}
+      NEXT_PUBLIC_REVERB_APP_KEY: ${REVERB_APP_KEY}
+      NEXT_PUBLIC_REVERB_SCHEME: http
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - nginx
+    networks: [machinery]
+    restart: unless-stopped
+
+  # --- End-to-end tests ------------------------------------------------------
+  # Not part of the default stack — `docker compose --profile test run
+  # --rm playwright`. Needs its own image because Playwright's browser
+  # binaries require glibc and `frontend`'s own image (docker/node/
+  # Dockerfile) is Alpine/musl; the official image ships Chromium/Firefox/
+  # WebKit already installed, so nothing needs `playwright install` here.
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.55.0-noble
+    profiles: ["test"]
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      # Own node_modules, separate from `frontend-node-modules` — this
+      # image's package.json install (just @playwright/test's runtime, not
+      # a dev server) has nothing to do with the frontend container's.
+      - playwright-node-modules:/app/node_modules
+    environment:
+      PLAYWRIGHT_BASE_URL: http://frontend:3000
+    depends_on:
+      - frontend
+    networks: [machinery]
+    command: ["sh", "-c", "npm install && npx playwright test"]
+
+volumes:
+  backend-vendor:
+  backend-bootstrap-cache:
+  backend-storage-framework:
+  postgres-data:
+  redis-data:
+  frontend-node-modules:
+  frontend-next-cache:
+  playwright-node-modules:
+
+networks:
+  machinery:
+    driver: bridge

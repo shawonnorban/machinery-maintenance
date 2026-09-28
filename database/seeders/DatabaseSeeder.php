@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use App\Modules\Asset\Database\Seeders\AssetModelSeeder;
+use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
+use App\Modules\Breakdown\Database\Seeders\FailureTaxonomySeeder;
+use App\Modules\Costing\Database\Seeders\CostCategorySeeder;
+use App\Modules\Finance\Database\Seeders\PaymentTypeSeeder;
+use App\Modules\Identity\Database\Seeders\PermissionSeeder;
+use App\Modules\Identity\Database\Seeders\RoleSeeder;
+use App\Modules\Inventory\Database\Seeders\SparePartCategorySeeder;
+use App\Modules\Inventory\Database\Seeders\UomSeeder;
+use App\Modules\ItemMaster\Database\Seeders\FabricDefectSeeder;
+use App\Modules\Maintenance\Database\Seeders\ChecklistTemplateSeeder;
+use App\Modules\Maintenance\Database\Seeders\MaintenanceTypeSeeder;
+use App\Modules\Metering\Database\Seeders\MeterTypeSeeder;
+use App\Modules\Platform\Database\Seeders\PlatformAdminSeeder;
+use App\Modules\Settings\Database\Seeders\SettingDefinitionSeeder;
+use Illuminate\Database\Seeder;
+
+/**
+ * Platform seed only: permissions, roles, and other rows that are identical
+ * for every tenant (Seed Catalog 1).
+ *
+ * The garment industry seed and the demo tenant are separate seeders so a
+ * production install never receives demo data.
+ */
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            SettingDefinitionSeeder::class,
+            AssetTaxonomySeeder::class,
+            // After the taxonomy: every model hangs off a manufacturer and an
+            // asset type that has to exist first.
+            AssetModelSeeder::class,
+            MaintenanceTypeSeeder::class,
+            ChecklistTemplateSeeder::class,
+            FailureTaxonomySeeder::class,
+            MeterTypeSeeder::class,
+            SparePartCategorySeeder::class,
+            UomSeeder::class,
+            FabricDefectSeeder::class,
+            PaymentTypeSeeder::class,
+            CostCategorySeeder::class,
+            PlatformAdminSeeder::class,
+        ]);
+    }
+}
