@@ -125,6 +125,8 @@ Section 3-এর পুরোটাই Import PO + Bonded Store-এ সীমা
 - এখন শুধু নাল্যাবল কলাম যোগ করে রাখা যায় (`bond_applicable`, `hs_code` on PO) — Duty ক্যালকুলেশন/UD-UP রিপোর্ট বন্ধ রাখা যায় যতক্ষণ Customs টিমের ভ্যালিডেশন না আসে।
 - ফ্যাক্টরি Export/Bonded ব্যবসা না করলে পুরো সেকশনটাই Phase 6 পর্যন্ত সম্পূর্ণ স্কিপ করা যায়, কোনো রিওয়ার্ক ছাড়াই (কলামগুলো additive)।
 
+> **As built (Phase 6):** পুরো ফিচারটাই এখন বাস্তবায়িত — `BondLicence`/`BondEntitlement`/`UtilisationDeclaration`/`DutyAssessment` ([§3.6](#36-যেভাবে-তৈরি-হয়েছে-phase-6))। **যা এখনো ডাটা-গ্যাপ, কোড-গ্যাপ নয়**: `hs_codes` টেবিলে `duty_rate`/`vat_rate` কলাম আছে কিন্তু কোনো সিডেড রো নেই — প্রতিটি কোম্পানিকে নিজের আসল HS কোড ও শুল্ক হার Settings থেকে ঢোকাতে হবে (Chart of Accounts-এর মতোই একই প্যাটার্ন: কাঠামো প্রস্তুত, সংখ্যা কোম্পানি-নির্দিষ্ট)।
+
 ### 5.3 Approval Matrix থ্রেশহোল্ড ও BOM Variance Tolerance %
 
 সবচেয়ে সহজ — এগুলো এমনিতেই Settings-এ configurable value হিসেবে রাখার কথা (দেখুন [Procurement §5.7](03_Procurement_Module.md#57-approval-matrix-উদাহরণ), [Inventory §9](02_Inventory_Module.md#9-issue-to-production--bom-consumption-variance))। যেকোনো যুক্তিসঙ্গত ডিফল্ট দিয়ে শুরু করলেই হবে — বাস্তব সংখ্যা এলে Settings screen থেকে বদলে দেওয়া যাবে, কোনো কোড পরিবর্তন লাগবে না।

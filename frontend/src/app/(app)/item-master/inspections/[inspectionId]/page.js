@@ -14,6 +14,7 @@ import {
   rejectInspection,
   escalateInspection,
   cancelInspection,
+  uploadInspectionPhoto,
 } from "../actions";
 
 /** Mirrors `FabricInspectionApiController::show` (Inventory spec §4.3). */
@@ -69,6 +70,7 @@ export default async function InspectionPage({ params }) {
           reject: rejectInspection.bind(null, inspectionId),
           escalate: escalateInspection.bind(null, inspectionId),
           cancel: cancelInspection.bind(null, inspectionId),
+          uploadPhoto: uploadInspectionPhoto.bind(null, inspectionId),
         }}
       />
     </>

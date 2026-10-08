@@ -12,6 +12,7 @@ import { useToastManager } from "@/components/ui/toast";
 import { DocumentActions } from "@/components/procurement/document-actions";
 import { Field } from "@/components/procurement/requisition-detail";
 import { RollTallyDialog } from "@/components/item-master/roll-tally-dialog";
+import { InspectionPhotos } from "@/components/item-master/inspection-photos";
 import { formatNumber } from "@/lib/format";
 import { useT } from "@/lib/i18n";
 
@@ -258,6 +259,17 @@ function InspectionSheet({ inspection, options, actions }) {
               <CardBody className="text-sm whitespace-pre-line">{i.remarks}</CardBody>
             </Card>
           ) : null}
+
+          {/* One evidence file for the whole lot, not gated on the sheet
+              still being open — see `can_manage_photos`'s own note. */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("photos")}</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <InspectionPhotos photos={i.photos ?? []} canUpload={i.can_manage_photos} action={actions.uploadPhoto} />
+            </CardBody>
+          </Card>
         </div>
 
         <div className="flex flex-col gap-4 lg:col-span-4">

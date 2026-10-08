@@ -149,6 +149,7 @@ class FileApiController extends ApiController
         $this->allow(match ($file->attachable_type) {
             'asset' => 'asset.asset.view',
             'breakdown' => 'breakdown.breakdown.view',
+            'fabric_roll', 'fabric_inspection' => 'itemmaster.roll.view_any',
             default => 'work_order.work_order.view',
         });
     }
@@ -177,6 +178,7 @@ class FileApiController extends ApiController
         $this->allow(match ($file->attachable_type) {
             'asset' => 'asset.document.manage',
             'breakdown' => 'breakdown.breakdown.repair',
+            'fabric_roll', 'fabric_inspection' => 'itemmaster.roll.inspect',
             default => 'work_order.work_order.update',
         });
     }

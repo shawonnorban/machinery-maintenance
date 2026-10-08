@@ -11,6 +11,7 @@ use App\Modules\ItemMaster\Models\FabricRoll;
 use App\Modules\ItemMaster\Models\FabricRollDefect;
 use App\Modules\ItemMaster\Services\FourPointScore;
 use App\Modules\Procurement\Models\GoodsReceipt;
+use App\Shared\Files\Models\FileAttachment;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiResponse;
 use App\Shared\Tenancy\TenantContext;
@@ -296,7 +297,20 @@ class FabricInspectionApiController extends ApiController
             'can_escalate' => $inspection->status === 'REJECTED'
                 && $inspection->nextStage() !== null && $mayInspect,
             'can_cancel' => $inspection->canTransitionTo('CANCELLED') && $mayInspect,
+            // Unlike the others, not gated on the sheet still being open —
+            // a shade dispute is often settled by a picture added well
+            // after the sheet was submitted.
+            'can_manage_photos' => $mayInspect,
             'next_stage' => $inspection->nextStage(),
+            // One evidence file for the whole lot (spec §4.3) — a shade or
+            // defect dispute belongs with the pooled score that decided
+            // the lot, not scattered across each roll it came from.
+            'photos' => FileAttachment::where('attachable_type', 'fabric_inspection')
+                ->where('attachable_id', $inspection->id)
+                ->latest()
+                ->get()
+                ->map(fn (FileAttachment $file): array => $file->toApiSummary())
+                ->all(),
             'rolls' => $rolls->map(fn (FabricRoll $roll): array => [
                 'id' => $roll->id,
                 'roll_no' => $roll->roll_no,

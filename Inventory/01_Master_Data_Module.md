@@ -232,7 +232,7 @@ Company → Factory → Warehouse → Store → Bin
 
 **Item Master-এর জন্য প্রভাব:**
 - Item Master-এর `store_id` এখন সরাসরি বিদ্যমান `Store` মডেলে real FK (নতুন কোনো টেবিল না)
-- store_type (General / Bonded / Sub-store) — [Shared Systems — Bonded Warehouse](05_Shared_Systems_and_Compliance.md#3-bangladesh-rmg-compliance--bonded-warehouse--ud-up)-এর জন্য `Store`-এ নতুন কলাম হিসেবে যোগ করতে হবে (বিদ্যমান `Store` মডেলে এখনো নেই)
+- store_type (General / Bonded / Sub-store) — [Shared Systems — Bonded Warehouse](05_Shared_Systems_and_Compliance.md#3-bangladesh-rmg-compliance--bonded-warehouse--ud-up)-এর জন্য `Store`-এ কলাম **যোগ হয়ে গেছে** (as built, Phase 2); Bond/UD-UP-এর `bonded_stores` ফিল্টার এই কলামের ওপরেই চলে
 - Legacy ফাইলে থাকা Store নামগুলো (Yarn Store, Garments Store, General Store...) migration-এর সময় বিদ্যমান `stores` টেবিলেই সিড হবে, নতুন টেবিলে না
 - Department Lookup List (Section 4) অপরিবর্তিত থাকবে — Department-এর সমতুল্য কোনো বিদ্যমান এনটিটি কোডবেসে নেই, তাই এটা সত্যিই নতুন
 

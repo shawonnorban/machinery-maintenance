@@ -71,7 +71,6 @@ return [
     'inspection_notes' => 'মন্তব্য',
     'inspected_by' => 'ইনস্পেক্ট করেছেন',
     'inspected_at' => 'ইনস্পেকশনের সময়',
-    'photo_upload_note' => 'এখনো ছবি সংযুক্ত করা যাচ্ছে না — শুধু লিখিত মন্তব্য।',
     'submit_inspection' => 'ইনস্পেকশন রেকর্ড করুন',
     'roll_accepted' => ':roll_no গৃহীত হয়েছে (গ্রেড :grade)।',
     'roll_rejected' => ':roll_no প্রত্যাখ্যাত — :disposition।',
@@ -192,6 +191,13 @@ return [
     'reason' => 'কারণ',
     'verified_by' => 'যাচাই করেছেন',
     'approved_by' => 'গ্রহণ করেছেন',
+
+    // প্রমাণের ছবি (spec §4.3) — শেড বা ডিফেক্টের বিরোধ প্রায়ই ছবি দিয়েই মেটে, কথায় নয়।
+    'photos' => 'ছবি',
+    'no_photos' => 'এখনো কোনো ছবি যোগ করা হয়নি।',
+    'add_photo' => 'ছবি যোগ করুন',
+    'uploaded' => 'আপলোড হয়েছে।',
+    'download' => 'ডাউনলোড',
 
     'sheet_not_open' => 'এই শিট :status, তাই এতে আর কিছু তোলা যাবে না।',
     'bad_transition' => 'ইন্সপেকশন :from থেকে :to-তে যেতে পারে না।',

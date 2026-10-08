@@ -7,17 +7,20 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { cn } from "@/lib/utils";
 import { InspectRollForm } from "@/components/item-master/inspect-roll-form";
 import { getT } from "@/lib/i18n-server";
-import { inspectRoll } from "./actions";
+import { inspectRoll, uploadRollPhoto } from "./actions";
 
 /** Mirrors `FabricRollApiController::show` (Inventory spec §4). */
 export default async function InspectFabricRollPage({ params }) {
   const { rollId } = await params;
 
-  const [roll, formOptions, t] = await Promise.all([
+  const [roll, formOptions, permissions, t] = await Promise.all([
     apiFetch(`/fabric-rolls/${rollId}`),
     apiFetch("/fabric-rolls/form-options"),
+    apiFetch("/auth/permissions"),
     getT("inspection"),
   ]);
+
+  const canUploadPhoto = new Set(permissions.permissions).has("itemmaster.roll.inspect");
 
   return (
     <>
@@ -36,7 +39,13 @@ export default async function InspectFabricRollPage({ params }) {
         }
       />
 
-      <InspectRollForm roll={roll} defects={formOptions.defects} action={inspectRoll} />
+      <InspectRollForm
+        roll={roll}
+        defects={formOptions.defects}
+        action={inspectRoll}
+        canUploadPhoto={canUploadPhoto}
+        uploadPhoto={uploadRollPhoto.bind(null, rollId)}
+      />
     </>
   );
 }

@@ -9,6 +9,7 @@ use App\Modules\ItemMaster\Actions\MergeFabricRolls;
 use App\Modules\ItemMaster\Actions\SplitFabricRoll;
 use App\Modules\ItemMaster\Models\FabricDefect;
 use App\Modules\ItemMaster\Models\FabricRoll;
+use App\Shared\Files\Models\FileAttachment;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiResponse;
 use App\Shared\Tenancy\TenantContext;
@@ -197,6 +198,14 @@ class FabricRollApiController extends ApiController
             'inspected_by' => $roll->inspector === null ? null : ['id' => $roll->inspector->id, 'name' => $roll->inspector->name],
             'inspected_at' => $roll->inspected_at?->toIso8601String(),
             'defects' => $roll->defects->map(fn (FabricDefect $d): array => ['id' => $d->id, 'code' => $d->code, 'name' => $d->name])->all(),
+            // Evidence filed against this roll (spec §4.3) — a shade or
+            // defect dispute settled with a picture, not only remarks.
+            'photos' => FileAttachment::where('attachable_type', 'fabric_roll')
+                ->where('attachable_id', $roll->id)
+                ->latest()
+                ->get()
+                ->map(fn (FileAttachment $file): array => $file->toApiSummary())
+                ->all(),
             'parent_roll_id' => $roll->parent_roll_id,
             'merged_into_roll_id' => $roll->merged_into_roll_id,
             // §10.5: the price changed after the cloth left the store.

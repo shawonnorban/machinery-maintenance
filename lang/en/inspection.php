@@ -71,7 +71,6 @@ return [
     'inspection_notes' => 'Remarks',
     'inspected_by' => 'Inspected by',
     'inspected_at' => 'Inspected at',
-    'photo_upload_note' => 'Photo evidence is not captured yet — remarks only.',
     'submit_inspection' => 'Record inspection',
     'roll_accepted' => ':roll_no accepted (grade :grade).',
     'roll_rejected' => ':roll_no rejected — :disposition.',
@@ -192,6 +191,14 @@ return [
     'reason' => 'Reason',
     'verified_by' => 'Checked by',
     'approved_by' => 'Accepted by',
+
+    // Evidence photos (spec §4.3) — a shade or defect dispute is often
+    // settled by a picture, not by the words describing it.
+    'photos' => 'Photos',
+    'no_photos' => 'No photo has been attached yet.',
+    'add_photo' => 'Add photo',
+    'uploaded' => 'Uploaded.',
+    'download' => 'Download',
 
     'sheet_not_open' => 'This sheet is :status, so nothing more can be tallied onto it.',
     'bad_transition' => 'An inspection cannot go from :from to :to.',

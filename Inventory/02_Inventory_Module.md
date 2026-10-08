@@ -74,9 +74,10 @@ Phase 2-এর ইন্সপেকশন ছিল রোলপ্রতি �
 - **পারমিশন** — রোল তোলা `itemmaster.roll.inspect` (স্টোরকিপার); লট গ্রহণ/প্রত্যাখ্যান নতুন `itemmaster.inspection.approve` (স্টোর ম্যানেজার) — টাকা জড়িত সিদ্ধান্ত।
 - **নোটিফিকেশন** — লট ফেল করলে `FABRIC_INSPECTION_FAILED` স্টোর টিমকে; পরের ধাপ QC-র সিদ্ধান্ত নয়।
 - **API** — `/fabric-inspections` (index/store/form-options/show + rolls/submit/approve/reject/escalate/cancel)। পুরনো `/fabric-rolls/{roll}/inspect` রয়ে গেছে — যে ডেলিভারি কেউ ফোর-পয়েন্ট করে না তার এক-রোল শর্টকাট।
-- টেস্ট: `tests/Feature/ItemMaster/FourPointInspectionTest`।
+- **ছবি (Phase 7, as built)** — Phase 2-এর জানা গ্যাপ (শুধু লিখিত Remarks) এখন বন্ধ। `FileAttachment`-এর বিদ্যমান প্যাটার্ন পুনর্ব্যবহার করা হয়েছে (Breakdown/Work Order-এর মতোই) — `attachable_type` দুটো: `fabric_roll` (এক-রোল পথের নিজস্ব প্রমাণ) ও `fabric_inspection` (পুরো লটের একটাই evidence ফাইল, প্রতিটি রোলে ছড়ানো নয়)। **ছবি তোলা যায় শিট ড্রাফট না থাকলেও** — শেড বা ডিফেক্টের বিরোধ প্রায়ই গ্রেড বসার দিন কয়েক পরে ছবি দিয়েই মেটে, তাই `can_manage_photos` সচেতনভাবে `can_record`-এর মতো status-এ বাঁধা নয়, কেবল পারমিশনে। আপলোড `itemmaster.roll.inspect`-এ, দেখা `itemmaster.roll.view_any`-তে। `GET/POST /fabric-rolls/{roll}/attachments` ও `GET/POST /fabric-inspections/{inspection}/attachments`; দুটো detail payload-এই `photos[]` যোগ হয়েছে। পরীক্ষিত: ছবি আপলোড করে উভয় detail-এ ফিরে আসা, VIEWER-এর আপলোড না পারা (403), আরেক কোম্পানির ছবি 404 — `tests/Feature/ItemMaster/FabricInspectionPhotoTest`।
+- টেস্ট: `tests/Feature/ItemMaster/FourPointInspectionTest`, `tests/Feature/ItemMaster/FabricInspectionPhotoTest`।
 
-> **এখনো বাকি:** Photo আপলোড (গ্যাপ, Phase 2 থেকেই) — শুধু লিখিত Remarks। আর গ্রহণযোগ্য সীমার ডিফল্ট ২৮ ধরা হয়েছে; ব্যবহারকারীর শিটে ২২.৩০% রোল PASS দেখানো আছে বলে সীমা অন্তত তার বেশি, কিন্তু প্রকৃত সংখ্যাটা বায়ারভেদে বদলায় — **সেটিং থেকে নিশ্চিত করে নিতে হবে।**
+> **সিদ্ধান্ত দরকার:** গ্রহণযোগ্য সীমার ডিফল্ট ২৮ ধরা হয়েছে — ব্যবহারকারীর শিটে ২২.৩০% রোল PASS দেখানো আছে বলে সীমা অন্তত তার বেশি, কিন্তু প্রকৃত সংখ্যাটা বায়ারভেদে বদলায়। সেটিং `inspection.four_point_acceptance`-এ ঠিক করা যায়, তাই এটা আর ইমপ্লিমেন্টেশনের গ্যাপ নয়, শুধু একটা কনফিগারেশন মান — ব্যবহারকারী চাইলে বদলে নেবেন।
 
 ### 4.4 Knit Fabric Defects
 Hole/Needle Line, Drop Stitch, Barré, Contamination, Oil Spot, Uneven Dyeing, Width Variation, GSM Variation, Snagging, Other

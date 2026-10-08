@@ -1,5 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { apiFetch } from "@/lib/api-server";
+import { ApiError } from "@/lib/api-error";
 import { postDocumentAction } from "@/components/procurement/document-action-helpers";
 
 const paths = (id) => ["/item-master/inspections", `/item-master/inspections/${id}`];
@@ -33,6 +36,35 @@ async function cancelInspection(id, reason) {
   return postDocumentAction(`/fabric-inspections/${id}/cancel`, { reason }, paths(id));
 }
 
+/**
+ * Evidence for the whole lot. Not run through `postDocumentAction` — that
+ * helper always JSON-encodes the body, which a multipart file upload
+ * cannot be.
+ */
+async function uploadInspectionPhoto(id, formData) {
+  try {
+    const file = formData.get("file");
+
+    if (!(file instanceof File) || file.size === 0) {
+      return { status: "error", message: "Choose a file first." };
+    }
+
+    const body = new FormData();
+    body.set("file", file);
+
+    await apiFetch(`/fabric-inspections/${id}/attachments`, { method: "POST", body });
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return { status: "error", message: error.message, errors: error.errors };
+    }
+    throw error;
+  }
+
+  revalidatePath(`/item-master/inspections/${id}`);
+
+  return { status: "success" };
+}
+
 export {
   recordInspectionRoll,
   submitInspection,
@@ -40,4 +72,5 @@ export {
   rejectInspection,
   escalateInspection,
   cancelInspection,
+  uploadInspectionPhoto,
 };

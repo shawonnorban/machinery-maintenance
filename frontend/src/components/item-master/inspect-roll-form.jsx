@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useToastManager } from "@/components/ui/toast";
+import { InspectionPhotos } from "@/components/item-master/inspection-photos";
 import { formatNumber } from "@/lib/format";
 import { useT } from "@/lib/i18n";
 
@@ -22,7 +23,7 @@ import { useT } from "@/lib/i18n";
  * screens. The defect checklist is filtered to the roll's own family
  * (Knit or Woven), never showing the other list's entries.
  */
-function InspectRollForm({ roll, defects, action }) {
+function InspectRollForm({ roll, defects, action, canUploadPhoto, uploadPhoto }) {
   const t = useT("inspection");
   const tc = useT("common");
   const router = useRouter();
@@ -65,14 +66,6 @@ function InspectRollForm({ roll, defects, action }) {
     });
   }
 
-  if (!roll.can_inspect) {
-    return (
-      <Alert variant="info">
-        {t("roll_not_pending", { status: t(`statuses.${roll.status}`) })}
-      </Alert>
-    );
-  }
-
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
       <div className="flex flex-col gap-4 lg:col-span-6">
@@ -94,69 +87,85 @@ function InspectRollForm({ roll, defects, action }) {
             <Field label={t("unit_cost")}>{formatNumber(roll.unit_cost, { maximumFractionDigits: 2 })} {roll.currency}</Field>
           </CardBody>
         </Card>
+
+        {/* Lives beside the roll's own facts, not inside the grading form:
+            a shade dispute is often settled by a picture taken days after
+            the grade was recorded, so this stays reachable either way. */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("photos")}</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <InspectionPhotos photos={roll.photos ?? []} canUpload={canUploadPhoto} action={uploadPhoto} />
+          </CardBody>
+        </Card>
       </div>
 
       <div className="flex flex-col gap-4 lg:col-span-6">
-        <form onSubmit={submit}>
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("inspection_data")}</CardTitle>
-            </CardHeader>
-            <CardBody className="flex flex-col gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField label={t("actual_width")} error={errors?.actual_width?.[0]}>
-                  {(fp) => <Input {...fp} type="number" step="0.01" min="0" value={actualWidth} onChange={(e) => setActualWidth(e.target.value)} />}
-                </FormField>
-                <FormField label={t("grade")} required error={errors?.grade?.[0]}>
-                  {(fp) => (
-                    <Select {...fp} value={grade} onValueChange={setGrade} options={["A", "B", "C", "REJECT"].map((g) => ({ value: g, label: t(`grades.${g}`) }))} placeholder={t("grade")} />
-                  )}
-                </FormField>
-              </div>
-
-              <label className="flex items-center gap-2 text-sm text-foreground">
-                <Checkbox checked={shadeMatch} onCheckedChange={setShadeMatch} />
-                {t("shade_match")}
-              </label>
-
-              {grade === "REJECT" ? (
-                <FormField label={t("disposition")} required error={errors?.disposition?.[0]}>
-                  {(fp) => (
-                    <Select {...fp} value={disposition} onValueChange={setDisposition} options={["DAMAGED", "RETURNED"].map((d) => ({ value: d, label: t(`dispositions.${d}`) }))} placeholder={t("disposition")} />
-                  )}
-                </FormField>
-              ) : null}
-
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-foreground">{t("defects")} — {t(`defect_family_${roll.defect_family?.toLowerCase()}`)}</span>
-                {errors?.defect_ids?.[0] ? <p className="text-xs text-danger">{errors.defect_ids[0]}</p> : null}
-                <div className="flex flex-wrap gap-x-4 gap-y-2">
-                  {familyDefects.map((defect) => (
-                    <label key={defect.id} className="flex items-center gap-2 text-sm text-foreground">
-                      <Checkbox checked={defectIds.includes(defect.id)} onCheckedChange={() => toggleDefect(defect.id)} />
-                      {defect.name}
-                    </label>
-                  ))}
+        {roll.can_inspect ? (
+          <form onSubmit={submit}>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("inspection_data")}</CardTitle>
+              </CardHeader>
+              <CardBody className="flex flex-col gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField label={t("actual_width")} error={errors?.actual_width?.[0]}>
+                    {(fp) => <Input {...fp} type="number" step="0.01" min="0" value={actualWidth} onChange={(e) => setActualWidth(e.target.value)} />}
+                  </FormField>
+                  <FormField label={t("grade")} required error={errors?.grade?.[0]}>
+                    {(fp) => (
+                      <Select {...fp} value={grade} onValueChange={setGrade} options={["A", "B", "C", "REJECT"].map((g) => ({ value: g, label: t(`grades.${g}`) }))} placeholder={t("grade")} />
+                    )}
+                  </FormField>
                 </div>
-              </div>
 
-              <FormField label={t("inspection_notes")}>
-                {(fp) => <Textarea {...fp} value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={2000} />}
-              </FormField>
+                <label className="flex items-center gap-2 text-sm text-foreground">
+                  <Checkbox checked={shadeMatch} onCheckedChange={setShadeMatch} />
+                  {t("shade_match")}
+                </label>
 
-              <p className="text-xs text-foreground-muted">{t("photo_upload_note")}</p>
+                {grade === "REJECT" ? (
+                  <FormField label={t("disposition")} required error={errors?.disposition?.[0]}>
+                    {(fp) => (
+                      <Select {...fp} value={disposition} onValueChange={setDisposition} options={["DAMAGED", "RETURNED"].map((d) => ({ value: d, label: t(`dispositions.${d}`) }))} placeholder={t("disposition")} />
+                    )}
+                  </FormField>
+                ) : null}
 
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => router.back()}>
-                  {tc("cancel")}
-                </Button>
-                <Button type="submit" loading={pending} disabled={!grade}>
-                  {t("submit_inspection")}
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
-        </form>
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-foreground">{t("defects")} — {t(`defect_family_${roll.defect_family?.toLowerCase()}`)}</span>
+                  {errors?.defect_ids?.[0] ? <p className="text-xs text-danger">{errors.defect_ids[0]}</p> : null}
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
+                    {familyDefects.map((defect) => (
+                      <label key={defect.id} className="flex items-center gap-2 text-sm text-foreground">
+                        <Checkbox checked={defectIds.includes(defect.id)} onCheckedChange={() => toggleDefect(defect.id)} />
+                        {defect.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <FormField label={t("inspection_notes")}>
+                  {(fp) => <Textarea {...fp} value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={2000} />}
+                </FormField>
+
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => router.back()}>
+                    {tc("cancel")}
+                  </Button>
+                  <Button type="submit" loading={pending} disabled={!grade}>
+                    {t("submit_inspection")}
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          </form>
+        ) : (
+          <Alert variant="info">
+            {t("roll_not_pending", { status: t(`statuses.${roll.status}`) })}
+          </Alert>
+        )}
       </div>
     </div>
   );

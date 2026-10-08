@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Modules\ItemMaster\Http\Controllers\Api\FabricInspectionApiController;
+use App\Modules\ItemMaster\Http\Controllers\Api\FabricInspectionAttachmentApiController;
 use App\Modules\ItemMaster\Http\Controllers\Api\FabricRollApiController;
+use App\Modules\ItemMaster\Http\Controllers\Api\FabricRollAttachmentApiController;
 use App\Modules\ItemMaster\Http\Controllers\Api\ItemApiController;
 use App\Modules\ItemMaster\Http\Controllers\Api\ItemReservationApiController;
 use App\Modules\ItemMaster\Http\Controllers\Api\StockCountApiController;
@@ -32,6 +34,8 @@ Route::middleware(['api.auth', 'throttle:api'])->group(function (): void {
     Route::get('/fabric-rolls/{roll}', [FabricRollApiController::class, 'show'])->name('fabric-rolls.show');
     Route::post('/fabric-rolls/{roll}/inspect', [FabricRollApiController::class, 'inspect'])->name('fabric-rolls.inspect');
     Route::post('/fabric-rolls/{roll}/split', [FabricRollApiController::class, 'split'])->name('fabric-rolls.split');
+    Route::get('/fabric-rolls/{roll}/attachments', [FabricRollAttachmentApiController::class, 'index'])->name('fabric-rolls.attachments.index');
+    Route::post('/fabric-rolls/{roll}/attachments', [FabricRollAttachmentApiController::class, 'store'])->name('fabric-rolls.attachments.store');
 
     // Four-point inspection (Inventory spec §4.3). The sheet is the lot,
     // and rolls are tallied onto it — the per-roll `fabric-rolls/{roll}/inspect`
@@ -46,6 +50,8 @@ Route::middleware(['api.auth', 'throttle:api'])->group(function (): void {
     Route::post('/fabric-inspections/{inspection}/reject', [FabricInspectionApiController::class, 'reject'])->name('fabric-inspections.reject');
     Route::post('/fabric-inspections/{inspection}/escalate', [FabricInspectionApiController::class, 'escalate'])->name('fabric-inspections.escalate');
     Route::post('/fabric-inspections/{inspection}/cancel', [FabricInspectionApiController::class, 'cancel'])->name('fabric-inspections.cancel');
+    Route::get('/fabric-inspections/{inspection}/attachments', [FabricInspectionAttachmentApiController::class, 'index'])->name('fabric-inspections.attachments.index');
+    Route::post('/fabric-inspections/{inspection}/attachments', [FabricInspectionAttachmentApiController::class, 'store'])->name('fabric-inspections.attachments.store');
 
     Route::get('/item-reservations', [ItemReservationApiController::class, 'index'])->name('item-reservations.index');
     Route::post('/item-reservations', [ItemReservationApiController::class, 'store'])->name('item-reservations.store');

@@ -29,4 +29,33 @@ async function inspectRoll(rollId, data) {
   return { status: "success", data: roll };
 }
 
-export { inspectRoll };
+/**
+ * A photo filed against the roll itself — usable at any point once it
+ * exists from receiving, not only while it waits on a grade. Mirrors
+ * `WorkOrderDetail`'s own `uploadAttachment` action.
+ */
+async function uploadRollPhoto(rollId, formData) {
+  try {
+    const file = formData.get("file");
+
+    if (!(file instanceof File) || file.size === 0) {
+      return { status: "error", message: "Choose a file first." };
+    }
+
+    const body = new FormData();
+    body.set("file", file);
+
+    await apiFetch(`/fabric-rolls/${rollId}/attachments`, { method: "POST", body });
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return { status: "error", message: error.message, errors: error.errors };
+    }
+    throw error;
+  }
+
+  revalidatePath(`/item-master/inspection/${rollId}`);
+
+  return { status: "success" };
+}
+
+export { inspectRoll, uploadRollPhoto };
