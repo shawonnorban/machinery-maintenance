@@ -182,7 +182,9 @@ final class DataSnapshot
         $chunkSize = 500;
         $count = 0;
         $encrypted = self::ENCRYPTED[$table] ?? [];
+        $required = self::requiredColumns($table);
         $unreadable = 0;
+        $skipped = 0;
 
         $gz = gzopen($path, 'rb');
         while (($line = gzgets($gz)) !== false) {
@@ -206,6 +208,13 @@ final class DataSnapshot
                     $unreadable++;
                 }
             }
+            // A NOT NULL secret this server cannot read: the row is useless
+            // here (it has to be entered again anyway), so it is left out.
+            if (array_filter($encrypted, fn ($c) => array_key_exists($c, $row) && $row[$c] === null && in_array($c, $required, true)) !== []) {
+                $skipped++;
+
+                continue;
+            }
             $chunk[] = $row;
             if (count($chunk) >= $chunkSize) {
                 DB::table($table)->insert($chunk);
@@ -220,10 +229,22 @@ final class DataSnapshot
             $count += count($chunk);
         }
         if ($unreadable > 0) {
-            $warn("{$table}: {$unreadable} encrypted value(s) were made with another APP_KEY — cleared; enter them again.");
+            $warn($skipped > 0
+                ? "{$table}: {$skipped} row(s) left out — their encrypted values were made with another APP_KEY; enter them again."
+                : "{$table}: {$unreadable} encrypted value(s) were made with another APP_KEY — cleared; enter them again.");
         }
 
         return $count;
+    }
+
+    /** @return list<string> */
+    private static function requiredColumns(string $table): array
+    {
+        return array_map(fn ($r) => $r->column_name, DB::select(
+            "select column_name from information_schema.columns
+             where table_schema = current_schema() and table_name = ? and is_nullable = 'NO'",
+            [$table],
+        ));
     }
 
     private static function readable(string $value): bool
