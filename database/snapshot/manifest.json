@@ -1,0 +1,3928 @@
+{
+    "exported_at": "2026-11-26T17:34:31+00:00",
+    "excluded": [
+        "migrations",
+        "sessions",
+        "cache",
+        "cache_locks",
+        "jobs",
+        "job_batches",
+        "failed_jobs",
+        "password_reset_tokens",
+        "personal_access_tokens",
+        "idempotency_keys",
+        "login_attempts",
+        "scheduled_job_runs",
+        "notifications",
+        "notification_deliveries",
+        "chat_presence",
+        "chat_push_subscriptions",
+        "audit_logs"
+    ],
+    "tables": [
+        {
+            "table": "legacy_permissions",
+            "rows": 0
+        },
+        {
+            "table": "menu_modules",
+            "rows": 40
+        },
+        {
+            "table": "menus",
+            "rows": 1073
+        },
+        {
+            "table": "organizations",
+            "rows": 0
+        },
+        {
+            "table": "permissions",
+            "rows": 480
+        },
+        {
+            "table": "setting_definitions",
+            "rows": 44
+        },
+        {
+            "table": "menu_permissions",
+            "rows": 1939
+        },
+        {
+            "table": "model_has_permissions",
+            "rows": 0
+        },
+        {
+            "table": "acc_account_classes",
+            "rows": 6
+        },
+        {
+            "table": "acc_accounts",
+            "rows": 260
+        },
+        {
+            "table": "acc_bank_accounts",
+            "rows": 9
+        },
+        {
+            "table": "acc_bank_lines",
+            "rows": 1
+        },
+        {
+            "table": "acc_cheque_books",
+            "rows": 1
+        },
+        {
+            "table": "acc_cheque_cancellations",
+            "rows": 1
+        },
+        {
+            "table": "acc_cheque_issue_lines",
+            "rows": 1
+        },
+        {
+            "table": "acc_cheque_issues",
+            "rows": 1
+        },
+        {
+            "table": "acc_cheque_leaves",
+            "rows": 10
+        },
+        {
+            "table": "acc_compliance_rules",
+            "rows": 0
+        },
+        {
+            "table": "acc_cost_center_groups",
+            "rows": 8
+        },
+        {
+            "table": "acc_cost_centers",
+            "rows": 22
+        },
+        {
+            "table": "acc_fiscal_year_closings",
+            "rows": 0
+        },
+        {
+            "table": "acc_fiscal_years",
+            "rows": 6
+        },
+        {
+            "table": "acc_gl_source_lines",
+            "rows": 2
+        },
+        {
+            "table": "acc_gl_sources",
+            "rows": 4
+        },
+        {
+            "table": "acc_ledger_postings",
+            "rows": 1
+        },
+        {
+            "table": "acc_mrr_bill_lines",
+            "rows": 2
+        },
+        {
+            "table": "acc_mrr_bills",
+            "rows": 1
+        },
+        {
+            "table": "acc_payment_modes",
+            "rows": 18
+        },
+        {
+            "table": "acc_report_runs",
+            "rows": 7
+        },
+        {
+            "table": "acc_stock_closings",
+            "rows": 3
+        },
+        {
+            "table": "acc_voucher_grants",
+            "rows": 1
+        },
+        {
+            "table": "acc_voucher_lines",
+            "rows": 8
+        },
+        {
+            "table": "acc_voucher_logs",
+            "rows": 11
+        },
+        {
+            "table": "acc_vouchers",
+            "rows": 4
+        },
+        {
+            "table": "access_mappings",
+            "rows": 7
+        },
+        {
+            "table": "ai_approval_steps",
+            "rows": 3
+        },
+        {
+            "table": "ai_extraction_rules",
+            "rows": 2
+        },
+        {
+            "table": "ai_features",
+            "rows": 2
+        },
+        {
+            "table": "ai_intake_files",
+            "rows": 4
+        },
+        {
+            "table": "ai_intake_values",
+            "rows": 0
+        },
+        {
+            "table": "ai_services",
+            "rows": 2
+        },
+        {
+            "table": "ai_signatures",
+            "rows": 2
+        },
+        {
+            "table": "ai_validations",
+            "rows": 2
+        },
+        {
+            "table": "api_clients",
+            "rows": 1
+        },
+        {
+            "table": "api_tokens",
+            "rows": 0
+        },
+        {
+            "table": "approval_actions",
+            "rows": 10
+        },
+        {
+            "table": "approval_request_types",
+            "rows": 14
+        },
+        {
+            "table": "approval_requests",
+            "rows": 7
+        },
+        {
+            "table": "approval_rule_users",
+            "rows": 3
+        },
+        {
+            "table": "approval_rules",
+            "rows": 8
+        },
+        {
+            "table": "approval_tickets",
+            "rows": 1
+        },
+        {
+            "table": "approval_workflows",
+            "rows": 5
+        },
+        {
+            "table": "asm_bundle_ins",
+            "rows": 2
+        },
+        {
+            "table": "asm_bundle_outs",
+            "rows": 2
+        },
+        {
+            "table": "asm_fg_ledger",
+            "rows": 2
+        },
+        {
+            "table": "asm_finishing_ins",
+            "rows": 2
+        },
+        {
+            "table": "asm_finishing_outs",
+            "rows": 2
+        },
+        {
+            "table": "asm_packing_batches",
+            "rows": 1
+        },
+        {
+            "table": "asm_packing_carton_lines",
+            "rows": 2
+        },
+        {
+            "table": "asm_packing_cartons",
+            "rows": 2
+        },
+        {
+            "table": "asm_packing_ins",
+            "rows": 2
+        },
+        {
+            "table": "asm_packing_labels",
+            "rows": 1
+        },
+        {
+            "table": "asm_packing_steps",
+            "rows": 7
+        },
+        {
+            "table": "asm_quality_ins",
+            "rows": 2
+        },
+        {
+            "table": "asm_quality_inspections",
+            "rows": 3
+        },
+        {
+            "table": "asm_quality_outs",
+            "rows": 2
+        },
+        {
+            "table": "asm_shipments",
+            "rows": 1
+        },
+        {
+            "table": "asm_trims_issue_lines",
+            "rows": 1
+        },
+        {
+            "table": "asm_trims_issues",
+            "rows": 1
+        },
+        {
+            "table": "asm_trims_moves",
+            "rows": 4
+        },
+        {
+            "table": "asm_trims_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "asm_trims_receipts",
+            "rows": 1
+        },
+        {
+            "table": "asm_trims_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "asm_trims_returns",
+            "rows": 1
+        },
+        {
+            "table": "asset_categories",
+            "rows": 135
+        },
+        {
+            "table": "asset_locations",
+            "rows": 29
+        },
+        {
+            "table": "asset_meters",
+            "rows": 4
+        },
+        {
+            "table": "asset_models",
+            "rows": 228
+        },
+        {
+            "table": "asset_status_histories",
+            "rows": 514
+        },
+        {
+            "table": "asset_transfer_history",
+            "rows": 0
+        },
+        {
+            "table": "asset_types",
+            "rows": 15
+        },
+        {
+            "table": "assets",
+            "rows": 99
+        },
+        {
+            "table": "bank_integrations",
+            "rows": 1
+        },
+        {
+            "table": "bg_activity_entries",
+            "rows": 3
+        },
+        {
+            "table": "bg_announcements",
+            "rows": 3
+        },
+        {
+            "table": "bg_branding_profiles",
+            "rows": 2
+        },
+        {
+            "table": "bg_complaints",
+            "rows": 2
+        },
+        {
+            "table": "bg_invoices",
+            "rows": 2
+        },
+        {
+            "table": "bg_notification_prefs",
+            "rows": 2
+        },
+        {
+            "table": "bg_onboardings",
+            "rows": 2
+        },
+        {
+            "table": "bg_payment_lines",
+            "rows": 2
+        },
+        {
+            "table": "bg_permission_sets",
+            "rows": 1
+        },
+        {
+            "table": "bg_portal_users",
+            "rows": 2
+        },
+        {
+            "table": "bg_price_lines",
+            "rows": 1
+        },
+        {
+            "table": "bg_requests",
+            "rows": 2
+        },
+        {
+            "table": "bg_rfqs",
+            "rows": 2
+        },
+        {
+            "table": "bg_sample_progress",
+            "rows": 2
+        },
+        {
+            "table": "bg_shared_documents",
+            "rows": 2
+        },
+        {
+            "table": "bg_shipment_progress",
+            "rows": 2
+        },
+        {
+            "table": "bg_surveys",
+            "rows": 2
+        },
+        {
+            "table": "bg_tickets",
+            "rows": 2
+        },
+        {
+            "table": "bg_usage_lines",
+            "rows": 2
+        },
+        {
+            "table": "bg_visibility_rules",
+            "rows": 2
+        },
+        {
+            "table": "bins",
+            "rows": 45
+        },
+        {
+            "table": "bond_entitlements",
+            "rows": 1
+        },
+        {
+            "table": "bond_licences",
+            "rows": 1
+        },
+        {
+            "table": "breakdown_status_histories",
+            "rows": 37
+        },
+        {
+            "table": "breakdowns",
+            "rows": 9
+        },
+        {
+            "table": "buildings",
+            "rows": 2
+        },
+        {
+            "table": "business_units",
+            "rows": 0
+        },
+        {
+            "table": "buyer_office_links",
+            "rows": 177
+        },
+        {
+            "table": "buyer_offices",
+            "rows": 22
+        },
+        {
+            "table": "buyer_sample_types",
+            "rows": 2
+        },
+        {
+            "table": "buyer_supplier_configs",
+            "rows": 8
+        },
+        {
+            "table": "buyer_test_institutes",
+            "rows": 1
+        },
+        {
+            "table": "buyer_trim_items",
+            "rows": 20
+        },
+        {
+            "table": "buyer_user_permissions",
+            "rows": 29
+        },
+        {
+            "table": "buyers",
+            "rows": 170
+        },
+        {
+            "table": "cc_boards",
+            "rows": 2
+        },
+        {
+            "table": "cc_compositions",
+            "rows": 2
+        },
+        {
+            "table": "cc_drill_paths",
+            "rows": 2
+        },
+        {
+            "table": "chat_members",
+            "rows": 186
+        },
+        {
+            "table": "chat_message_hides",
+            "rows": 0
+        },
+        {
+            "table": "chat_message_reactions",
+            "rows": 4
+        },
+        {
+            "table": "chat_messages",
+            "rows": 45
+        },
+        {
+            "table": "chats",
+            "rows": 18
+        },
+        {
+            "table": "checklist_items",
+            "rows": 104
+        },
+        {
+            "table": "colours",
+            "rows": 40
+        },
+        {
+            "table": "companies",
+            "rows": 2
+        },
+        {
+            "table": "company_backups",
+            "rows": 2
+        },
+        {
+            "table": "company_documents",
+            "rows": 0
+        },
+        {
+            "table": "company_domains",
+            "rows": 0
+        },
+        {
+            "table": "company_modules",
+            "rows": 2
+        },
+        {
+            "table": "company_restores",
+            "rows": 1
+        },
+        {
+            "table": "company_users",
+            "rows": 153
+        },
+        {
+            "table": "cost_categories",
+            "rows": 9
+        },
+        {
+            "table": "cost_entries",
+            "rows": 7
+        },
+        {
+            "table": "country_configs",
+            "rows": 30
+        },
+        {
+            "table": "credit_notes",
+            "rows": 0
+        },
+        {
+            "table": "currencies",
+            "rows": 14
+        },
+        {
+            "table": "custom_field_definitions",
+            "rows": 0
+        },
+        {
+            "table": "custom_field_values",
+            "rows": 0
+        },
+        {
+            "table": "cut_bundles",
+            "rows": 42
+        },
+        {
+            "table": "cut_input_sizes",
+            "rows": 4
+        },
+        {
+            "table": "cut_inputs",
+            "rows": 2
+        },
+        {
+            "table": "deletion_requests",
+            "rows": 0
+        },
+        {
+            "table": "departments",
+            "rows": 44
+        },
+        {
+            "table": "designations",
+            "rows": 37
+        },
+        {
+            "table": "dev_commands",
+            "rows": 7
+        },
+        {
+            "table": "dev_devices",
+            "rows": 1
+        },
+        {
+            "table": "dev_employee_maps",
+            "rows": 2
+        },
+        {
+            "table": "dev_fingerprints",
+            "rows": 2
+        },
+        {
+            "table": "dev_punches",
+            "rows": 6
+        },
+        {
+            "table": "dev_users",
+            "rows": 4
+        },
+        {
+            "table": "downtime_reason_codes",
+            "rows": 29
+        },
+        {
+            "table": "downtime_records",
+            "rows": 9
+        },
+        {
+            "table": "ds_changes",
+            "rows": 17
+        },
+        {
+            "table": "ds_column_events",
+            "rows": 21
+        },
+        {
+            "table": "ds_columns",
+            "rows": 46
+        },
+        {
+            "table": "ds_groups",
+            "rows": 6
+        },
+        {
+            "table": "ds_samples",
+            "rows": 3
+        },
+        {
+            "table": "duty_assessments",
+            "rows": 1
+        },
+        {
+            "table": "dye_audit_checks",
+            "rows": 1
+        },
+        {
+            "table": "dye_batch_completions",
+            "rows": 0
+        },
+        {
+            "table": "dye_batch_items",
+            "rows": 10
+        },
+        {
+            "table": "dye_batch_plans",
+            "rows": 2
+        },
+        {
+            "table": "dye_batches",
+            "rows": 7
+        },
+        {
+            "table": "dye_check_roll_inspections",
+            "rows": 2
+        },
+        {
+            "table": "dye_check_roll_params",
+            "rows": 1
+        },
+        {
+            "table": "dye_check_roll_returns",
+            "rows": 1
+        },
+        {
+            "table": "dye_chem_closing_lines",
+            "rows": 0
+        },
+        {
+            "table": "dye_chem_closings",
+            "rows": 0
+        },
+        {
+            "table": "dye_chem_cs",
+            "rows": 1
+        },
+        {
+            "table": "dye_chem_cs_lines",
+            "rows": 1
+        },
+        {
+            "table": "dye_chem_cs_quotes",
+            "rows": 2
+        },
+        {
+            "table": "dye_chem_issue_lines",
+            "rows": 3
+        },
+        {
+            "table": "dye_chem_issues",
+            "rows": 2
+        },
+        {
+            "table": "dye_chem_loan_openings",
+            "rows": 1
+        },
+        {
+            "table": "dye_chem_lots",
+            "rows": 7
+        },
+        {
+            "table": "dye_chem_moves",
+            "rows": 12
+        },
+        {
+            "table": "dye_chem_openings",
+            "rows": 4
+        },
+        {
+            "table": "dye_chem_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "dye_chem_receipts",
+            "rows": 1
+        },
+        {
+            "table": "dye_chem_requisition_lines",
+            "rows": 4
+        },
+        {
+            "table": "dye_chem_requisitions",
+            "rows": 3
+        },
+        {
+            "table": "dye_chem_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "dye_chem_returns",
+            "rows": 1
+        },
+        {
+            "table": "dye_colour_groups",
+            "rows": 20
+        },
+        {
+            "table": "dye_colour_transfers",
+            "rows": 1
+        },
+        {
+            "table": "dye_dosing_template_agents",
+            "rows": 8
+        },
+        {
+            "table": "dye_dosing_templates",
+            "rows": 16
+        },
+        {
+            "table": "dye_fabric_booking_lines",
+            "rows": 2
+        },
+        {
+            "table": "dye_fabric_bookings",
+            "rows": 2
+        },
+        {
+            "table": "dye_finishing_qcs",
+            "rows": 1
+        },
+        {
+            "table": "dye_grey_indent_lines",
+            "rows": 3
+        },
+        {
+            "table": "dye_grey_indents",
+            "rows": 3
+        },
+        {
+            "table": "dye_grey_issues",
+            "rows": 1
+        },
+        {
+            "table": "dye_grey_order_transfers",
+            "rows": 1
+        },
+        {
+            "table": "dye_lab_dip_recipes",
+            "rows": 2
+        },
+        {
+            "table": "dye_leftover_transfers",
+            "rows": 1
+        },
+        {
+            "table": "dye_machine_lists",
+            "rows": 38
+        },
+        {
+            "table": "dye_machine_maintenance",
+            "rows": 1
+        },
+        {
+            "table": "dye_machines",
+            "rows": 9
+        },
+        {
+            "table": "dye_methods",
+            "rows": 16
+        },
+        {
+            "table": "dye_order_closings",
+            "rows": 0
+        },
+        {
+            "table": "dye_production_loads",
+            "rows": 3
+        },
+        {
+            "table": "dye_productions",
+            "rows": 2
+        },
+        {
+            "table": "dye_pt_bills",
+            "rows": 1
+        },
+        {
+            "table": "dye_pt_challans",
+            "rows": 1
+        },
+        {
+            "table": "dye_pt_programmes",
+            "rows": 1
+        },
+        {
+            "table": "dye_pt_receipts",
+            "rows": 1
+        },
+        {
+            "table": "dye_responsible_employees",
+            "rows": 6
+        },
+        {
+            "table": "dye_sample_transfers",
+            "rows": 1
+        },
+        {
+            "table": "dye_sc_bills",
+            "rows": 1
+        },
+        {
+            "table": "dye_sc_challan_programmes",
+            "rows": 1
+        },
+        {
+            "table": "dye_sc_challans",
+            "rows": 1
+        },
+        {
+            "table": "dye_sc_programme_shades",
+            "rows": 2
+        },
+        {
+            "table": "dye_sc_programmes",
+            "rows": 1
+        },
+        {
+            "table": "dye_sc_quotation_lines",
+            "rows": 3
+        },
+        {
+            "table": "dye_sc_quotations",
+            "rows": 3
+        },
+        {
+            "table": "dye_sc_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "dye_sc_receipts",
+            "rows": 2
+        },
+        {
+            "table": "dye_sc_requisition_lines",
+            "rows": 1
+        },
+        {
+            "table": "dye_sc_requisitions",
+            "rows": 1
+        },
+        {
+            "table": "dye_sci_programmes",
+            "rows": 1
+        },
+        {
+            "table": "dye_sci_receipts",
+            "rows": 1
+        },
+        {
+            "table": "dye_shade_approvals",
+            "rows": 1
+        },
+        {
+            "table": "dye_trim_programme_lines",
+            "rows": 1
+        },
+        {
+            "table": "dye_trim_programmes",
+            "rows": 1
+        },
+        {
+            "table": "dye_wash_production_lines",
+            "rows": 2
+        },
+        {
+            "table": "dye_wash_productions",
+            "rows": 1
+        },
+        {
+            "table": "dyeing_loss_bands",
+            "rows": 72
+        },
+        {
+            "table": "es_changes",
+            "rows": 1585
+        },
+        {
+            "table": "es_column_events",
+            "rows": 0
+        },
+        {
+            "table": "es_columns",
+            "rows": 60
+        },
+        {
+            "table": "es_edit_requests",
+            "rows": 1
+        },
+        {
+            "table": "es_groups",
+            "rows": 7
+        },
+        {
+            "table": "es_statements",
+            "rows": 31
+        },
+        {
+            "table": "escalation_rules",
+            "rows": 4
+        },
+        {
+            "table": "export_jobs",
+            "rows": 0
+        },
+        {
+            "table": "fabric_booking_lines",
+            "rows": 3
+        },
+        {
+            "table": "fabric_bookings",
+            "rows": 3
+        },
+        {
+            "table": "fabric_defects",
+            "rows": 30
+        },
+        {
+            "table": "fabric_inspections",
+            "rows": 1
+        },
+        {
+            "table": "fabric_roll_defects",
+            "rows": 8
+        },
+        {
+            "table": "fabric_rolls",
+            "rows": 11
+        },
+        {
+            "table": "fabric_type_garment_parts",
+            "rows": 2
+        },
+        {
+            "table": "fabric_types",
+            "rows": 18
+        },
+        {
+            "table": "factories",
+            "rows": 4
+        },
+        {
+            "table": "failure_categories",
+            "rows": 11
+        },
+        {
+            "table": "failure_codes",
+            "rows": 131
+        },
+        {
+            "table": "fiber_composition_items",
+            "rows": 32
+        },
+        {
+            "table": "fiber_compositions",
+            "rows": 18
+        },
+        {
+            "table": "fibers",
+            "rows": 16
+        },
+        {
+            "table": "file_attachments",
+            "rows": 1012
+        },
+        {
+            "table": "fin_batch_receipts",
+            "rows": 2
+        },
+        {
+            "table": "fin_cut_requisition_lines",
+            "rows": 1
+        },
+        {
+            "table": "fin_cut_requisitions",
+            "rows": 1
+        },
+        {
+            "table": "fin_inspection_rolls",
+            "rows": 2
+        },
+        {
+            "table": "fin_inspections",
+            "rows": 1
+        },
+        {
+            "table": "fin_machine_processes",
+            "rows": 10
+        },
+        {
+            "table": "fin_machine_targets",
+            "rows": 9
+        },
+        {
+            "table": "fin_machines",
+            "rows": 9
+        },
+        {
+            "table": "fin_process_deliveries",
+            "rows": 9
+        },
+        {
+            "table": "fin_process_groups",
+            "rows": 12
+        },
+        {
+            "table": "fin_process_subgroups",
+            "rows": 6
+        },
+        {
+            "table": "fin_process_types",
+            "rows": 18
+        },
+        {
+            "table": "fin_production_amendments",
+            "rows": 1
+        },
+        {
+            "table": "fin_production_lines",
+            "rows": 2
+        },
+        {
+            "table": "fin_production_sheets",
+            "rows": 1
+        },
+        {
+            "table": "fin_qc_entries",
+            "rows": 1
+        },
+        {
+            "table": "fin_reprocess_advices",
+            "rows": 0
+        },
+        {
+            "table": "fin_reprocess_returns",
+            "rows": 1
+        },
+        {
+            "table": "fin_sc_bill_lines",
+            "rows": 1
+        },
+        {
+            "table": "fin_sc_bills",
+            "rows": 1
+        },
+        {
+            "table": "fin_sc_challan_lines",
+            "rows": 1
+        },
+        {
+            "table": "fin_sc_challans",
+            "rows": 1
+        },
+        {
+            "table": "fin_sc_receipt_lines",
+            "rows": 1
+        },
+        {
+            "table": "fin_sc_receipts",
+            "rows": 1
+        },
+        {
+            "table": "fin_shade_decisions",
+            "rows": 1
+        },
+        {
+            "table": "fin_store_deliveries",
+            "rows": 1
+        },
+        {
+            "table": "fin_store_delivery_lines",
+            "rows": 1
+        },
+        {
+            "table": "fin_store_lots",
+            "rows": 1
+        },
+        {
+            "table": "fin_store_moves",
+            "rows": 3
+        },
+        {
+            "table": "fin_store_returns",
+            "rows": 1
+        },
+        {
+            "table": "fin_store_rolls",
+            "rows": 1
+        },
+        {
+            "table": "floor_requisition_issues",
+            "rows": 2
+        },
+        {
+            "table": "floor_requisition_lines",
+            "rows": 6
+        },
+        {
+            "table": "floor_requisitions",
+            "rows": 5
+        },
+        {
+            "table": "floors",
+            "rows": 4
+        },
+        {
+            "table": "fp_batch_hours",
+            "rows": 15
+        },
+        {
+            "table": "fp_batch_lead_rules",
+            "rows": 13
+        },
+        {
+            "table": "fp_batch_plan_lines",
+            "rows": 2
+        },
+        {
+            "table": "fp_batch_plans",
+            "rows": 1
+        },
+        {
+            "table": "fp_holidays",
+            "rows": 2
+        },
+        {
+            "table": "fp_machine_capacities",
+            "rows": 1
+        },
+        {
+            "table": "fp_machine_routes",
+            "rows": 8
+        },
+        {
+            "table": "fp_report_runs",
+            "rows": 1
+        },
+        {
+            "table": "fp_reports",
+            "rows": 8
+        },
+        {
+            "table": "fp_schedule_batches",
+            "rows": 1
+        },
+        {
+            "table": "fp_schedule_plans",
+            "rows": 1
+        },
+        {
+            "table": "fp_status_areas",
+            "rows": 18
+        },
+        {
+            "table": "fp_status_groups",
+            "rows": 6
+        },
+        {
+            "table": "fp_status_rules",
+            "rows": 30
+        },
+        {
+            "table": "garment_parts",
+            "rows": 20
+        },
+        {
+            "table": "gate_pass_categories",
+            "rows": 4
+        },
+        {
+            "table": "gate_pass_events",
+            "rows": 14
+        },
+        {
+            "table": "gate_pass_in_lines",
+            "rows": 3
+        },
+        {
+            "table": "gate_pass_ins",
+            "rows": 3
+        },
+        {
+            "table": "gate_pass_items",
+            "rows": 20
+        },
+        {
+            "table": "gate_pass_lines",
+            "rows": 2
+        },
+        {
+            "table": "gate_pass_location_types",
+            "rows": 20
+        },
+        {
+            "table": "gate_pass_locations",
+            "rows": 14
+        },
+        {
+            "table": "gate_pass_purposes",
+            "rows": 24
+        },
+        {
+            "table": "gate_passes",
+            "rows": 3
+        },
+        {
+            "table": "gl_accounts",
+            "rows": 16
+        },
+        {
+            "table": "gl_event_mappings",
+            "rows": 14
+        },
+        {
+            "table": "gl_journal_entries",
+            "rows": 3
+        },
+        {
+            "table": "gl_journal_lines",
+            "rows": 6
+        },
+        {
+            "table": "goods_receipt_lines",
+            "rows": 13
+        },
+        {
+            "table": "goods_receipts",
+            "rows": 11
+        },
+        {
+            "table": "grades",
+            "rows": 14
+        },
+        {
+            "table": "gs_audit_trail",
+            "rows": 29
+        },
+        {
+            "table": "gs_departments",
+            "rows": 24
+        },
+        {
+            "table": "gs_document_lines",
+            "rows": 8
+        },
+        {
+            "table": "gs_documents",
+            "rows": 6
+        },
+        {
+            "table": "gs_items",
+            "rows": 36
+        },
+        {
+            "table": "gs_requisition_lines",
+            "rows": 3
+        },
+        {
+            "table": "gs_requisitions",
+            "rows": 2
+        },
+        {
+            "table": "gs_settings",
+            "rows": 0
+        },
+        {
+            "table": "gs_stock_movements",
+            "rows": 12
+        },
+        {
+            "table": "gs_suppliers",
+            "rows": 11
+        },
+        {
+            "table": "hr_allowances",
+            "rows": 2
+        },
+        {
+            "table": "hr_attendance_corrections",
+            "rows": 1
+        },
+        {
+            "table": "hr_attendance_days",
+            "rows": 1743
+        },
+        {
+            "table": "hr_bonus_lines",
+            "rows": 0
+        },
+        {
+            "table": "hr_bonus_rule_sets",
+            "rows": 2
+        },
+        {
+            "table": "hr_bonus_rules",
+            "rows": 12
+        },
+        {
+            "table": "hr_bonus_runs",
+            "rows": 0
+        },
+        {
+            "table": "hr_daily_salaries",
+            "rows": 5
+        },
+        {
+            "table": "hr_deductions",
+            "rows": 0
+        },
+        {
+            "table": "hr_designation_groups",
+            "rows": 90
+        },
+        {
+            "table": "hr_employee_assignments",
+            "rows": 135
+        },
+        {
+            "table": "hr_employee_background_checks",
+            "rows": 1
+        },
+        {
+            "table": "hr_employee_ot",
+            "rows": 0
+        },
+        {
+            "table": "hr_employee_pay_lines",
+            "rows": 2
+        },
+        {
+            "table": "hr_employee_salaries",
+            "rows": 6
+        },
+        {
+            "table": "hr_employees",
+            "rows": 134
+        },
+        {
+            "table": "hr_employment_types",
+            "rows": 11
+        },
+        {
+            "table": "hr_festivals",
+            "rows": 6
+        },
+        {
+            "table": "hr_gazette_grade_wages",
+            "rows": 2
+        },
+        {
+            "table": "hr_gazette_lines",
+            "rows": 30
+        },
+        {
+            "table": "hr_gazette_policies",
+            "rows": 2
+        },
+        {
+            "table": "hr_gazettes",
+            "rows": 8
+        },
+        {
+            "table": "hr_grade_ot",
+            "rows": 0
+        },
+        {
+            "table": "hr_holidays",
+            "rows": 34
+        },
+        {
+            "table": "hr_id_card_queue",
+            "rows": 5
+        },
+        {
+            "table": "hr_increments",
+            "rows": 1
+        },
+        {
+            "table": "hr_leave_applications",
+            "rows": 1
+        },
+        {
+            "table": "hr_leave_types",
+            "rows": 16
+        },
+        {
+            "table": "hr_lefty_cases",
+            "rows": 1
+        },
+        {
+            "table": "hr_letter_templates",
+            "rows": 2
+        },
+        {
+            "table": "hr_letter_types",
+            "rows": 17
+        },
+        {
+            "table": "hr_letters",
+            "rows": 6
+        },
+        {
+            "table": "hr_ot_audit",
+            "rows": 0
+        },
+        {
+            "table": "hr_ot_correction_history",
+            "rows": 1
+        },
+        {
+            "table": "hr_ot_corrections",
+            "rows": 1
+        },
+        {
+            "table": "hr_ot_limits",
+            "rows": 0
+        },
+        {
+            "table": "hr_ot_request_employees",
+            "rows": 2
+        },
+        {
+            "table": "hr_ot_requests",
+            "rows": 1
+        },
+        {
+            "table": "hr_ot_rules",
+            "rows": 8
+        },
+        {
+            "table": "hr_pay_elements",
+            "rows": 16
+        },
+        {
+            "table": "hr_pay_periods",
+            "rows": 12
+        },
+        {
+            "table": "hr_payroll_adjustments",
+            "rows": 2
+        },
+        {
+            "table": "hr_payroll_settings",
+            "rows": 12
+        },
+        {
+            "table": "hr_promotions",
+            "rows": 1
+        },
+        {
+            "table": "hr_rejoins",
+            "rows": 0
+        },
+        {
+            "table": "hr_salary_runs",
+            "rows": 2
+        },
+        {
+            "table": "hr_salary_slips",
+            "rows": 9
+        },
+        {
+            "table": "hr_separations",
+            "rows": 1
+        },
+        {
+            "table": "hr_settlements",
+            "rows": 1
+        },
+        {
+            "table": "hr_shift_rosters",
+            "rows": 1
+        },
+        {
+            "table": "hr_shift_teams",
+            "rows": 4
+        },
+        {
+            "table": "hr_shifts",
+            "rows": 4
+        },
+        {
+            "table": "hr_transfers",
+            "rows": 1
+        },
+        {
+            "table": "hs_codes",
+            "rows": 0
+        },
+        {
+            "table": "import_errors",
+            "rows": 0
+        },
+        {
+            "table": "import_jobs",
+            "rows": 0
+        },
+        {
+            "table": "integration_logs",
+            "rows": 1
+        },
+        {
+            "table": "inventory_balances",
+            "rows": 8
+        },
+        {
+            "table": "inventory_transactions",
+            "rows": 10
+        },
+        {
+            "table": "inventory_transfer_items",
+            "rows": 0
+        },
+        {
+            "table": "inventory_transfers",
+            "rows": 0
+        },
+        {
+            "table": "item_categories",
+            "rows": 629
+        },
+        {
+            "table": "item_chemical_attributes",
+            "rows": 0
+        },
+        {
+            "table": "item_departments",
+            "rows": 15
+        },
+        {
+            "table": "item_fabric_attributes",
+            "rows": 1
+        },
+        {
+            "table": "item_lots",
+            "rows": 2
+        },
+        {
+            "table": "item_reservations",
+            "rows": 6
+        },
+        {
+            "table": "item_stock_balances",
+            "rows": 9
+        },
+        {
+            "table": "item_stock_transactions",
+            "rows": 20
+        },
+        {
+            "table": "item_types",
+            "rows": 78
+        },
+        {
+            "table": "item_yarn_attributes",
+            "rows": 922
+        },
+        {
+            "table": "items",
+            "rows": 7989
+        },
+        {
+            "table": "knit_capacity_plans",
+            "rows": 9
+        },
+        {
+            "table": "knit_cards",
+            "rows": 1
+        },
+        {
+            "table": "knit_cc_challan_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_cc_challans",
+            "rows": 2
+        },
+        {
+            "table": "knit_cc_productions",
+            "rows": 3
+        },
+        {
+            "table": "knit_cc_program_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_cc_programs",
+            "rows": 1
+        },
+        {
+            "table": "knit_cc_requirements",
+            "rows": 3
+        },
+        {
+            "table": "knit_cc_yarn_issues",
+            "rows": 2
+        },
+        {
+            "table": "knit_cc_yarn_req_lines",
+            "rows": 3
+        },
+        {
+            "table": "knit_cc_yarn_reqs",
+            "rows": 2
+        },
+        {
+            "table": "knit_direct_booking_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_direct_bookings",
+            "rows": 1
+        },
+        {
+            "table": "knit_grey_adjustment_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_grey_adjustments",
+            "rows": 1
+        },
+        {
+            "table": "knit_grey_lots",
+            "rows": 19
+        },
+        {
+            "table": "knit_grey_month_closes",
+            "rows": 0
+        },
+        {
+            "table": "knit_grey_moves",
+            "rows": 33
+        },
+        {
+            "table": "knit_grey_openings",
+            "rows": 3
+        },
+        {
+            "table": "knit_grey_receipt_rolls",
+            "rows": 2
+        },
+        {
+            "table": "knit_grey_receipts",
+            "rows": 1
+        },
+        {
+            "table": "knit_grey_transfer_lines",
+            "rows": 11
+        },
+        {
+            "table": "knit_grey_transfers",
+            "rows": 10
+        },
+        {
+            "table": "knit_label_printers",
+            "rows": 4
+        },
+        {
+            "table": "knit_machine_loads",
+            "rows": 1
+        },
+        {
+            "table": "knit_machines",
+            "rows": 9
+        },
+        {
+            "table": "knit_needle_assignments",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_broken_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_brokens",
+            "rows": 1
+        },
+        {
+            "table": "knit_needle_closings",
+            "rows": 0
+        },
+        {
+            "table": "knit_needle_issue_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_issues",
+            "rows": 1
+        },
+        {
+            "table": "knit_needle_loan_openings",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_loan_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_loan_receipts",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_loan_req_lines",
+            "rows": 5
+        },
+        {
+            "table": "knit_needle_loan_reqs",
+            "rows": 5
+        },
+        {
+            "table": "knit_needle_loan_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_needle_loan_returns",
+            "rows": 1
+        },
+        {
+            "table": "knit_needle_moves",
+            "rows": 25
+        },
+        {
+            "table": "knit_needle_openings",
+            "rows": 3
+        },
+        {
+            "table": "knit_needle_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_receipts",
+            "rows": 1
+        },
+        {
+            "table": "knit_needle_req_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_needle_reqs",
+            "rows": 1
+        },
+        {
+            "table": "knit_needle_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_needle_returns",
+            "rows": 1
+        },
+        {
+            "table": "knit_oil_consumption_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_oil_consumptions",
+            "rows": 1
+        },
+        {
+            "table": "knit_oil_openings",
+            "rows": 2
+        },
+        {
+            "table": "knit_oil_receipt_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_oil_receipts",
+            "rows": 1
+        },
+        {
+            "table": "knit_oil_req_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_oil_reqs",
+            "rows": 1
+        },
+        {
+            "table": "knit_oil_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_oil_returns",
+            "rows": 1
+        },
+        {
+            "table": "knit_operator_postings",
+            "rows": 5
+        },
+        {
+            "table": "knit_prod_orders",
+            "rows": 1
+        },
+        {
+            "table": "knit_programs",
+            "rows": 1
+        },
+        {
+            "table": "knit_ref_entries",
+            "rows": 48
+        },
+        {
+            "table": "knit_roll_inspection_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_roll_inspections",
+            "rows": 1
+        },
+        {
+            "table": "knit_roll_sheets",
+            "rows": 2
+        },
+        {
+            "table": "knit_rolls",
+            "rows": 3
+        },
+        {
+            "table": "knit_sample_plan_lines",
+            "rows": 3
+        },
+        {
+            "table": "knit_sample_plans",
+            "rows": 2
+        },
+        {
+            "table": "knit_sc_bill_lines",
+            "rows": 5
+        },
+        {
+            "table": "knit_sc_bills",
+            "rows": 4
+        },
+        {
+            "table": "knit_sc_debit_memo_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_sc_debit_memos",
+            "rows": 1
+        },
+        {
+            "table": "knit_sc_deliveries",
+            "rows": 1
+        },
+        {
+            "table": "knit_sc_delivery_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_sc_grey_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_sc_grey_receipts",
+            "rows": 1
+        },
+        {
+            "table": "knit_sc_grey_return_lines",
+            "rows": 3
+        },
+        {
+            "table": "knit_sc_grey_returns",
+            "rows": 2
+        },
+        {
+            "table": "knit_sc_program_lines",
+            "rows": 4
+        },
+        {
+            "table": "knit_sc_programs",
+            "rows": 3
+        },
+        {
+            "table": "knit_sc_receipt_fabrics",
+            "rows": 3
+        },
+        {
+            "table": "knit_sc_receipt_yarns",
+            "rows": 1
+        },
+        {
+            "table": "knit_sc_receipts",
+            "rows": 2
+        },
+        {
+            "table": "knit_sc_yarn_challan_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_sc_yarn_challans",
+            "rows": 1
+        },
+        {
+            "table": "knit_station_machines",
+            "rows": 2
+        },
+        {
+            "table": "knit_stations",
+            "rows": 1
+        },
+        {
+            "table": "knit_twist_bill_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_twist_bills",
+            "rows": 1
+        },
+        {
+            "table": "knit_twist_program_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_twist_programs",
+            "rows": 1
+        },
+        {
+            "table": "knit_twist_receive_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_twist_receives",
+            "rows": 1
+        },
+        {
+            "table": "knit_user_offices",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_adjustment_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_adjustments",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_comparison_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_comparisons",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_counts",
+            "rows": 50
+        },
+        {
+            "table": "knit_yarn_issue_lines",
+            "rows": 3
+        },
+        {
+            "table": "knit_yarn_issue_req_lines",
+            "rows": 6
+        },
+        {
+            "table": "knit_yarn_issue_reqs",
+            "rows": 4
+        },
+        {
+            "table": "knit_yarn_issue_return_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_issue_returns",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_issues",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_lots",
+            "rows": 7
+        },
+        {
+            "table": "knit_yarn_month_closes",
+            "rows": 0
+        },
+        {
+            "table": "knit_yarn_moves",
+            "rows": 21
+        },
+        {
+            "table": "knit_yarn_ob_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_obs",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_offers",
+            "rows": 3
+        },
+        {
+            "table": "knit_yarn_party_challan_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_party_challans",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_period_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_po_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_pos",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_prog_transfer_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_prog_transfers",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_racks",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_receipts",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_replace_req_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_replace_reqs",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_replacement_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_replacements",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_requisition_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_requisitions",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_returns",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_test_order_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yarn_test_orders",
+            "rows": 1
+        },
+        {
+            "table": "knit_yarn_test_results",
+            "rows": 3
+        },
+        {
+            "table": "knit_yarn_tests",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_dyed_receipt_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_dyed_receipts",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_dyed_transfer_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_dyed_transfers",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_grey_transfer_lines",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_grey_transfers",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_loss_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yd_loss_memos",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_program_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yd_programs",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yd_receipts",
+            "rows": 1
+        },
+        {
+            "table": "knit_yd_reprocess_lines",
+            "rows": 2
+        },
+        {
+            "table": "knit_yd_reprocesses",
+            "rows": 2
+        },
+        {
+            "table": "knit_yd_revisions",
+            "rows": 1
+        },
+        {
+            "table": "kpi_snapshots",
+            "rows": 323
+        },
+        {
+            "table": "lab_cert_register",
+            "rows": 1
+        },
+        {
+            "table": "lab_cert_types",
+            "rows": 15
+        },
+        {
+            "table": "lab_certificates",
+            "rows": 1
+        },
+        {
+            "table": "lab_equipment",
+            "rows": 8
+        },
+        {
+            "table": "lab_fabric_tests",
+            "rows": 1
+        },
+        {
+            "table": "lab_trial_lines",
+            "rows": 2
+        },
+        {
+            "table": "lab_trials",
+            "rows": 1
+        },
+        {
+            "table": "label_templates",
+            "rows": 10
+        },
+        {
+            "table": "landed_cost_allocations",
+            "rows": 0
+        },
+        {
+            "table": "landed_cost_charges",
+            "rows": 0
+        },
+        {
+            "table": "landed_cost_receipts",
+            "rows": 0
+        },
+        {
+            "table": "landed_cost_vouchers",
+            "rows": 0
+        },
+        {
+            "table": "legacy_roles",
+            "rows": 0
+        },
+        {
+            "table": "letter_of_credit_amendments",
+            "rows": 1
+        },
+        {
+            "table": "letters_of_credit",
+            "rows": 1
+        },
+        {
+            "table": "lookup_tables",
+            "rows": 46
+        },
+        {
+            "table": "lookup_values",
+            "rows": 665
+        },
+        {
+            "table": "mail_services",
+            "rows": 0
+        },
+        {
+            "table": "maintenance_plan_rules",
+            "rows": 8
+        },
+        {
+            "table": "maintenance_plans",
+            "rows": 8
+        },
+        {
+            "table": "maintenance_schedules",
+            "rows": 8
+        },
+        {
+            "table": "maintenance_template_versions",
+            "rows": 9
+        },
+        {
+            "table": "maintenance_templates",
+            "rows": 9
+        },
+        {
+            "table": "maintenance_types",
+            "rows": 10
+        },
+        {
+            "table": "manufacturers",
+            "rows": 117
+        },
+        {
+            "table": "menu_overrides",
+            "rows": 0
+        },
+        {
+            "table": "merch_acc_booking_lines",
+            "rows": 2
+        },
+        {
+            "table": "merch_acc_bookings",
+            "rows": 1
+        },
+        {
+            "table": "merch_acc_mrr_costs",
+            "rows": 2
+        },
+        {
+            "table": "merch_acc_mrr_lines",
+            "rows": 5
+        },
+        {
+            "table": "merch_acc_mrrs",
+            "rows": 2
+        },
+        {
+            "table": "merch_acc_po_lines",
+            "rows": 4
+        },
+        {
+            "table": "merch_acc_pos",
+            "rows": 1
+        },
+        {
+            "table": "merch_acc_requisition_lines",
+            "rows": 10
+        },
+        {
+            "table": "merch_acc_requisitions",
+            "rows": 3
+        },
+        {
+            "table": "merch_acc_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "merch_acc_returns",
+            "rows": 1
+        },
+        {
+            "table": "merch_ai_alerts",
+            "rows": 1
+        },
+        {
+            "table": "merch_ai_order_scores",
+            "rows": 8
+        },
+        {
+            "table": "merch_ai_runs",
+            "rows": 4
+        },
+        {
+            "table": "merch_ai_task_scores",
+            "rows": 88
+        },
+        {
+            "table": "merch_budget_events",
+            "rows": 0
+        },
+        {
+            "table": "merch_budget_lines",
+            "rows": 3
+        },
+        {
+            "table": "merch_budgets",
+            "rows": 2
+        },
+        {
+            "table": "merch_cad_records",
+            "rows": 1
+        },
+        {
+            "table": "merch_cad_sizes",
+            "rows": 0
+        },
+        {
+            "table": "merch_embellishment_rates",
+            "rows": 1
+        },
+        {
+            "table": "merch_fab_process_rates",
+            "rows": 26
+        },
+        {
+            "table": "merch_fabric_booking_lines",
+            "rows": 6
+        },
+        {
+            "table": "merch_fabric_bookings",
+            "rows": 4
+        },
+        {
+            "table": "merch_ffab_ob_lines",
+            "rows": 2
+        },
+        {
+            "table": "merch_ffab_obs",
+            "rows": 1
+        },
+        {
+            "table": "merch_inquiries",
+            "rows": 2
+        },
+        {
+            "table": "merch_labdip_programs",
+            "rows": 2
+        },
+        {
+            "table": "merch_labdip_shades",
+            "rows": 4
+        },
+        {
+            "table": "merch_measure_charts",
+            "rows": 1
+        },
+        {
+            "table": "merch_measure_points",
+            "rows": 3
+        },
+        {
+            "table": "merch_order_sizes",
+            "rows": 3
+        },
+        {
+            "table": "merch_order_tna",
+            "rows": 25
+        },
+        {
+            "table": "merch_order_tna_events",
+            "rows": 6
+        },
+        {
+            "table": "merch_order_upload_lines",
+            "rows": 3
+        },
+        {
+            "table": "merch_order_uploads",
+            "rows": 1
+        },
+        {
+            "table": "merch_orders",
+            "rows": 2
+        },
+        {
+            "table": "merch_pfab_indent_lines",
+            "rows": 2
+        },
+        {
+            "table": "merch_pfab_indents",
+            "rows": 1
+        },
+        {
+            "table": "merch_pfab_ledger",
+            "rows": 5
+        },
+        {
+            "table": "merch_pfab_mrr_costs",
+            "rows": 1
+        },
+        {
+            "table": "merch_pfab_mrr_lines",
+            "rows": 3
+        },
+        {
+            "table": "merch_pfab_mrrs",
+            "rows": 2
+        },
+        {
+            "table": "merch_pfab_ob_events",
+            "rows": 5
+        },
+        {
+            "table": "merch_pfab_ob_lines",
+            "rows": 3
+        },
+        {
+            "table": "merch_pfab_obs",
+            "rows": 2
+        },
+        {
+            "table": "merch_pfab_po_costs",
+            "rows": 1
+        },
+        {
+            "table": "merch_pfab_po_lines",
+            "rows": 2
+        },
+        {
+            "table": "merch_pfab_pos",
+            "rows": 1
+        },
+        {
+            "table": "merch_pfab_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "merch_pfab_returns",
+            "rows": 1
+        },
+        {
+            "table": "merch_print_lines",
+            "rows": 4
+        },
+        {
+            "table": "merch_print_programs",
+            "rows": 2
+        },
+        {
+            "table": "merch_proc_cost_heads",
+            "rows": 6
+        },
+        {
+            "table": "merch_proc_posting_setups",
+            "rows": 1
+        },
+        {
+            "table": "merch_sample_batches",
+            "rows": 2
+        },
+        {
+            "table": "merch_sample_challan_items",
+            "rows": 1
+        },
+        {
+            "table": "merch_sample_challans",
+            "rows": 1
+        },
+        {
+            "table": "merch_sample_feedback",
+            "rows": 2
+        },
+        {
+            "table": "merch_sample_lines",
+            "rows": 2
+        },
+        {
+            "table": "merch_sample_programs",
+            "rows": 1
+        },
+        {
+            "table": "merch_stock_closing_exceptions",
+            "rows": 1
+        },
+        {
+            "table": "merch_stock_closings",
+            "rows": 2
+        },
+        {
+            "table": "merch_style_approvals",
+            "rows": 0
+        },
+        {
+            "table": "merch_style_attachments",
+            "rows": 1
+        },
+        {
+            "table": "merch_style_bom_lines",
+            "rows": 6
+        },
+        {
+            "table": "merch_style_bom_versions",
+            "rows": 2
+        },
+        {
+            "table": "merch_style_boms",
+            "rows": 2
+        },
+        {
+            "table": "merch_style_colours",
+            "rows": 1
+        },
+        {
+            "table": "merch_style_fabric_maps",
+            "rows": 0
+        },
+        {
+            "table": "merch_style_fabrics",
+            "rows": 1
+        },
+        {
+            "table": "merch_style_item_styles",
+            "rows": 1
+        },
+        {
+            "table": "merch_style_items",
+            "rows": 1
+        },
+        {
+            "table": "merch_style_knit_instructions",
+            "rows": 0
+        },
+        {
+            "table": "merch_style_packing",
+            "rows": 0
+        },
+        {
+            "table": "merch_style_packing_details",
+            "rows": 0
+        },
+        {
+            "table": "merch_style_processes",
+            "rows": 1
+        },
+        {
+            "table": "merch_style_registration_events",
+            "rows": 0
+        },
+        {
+            "table": "merch_style_registrations",
+            "rows": 1
+        },
+        {
+            "table": "merch_style_size_ranges",
+            "rows": 2
+        },
+        {
+            "table": "merch_styles",
+            "rows": 2
+        },
+        {
+            "table": "merch_trim_dyeing_items",
+            "rows": 1
+        },
+        {
+            "table": "merch_trim_dyeing_programs",
+            "rows": 1
+        },
+        {
+            "table": "merch_trim_sourcings",
+            "rows": 2
+        },
+        {
+            "table": "merch_yarn_specs",
+            "rows": 8
+        },
+        {
+            "table": "meter_readings",
+            "rows": 16
+        },
+        {
+            "table": "meter_reset_events",
+            "rows": 0
+        },
+        {
+            "table": "meter_types",
+            "rows": 12
+        },
+        {
+            "table": "model_has_roles",
+            "rows": 0
+        },
+        {
+            "table": "mp_audit_trail",
+            "rows": 8
+        },
+        {
+            "table": "mp_followups",
+            "rows": 2
+        },
+        {
+            "table": "mp_items",
+            "rows": 40
+        },
+        {
+            "table": "mp_quotation_revisions",
+            "rows": 7
+        },
+        {
+            "table": "mp_quotations",
+            "rows": 3
+        },
+        {
+            "table": "mp_requisition_lines",
+            "rows": 6
+        },
+        {
+            "table": "mp_requisitions",
+            "rows": 4
+        },
+        {
+            "table": "mp_supplier_logins",
+            "rows": 4
+        },
+        {
+            "table": "mp_suppliers",
+            "rows": 33
+        },
+        {
+            "table": "notification_broadcasts",
+            "rows": 0
+        },
+        {
+            "table": "notification_event_defaults",
+            "rows": 30
+        },
+        {
+            "table": "notification_preferences",
+            "rows": 0
+        },
+        {
+            "table": "number_sequence_formats",
+            "rows": 0
+        },
+        {
+            "table": "number_sequences",
+            "rows": 21
+        },
+        {
+            "table": "origin_countries",
+            "rows": 40
+        },
+        {
+            "table": "os_changes",
+            "rows": 7521
+        },
+        {
+            "table": "os_column_events",
+            "rows": 84
+        },
+        {
+            "table": "os_columns",
+            "rows": 326
+        },
+        {
+            "table": "os_department_heads",
+            "rows": 2
+        },
+        {
+            "table": "os_groups",
+            "rows": 36
+        },
+        {
+            "table": "os_mail_settings",
+            "rows": 0
+        },
+        {
+            "table": "os_orders",
+            "rows": 1739
+        },
+        {
+            "table": "os_team_members",
+            "rows": 15
+        },
+        {
+            "table": "os_teams",
+            "rows": 3
+        },
+        {
+            "table": "password_changes",
+            "rows": 141
+        },
+        {
+            "table": "payment_types",
+            "rows": 6
+        },
+        {
+            "table": "pb_accessory_items",
+            "rows": 227
+        },
+        {
+            "table": "pb_bom_lines",
+            "rows": 8
+        },
+        {
+            "table": "pb_bom_styles",
+            "rows": 4
+        },
+        {
+            "table": "pb_boms",
+            "rows": 2
+        },
+        {
+            "table": "pb_budget_costs",
+            "rows": 8
+        },
+        {
+            "table": "pb_budget_lines",
+            "rows": 7
+        },
+        {
+            "table": "pb_budget_requisitions",
+            "rows": 23
+        },
+        {
+            "table": "pb_budgets",
+            "rows": 8
+        },
+        {
+            "table": "pb_changes",
+            "rows": 1549
+        },
+        {
+            "table": "pb_column_events",
+            "rows": 24
+        },
+        {
+            "table": "pb_columns",
+            "rows": 73
+        },
+        {
+            "table": "pb_groups",
+            "rows": 6
+        },
+        {
+            "table": "pb_list_values",
+            "rows": 2513
+        },
+        {
+            "table": "pb_requisition_drafts",
+            "rows": 24
+        },
+        {
+            "table": "pb_requisitions",
+            "rows": 36
+        },
+        {
+            "table": "pb_stock_lots",
+            "rows": 1
+        },
+        {
+            "table": "pb_unit_rules",
+            "rows": 34
+        },
+        {
+            "table": "planning_daily_plans",
+            "rows": 2
+        },
+        {
+            "table": "planning_efficiency_standards",
+            "rows": 6
+        },
+        {
+            "table": "planning_lead_times",
+            "rows": 14
+        },
+        {
+            "table": "planning_line_machines",
+            "rows": 40
+        },
+        {
+            "table": "planning_line_manpower",
+            "rows": 40
+        },
+        {
+            "table": "planning_line_shifts",
+            "rows": 8
+        },
+        {
+            "table": "planning_lines",
+            "rows": 8
+        },
+        {
+            "table": "planning_master_plan_activities",
+            "rows": 18
+        },
+        {
+            "table": "planning_master_plan_days",
+            "rows": 4
+        },
+        {
+            "table": "planning_master_plan_lines",
+            "rows": 4
+        },
+        {
+            "table": "planning_master_plans",
+            "rows": 2
+        },
+        {
+            "table": "planning_plan_events",
+            "rows": 5
+        },
+        {
+            "table": "planning_revision_requests",
+            "rows": 1
+        },
+        {
+            "table": "planning_style_smvs",
+            "rows": 10
+        },
+        {
+            "table": "platform_expenses",
+            "rows": 0
+        },
+        {
+            "table": "process_loss_allowances",
+            "rows": 18
+        },
+        {
+            "table": "production_cutting_programs",
+            "rows": 1
+        },
+        {
+            "table": "production_impacts",
+            "rows": 0
+        },
+        {
+            "table": "production_lines",
+            "rows": 39
+        },
+        {
+            "table": "production_material_issues",
+            "rows": 0
+        },
+        {
+            "table": "production_orders",
+            "rows": 1
+        },
+        {
+            "table": "production_style_bom_lines",
+            "rows": 1
+        },
+        {
+            "table": "production_styles",
+            "rows": 1
+        },
+        {
+            "table": "proforma_invoices",
+            "rows": 1
+        },
+        {
+            "table": "proto_alerts",
+            "rows": 1
+        },
+        {
+            "table": "proto_approvals",
+            "rows": 2
+        },
+        {
+            "table": "proto_bundle_cards",
+            "rows": 1
+        },
+        {
+            "table": "proto_bundle_movements",
+            "rows": 7
+        },
+        {
+            "table": "proto_bundles",
+            "rows": 2
+        },
+        {
+            "table": "proto_day_sheet_lines",
+            "rows": 2
+        },
+        {
+            "table": "proto_day_sheets",
+            "rows": 1
+        },
+        {
+            "table": "proto_development_tasks",
+            "rows": 28
+        },
+        {
+            "table": "proto_developments",
+            "rows": 2
+        },
+        {
+            "table": "proto_documents",
+            "rows": 2
+        },
+        {
+            "table": "proto_events",
+            "rows": 2
+        },
+        {
+            "table": "proto_feedback",
+            "rows": 1
+        },
+        {
+            "table": "proto_handovers",
+            "rows": 1
+        },
+        {
+            "table": "proto_material_issue_lines",
+            "rows": 1
+        },
+        {
+            "table": "proto_material_issues",
+            "rows": 1
+        },
+        {
+            "table": "proto_material_requisitions",
+            "rows": 1
+        },
+        {
+            "table": "proto_mr_lines",
+            "rows": 2
+        },
+        {
+            "table": "proto_mr_programs",
+            "rows": 1
+        },
+        {
+            "table": "proto_quality_checkpoints",
+            "rows": 13
+        },
+        {
+            "table": "proto_quality_checks",
+            "rows": 1
+        },
+        {
+            "table": "proto_requisition_decisions",
+            "rows": 3
+        },
+        {
+            "table": "proto_requisitions",
+            "rows": 1
+        },
+        {
+            "table": "proto_revisions",
+            "rows": 1
+        },
+        {
+            "table": "proto_samples",
+            "rows": 1
+        },
+        {
+            "table": "proto_target_plans",
+            "rows": 1
+        },
+        {
+            "table": "pt_daily_plan_events",
+            "rows": 9
+        },
+        {
+            "table": "pt_daily_plans",
+            "rows": 2
+        },
+        {
+            "table": "pt_entries",
+            "rows": 4
+        },
+        {
+            "table": "pt_line_capacities",
+            "rows": 3
+        },
+        {
+            "table": "pt_settings",
+            "rows": 1
+        },
+        {
+            "table": "pt_tv_screens",
+            "rows": 3
+        },
+        {
+            "table": "purchase_order_lines",
+            "rows": 10
+        },
+        {
+            "table": "purchase_order_revisions",
+            "rows": 0
+        },
+        {
+            "table": "purchase_orders",
+            "rows": 8
+        },
+        {
+            "table": "purchase_requisition_lines",
+            "rows": 10
+        },
+        {
+            "table": "purchase_requisitions",
+            "rows": 8
+        },
+        {
+            "table": "purchase_return_lines",
+            "rows": 0
+        },
+        {
+            "table": "purchase_returns",
+            "rows": 0
+        },
+        {
+            "table": "qt_cut_bundles",
+            "rows": 9
+        },
+        {
+            "table": "qt_defect_types",
+            "rows": 58
+        },
+        {
+            "table": "qt_entries",
+            "rows": 191
+        },
+        {
+            "table": "qt_entry_defects",
+            "rows": 17
+        },
+        {
+            "table": "qt_inspector_lines",
+            "rows": 8
+        },
+        {
+            "table": "qt_inspectors",
+            "rows": 4
+        },
+        {
+            "table": "qt_jobs",
+            "rows": 3
+        },
+        {
+            "table": "qt_line_attendances",
+            "rows": 2
+        },
+        {
+            "table": "qt_line_targets",
+            "rows": 15
+        },
+        {
+            "table": "qt_panels",
+            "rows": 22
+        },
+        {
+            "table": "qt_phones",
+            "rows": 3
+        },
+        {
+            "table": "qt_refused_taps",
+            "rows": 1
+        },
+        {
+            "table": "qt_sessions",
+            "rows": 12
+        },
+        {
+            "table": "rate_contract_lines",
+            "rows": 2
+        },
+        {
+            "table": "rate_contracts",
+            "rows": 1
+        },
+        {
+            "table": "rate_line_rates",
+            "rows": 2
+        },
+        {
+            "table": "rate_lines",
+            "rows": 28
+        },
+        {
+            "table": "refunds",
+            "rows": 0
+        },
+        {
+            "table": "report_jobs",
+            "rows": 4
+        },
+        {
+            "table": "report_templates",
+            "rows": 0
+        },
+        {
+            "table": "retention_policies",
+            "rows": 12
+        },
+        {
+            "table": "role_has_permissions",
+            "rows": 10110
+        },
+        {
+            "table": "role_item_category_permissions",
+            "rows": 0
+        },
+        {
+            "table": "role_permissions",
+            "rows": 0
+        },
+        {
+            "table": "roles",
+            "rows": 157
+        },
+        {
+            "table": "root_causes",
+            "rows": 21
+        },
+        {
+            "table": "rule_violations",
+            "rows": 0
+        },
+        {
+            "table": "sample_types",
+            "rows": 22
+        },
+        {
+            "table": "sections",
+            "rows": 144
+        },
+        {
+            "table": "service_contract_assets",
+            "rows": 0
+        },
+        {
+            "table": "service_contracts",
+            "rows": 1
+        },
+        {
+            "table": "service_types",
+            "rows": 36
+        },
+        {
+            "table": "settings",
+            "rows": 7
+        },
+        {
+            "table": "shipments",
+            "rows": 1
+        },
+        {
+            "table": "sizes",
+            "rows": 40
+        },
+        {
+            "table": "sm_adjustments",
+            "rows": 1
+        },
+        {
+            "table": "sm_grn_lines",
+            "rows": 3
+        },
+        {
+            "table": "sm_grns",
+            "rows": 3
+        },
+        {
+            "table": "sm_ledger",
+            "rows": 10
+        },
+        {
+            "table": "sm_material_outs",
+            "rows": 3
+        },
+        {
+            "table": "sm_material_returns",
+            "rows": 2
+        },
+        {
+            "table": "sm_min_levels",
+            "rows": 0
+        },
+        {
+            "table": "sm_roll_moves",
+            "rows": 9
+        },
+        {
+            "table": "sm_rolls",
+            "rows": 3
+        },
+        {
+            "table": "sm_stocks",
+            "rows": 3
+        },
+        {
+            "table": "sms_gateways",
+            "rows": 0
+        },
+        {
+            "table": "spare_part_compatibilities",
+            "rows": 0
+        },
+        {
+            "table": "spare_part_reservations",
+            "rows": 0
+        },
+        {
+            "table": "spare_parts",
+            "rows": 8
+        },
+        {
+            "table": "ss_amendment_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_amendments",
+            "rows": 1
+        },
+        {
+            "table": "ss_bill_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_bills",
+            "rows": 1
+        },
+        {
+            "table": "ss_bookings",
+            "rows": 1
+        },
+        {
+            "table": "ss_certificates",
+            "rows": 1
+        },
+        {
+            "table": "ss_challan_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_challan_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "ss_challan_returns",
+            "rows": 1
+        },
+        {
+            "table": "ss_challans",
+            "rows": 1
+        },
+        {
+            "table": "ss_containers",
+            "rows": 1
+        },
+        {
+            "table": "ss_doc_handovers",
+            "rows": 2
+        },
+        {
+            "table": "ss_export_docs",
+            "rows": 4
+        },
+        {
+            "table": "ss_invoice_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_invoices",
+            "rows": 1
+        },
+        {
+            "table": "ss_month_closes",
+            "rows": 0
+        },
+        {
+            "table": "ss_packing_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_packing_lists",
+            "rows": 1
+        },
+        {
+            "table": "ss_particulars",
+            "rows": 3
+        },
+        {
+            "table": "ss_sales_order_lines",
+            "rows": 1
+        },
+        {
+            "table": "ss_sales_order_particulars",
+            "rows": 1
+        },
+        {
+            "table": "ss_sales_order_sizes",
+            "rows": 2
+        },
+        {
+            "table": "ss_sales_orders",
+            "rows": 1
+        },
+        {
+            "table": "ss_sc_deliveries",
+            "rows": 1
+        },
+        {
+            "table": "ss_sc_delivery_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_sc_programme_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_sc_programmes",
+            "rows": 1
+        },
+        {
+            "table": "ss_sc_receipt_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_sc_receipts",
+            "rows": 1
+        },
+        {
+            "table": "ss_sc_reconciliation_lines",
+            "rows": 2
+        },
+        {
+            "table": "ss_sc_reconciliations",
+            "rows": 1
+        },
+        {
+            "table": "ss_sc_return_lines",
+            "rows": 1
+        },
+        {
+            "table": "ss_sc_returns",
+            "rows": 1
+        },
+        {
+            "table": "ss_settings",
+            "rows": 1
+        },
+        {
+            "table": "ss_shipment_attachments",
+            "rows": 1
+        },
+        {
+            "table": "ss_shipment_lines",
+            "rows": 3
+        },
+        {
+            "table": "ss_shipments",
+            "rows": 2
+        },
+        {
+            "table": "stock_count_lines",
+            "rows": 8
+        },
+        {
+            "table": "stock_counts",
+            "rows": 1
+        },
+        {
+            "table": "stores",
+            "rows": 30
+        },
+        {
+            "table": "subcontract_challan_lines",
+            "rows": 2
+        },
+        {
+            "table": "subcontract_challans",
+            "rows": 1
+        },
+        {
+            "table": "subscription_contracts",
+            "rows": 1
+        },
+        {
+            "table": "subscription_invoice_lines",
+            "rows": 2
+        },
+        {
+            "table": "subscription_invoices",
+            "rows": 2
+        },
+        {
+            "table": "subscription_payments",
+            "rows": 3
+        },
+        {
+            "table": "supplier_advance_adjustments",
+            "rows": 0
+        },
+        {
+            "table": "supplier_advances",
+            "rows": 1
+        },
+        {
+            "table": "supplier_claims",
+            "rows": 0
+        },
+        {
+            "table": "supplier_scorecards",
+            "rows": 18
+        },
+        {
+            "table": "support_grants",
+            "rows": 0
+        },
+        {
+            "table": "support_ticket_messages",
+            "rows": 4
+        },
+        {
+            "table": "support_tickets",
+            "rows": 3
+        },
+        {
+            "table": "teams",
+            "rows": 1
+        },
+        {
+            "table": "technician_skills",
+            "rows": 0
+        },
+        {
+            "table": "technicians",
+            "rows": 6
+        },
+        {
+            "table": "test_institutes",
+            "rows": 11
+        },
+        {
+            "table": "tna_event_instances",
+            "rows": 1
+        },
+        {
+            "table": "tna_event_users",
+            "rows": 1
+        },
+        {
+            "table": "tna_task_groups",
+            "rows": 9
+        },
+        {
+            "table": "tna_task_rights",
+            "rows": 2
+        },
+        {
+            "table": "tna_tasks",
+            "rows": 51
+        },
+        {
+            "table": "tna_template_tasks",
+            "rows": 27
+        },
+        {
+            "table": "tna_templates",
+            "rows": 12
+        },
+        {
+            "table": "trim_spec_controls",
+            "rows": 24
+        },
+        {
+            "table": "trim_spec_item_rules",
+            "rows": 1
+        },
+        {
+            "table": "trim_spec_templates",
+            "rows": 9
+        },
+        {
+            "table": "tx_bank_branches",
+            "rows": 12
+        },
+        {
+            "table": "tx_banks",
+            "rows": 52
+        },
+        {
+            "table": "tx_bill_distributions",
+            "rows": 6
+        },
+        {
+            "table": "tx_bill_of_entry_lines",
+            "rows": 1
+        },
+        {
+            "table": "tx_bill_realisations",
+            "rows": 2
+        },
+        {
+            "table": "tx_bills_of_entry",
+            "rows": 1
+        },
+        {
+            "table": "tx_bills_of_exchange",
+            "rows": 3
+        },
+        {
+            "table": "tx_boe_invoices",
+            "rows": 1
+        },
+        {
+            "table": "tx_cash_incentives",
+            "rows": 1
+        },
+        {
+            "table": "tx_cm_receipts",
+            "rows": 1
+        },
+        {
+            "table": "tx_commercial_invoice_lines",
+            "rows": 1
+        },
+        {
+            "table": "tx_commercial_invoices",
+            "rows": 1
+        },
+        {
+            "table": "tx_exchange_rates",
+            "rows": 1
+        },
+        {
+            "table": "tx_export_bill_invoices",
+            "rows": 1
+        },
+        {
+            "table": "tx_export_bills",
+            "rows": 1
+        },
+        {
+            "table": "tx_export_lc_orders",
+            "rows": 1
+        },
+        {
+            "table": "tx_export_lc_pis",
+            "rows": 1
+        },
+        {
+            "table": "tx_export_lcs",
+            "rows": 1
+        },
+        {
+            "table": "tx_export_pi_lines",
+            "rows": 1
+        },
+        {
+            "table": "tx_export_pis",
+            "rows": 1
+        },
+        {
+            "table": "tx_import_acceptances",
+            "rows": 1
+        },
+        {
+            "table": "tx_import_lc_commodities",
+            "rows": 1
+        },
+        {
+            "table": "tx_import_lc_pis",
+            "rows": 2
+        },
+        {
+            "table": "tx_import_lcs",
+            "rows": 2
+        },
+        {
+            "table": "tx_import_pi_lines",
+            "rows": 6
+        },
+        {
+            "table": "tx_import_pis",
+            "rows": 2
+        },
+        {
+            "table": "tx_lc_applicants",
+            "rows": 11
+        },
+        {
+            "table": "tx_notify_parties",
+            "rows": 11
+        },
+        {
+            "table": "tx_reference_entries",
+            "rows": 63
+        },
+        {
+            "table": "tx_ud_lcs",
+            "rows": 2
+        },
+        {
+            "table": "tx_ud_transfers",
+            "rows": 1
+        },
+        {
+            "table": "tx_uds",
+            "rows": 2
+        },
+        {
+            "table": "units_of_measure",
+            "rows": 43
+        },
+        {
+            "table": "uom_conversions",
+            "rows": 0
+        },
+        {
+            "table": "usage_metrics",
+            "rows": 24
+        },
+        {
+            "table": "user_roles",
+            "rows": 153
+        },
+        {
+            "table": "users",
+            "rows": 153
+        },
+        {
+            "table": "utilisation_declaration_lines",
+            "rows": 1
+        },
+        {
+            "table": "utilisation_declarations",
+            "rows": 1
+        },
+        {
+            "table": "vendors",
+            "rows": 10
+        },
+        {
+            "table": "warehouses",
+            "rows": 3
+        },
+        {
+            "table": "warranties",
+            "rows": 2
+        },
+        {
+            "table": "warranty_claims",
+            "rows": 0
+        },
+        {
+            "table": "webhook_deliveries",
+            "rows": 0
+        },
+        {
+            "table": "webhook_endpoints",
+            "rows": 1
+        },
+        {
+            "table": "webhook_subscriptions",
+            "rows": 1
+        },
+        {
+            "table": "work_natures",
+            "rows": 5
+        },
+        {
+            "table": "work_order_assignments",
+            "rows": 7
+        },
+        {
+            "table": "work_order_checklist_results",
+            "rows": 13
+        },
+        {
+            "table": "work_order_holds",
+            "rows": 1
+        },
+        {
+            "table": "work_order_labor_entries",
+            "rows": 0
+        },
+        {
+            "table": "work_order_parts",
+            "rows": 1
+        },
+        {
+            "table": "work_order_status_histories",
+            "rows": 33
+        },
+        {
+            "table": "work_orders",
+            "rows": 9
+        },
+        {
+            "table": "workstations",
+            "rows": 0
+        },
+        {
+            "table": "ws_changeovers",
+            "rows": 1
+        },
+        {
+            "table": "ws_cm_rates",
+            "rows": 1
+        },
+        {
+            "table": "ws_criticality_lines",
+            "rows": 1
+        },
+        {
+            "table": "ws_finishing_access",
+            "rows": 0
+        },
+        {
+            "table": "ws_garment_items",
+            "rows": 17
+        },
+        {
+            "table": "ws_item_groups",
+            "rows": 4
+        },
+        {
+            "table": "ws_item_parts",
+            "rows": 58
+        },
+        {
+            "table": "ws_learning_points",
+            "rows": 74
+        },
+        {
+            "table": "ws_line_allocations",
+            "rows": 1
+        },
+        {
+            "table": "ws_line_costings",
+            "rows": 1
+        },
+        {
+            "table": "ws_line_productions",
+            "rows": 2
+        },
+        {
+            "table": "ws_line_profiles",
+            "rows": 24
+        },
+        {
+            "table": "ws_man_minute_adjustments",
+            "rows": 3
+        },
+        {
+            "table": "ws_npt_entries",
+            "rows": 1
+        },
+        {
+            "table": "ws_oh_costs",
+            "rows": 2
+        },
+        {
+            "table": "ws_oh_heads",
+            "rows": 149
+        },
+        {
+            "table": "ws_oh_sections",
+            "rows": 11
+        },
+        {
+            "table": "ws_ot_plans",
+            "rows": 1
+        },
+        {
+            "table": "ws_output_adjustments",
+            "rows": 2
+        },
+        {
+            "table": "ws_report_runs",
+            "rows": 1
+        },
+        {
+            "table": "ws_responsible_depts",
+            "rows": 5
+        },
+        {
+            "table": "ws_responsible_persons",
+            "rows": 2
+        },
+        {
+            "table": "ws_salary_rates",
+            "rows": 2
+        },
+        {
+            "table": "ws_section_results",
+            "rows": 3
+        },
+        {
+            "table": "ws_section_targets",
+            "rows": 4
+        },
+        {
+            "table": "ws_sewing_targets",
+            "rows": 1
+        },
+        {
+            "table": "ws_spec_machines",
+            "rows": 2
+        },
+        {
+            "table": "ws_spec_processes",
+            "rows": 1
+        },
+        {
+            "table": "ws_specs",
+            "rows": 1
+        },
+        {
+            "table": "ws_target_access",
+            "rows": 0
+        },
+        {
+            "table": "ws_tech_variations",
+            "rows": 1
+        },
+        {
+            "table": "ws_wash_requisitions",
+            "rows": 2
+        },
+        {
+            "table": "ws_yarn_targets",
+            "rows": 2
+        },
+        {
+            "table": "yarn_count_configs",
+            "rows": 19
+        }
+    ]
+}
