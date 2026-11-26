@@ -23,3 +23,4 @@ yarn-error.log
 /AnnotechERP/tools/erp_crawler/out
 /.annotech-erp-audit.env
 /AnnotechERP/tools/app_check/out
+/docker-compose.yml
