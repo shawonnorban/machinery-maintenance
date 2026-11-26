@@ -1,0 +1,20 @@
+[
+ {"goto": "/knit-production/approval-without-test"},
+ {"pick": "Test By", "exact": true, "option": "Shawonoor"},
+ {"click": "main button:has-text('Search')", "after": 8000},
+ {"texts": "lots", "of": "main tbody tr"},
+ {"click": "main [aria-label='Release OB-301']", "after": 300},
+ {"fill": "Note OB-301", "exact": true, "text": "Merchandiser approved on buyer's email — dark shade only"},
+ {"shot": "waiver-ticked"},
+ {"click": "main button:has-text('Save')", "after": 15000},
+ {"texts": "err", "of": "[role=alert]"},
+ {"texts": "lots2", "of": "main tbody tr"},
+ {"goto": "/knit-production/approval-without-test?tab=records"},
+ {"texts": "waived", "of": "main tbody tr"},
+ {"goto": "/knit-production/yarn-test-register"},
+ {"texts": "register", "of": "main tbody tr"},
+ {"shot": "register"},
+ {"goto": "/knit-production/test-for-production?tab=entry&ref=YTS-2026100001"},
+ {"wait": 3000},
+ {"shot": "test-loaded"}
+]

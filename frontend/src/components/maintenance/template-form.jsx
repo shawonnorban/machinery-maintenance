@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { startTransition, useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,10 +41,11 @@ function TemplateForm({ template = null, options, action }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <FormSection>
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
         </FormField>
@@ -83,15 +86,16 @@ function TemplateForm({ template = null, options, action }) {
       <FormField label={t("description")}>
         {(fieldProps) => <Textarea {...fieldProps} value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={2000} />}
       </FormField>
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? t("save_changes") : t("create_checklist")}
+          <Save /> {isEdit ? t("save_changes") : t("create_checklist")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

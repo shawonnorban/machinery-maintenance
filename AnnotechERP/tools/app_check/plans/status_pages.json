@@ -1,0 +1,10 @@
+[
+ {"goto": "/order-summary/new"},
+ {"shot": "owner_new"},
+ {"goto": "/this-page-does-not-exist"},
+ {"see": "Page not found"},
+ {"shot": "nf_root"},
+ {"goto": "/order-summary/nope"},
+ {"see": "Page not found"},
+ {"shot": "nf_app"}
+]

@@ -1,0 +1,17 @@
+[
+ { "goto": "/m/security/user-registration" },
+ { "wait": 5000 },
+ { "click": "main button:has-text('New user account') >> nth=0", "wait": 2500 },
+ { "choose": "main select >> nth=0", "label": "Internal" },
+ { "type": "main input[type=text] >> nth=0", "text": "$ENV:MERCH_USER" },
+ { "type": "main input[type=password] >> nth=0", "text": "$ENV:MERCH_PASS" },
+ { "type": "main input[type=password] >> nth=1", "text": "$ENV:MERCH_PASS" },
+ { "type": "main input[type=text] >> nth=1", "text": "Annotech Probe Merchandiser" },
+ { "type": "main input[type=text] >> nth=2", "text": "$ENV:MERCH_EMAIL" },
+ { "peek": "main button:has-text('Select…') >> nth=1", "wait": 1200 },
+ { "popup": "roles" },
+ { "peek": "[role=option]:has-text('Merchandising Desk') >> nth=-1", "wait": 1200 },
+ { "texts": "before_save", "of": "main label, main button" },
+ { "click": "main button:has-text('Save user account')", "wait": 4000 },
+ { "texts": "after_save", "of": "main p, main span, main td, li[data-sonner-toast] *, main [role=alert]" }
+]

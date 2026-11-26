@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/inventory/in-house-grn?grn=5" }, { "wait": 6000 },
+ { "click": "main button:has-text('Attachments') >> visible=true", "wait": 1500 },
+ { "texts": "attach", "of": "main p, main button, main label, main span" },
+ { "click": "main button:has-text('Reverse') >> visible=true", "wait": 2000 },
+ { "texts": "reverse_dialog", "of": "[role=dialog] *, [role=alertdialog] *" },
+ { "fullshot": "st09-reverse" },
+ { "escape": true },
+ { "click": "header button[aria-label*='otification'], button[aria-label*='otification']", "wait": 2500 },
+ { "texts": "bell", "of": "[role=dialog] *, [role=menu] *, [data-radix-popper-content-wrapper] *, aside *" },
+ { "fullshot": "st09-bell" }
+]

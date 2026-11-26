@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/merchandising/trims-closing" },
+ { "wait": 3000 },
+ { "click": "header button >> nth=3", "wait": 1500 },
+ { "click": "aside button:has-text('TRIMS & ACCESSORIES')", "wait": 800 },
+ { "click": "aside button:has-text('OPERATION')", "wait": 1200 },
+ { "click": "aside button:has-text('Style & Order')", "wait": 1200 },
+ { "fullshot": "side-light2" }
+]

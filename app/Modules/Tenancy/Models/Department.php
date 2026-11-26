@@ -11,7 +11,9 @@ class Department extends BaseModel
 {
     use BelongsToTenant;
 
+    public const TYPES = ['PRODUCTION', 'NON_PRODUCTION'];
+
     protected $table = 'departments';
 
-    protected $fillable = ['company_id', 'factory_id', 'name', 'code'];
+    protected $fillable = ['company_id', 'factory_id', 'name', 'code', 'department_type', 'status'];
 }

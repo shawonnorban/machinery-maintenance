@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Maintenance;
 
+use App\Modules\HrPayroll\Support\FactoryCalendarSetup;
 use App\Modules\Asset\Actions\ChangeAssetStatus;
 use App\Modules\Asset\Actions\CreateAsset;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetType;
-use App\Modules\Calendar\Models\FactoryCalendar;
-use App\Modules\Calendar\Models\Shift;
 use App\Modules\Maintenance\Actions\CompleteSchedule;
 use App\Modules\Maintenance\Models\MaintenancePlan;
 use App\Modules\Maintenance\Models\MaintenancePlanRule;
@@ -270,20 +269,9 @@ class ScheduleGeneratorTest extends TestCase
 
     public function test_a_due_date_moves_off_a_non_working_day(): void
     {
-        FactoryCalendar::create([
-            'factory_id' => $this->dhaka->id,
-            'operating_mode' => 'SHIFT_BASED',
-            'weekly_off_days' => [5], // Friday
-            'effective_from' => '2026-01-01',
-        ]);
-
-        Shift::create([
-            'factory_id' => $this->dhaka->id,
-            'name' => 'Day', 'code' => 'DAY',
-            'start_time' => '08:00:00', 'end_time' => '22:00:00',
-            'days_of_week' => [1, 2, 3, 4, 6, 7],
-            'effective_from' => '2026-01-01',
-        ]);
+        // Friday off: the default working week.
+        FactoryCalendarSetup::factory($this->delta->id, $this->dhaka->id, 'SHIFT_BASED');
+        FactoryCalendarSetup::shift($this->delta->id, 'DAY', 'Day', '08:00', '22:00');
 
         // 2026-08-21 is a Friday.
         $plan = $this->plan([

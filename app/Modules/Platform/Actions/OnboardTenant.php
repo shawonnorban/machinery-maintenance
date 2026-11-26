@@ -7,6 +7,7 @@ namespace App\Modules\Platform\Actions;
 use App\Modules\Audit\Services\AuditRecorder;
 use App\Modules\Identity\Models\CompanyUser;
 use App\Modules\Identity\Models\Role;
+use App\Modules\Identity\Support\RoleProvisioner;
 use App\Modules\Finance\Actions\SeedGlDefaults;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserRole;
@@ -68,7 +69,7 @@ class OnboardTenant
 
         $password = $this->generatePassword();
 
-        $result = DB::transaction(function () use ($data, $password): array {
+        $result = DB::transaction(function () use ($data, $password, $staffId): array {
             $company = Company::create([
                 'name' => $data['name'],
                 'code' => strtoupper(trim($data['code'])),
@@ -82,6 +83,15 @@ class OnboardTenant
             // Everything below writes tenant-owned rows, so the context has to
             // be the company being created rather than nothing.
             $this->context->set($company->id);
+
+            // A new customer starts with the core modules only; the platform
+            // switches on what was sold (Customer → Modules; user, 2026-11-24).
+            foreach (\App\Modules\Platform\Support\LicensedModules::offForNewCompany() as $module) {
+                DB::table('company_modules')->insert([
+                    'id' => (string) \Illuminate\Support\Str::ulid(), 'company_id' => $company->id, 'module_code' => $module,
+                    'enabled' => false, 'enabled_by' => $staffId, 'created_at' => now(), 'updated_at' => now(),
+                ]);
+            }
 
             $factory = Factory::create([
                 'company_id' => $company->id,
@@ -110,9 +120,10 @@ class OnboardTenant
             // Spatie's Role carries no TenantScope to lift — it's not one of
             // this application's tenant-owned models — and its `name` is
             // the machine code now (COMPANY_OWNER), not a `code` column.
-            $role = Role::whereNull('company_id')
-                ->where('name', 'COMPANY_OWNER')
-                ->firstOrFail();
+            // The company's own, editable copy of every seeded role
+            // (user, 2026-11-22); the owner holds its copy of COMPANY_OWNER.
+            RoleProvisioner::provision($company->id);
+            $role = RoleProvisioner::resolve('COMPANY_OWNER', $company->id) ?? throw new \RuntimeException('COMPANY_OWNER role missing');
 
             UserRole::withoutGlobalScope(TenantScope::class)->create([
                 'company_id' => $company->id,

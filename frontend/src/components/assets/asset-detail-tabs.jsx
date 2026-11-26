@@ -17,6 +17,7 @@ import { DocumentsTab } from "@/components/assets/documents-tab";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useLazyTabData } from "@/lib/use-lazy-tab-data";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 import {
   getStatusHistory, getMaintenanceHistory, getTransferHistory, getMeters, getCostsData, getDocumentsData, getCustomFields,
 } from "@/app/(app)/assets/[assetId]/actions";
@@ -181,7 +182,7 @@ function MaintenanceHistoryPanel({ assetId }) {
           key: "work_order_number",
           header: t("work_order"),
           render: (row) => (
-            <Link href={`/work-orders/${row.id}`} className="font-medium text-brand hover:underline">
+            <Link href={`/work-orders/${refOf(row, "work_order_number")}`} className="font-medium text-brand hover:underline">
               {row.work_order_number}
             </Link>
           ),
@@ -352,7 +353,7 @@ function Overview({ asset }) {
       <Field label={t("serial_number")}>{asset.serial_number ?? "—"}</Field>
       <Field label={t("parent_asset")}>
         {asset.parent ? (
-          <Link href={`/assets/${asset.parent.id}`} className="text-brand hover:underline">
+          <Link href={`/assets/${refOf(asset.parent, "asset_code")}`} className="text-brand hover:underline">
             {asset.parent.asset_code}
           </Link>
         ) : (

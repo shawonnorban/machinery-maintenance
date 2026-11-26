@@ -1,0 +1,16 @@
+[
+ { "goto": "/m/planning/revision-request" }, { "wait": 4000 },
+ { "click": "main tbody button:has-text('Approve')", "wait": 2500 },
+ { "click": "[role=dialog] button:has-text('Approve')", "wait": 5000 },
+ { "texts": "rev_list", "of": "main table" },
+ { "goto": "/m/planning/master-plan?plan=4" }, { "wait": 6000 },
+ { "url": "after_url" }, { "texts": "after_head", "of": "main" },
+ { "goto": "/m/planning/master-plan-list" }, { "wait": 4000 },
+ { "texts": "mpl", "of": "main table" },
+ { "goto": "/m/planning/daily-plan" }, { "wait": 4000 },
+ { "fillsel": "main input[type=date]", "text": "2026-11-05" }, { "wait": 2000 },
+ { "peek": "main button[aria-haspopup]", "wait": 2000 }, { "popup": "daily_orders" },
+ { "click": "[role=option]:has-text('LPP-2026-000025')", "wait": 4000 },
+ { "fullshot": "g-daily" }, { "texts": "daily", "of": "main" },
+ { "html": "daily_ctl", "of": "main table input, main table select, main textarea, main button" }
+]

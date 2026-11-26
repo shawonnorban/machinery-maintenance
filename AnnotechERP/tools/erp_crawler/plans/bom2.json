@@ -1,0 +1,50 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('BOM')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)"
+ },
+ {
+  "click": "[data-panel] button[aria-label='Add a BOM line'], [data-panel] button[title='Add a BOM line']",
+  "wait": 2000
+ },
+ {
+  "dump": "add_line",
+  "root": "body"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "[data-panel] button[aria-label^='Edit 100%'], [data-panel] button[title^='Edit 100%']",
+  "wait": 2000
+ },
+ {
+  "dump": "edit_line",
+  "root": "body"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "[data-panel] button:has-text('Labels')",
+  "wait": 1500
+ },
+ {
+  "dump": "labels",
+  "root": "[data-panel]"
+ }
+]

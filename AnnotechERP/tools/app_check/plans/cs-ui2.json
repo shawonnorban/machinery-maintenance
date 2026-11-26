@@ -1,0 +1,38 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=profit&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "c14-profit"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=lines&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "c16-lines"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=config&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "c15-config"
+ }
+]

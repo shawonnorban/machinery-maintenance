@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
+import { ArrowLeft, Save, X } from "lucide-react";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -180,11 +181,12 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <FormSection>
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="flex flex-col gap-5">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
+        <div className="flex flex-col gap-3">
           <FormField label={t("asset")} required>
             {(fieldProps) => (
               <Select
@@ -229,7 +231,7 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
             )}
           </FormField>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-3">
             <FormField label={t("failure_at")} helperText={t("failure_at_hint")}>
               {(fieldProps) => <DateTimeField {...fieldProps} value={failureAt} onChange={setFailureAt} />}
             </FormField>
@@ -239,8 +241,8 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-5">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3">
             <FormField label={t("priority")}>
               {(fieldProps) => <Select {...fieldProps} value={priority} onValueChange={setPriority} options={PRIORITY_OPTIONS} />}
             </FormField>
@@ -318,15 +320,16 @@ function ReportBreakdownForm({ options, initialAssetId = "" }) {
           </FormField>
         </div>
       </div>
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" variant="danger" loading={submitting} disabled={photoProcessing}>
-          {t("report_breakdown")}
+          <Save /> {t("report_breakdown")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

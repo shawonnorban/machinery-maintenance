@@ -1,0 +1,5 @@
+[
+ { "goto": "/m/planning/smv-sam-master" }, { "wait": 4000 },
+ { "click": "main [role=tab]:has-text('New style SMV')", "wait": 2000 },
+ { "html": "smv_inputs", "of": "main input" }
+]

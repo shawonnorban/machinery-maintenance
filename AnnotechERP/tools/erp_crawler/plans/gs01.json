@@ -1,0 +1,131 @@
+[
+ {
+  "goto": "/m/general-store/gs-receive"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "receive_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gs01-receive"
+ },
+ {
+  "goto": "/m/general-store/gs-issue"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "issue_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gs01-issue"
+ },
+ {
+  "goto": "/m/general-store/gs-return"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "return_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gs01-return"
+ },
+ {
+  "goto": "/m/general-store/gs-adjustment"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "adjustment_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gs01-adjustment"
+ },
+ {
+  "goto": "/m/general-store/gs-transfer"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "transfer_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gs01-transfer"
+ },
+ {
+  "goto": "/m/general-store/gs-receive"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": "main button:has-text('Save') >> visible=true >> nth=0",
+  "wait": 2500
+ },
+ {
+  "texts": "receive_empty_save",
+  "of": "main p, main span, [role=alert], [data-sonner-toast], li[data-sonner-toast]"
+ },
+ {
+  "click": "main button:has-text('Add Item') >> visible=true >> nth=0",
+  "wait": 2500
+ },
+ {
+  "texts": "receive_add_item",
+  "of": "[role=dialog] *"
+ },
+ {
+  "fullshot": "gs01-receive-additem"
+ },
+ {
+  "goto": "/m/general-store/gs-current-stock"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "current-stock_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p, main span"
+ },
+ {
+  "fullshot": "gs01-current-stock"
+ },
+ {
+  "goto": "/m/general-store/gs-ledger"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "ledger_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p, main span"
+ },
+ {
+  "fullshot": "gs01-ledger"
+ },
+ {
+  "goto": "/m/general-store/gs-dashboard"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "dashboard_page",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p, main span"
+ },
+ {
+  "fullshot": "gs01-dashboard"
+ }
+]

@@ -1,0 +1,7 @@
+[
+ {"goto": "/access-control/ledger-integration?tab=entry&source=Machinery-Other-Costs"}, {"wait": 15000},
+ {"pick": "Debit / Credit", "option": "Credit"}, {"wait": 1000},
+ {"pick": "Chart of Account", "option": "2100 — Accounts Payable"}, {"wait": 1000},
+ {"click": "button:has-text('Save COA line'):visible", "after": 20000},
+ {"goto": "/access-control/ledger-integration?tab=entry&source=Machinery-Other-Costs"}, {"wait": 15000}, {"shot": "n01-ledger-both-lines"}
+]

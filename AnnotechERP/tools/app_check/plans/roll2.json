@@ -1,0 +1,22 @@
+[
+ { "goto": "/store-material/fabric-warehouse" },
+ { "click": "role=tab[name='Roll Wise']", "after": 4000 },
+ { "texts": "roll_view", "of": "main tbody tr" },
+ { "shot": "roll2-rollwise" },
+ { "click": "role=tab[name='Dye Lot Wise']", "after": 4000 },
+ { "texts": "lot_view", "of": "main tbody tr" },
+ { "goto": "/store-material/material-out" },
+ { "pick": "t", "sel": "[aria-label='Material Type']", "option": "Fabric" },
+ { "pick": "m", "sel": "[aria-label='Material']", "option": "Single Jersey 160 GSM" },
+ { "fill": "a", "sel": "[aria-label='Out Qty DL-R001']", "text": "7" },
+ { "fill": "a", "sel": "[aria-label='Out Qty DL-R003']", "text": "3" },
+ { "pick": "p", "sel": "[aria-label='Purpose']", "option": "Cutting" },
+ { "pick": "f", "sel": "[aria-label='Floor']", "option": "" },
+ { "pick": "s", "sel": "[aria-label='Section']", "option": "" },
+ { "pick": "l", "sel": "[aria-label='Line']", "option": "" },
+ { "fill": "r", "sel": "[aria-label='Receiver']", "text": "50001001" },
+ { "shot": "roll2-mo-filled" },
+ { "click": "role=button[name='Confirm Material Out']", "after": 15000 },
+ { "texts": "toast", "of": "[data-sonner-toast], [role=status], li[data-type]" },
+ { "shot": "roll2-mo-done" }
+]

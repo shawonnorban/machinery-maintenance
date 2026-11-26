@@ -1,0 +1,18 @@
+[
+ {"goto": "/hr-payroll/monthly-salary"},
+ {"wait": 20000},
+ {"pick": "Pay Period", "sel": "main [aria-label='Pay Period']", "option": "October 2026"},
+ {"click": "main button:has-text('Load')", "after": 12000},
+ {"printpdf": "main [aria-label='Payslip of EMP-000003']", "as": "payslip-shawonoor"},
+ {"goto": "/hr-payroll/payroll-adjustment"},
+ {"wait": 20000},
+ {"pick": "Show", "sel": "main [aria-label='Show']", "option": "All finalized slips"},
+ {"click": "main button:has-text('Show')", "after": 12000},
+ {"click": "main tr:has-text('EMP-000003') button:has-text('Raise')", "after": 1500},
+ {"click": "[role=dialog] button[role=radio]:has-text('Other')", "after": 800},
+ {"fill": "Amount", "sel": "[role=dialog] [aria-label='Amount to pay (+) or recover (−)']", "text": "-200"},
+ {"fill": "Reason", "sel": "[role=dialog] [aria-label='Reason']", "text": "Canteen advance taken in October"},
+ {"click": "[role=dialog] button:has-text('Raise for approval')", "after": 12000},
+ {"texts": "slips_after_raise", "of": "main tbody tr"},
+ {"shot": "b1-after-raise"}
+]

@@ -1,0 +1,18 @@
+[
+ {"goto": "/hr-payroll/id-card-print"},
+ {"wait": 25000},
+ {"shot": "id-records"},
+ {"click": "main button[role=tab]:has-text('Add to print queue')", "after": 1500},
+ {"click": "main section button:has-text('Add to print queue')", "after": 8000},
+ {"texts": "errors", "of": "main .text-danger"},
+ {"pick": "Employee Code", "sel": "main [aria-label='Employee Code']:visible", "option": "Rokeya Begum"},
+ {"shot": "id-new"},
+ {"click": "main section button:has-text('Add to print queue')", "after": 12000},
+ {"click": "main label:has-text('English') >> nth=0", "after": 500},
+ {"fill": "Employee Code", "sel": "main input[placeholder='Search…']", "text": "EMP-00000"},
+ {"click": "main button:text-is('Add')", "after": 12000},
+ {"texts": "queue", "of": "main tbody tr"},
+ {"shot": "id-queue"},
+ {"printpdf": "main tbody tr:has-text('Rokeya') button:has-text('Print')", "as": "id-card-one"},
+ {"printpdf": "main button:has-text('Print Queue')", "as": "id-card-queue"}
+]

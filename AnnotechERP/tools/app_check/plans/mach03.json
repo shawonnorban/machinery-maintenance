@@ -1,0 +1,9 @@
+[
+ {"goto": "/assets/labels"}, {"wait": 15000}, {"shot": "l01-labels-filters"},
+ {"click": "main button:has-text('Generate sheet')"}, {"wait": 15000}, {"shot": "l02-labels-sheet"},
+ {"printpdf": "main button:has-text('Print')", "as": "l03-labels-print"},
+ {"goto": "/teams"}, {"wait": 12000}, {"shot": "l04-teams"},
+ {"goto": "/vendors/warranties"}, {"wait": 12000}, {"shot": "l05-warranties"},
+ {"goto": "/metering"}, {"wait": 12000}, {"shot": "l06-meters"},
+ {"goto": "/"}, {"wait": 15000}, {"shot": "l07-dashboard"}
+]

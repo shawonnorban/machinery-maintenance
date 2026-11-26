@@ -7,6 +7,8 @@ namespace Tests\Feature\Api;
 use App\Modules\Api\Models\ApiClient;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Breakdown\Models\Breakdown;
+use App\Modules\Breakdown\Models\FailureCode;
+use App\Modules\Breakdown\Models\RootCause;
 use App\Modules\Inventory\Services\InventoryLedger;
 use App\Modules\Metering\Actions\ManageAssetMeter;
 use App\Modules\Metering\Models\AssetMeter;
@@ -305,7 +307,7 @@ class ApiResourceTest extends TestCase
             ->assertJsonPath('data.status', 'IN_REPAIR');
 
         $this->withToken($this->token)
-            ->postJson('/api/v1/breakdowns/'.$id.'/complete-repair')
+            ->postJson('/api/v1/breakdowns/'.$id.'/complete-repair', $this->diagnosis())
             ->assertOk()
             ->assertJsonPath('data.status', 'REPAIRED');
     }
@@ -322,8 +324,17 @@ class ApiResourceTest extends TestCase
         // Repair cannot start on something nobody has acknowledged. The code
         // says the record is in the wrong state, not that a field is wrong.
         $this->withToken($this->token)
-            ->postJson('/api/v1/breakdowns/'.$id.'/complete-repair')
+            ->postJson('/api/v1/breakdowns/'.$id.'/complete-repair', $this->diagnosis())
             ->assertStatus(409);
+    }
+
+    /** What the technician names on Complete Repair (required since the step moved there). */
+    private function diagnosis(): array
+    {
+        return [
+            'failure_code_id' => FailureCode::where('code', 'BEARING_FAILURE')->firstOrFail()->id,
+            'root_cause_id' => RootCause::where('code', 'INADEQUATE_LUBRICATION')->firstOrFail()->id,
+        ];
     }
 
     public function test_a_machine_client_cannot_take_a_step_recorded_against_a_person(): void

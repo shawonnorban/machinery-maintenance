@@ -1,0 +1,22 @@
+[
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Select Order & Create')", "wait": 3000 },
+ { "texts": "order_dialog", "of": "[role=dialog] h1, [role=dialog] h2, [role=dialog] h3, [role=dialog] p, [role=dialog] label, [role=dialog] button, [role=dialog] th, [role=dialog] td, [role=dialog] option, [role=dialog] input" },
+ { "dump": "order_dialog_dump", "root": "[role=dialog]" },
+ { "fullshot": "mp2-order-dialog" },
+ { "escape": true },
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Create Direct Requisition')", "wait": 4000 },
+ { "texts": "direct", "of": "main h1, main h2, main h3, main h4, main p, main label, main button, main th, main td, main option, main span, [role=dialog] *" },
+ { "dump": "direct_dump", "root": "main" },
+ { "fullshot": "mp2-direct" },
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00005') >> nth=0", "wait": 3000 },
+ { "texts": "row5", "of": "main h3, main h4, main p, main th, main td, main button, main span, main dt, main dd" },
+ { "fullshot": "mp2-row5" },
+ { "click": "main button:has-text('PR-2026-00001') >> nth=0", "wait": 3000 },
+ { "fullshot": "mp2-row1" }
+]

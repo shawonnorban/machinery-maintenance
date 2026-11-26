@@ -1,0 +1,19 @@
+[
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "click": "main table tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Add follow-up')", "wait": 2000 },
+ { "type": "[role=dialog] input[type=text]", "text": "Md. Akter (Poly Plan)" },
+ { "choose": "[role=dialog] select", "label": "Supplier Confirmed" },
+ { "type": "[role=dialog] textarea >> nth=0", "text": "Confirmed; production starts Monday" },
+ { "type": "[role=dialog] input[type=date] >> nth=3", "text": "2026-10-27" },
+ { "click": "[role=dialog] button:has-text('Save follow-up')", "wait": 4000 },
+ { "texts": "after1", "of": "li[data-sonner-toast] *, main td, main span" },
+ { "click": "main button:has-text('Add follow-up')", "wait": 2000 },
+ { "choose": "[role=dialog] select", "label": "Partially Received" },
+ { "type": "[role=dialog] input[type=number]", "text": "500" },
+ { "type": "[role=dialog] input[type=date] >> nth=2", "text": "2026-10-23" },
+ { "click": "[role=dialog] button:has-text('Save follow-up')", "wait": 4000 },
+ { "texts": "after2", "of": "li[data-sonner-toast] *, main td, main span, main button" },
+ { "fullshot": "mp32-after" }
+]

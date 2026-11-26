@@ -1,0 +1,11 @@
+[
+ {"goto": "/buyer-gateway/portal-branding"},
+ {"wait": 20000},
+ {"shot": "b4-reload"},
+ {"click": "main tr:has-text('H&M') button:has-text('Edit')", "after": 2000},
+ {"upload": "[role=dialog] input[type=file]", "file": "C:/wamp64/www/machinery-maintenance/AnnotechERP/tools/app_check/out/bg05/hm-portal-mark.png"},
+ {"wait": 500},
+ {"shot": "b5-uploading"},
+ {"click": "[role=dialog] button[type=submit]", "after": 20000},
+ {"shot": "b6-logo"}
+]

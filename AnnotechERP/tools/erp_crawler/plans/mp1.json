@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 5000 },
+ { "texts": "create", "of": "main h1, main h2, main h3, main h4, main p, main label, main button, main th, main td, main option, main span" },
+ { "dump": "create_dump", "root": "main" },
+ { "fullshot": "mp1-create" },
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 5000 },
+ { "texts": "mine", "of": "main h1, main h2, main h3, main h4, main p, main label, main button, main th, main td, main option, main span" },
+ { "fullshot": "mp1-mine" },
+ { "goto": "/m/material-procurement/procurement-dashboard" },
+ { "wait": 5000 },
+ { "texts": "dash", "of": "main h2, main h3, main h4, main p, main button, main th, main span" },
+ { "fullshot": "mp1-dash" }
+]

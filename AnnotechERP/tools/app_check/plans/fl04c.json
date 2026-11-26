@@ -1,0 +1,7 @@
+[{"goto": "/finance-ledger/voucher-post-unpost"}, {"wait": 25000},
+ {"click": "main button[role=tab]:has-text('Post / Unpost')", "after": 2000},
+ {"click": "main aside button:has-text('Delta Apparels')", "after": 2000},
+ {"click": "main button[aria-label='Unpost JV-2026-000002']", "after": 2000},
+ {"click": "[role=alertdialog] button:has-text('Unpost')", "after": 10000},
+ {"shot": "unpost-refused"},
+ {"texts": "board", "of": "main tbody tr"}]

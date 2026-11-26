@@ -1,0 +1,7 @@
+[
+ {"goto": "/command-center/command-deck"},
+ {"wait": 25000},
+ {"shot": "k3-deck"},
+ {"click": "main button:has-text(\"Table\") >> nth=0", "after": 1500},
+ {"shot": "k4-table"}
+]

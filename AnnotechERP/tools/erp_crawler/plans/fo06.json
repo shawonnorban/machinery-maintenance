@@ -1,0 +1,17 @@
+[
+ {"goto": "/m/ie/man-minutes-adjustment"},
+ {"click": "main button[role=tab]:has-text('Man Minutes Adjustment')", "wait": 2500},
+ {"choose": "main select[name=floorId]", "label": "SWEING — BCL"},
+ {"type": "main input[name=adjustDate]", "text": "2026-10-25"},
+ {"wait": 2000},
+ {"peek": "main button[aria-haspopup=listbox]", "wait": 1200},
+ {"popup": "mm_lines"},
+ {"click": "xpath=(//*[@role='option'][normalize-space(.)='1'])[1]", "wait": 800},
+ {"click": "main button:has-text('Refresh')", "wait": 6000},
+ {"fullshot": "mm-refresh"},
+ {"dump": "mm_refresh", "root": "main"},
+ {"html": "mm_rows", "of": "main table tbody tr"},
+ {"html": "mm_head", "of": "main table thead"},
+ {"texts": "mm_p2", "of": "main p"},
+ {"texts": "mm_foot", "of": "main table tfoot"}
+]

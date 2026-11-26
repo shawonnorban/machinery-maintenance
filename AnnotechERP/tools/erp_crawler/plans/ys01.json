@@ -1,0 +1,406 @@
+[
+{
+"goto": "/m/knitting/yarn-opening"
+},
+{
+"texts": "op_p0",
+"of": "main p"
+},
+{
+"texts": "op_h0",
+"of": "main table thead"
+},
+{
+"texts": "op_btn0",
+"of": "main button"
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "op_p1",
+"of": "main p"
+},
+{
+"texts": "op_h1",
+"of": "main table thead"
+},
+{
+"html": "op_ctl1",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "op_btn1",
+"of": "main button"
+},
+{
+"fullshot": "op-1"
+},
+{
+"goto": "/m/knitting/opening-balance"
+},
+{
+"texts": "ob_p0",
+"of": "main p"
+},
+{
+"texts": "ob_h0",
+"of": "main table thead"
+},
+{
+"texts": "ob_btn0",
+"of": "main button"
+},
+{
+"click": "main button[role=tab]:has-text('Yarn Opening Balance Entry')",
+"wait": 2500
+},
+{
+"texts": "ob_p1",
+"of": "main p"
+},
+{
+"texts": "ob_h1",
+"of": "main table thead"
+},
+{
+"html": "ob_ctl1",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "ob_btn1",
+"of": "main button"
+},
+{
+"fullshot": "ob-1"
+},
+{
+"click": "main button:has-text('Add Line'), main button:has-text('Add Yarn'), main button:has-text('Add Item')",
+"wait": 2500
+},
+{
+"texts": "ob_p2",
+"of": "main p"
+},
+{
+"texts": "ob_h2",
+"of": "main table thead"
+},
+{
+"html": "ob_ctl2",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "ob_btn2",
+"of": "main button"
+},
+{
+"fullshot": "ob-2"
+},
+{
+"goto": "/m/knitting/daily-receive"
+},
+{
+"texts": "mrr_p0",
+"of": "main p"
+},
+{
+"texts": "mrr_h0",
+"of": "main table thead"
+},
+{
+"texts": "mrr_btn0",
+"of": "main button"
+},
+{
+"click": "main button[role=tab]:has-text('Yarn Receive Entry')",
+"wait": 2500
+},
+{
+"texts": "mrr_p1",
+"of": "main p"
+},
+{
+"texts": "mrr_h1",
+"of": "main table thead"
+},
+{
+"html": "mrr_ctl1",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "mrr_btn1",
+"of": "main button"
+},
+{
+"fullshot": "mrr-1"
+},
+{
+"click": "main button:has-text('Add Line')",
+"wait": 2500
+},
+{
+"texts": "mrr_p2",
+"of": "main p"
+},
+{
+"texts": "mrr_h2",
+"of": "main table thead"
+},
+{
+"html": "mrr_ctl2",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "mrr_btn2",
+"of": "main button"
+},
+{
+"fullshot": "mrr-2"
+},
+{
+"click": "main button[role=tab]:has-text('Returns & Exchanges')",
+"wait": 2500
+},
+{
+"texts": "mrr_p3",
+"of": "main p"
+},
+{
+"texts": "mrr_h3",
+"of": "main table thead"
+},
+{
+"html": "mrr_ctl3",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "mrr_btn3",
+"of": "main button"
+},
+{
+"fullshot": "mrr-3"
+},
+{
+"click": "main button:has-text('Add Line')",
+"wait": 2500
+},
+{
+"texts": "mrr_p4",
+"of": "main p"
+},
+{
+"texts": "mrr_h4",
+"of": "main table thead"
+},
+{
+"html": "mrr_ctl4",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "mrr_btn4",
+"of": "main button"
+},
+{
+"fullshot": "mrr-4"
+},
+{
+"goto": "/m/knitting/yarn-stock-racking-board"
+},
+{
+"texts": "rack_p0",
+"of": "main p"
+},
+{
+"texts": "rack_h0",
+"of": "main table thead"
+},
+{
+"texts": "rack_btn0",
+"of": "main button"
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rack_p1",
+"of": "main p"
+},
+{
+"texts": "rack_h1",
+"of": "main table thead"
+},
+{
+"html": "rack_ctl1",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "rack_btn1",
+"of": "main button"
+},
+{
+"fullshot": "rack-1"
+},
+{
+"click": "main button[role=tab]:has-text('Rack Assignment')",
+"wait": 2500
+},
+{
+"texts": "rack_p2",
+"of": "main p"
+},
+{
+"texts": "rack_h2",
+"of": "main table thead"
+},
+{
+"html": "rack_ctl2",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "rack_btn2",
+"of": "main button"
+},
+{
+"fullshot": "rack-2"
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rack_p3",
+"of": "main p"
+},
+{
+"texts": "rack_h3",
+"of": "main table thead"
+},
+{
+"html": "rack_ctl3",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "rack_btn3",
+"of": "main button"
+},
+{
+"fullshot": "rack-3"
+},
+{
+"goto": "/m/knitting/daily-receive-return"
+},
+{
+"texts": "rr_p0",
+"of": "main p"
+},
+{
+"texts": "rr_h0",
+"of": "main table thead"
+},
+{
+"texts": "rr_btn0",
+"of": "main button"
+},
+{
+"click": "main button[role=tab]:has-text('Yarn Receive Return')",
+"wait": 2500
+},
+{
+"texts": "rr_p1",
+"of": "main p"
+},
+{
+"texts": "rr_h1",
+"of": "main table thead"
+},
+{
+"html": "rr_ctl1",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "rr_btn1",
+"of": "main button"
+},
+{
+"fullshot": "rr-1"
+},
+{
+"goto": "/m/knitting/yarn-month-closing"
+},
+{
+"texts": "mc_p0",
+"of": "main p"
+},
+{
+"texts": "mc_h0",
+"of": "main table thead"
+},
+{
+"texts": "mc_btn0",
+"of": "main button"
+},
+{
+"goto": "/m/knitting/yarn-adjustment"
+},
+{
+"texts": "adj_p0",
+"of": "main p"
+},
+{
+"texts": "adj_h0",
+"of": "main table thead"
+},
+{
+"texts": "adj_btn0",
+"of": "main button"
+},
+{
+"click": "main button[role=tab]:has-text('Yarn Adjustment')",
+"wait": 2500
+},
+{
+"texts": "adj_p1",
+"of": "main p"
+},
+{
+"texts": "adj_h1",
+"of": "main table thead"
+},
+{
+"html": "adj_ctl1",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "adj_btn1",
+"of": "main button"
+},
+{
+"fullshot": "adj-1"
+},
+{
+"click": "main button:has-text('Add Line')",
+"wait": 2500
+},
+{
+"texts": "adj_p2",
+"of": "main p"
+},
+{
+"texts": "adj_h2",
+"of": "main table thead"
+},
+{
+"html": "adj_ctl2",
+"of": "main table tbody [aria-label]"
+},
+{
+"texts": "adj_btn2",
+"of": "main button"
+},
+{
+"fullshot": "adj-2"
+}
+]

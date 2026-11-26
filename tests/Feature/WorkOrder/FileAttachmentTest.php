@@ -51,7 +51,7 @@ class FileAttachmentTest extends TestCase
 
     public function test_an_image_is_stored_under_its_company_with_a_hash(): void
     {
-        $file = UploadedFile::fake()->image('gauge.jpg', 400, 300);
+        $file = UploadedFile::fake()->image('gauge.png', 400, 300); // the container's GD encodes no JPEG
 
         $attachment = $this->store->handle($file, 'work_order', (string) Str::ulid(), $this->manager->id);
 
@@ -60,8 +60,8 @@ class FileAttachmentTest extends TestCase
         $this->assertStringStartsWith("attachments/{$this->delta->id}/", $attachment->path);
         Storage::disk('local')->assertExists($attachment->path);
 
-        $this->assertSame('image/jpeg', $attachment->mime_type);
-        $this->assertSame('gauge.jpg', $attachment->original_name);
+        $this->assertSame('image/png', $attachment->mime_type);
+        $this->assertSame('gauge.png', $attachment->original_name);
         $this->assertSame(64, strlen($attachment->sha256));
         $this->assertGreaterThan(0, $attachment->size_bytes);
     }
@@ -81,7 +81,7 @@ class FileAttachmentTest extends TestCase
 
     public function test_a_filename_that_could_break_a_header_is_sanitised(): void
     {
-        $file = UploadedFile::fake()->image('../../etc/pass"wd.jpg');
+        $file = UploadedFile::fake()->image('../../etc/pass"wd.png');
 
         $attachment = $this->store->handle($file, 'work_order', (string) Str::ulid(), $this->manager->id);
 
@@ -107,7 +107,7 @@ class FileAttachmentTest extends TestCase
     public function test_another_company_cannot_read_an_attachment(): void
     {
         $attachment = $this->store->handle(
-            UploadedFile::fake()->image('gauge.jpg'),
+            UploadedFile::fake()->image('gauge.png'),
             'work_order',
             (string) Str::ulid(),
             $this->manager->id,
@@ -117,32 +117,27 @@ class FileAttachmentTest extends TestCase
         TenantFixture::factory($omega, 'Narayanganj Unit', 'NGJ');
         $intruder = TenantFixture::user($omega, 'COMPANY_OWNER', 'owner@omega.test');
 
-        $this->actingAs($this->manager)
-            ->get("/app/attachments/{$attachment->id}")
+        // Served through the API now (the Blade /app/attachments screen is retired): download → a signed URL → the bytes.
+        $this->fetch($this->manager, $this->delta, $attachment->id)
             ->assertOk()
-            ->assertHeader('Content-Type', 'image/jpeg');
-
-        // The test client reuses one session across actors, and the request
-        // above left Delta as the active company. A real browser gives each user
-        // their own session, so this is cleared rather than worked around.
-        $this->flushSession();
+            ->assertHeader('Content-Type', 'image/png');
 
         // 404, not 403: a 403 would confirm the id names a real file.
-        $this->actingAs($intruder)
-            ->get("/app/attachments/{$attachment->id}")
+        $this->withToken($this->token($intruder, $omega))
+            ->getJson("/api/v1/files/{$attachment->id}")
             ->assertNotFound();
     }
 
     public function test_an_attachment_is_never_served_from_a_shared_cache(): void
     {
         $attachment = $this->store->handle(
-            UploadedFile::fake()->image('gauge.jpg'),
+            UploadedFile::fake()->image('gauge.png'),
             'work_order',
             (string) Str::ulid(),
             $this->manager->id,
         );
 
-        $response = $this->actingAs($this->manager)->get("/app/attachments/{$attachment->id}");
+        $response = $this->fetch($this->manager, $this->delta, $attachment->id);
 
         $response->assertOk();
         // Evidence should not sit in a proxy, and the browser should not sniff
@@ -170,8 +165,23 @@ class FileAttachmentTest extends TestCase
             'scan_status' => 'SKIPPED',
         ]);
 
-        $this->actingAs($this->manager)
-            ->get("/app/attachments/{$orphan->id}")
-            ->assertNotFound();
+        $this->fetch($this->manager, $this->delta, $orphan->id)->assertNotFound();
+    }
+
+    private function token(User $user, Company $company): string
+    {
+        return app(\App\Modules\Api\Actions\IssueApiToken::class)->forUser($user, $company->id, 'Test token')['plain'];
+    }
+
+    /** The file as a browser gets it: the download's redirect to a short-lived signed URL, then that URL. */
+    private function fetch(User $user, Company $company, string $fileId): \Illuminate\Testing\TestResponse
+    {
+        $response = $this->withToken($this->token($user, $company))->get("/api/v1/files/{$fileId}/download");
+        if ($response->isRedirect()) {
+            $this->flushHeaders();
+            $response = $this->get((string) $response->headers->get('Location'));
+        }
+
+        return $response;
     }
 }

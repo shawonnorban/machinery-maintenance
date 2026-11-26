@@ -1,0 +1,6 @@
+[
+ { "goto": "/print/payslip/4?mode=INDIVIDUAL&employeeId=957" }, { "wait": 6000 }, { "shot": "pr_payslip" },
+ { "goto": "/print/payslip/4?mode=INDIVIDUAL&employeeId=1239" }, { "wait": 6000 }, { "shot": "pr_payslip_worker" },
+ { "goto": "/print/daily-salary/2026-11-11?mode=BULK" }, { "wait": 6000 }, { "shot": "pr_daily" },
+ { "goto": "/print/ot-salary?from=2026-11-01&to=2026-11-11&departmentId=3" }, { "wait": 6000 }, { "shot": "pr_ot" }
+]

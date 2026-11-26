@@ -1,0 +1,84 @@
+[
+{
+"goto": "/knit-production/issue-against-requisition"
+},
+{
+"click": "main tbody a:has-text('Issue')",
+"after": 12000
+},
+{
+"fill": "Gate Pass No",
+"exact": true,
+"text": "GP-5501"
+},
+{
+"shot": "i-issue-filled"
+},
+{
+"click": "main button:has-text('Save issue')",
+"after": 15000
+},
+{
+"shot": "i-issue-saved"
+},
+{
+"goto": "/knit-production/issue-against-requisition"
+},
+{
+"shot": "i-list1"
+},
+{
+"goto": "/knit-production/issue-return-against-requisition?tab=entry"
+},
+{
+"pick": "Requisition Type",
+"exact": true,
+"option": "Knitting - Bulk"
+},
+{
+"pick": "Against Requisition",
+"exact": true,
+"option": "YIR-"
+},
+{
+"wait": 6000
+},
+{
+"fill": "Ret Qty 1",
+"text": "12"
+},
+{
+"fill": "Recv Qty 1",
+"text": "11.5"
+},
+{
+"click": "role=button[name='Remove this line 2']",
+"after": 600
+},
+{
+"fill": "Return By",
+"exact": true,
+"text": "Floor 1 \u00e2\u20ac\u201d Karim"
+},
+{
+"click": "main button:has-text('Save return challan')",
+"after": 15000
+},
+{
+"shot": "i-ret-saved"
+},
+{
+"goto": "/knit-production/issue-return-against-requisition"
+},
+{
+"click": "main tbody button:has-text('Issue')",
+"after": 15000
+},
+{
+"click": "main tbody button:has-text('Accept')",
+"after": 15000
+},
+{
+"shot": "i-ret-list"
+}
+]

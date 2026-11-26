@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/hr-payroll/letter-master" }, { "wait": 9000 }, { "shot": "m1_master" },
+ { "scroll": 0.5 }, { "shot": "m2_master_mid" },
+ { "scroll": 1 }, { "shot": "m3_master_end" },
+ { "goto": "/m/hr-payroll/generate-letter" }, { "wait": 9000 }, { "shot": "g1_generate" },
+ { "fill": "main input[placeholder='EMP-001 or card no.']", "value": "50000554" },
+ { "clickSel": "main button:has-text('Search')" }, { "wait": 5000 }, { "shot": "g2_found" },
+ { "clickSel": "main button:has-text('Preview Letter')" }, { "wait": 6000 }, { "shot": "g3_preview" },
+ { "scroll": 1 }, { "shot": "g4_preview_end" },
+ { "goto": "/m/hr-payroll/letter-history" }, { "wait": 8000 }, { "shot": "h1_history" },
+ { "goto": "/m/hr-payroll/letter-reports" }, { "wait": 8000 }, { "shot": "r1_reports" }
+]

@@ -44,6 +44,9 @@ class Notification extends BaseModel
         'WORK_ORDER_COMPLETED',
         'APPROVAL_REQUESTED',
         'APPROVAL_DECIDED',
+        // A request still waiting well past its due date, told to the type's
+        // escalation contact (Approval Center, AnnotechERP 04/03).
+        'APPROVAL_OVERDUE',
         'LOW_STOCK',
         'FLOOR_REQUISITION_SUBMITTED',
         // The store's side of the requisition: what was issued, what fell
@@ -81,6 +84,51 @@ class Notification extends BaseModel
         // A support ticket, told to the customer's own keyholders.
         'TICKET_REPLIED',
         'TICKET_RESOLVED',
+
+        // Access Control → Global Notification Broadcast (AnnotechERP 02/04).
+        'GLOBAL_BROADCAST',
+
+        // Prototype Desk → Sample Requisition (AnnotechERP 07/03): the sample
+        // room person a sample is handed to.
+        'SAMPLE_ASSIGNED',
+        // Prototype Desk → Buyer Feedback: the action asked of the assignee, cleared once resolved.
+        'SAMPLE_FEEDBACK_ACTION',
+
+        // Material Procurement → Purchase Requisition (AnnotechERP 08/03): every
+        // supplier portal login, when a requisition's lines open for quotation.
+        'MP_REQUIREMENT_AVAILABLE',
+        // Material Procurement → Price Review (08/05): the supplier's portal logins
+        // hear what was decided on their quotation; the follow-up merchandiser
+        // hears of the material handed to them.
+        'MP_QUOTATION_NEGOTIATION',
+        'MP_QUOTATION_REJECTED',
+        'MP_QUOTATION_APPROVED',
+        'MP_MATERIAL_ASSIGNED',
+        // Approved Material & Follow-Up (08/06): the requisition's author and the
+        // price's approver hear each delivery that comes in.
+        'MP_MATERIAL_RECEIVED',
+        // Supplier Portal (08/04), heard by whoever reviews prices: a first
+        // quotation on a line, and each revision of it.
+        'MP_QUOTATION_RECEIVED',
+        'MP_QUOTATION_REVISED',
+        // HR & Payroll → OT Request / OT Approval (24/05): the approver hears of
+        // a request sent to them; the requester hears what was decided.
+        'HR_OT_REQUESTED',
+        'HR_OT_DECIDED',
+
+        // Order Summary, Dev Sample Status and Pre-Budget (user, 2026-11-21):
+        // a save told to the team at once, one notification per save, and
+        // each morning the work that is due (Erp\Support\SheetNotices).
+        'OS_ORDERS_CHANGED',
+        'OS_PENDING_WORK',
+        'DS_SAMPLES_CHANGED',
+        'DS_DEADLINE_DUE',
+        'PB_REQUISITIONS_CHANGED',
+        'PB_BUDGET_CHANGED',
+        'PB_STOCK_NEEDED',
+        'PB_PENDING_WORK',
+        'ES_STATEMENTS_CHANGED',
+        'ES_PENDING_WORK',
 
         // Addressed to platform staff rather than to anybody inside a tenant,
         // and so carrying a null company_id. The customer has their own

@@ -1,0 +1,86 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Open Inbox'), main button:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "url": "inbox_url"
+ },
+ {
+  "texts": "inbox",
+  "of": "main"
+ },
+ {
+  "dump": "inbox",
+  "root": "body"
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Open Sent'), main button:has-text('Open Sent')",
+  "wait": 2500
+ },
+ {
+  "url": "sent_url"
+ },
+ {
+  "texts": "sent",
+  "of": "main"
+ },
+ {
+  "dump": "sent",
+  "root": "body"
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:first-child a:has-text('View'), main table tbody tr:first-child button:has-text('View')",
+  "wait": 3000
+ },
+ {
+  "url": "view_url"
+ },
+ {
+  "texts": "view",
+  "of": "main"
+ },
+ {
+  "dump": "view",
+  "root": "body"
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('New Development Style'), main button:has-text('New Development Style')",
+  "wait": 3000
+ },
+ {
+  "url": "new_url"
+ },
+ {
+  "texts": "newdev",
+  "of": "main"
+ },
+ {
+  "dump": "newdev",
+  "root": "body"
+ }
+]

@@ -1,45 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
+import { Ticket } from "lucide-react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { RelativeTime } from "@/components/ui/relative-time";
+import { Panel, PTable } from "@/components/platform/ui";
 
-/** This customer's own support tickets — the same thread `/platform/tickets/[id]` shows from the cross-customer inbox. */
+/** This customer's own support tickets — the same thread the cross-customer inbox opens. */
 function TicketsPanel({ tickets }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Tickets ({tickets.length})</CardTitle>
-      </CardHeader>
-      <CardBody className="flex flex-col divide-y divide-border p-0">
-        {tickets.length === 0 ? (
-          <p className="p-5 text-sm text-foreground-muted">No tickets from this customer.</p>
-        ) : (
-          tickets.map((ticket) => (
-            <Link
-              key={ticket.id}
-              href={`/platform/tickets/${ticket.id}`}
-              className="flex flex-wrap items-center justify-between gap-3 p-5 hover:bg-surface-muted"
-            >
-              <div>
-                <p className="text-sm font-medium text-brand">{ticket.subject}</p>
-                <p className="text-xs text-foreground-muted">
-                  Opened by {ticket.opener?.name ?? "—"}
-                  {ticket.assignee ? ` · assigned to ${ticket.assignee.name}` : ""}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-foreground-subtle">
-                  <RelativeTime value={ticket.last_message_at} />
-                </span>
-                <StatusBadge status={ticket.status} />
-              </div>
-            </Link>
-          ))
-        )}
-      </CardBody>
-    </Card>
+    <Panel title="Tickets" subtitle={`${tickets.length} ticket${tickets.length === 1 ? "" : "s"} from this customer`} icon={Ticket}>
+      <PTable
+        rows={tickets}
+        rowKey={(t) => t.id}
+        empty="No tickets from this customer."
+        columns={[
+          {
+            key: "subject",
+            label: "Subject",
+            render: (t) => (
+              <Link href={`/platform/tickets/${t.id}`} className="font-semibold text-brand hover:underline">
+                {t.subject}
+              </Link>
+            ),
+          },
+          { key: "opener", label: "Opened by", render: (t) => t.opener?.name ?? "—" },
+          { key: "assignee", label: "Assigned to", render: (t) => t.assignee?.name ?? <span className="text-foreground-subtle">Nobody</span> },
+          { key: "last", label: "Last message", render: (t) => <span className="text-[13px] text-foreground-muted"><RelativeTime value={t.last_message_at} /></span> },
+          { key: "status", label: "Status", render: (t) => <StatusBadge status={t.status} /> },
+        ]}
+      />
+    </Panel>
   );
 }
 

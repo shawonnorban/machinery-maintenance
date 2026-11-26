@@ -55,6 +55,10 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
+      // Firefox brings a button's last enabled/disabled state back on reload, so a button that
+      // was enabled (rows ticked) arrives enabled while React renders it disabled — a hydration
+      // mismatch that leaves e.g. Delete clickable with nothing ticked (Order Summary, 2026-11-21).
+      autoComplete="off"
       {...props}
     >
       {loading ? <Loader2 className="animate-spin" /> : null}

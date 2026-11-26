@@ -1,0 +1,15 @@
+[
+ {"goto": "/assets"}, {"wait": 15000},
+ {"click": "table a[href^='/assets/CUT']"}, {"wait": 15000}, {"shot": "r01-asset-by-code"},
+ {"goto": "/work-orders"}, {"wait": 12000},
+ {"click": "table a[href^='/work-orders/WO-']"}, {"wait": 15000}, {"shot": "r02-wo-by-number"},
+ {"goto": "/breakdowns"}, {"wait": 12000},
+ {"click": "table a[href^='/breakdowns/BD-']"}, {"wait": 15000}, {"shot": "r03-breakdown-by-number"},
+ {"goto": "/inventory/parts"}, {"wait": 12000},
+ {"click": "table a[href^='/inventory/parts/BRG']"}, {"wait": 15000}, {"shot": "r04-part-by-number"},
+ {"goto": "/technicians"}, {"wait": 12000},
+ {"click": "table a[href^='/technicians/EMP']"}, {"wait": 15000}, {"shot": "r05-technician-by-empid"},
+ {"goto": "/vendors"}, {"wait": 12000},
+ {"click": "table a[href^='/vendors/']"}, {"wait": 15000}, {"shot": "r06-vendor"},
+ {"goto": "/"}, {"wait": 15000}, {"shot": "r07-dashboard"}
+]

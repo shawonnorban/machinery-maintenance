@@ -1,0 +1,22 @@
+[
+ { "goto": "/m/sample/bundle-movement" },
+ { "wait": 3500 },
+ { "texts": "list", "of": "main button, main span, main label, main th, main option" },
+ { "fullshot": "proto19-list" },
+ { "click": "button:has-text('Scan Desk') >> nth=0", "wait": 2500 },
+ { "texts": "scan", "of": "main h2, main h3, main h4, main p, main label, main button, main input, main li" },
+ { "dump": "scan_dump", "root": "main" },
+ { "fullshot": "proto19-scan" },
+ { "type": "main input >> nth=0", "text": "SBC-2026080004-01" },
+ { "click": "main button:has-text('Scan')", "wait": 3000 },
+ { "texts": "scan_try", "of": "main p, [role=alert], li[role=status], main .text-danger" },
+ { "click": "button:has-text('Tracking Update') >> nth=0", "wait": 2500 },
+ { "texts": "track", "of": "main h2, main h3, main p, main label, main button, main th, main li" },
+ { "fullshot": "proto19-track" },
+ { "click": "button:has-text('Bundle Lookup') >> nth=0", "wait": 2500 },
+ { "texts": "lookup", "of": "main h2, main h3, main p, main label, main button, main th, main option" },
+ { "fullshot": "proto19-lookup" },
+ { "click": "button:has-text('Sample Card') >> nth=0", "wait": 2500 },
+ { "texts": "card", "of": "main h2, main h3, main p, main label, main button, main th, main li" },
+ { "fullshot": "proto19-card" }
+]

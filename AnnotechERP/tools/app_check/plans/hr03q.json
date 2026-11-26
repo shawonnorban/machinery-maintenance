@@ -1,0 +1,9 @@
+[
+ {"goto": "/hr-payroll/employee-profile"},
+ {"wait": 25000},
+ {"printpdf": "main tbody tr:has-text('Rokeya') button:has-text('Print') >> nth=0", "as": "ep-print"},
+ {"click": "main tbody tr:has-text('Rokeya') button:has-text('Edit')", "after": 10000},
+ {"shot": "ep-edit"},
+ {"click": "main button[role=tab]:has-text('Back Ground Check')", "after": 1000},
+ {"shot": "ep-edit-background"}
+]

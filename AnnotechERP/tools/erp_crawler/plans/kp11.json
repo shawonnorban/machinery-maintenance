@@ -1,0 +1,119 @@
+[
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"click": "main [role=tab]:has-text('Roll Weight Entry')",
+"wait": 2500
+},
+{
+"choose": "main select[name=jobCardId]",
+"index": 1
+},
+{
+"wait": 1500
+},
+{
+"click": "main button:has-text('Add Roll')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Add Roll')",
+"wait": 1200
+},
+{
+"type": "main table input[aria-label='Date'] >> nth=0",
+"text": "2026-10-29"
+},
+{
+"type": "main table input[aria-label='Date'] >> nth=1",
+"text": "2026-10-29"
+},
+{
+"type": "main table input[aria-label='Roll Weight'] >> nth=0",
+"text": "22.5"
+},
+{
+"type": "main table input[aria-label='Roll Weight'] >> nth=1",
+"text": "21.8"
+},
+{
+"type": "main table input[aria-label='Deducted'] >> nth=1",
+"text": "0.3"
+},
+{
+"choose": "main table select[aria-label='Shift'] >> nth=0",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Shift'] >> nth=1",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Operator'] >> nth=0",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Operator'] >> nth=1",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Movement Status'] >> nth=0",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Movement Status'] >> nth=1",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Quality Status'] >> nth=0",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Quality Status'] >> nth=1",
+"index": 1
+},
+{
+"html": "save_btn",
+"of": "main button:has-text('Save roll sheet')"
+},
+{
+"netclick": "main button:has-text('Save roll sheet')",
+"as": "save_net",
+"wait": 5000
+},
+{
+"texts": "toast",
+"of": "[data-sonner-toast], [role=alert], [role=status]"
+},
+{
+"texts": "after_p",
+"of": "main p"
+},
+{
+"fullshot": "rw-saved2"
+},
+{
+"click": "main [role=tab]:has-text('Roll List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Go')",
+"wait": 3000
+},
+{
+"texts": "rl_h",
+"of": "main table thead"
+},
+{
+"texts": "rl_rows",
+"of": "main table tbody tr"
+},
+{
+"texts": "rl_tabs",
+"of": "main [role=tab]"
+},
+{
+"fullshot": "rl"
+}
+]

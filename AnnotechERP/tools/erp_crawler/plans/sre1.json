@@ -1,0 +1,27 @@
+[
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "tabs",
+  "of": "main [role=tablist] a, main [role=tab]"
+ },
+ {
+  "click": "main [role=tab]:has-text('Registration') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "url": "reg_url"
+ },
+ {
+  "texts": "reg_t",
+  "of": "main"
+ },
+ {
+  "dump": "reg_d",
+  "root": "main"
+ }
+]

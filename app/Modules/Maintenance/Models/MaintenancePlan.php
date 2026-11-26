@@ -6,7 +6,9 @@ namespace App\Modules\Maintenance\Models;
 
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetType;
+use App\Shared\Concerns\AssignsDocumentNumber;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,13 +20,20 @@ use Illuminate\Support\Collection;
 class MaintenancePlan extends BaseModel
 {
     use BelongsToTenant;
+    use AssignsDocumentNumber;
+    use ResolvesByReference;
+
+    /** Pages address it by this number (PM-00001), never the ULID. */
+    public const ROUTE_REFERENCE = 'plan_number';
+
+    public const NUMBER_SERIES = 'MAINTENANCE_PLAN';
 
     public const TRIGGER_TYPES = ['TIME', 'METER', 'USAGE', 'CONDITION', 'COMBINED'];
 
     public const SCHEDULE_MODES = ['ROLLING', 'FIXED'];
 
     protected $fillable = [
-        'company_id', 'asset_id', 'asset_type_id', 'maintenance_type_id',
+        'company_id', 'plan_number', 'asset_id', 'asset_type_id', 'maintenance_type_id',
         'template_version_id', 'name', 'trigger_type', 'schedule_mode',
         'rule_logic', 'priority', 'grace_period_minutes', 'lead_time_days',
         'non_working_day_policy', 'requires_shutdown', 'assigned_team_id',

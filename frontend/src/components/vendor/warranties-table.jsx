@@ -2,15 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
-import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useT } from "@/lib/i18n";
+import { FormattedDateTime } from "@/components/ui/formatted-date-time";
+import { refOf } from "@/lib/ref-path";
 
 const TYPE_KEYS = { MANUFACTURER: "type_manufacturer", EXTENDED: "type_extended", SERVICE: "type_service_warranty" };
 
 /** Mirrors `warranties/index.blade.php` — the expiring/all pill toggle and the same six columns, row tinted when cover runs out within 30 days. */
-function WarrantiesTable({ warranties, meta, page, expiring }) {
+function WarrantiesTable({ warranties, meta, page, expiring, addHref }) {
   const t = useT("vendor");
   const tc = useT("common");
   const router = useRouter();
@@ -29,21 +31,29 @@ function WarrantiesTable({ warranties, meta, page, expiring }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full max-w-[200px]">
-        <Select
-          options={scopeOptions}
-          value={expiring ? "1" : ""}
-          onValueChange={(value) => navigate({ expiring: value, page: 1 })}
-        />
-      </div>
+      <SearchingData
+        fields={[{ name: "expiring", label: t("show"), type: "select", options: scopeOptions }]}
+        values={{ expiring: expiring ? "1" : "" }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+        addHref={addHref}
+      />
 
       <DataTable
         columns={[
           {
+            key: "warranty_number",
+            header: t("warranty_no"),
+            render: (row) => (
+              <Link href={`/vendors/warranties/${refOf(row, "warranty_number")}`} className="font-medium text-brand hover:underline">
+                {row.warranty_number}
+              </Link>
+            ),
+          },
+          {
             key: "asset",
             header: t("asset"),
             render: (row) => (
-              <Link href={`/vendors/warranties/${row.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/vendors/warranties/${refOf(row, "warranty_number")}`} className="font-medium text-brand hover:underline">
                 {row.asset?.asset_code}
                 <div className="text-xs font-normal text-foreground-muted">{row.asset?.name}</div>
               </Link>
@@ -51,7 +61,7 @@ function WarrantiesTable({ warranties, meta, page, expiring }) {
           },
           { key: "vendor", header: t("vendor"), render: (row) => row.vendor?.name ?? t("unnamed_vendor") },
           { key: "warranty_type", header: t("type"), render: (row) => t(TYPE_KEYS[row.warranty_type] ?? row.warranty_type) },
-          { key: "end_date", header: t("end_date"), render: (row) => row.end_date },
+          { key: "end_date", header: t("end_date"), render: (row) => <FormattedDateTime value={row.end_date} mode="date" /> },
           {
             key: "days_remaining",
             header: t("days_remaining"),
@@ -67,8 +77,9 @@ function WarrantiesTable({ warranties, meta, page, expiring }) {
         rows={warranties}
         rowKey={(row) => row.id}
         emptyTitle={expiring ? t("nothing_expiring") : t("no_warranties_found")}
-        rowActions={(row) => [{ label: tc("view"), onSelect: () => router.push(`/vendors/warranties/${row.id}`) }]}
+        rowActions={(row) => [{ icon: "view", label: tc("view"), onSelect: () => router.push(`/vendors/warranties/${refOf(row, "warranty_number")}`) }]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
     </div>

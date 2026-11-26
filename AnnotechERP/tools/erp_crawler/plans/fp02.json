@@ -1,0 +1,13 @@
+[
+ {"goto": "/m/dyeing-finishing/df-process-wise-delivery"},
+ {"popclick": "main button:has-text('S/C Prod.')", "as": "p1_sc", "wait": 8000},
+ {"goto": "/m/dyeing-finishing/df-process-wise-delivery"},
+ {"popclick": "main button:has-text('BT Trans.')", "as": "p1_bt", "wait": 8000},
+ {"goto": "/m/dyeing-finishing/df-process-wise-delivery"},
+ {"netclick": "main button:has-text('Pdf')", "as": "p1_pdf", "wait": 8000},
+ {"fullshot": "p1-afterpdf"},
+ {"goto": "/m/dyeing-finishing/df-production-entry-mc-wise"},
+ {"scroll": 900},
+ {"fullshot": "p0-full"},
+ {"html": "p0_lines", "of": "main section, main form >> nth=1"}
+]

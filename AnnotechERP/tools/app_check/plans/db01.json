@@ -1,0 +1,116 @@
+[
+ {
+  "goto": "/fabric-requirement/batch-planning?tab=planning&bp=BP-00001"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "choose": "main select >> nth=-1",
+  "option": "Released"
+ },
+ {
+  "click": "main button:has-text('Save batch plan')",
+  "after": 15000
+ },
+ {
+  "texts": "fp_err",
+  "of": "main [role=alert]"
+ },
+ {
+  "goto": "/dye-house/dyeing-batch-plan?tab=board&plan=PLN-26110001"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "db-board-empty"
+ },
+ {
+  "pick": "Released Fabric Batch Plan",
+  "exact": true,
+  "option": "BP-00001"
+ },
+ {
+  "click": "main button:text-is('Pull') >> nth=0",
+  "after": 15000
+ },
+ {
+  "texts": "waiting",
+  "of": "main h3 + p + div button"
+ },
+ {
+  "click": "main button:has-text('B-26110001')",
+  "after": 800
+ },
+ {
+  "click": "main button[aria-label='DM-01 03 Nov, 04:00']",
+  "after": 1500
+ },
+ {
+  "shot": "db-place-modal"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Place')",
+  "after": 15000
+ },
+ {
+  "click": "main button:has-text('B-26110002')",
+  "after": 800
+ },
+ {
+  "click": "main button[aria-label='DM-01 03 Nov, 04:00']",
+  "after": 1500
+ },
+ {
+  "click": "[role=dialog] button:has-text('Place')",
+  "after": 12000
+ },
+ {
+  "texts": "toasts",
+  "of": "[data-slot=toast], [role=status], li[role=status]"
+ },
+ {
+  "shot": "db-overlap"
+ },
+ {
+  "press": "Escape"
+ },
+ {
+  "click": "main button:has-text('B-26110002')",
+  "after": 800
+ },
+ {
+  "click": "main button[aria-label='DM-02 03 Nov, 08:00']",
+  "after": 1500
+ },
+ {
+  "fill": "Hours",
+  "exact": true,
+  "text": "6"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Place')",
+  "after": 15000
+ },
+ {
+  "shot": "db-board-laid"
+ },
+ {
+  "texts": "plan_line",
+  "of": "main p.text-sm.font-semibold"
+ },
+ {
+  "goto": "/dye-house/dyeing-batch-plan?tab=records"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "plan_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "db-plan-list"
+ }
+]

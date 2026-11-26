@@ -1,0 +1,25 @@
+{
+    "e": {
+        "declined": ":service declined this request.",
+        "failed": ":service could not answer: :why",
+        "not_json": ":service did not answer in the form asked for.",
+        "unknown_provider": "That AI service is not supported.",
+        "unreadable": "The file :name could not be read — its type is not supported or it is damaged.",
+        "too_long": ":name has more text than one AI request can read — split it into smaller files.",
+        "attachment_skipped": "Attachment :name was not read (its type is not supported).",
+        "http_401": ":service refused the API key — check the key in Settings → AI Services.",
+        "http_403": ":service says this key may not use that model or feature.",
+        "http_404": ":service does not know that model — check the model name.",
+        "http_429": ":service limit reached (rate or credit) — try again later.",
+        "http_5xx": ":service is busy or down — try again later."
+    },
+    "test": {
+        "ok": "Connected — the service answered.",
+        "odd": "The service answered, but not as expected."
+    },
+    "v": {
+        "provider_taken": "This service is already set up — edit it instead.",
+        "model": "Write the model name as the service writes it, e.g. claude-opus-5-5.",
+        "api_key": "Paste the API key from the service."
+    }
+}

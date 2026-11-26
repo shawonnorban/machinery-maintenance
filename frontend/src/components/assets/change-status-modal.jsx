@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useToastManager } from "@/components/ui/toast";
 import { ASSET_TRANSITIONS } from "@/lib/asset-transitions";
 import { useT } from "@/lib/i18n";
+import { RefreshCcw } from "lucide-react";
 
 function SubmitButton() {
   const t = useT("asset");
@@ -62,7 +63,7 @@ function ChangeStatusModal({ assetId, currentStatus, version, action }) {
   return (
     <>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        {t("change_status")}
+        <RefreshCcw /> {t("change_status")}
       </Button>
 
       <Modal open={open} onOpenChange={setOpen} title={t("change_status")} description={t("currently", { status: t(`status_${currentStatus?.toLowerCase()}`) })}>

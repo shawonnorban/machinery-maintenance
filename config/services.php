@@ -37,4 +37,13 @@ return [
         ],
     ],
 
+    // AI services (Claude, OpenAI, Gemini) are set per company in Settings → AI Services, not here.
+
+    // Web Push: chat notifications that reach a browser that is closed (VAPID keys, one pair per install).
+    'webpush' => [
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+        'subject' => env('VAPID_SUBJECT', 'mailto:support@annotecherp.local'),
+    ],
+
 ];

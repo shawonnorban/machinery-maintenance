@@ -1,0 +1,13 @@
+[
+ { "goto": "/m/merchandising/accessories-pr" },
+ { "click": "table tbody tr:first-child button:has-text('Edit'), table tbody tr:first-child a:has-text('Edit')", "wait": 3000 },
+ { "click": "main button:has-text('Approve')", "wait": 3000 },
+ { "texts": "after_approve_buttons", "of": "main button" },
+ { "texts": "toast", "of": "[role=status], [data-sonner-toast], .toast" },
+ { "goto": "/m/merchandising/accessories-pr" },
+ { "texts": "pr_rows", "of": "table tbody tr" },
+ { "goto": "/m/merchandising/accessories-po" },
+ { "click": "button:has-text('Requisition List')", "wait": 2500 },
+ { "fullshot": "apo-reqlist3" },
+ { "dump": "reqlist", "root": "main" }
+]

@@ -1,0 +1,8 @@
+[
+ {"goto": "/m/knitting/direct-fabric-booking"},
+ {"wait": 2000},
+ {"html": "inputs", "of": "main input, main select, main textarea"},
+ {"peek": "main button:has-text('-- Select Type --') >> nth=0", "wait": 1200},
+ {"popup": "prod_types"},
+ {"escape": true}
+]

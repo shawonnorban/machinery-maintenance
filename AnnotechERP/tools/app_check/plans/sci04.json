@@ -1,0 +1,8 @@
+[
+ {"goto": "/dye-house/dyeing-sc-party-rate?tab=records"}, {"wait": 10000},
+ {"texts": "out_rows", "of": "main tbody tr"},
+ {"html": "out_link", "of": "main tbody tr >> nth=0 >> a"},
+ {"click": "main tbody tr >> nth=0 >> a", "after": 10000},
+ {"url": "opened_url"},
+ {"texts": "badge", "of": "main span.rounded-full"}
+]

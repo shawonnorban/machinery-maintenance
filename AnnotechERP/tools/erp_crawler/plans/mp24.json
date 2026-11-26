@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('All (monitor)') >> visible=true >> nth=0", "wait": 2500 },
+ { "click": "main table tbody tr:has-text('PR-2026-00004') >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "followups", "of": "main section:has-text('Follow-up entries') th, main section:has-text('Follow-up entries') td, main div:has-text('Follow-up entries') >> nth=-1" },
+ { "html": "fu_table", "of": "main table >> nth=-1" },
+ { "fullshot": "mp24-inhouse" },
+ { "goto": "/m/material-procurement/delivery-tracking" },
+ { "wait": 4000 },
+ { "click": "main table tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "track_open", "of": "main h3, main p, main span, main dt, main dd, main button, [role=dialog] *" },
+ { "fullshot": "mp24-track-open" }
+]

@@ -1,0 +1,9 @@
+[
+ {"goto": "/knit-production/yarn-req-collar-cuff-yd?tab=issue"},
+ {"wait": 6000},
+ {"click": "main button[aria-label^='Select CYD']", "after": 10000},
+ {"click": "main [aria-label='Stock Line 1']", "after": 1500},
+ {"texts": "opts", "of": "[role=option]"},
+ {"html": "trig", "of": "main [aria-label='Stock Line 1']"},
+ {"shot": "cc-dbg"}
+]

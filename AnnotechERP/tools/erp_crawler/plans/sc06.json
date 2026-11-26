@@ -1,0 +1,28 @@
+[
+{
+"goto": "/m/knitting/issue-sc-knitting-program-bulk-solid"
+},
+{
+"html": "action_cell",
+"of": "main table tbody tr >> nth=0 >> td >> nth=-1"
+},
+{
+"click": "main table tbody tr >> nth=0 >> button:has-text('Submit')",
+"wait": 2000
+},
+{
+"click": "[role=dialog] button:has-text('Submit')",
+"wait": 5000
+},
+{
+"texts": "rows1",
+"of": "main table tbody tr"
+},
+{
+"html": "action_cell2",
+"of": "main table tbody tr >> nth=0 >> td >> nth=-1"
+},
+{
+"fullshot": "bs-sub"
+}
+]

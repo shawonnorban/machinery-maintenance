@@ -1,0 +1,5 @@
+[
+ {"goto": "/maintenance/plans/01m2new7r8859xn2jr1pmkg1vh"}, {"wait": 15000}, {"shot": "h01-plan-by-ulid"},
+ {"goto": "/vendors/warranties/01m2newqkrnzd2sys7qcvxm4ej"}, {"wait": 12000}, {"shot": "h02-warranty-by-ulid"},
+ {"goto": "/maintenance/plans/PM-00002"}, {"wait": 15000}, {"shot": "h03-plan-by-number"}
+]

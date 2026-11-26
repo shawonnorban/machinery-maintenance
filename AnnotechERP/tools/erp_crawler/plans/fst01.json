@@ -1,0 +1,18 @@
+[
+ {"goto": "/m/dyeing-finishing/finish-fabric-store-receive"},
+ {"texts": "r_p", "of": "main p, main h2, main h3, main thead th"},
+ {"click": "main button:has-text('Add New')", "wait": 3000},
+ {"fullshot": "r-entry"},
+ {"dump": "r_entry", "root": "main"},
+ {"texts": "r_entry_p", "of": "main p, main h2, main h3, main legend, main thead th, main span.text-xs"},
+ {"goto": "/m/dyeing-finishing/fabric-issue-to-cutting"},
+ {"texts": "i_p", "of": "main p, main h2, main h3, main thead th"},
+ {"click": "main button:has-text('Add New')", "wait": 3000},
+ {"fullshot": "i-entry"},
+ {"dump": "i_entry", "root": "main"},
+ {"texts": "i_entry_p", "of": "main p, main h2, main h3, main legend, main thead th, main span.text-xs"},
+ {"goto": "/m/dyeing-finishing/roll-wise-racking-barcode"},
+ {"texts": "k_p", "of": "main p, main h1"},
+ {"goto": "/m/dyeing-finishing/fabric-store-return-transfer"},
+ {"texts": "t_p", "of": "main p, main h1"}
+]

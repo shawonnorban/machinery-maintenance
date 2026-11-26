@@ -1,0 +1,12 @@
+[
+ {"goto": "/quality-tally/tally"},
+ {"wait": 6000},
+ {"choose": "main label:has-text('Line') select", "option": "LINE01"},
+ {"choose": "main label:has-text('Job') select", "option": "26DAL00101", "after": 3000},
+ {"shot": "qt36-tally-aligned"},
+ {"drag": "[data-chat-launcher]", "by": [-700, -500]},
+ {"shot": "qt37-chat-moved"},
+ {"goto": "/quality-tally/dashboard"},
+ {"wait": 5000},
+ {"shot": "qt38-chat-kept-place"}
+]

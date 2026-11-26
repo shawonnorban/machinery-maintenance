@@ -129,7 +129,8 @@ async function getCompatibilityData(partId) {
   return {
     rows,
     assetModels: formOptions.asset_models,
-    otherParts: otherPartsPage.filter((p) => p.id !== partId),
+    // `partId` is the page's reference: the part number, or an id from an old link.
+    otherParts: otherPartsPage.filter((p) => p.id !== partId && p.part_number !== partId),
   };
 }
 

@@ -1,0 +1,9 @@
+[
+ {"goto": "/dye-house/lab-dip-recipe"},
+ {"wait": 10000},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Edit')", "after": 18000},
+ {"url": "edit_url"},
+ {"texts": "tabs", "of": "[role=tab]"},
+ {"texts": "edit_head", "of": "main h2, main h3"},
+ {"shot": "ld-recipe-edit"}
+]

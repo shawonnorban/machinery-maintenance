@@ -44,6 +44,7 @@ return [
     'export_ready_toast' => 'Export ready',
     'my_exports' => 'My exports',
     'groups' => [
+        'quality' => 'Quality tally',
         'compliance' => 'Bond and customs',
         'procurement' => 'Buying',
         'requisition' => 'Floor requisitions',
@@ -83,6 +84,11 @@ return [
         'asset' => 'Machine',
     ],
     'columns' => [
+        'qt_section' => 'Section', 'qt_line' => 'Line', 'qt_job_no' => 'Job No', 'qt_buyer' => 'Buyer', 'qt_style' => 'Style', 'qt_target' => 'Target',
+        'qt_checked' => 'Checked', 'qt_rft' => 'RFT', 'qt_defect' => 'Defect', 'qt_rectify' => 'Rectify', 'qt_reject' => 'Reject', 'qt_pass' => 'Pass',
+        'qt_dhu' => 'DHU %', 'qt_rft_pct' => 'RFT %', 'qt_achievement' => 'Achievement %', 'qt_efficiency' => 'Efficiency %', 'qt_defect_code' => 'Code',
+        'qt_defect_name' => 'Defect', 'qt_found' => 'Found', 'qt_share' => 'Share %', 'qt_lines' => 'Lines', 'qt_jobs' => 'Jobs', 'qt_qc' => 'QC',
+        'qt_employee_code' => 'Employee code', 'qt_days' => 'Days', 'qt_taps' => 'Taps', 'qt_checked_per_day' => 'Checked / day', 'qt_hour' => 'Hour',
         // Bonded warehouse and UD/UP (Shared Systems §3.5).
         'licence_no' => 'Licence no.',
         'valid_to' => 'Valid to',
@@ -559,5 +565,26 @@ return [
     'compliance_duty_summary' => [
         'title' => 'Duty exemption summary',
         'description' => 'Duty that fell due when goods left the bond, and what took them out of it.',
+    ],
+    // The shared table PDF (App\Shared\Pdf\TablePdf), past its row limit.
+    'pdf_truncated' => 'Only the first :n rows are in this PDF — export Excel for the whole report.',
+    'pdf_printed_by' => 'Printed by :user on :when',
+    'pdf_printed' => 'Printed on :when',
+    'pdf_page' => 'Page',
+    'qt_daily_summary' => [
+        'title' => 'Daily quality summary',
+        'description' => 'Day by day, every line and job: target, RFT, defect, rectify, reject, pass, DHU, RFT %, achievement and efficiency.',
+    ],
+    'qt_defect_analysis' => [
+        'title' => 'Defect analysis',
+        'description' => 'Each defect over the period: how often it was found, its share of the section, and on how many lines and jobs.',
+    ],
+    'qt_inspector_performance' => [
+        'title' => 'QC performance',
+        'description' => 'Each QC over the period: days tapped, garments checked, defects found and the DHU they recorded.',
+    ],
+    'qt_hourly_tally' => [
+        'title' => 'Hourly tally',
+        'description' => 'The tally sheet for every line: day, line and hour with RFT, defect, rectify, reject, pass and DHU.',
     ],
 ];

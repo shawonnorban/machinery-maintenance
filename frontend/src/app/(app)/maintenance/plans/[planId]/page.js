@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { PlanHeaderActions } from "@/components/maintenance/plan-header-actions";
 import { getT } from "@/lib/i18n-server";
 import { activatePlan, deactivatePlan, deletePlan } from "../actions";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `plans/show.blade.php`. */
 export default async function MaintenancePlanDetailPage({ params }) {
@@ -20,9 +21,9 @@ export default async function MaintenancePlanDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("maintenance") }, { label: t("plans"), href: "/maintenance/plans" }, { label: plan.name }]}
-        title={plan.name}
+      <ScreenHeader
+        parentUrl="/maintenance/plans"
+        title={plan.plan_number ? `${plan.plan_number} — ${plan.name}` : plan.name}
         description={plan.asset?.asset_code ?? plan.asset_type ?? undefined}
         actions={<PlanHeaderActions plan={plan} actions={{ activatePlan, deactivatePlan, deletePlan }} />}
       />
@@ -56,7 +57,7 @@ export default async function MaintenancePlanDetailPage({ params }) {
                           <FormattedDateTime value={s.due_at} mode="date" />
                         </td>
                         <td className="px-2 py-2">
-                          <Link href={`/assets/${s.asset?.id}`} className="text-brand hover:underline">
+                          <Link href={`/assets/${refOf(s.asset, "asset_code")}`} className="text-brand hover:underline">
                             {s.asset?.asset_code}
                           </Link>
                         </td>

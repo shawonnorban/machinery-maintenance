@@ -6,6 +6,7 @@ namespace Tests\Feature\Analytics;
 
 use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Breakdown\Actions\ReportBreakdown;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Company;
 use Database\Seeders\DatabaseSeeder;
@@ -54,7 +55,7 @@ class DashboardApiTest extends TestCase
             ->getJson('/api/v1/dashboard/management')
             ->assertOk()
             ->assertJsonPath('data.assets.total', 1)
-            ->assertJsonStructure(['data' => ['kpis', 'assets', 'overdue_maintenance', 'cost', 'period']]);
+            ->assertJsonStructure(['data' => ['kpis', 'assets', 'overdue_maintenance', 'cost', 'top_failing_assets', 'period']]);
     }
 
     public function test_the_maintenance_panel_reports_open_work_and_workload(): void
@@ -62,7 +63,29 @@ class DashboardApiTest extends TestCase
         $this->withToken($this->tokenFor($this->engineer))
             ->getJson('/api/v1/dashboard/maintenance')
             ->assertOk()
-            ->assertJsonStructure(['data' => ['today', 'due', 'overdue', 'open_work_orders', 'active_breakdowns', 'workload']]);
+            ->assertJsonStructure(['data' => ['today', 'due', 'overdue', 'open_work_orders', 'active_breakdowns', 'workload', 'open_breakdown_list', 'pm_queue', 'upcoming_week']]);
+    }
+
+    public function test_an_open_breakdown_is_listed_and_counted_against_its_machine(): void
+    {
+        app(ReportBreakdown::class)->handle([
+            'asset_id' => $this->asset->id,
+            'problem_description' => 'Needle bar jammed',
+            'failure_at' => now()->subHour(),
+            'reported_at' => now()->subHour(),
+        ], $this->engineer->id);
+
+        $this->withToken($this->tokenFor($this->engineer))
+            ->getJson('/api/v1/dashboard/maintenance')
+            ->assertOk()
+            ->assertJsonPath('data.open_breakdown_list.0.asset_code', $this->asset->asset_code)
+            ->assertJsonPath('data.open_breakdown_list.0.status', 'REPORTED');
+
+        $this->withToken($this->tokenFor($this->manager))
+            ->getJson('/api/v1/dashboard/management')
+            ->assertOk()
+            ->assertJsonPath('data.top_failing_assets.0.asset_code', $this->asset->asset_code)
+            ->assertJsonPath('data.top_failing_assets.0.failures', 1);
     }
 
     public function test_the_store_panel_reports_stock_value(): void
@@ -70,7 +93,7 @@ class DashboardApiTest extends TestCase
         $this->withToken($this->tokenFor($this->manager))
             ->getJson('/api/v1/dashboard/store')
             ->assertOk()
-            ->assertJsonStructure(['data' => ['stock_value', 'low_stock', 'out_of_stock', 'critical_low']]);
+            ->assertJsonStructure(['data' => ['stock_value', 'low_stock', 'out_of_stock', 'critical_low', 'low_stock_items']]);
     }
 
     public function test_a_role_without_the_management_permission_cannot_reach_it(): void

@@ -1,0 +1,7 @@
+[
+ {"goto": "/capacity-planning/projections"},
+ {"click": "aside button:has-text('December')", "after": 12000},
+ {"texts": "proj_rows", "of": "tbody tr"},
+ {"texts": "tiles", "of": "main .grid p.text-lg"},
+ {"shot": "proj"}
+]

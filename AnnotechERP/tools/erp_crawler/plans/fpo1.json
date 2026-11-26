@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/merchandising/purchase-fabric-po" },
+ { "click": "button:has-text('Fabric Purchase Order Entry')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "fullshot": "fpo-entry" },
+ { "click": "button:has-text('Add to PO')", "wait": 1200 },
+ { "click": "button:has-text('Add other cost')", "wait": 1200 },
+ { "dump": "lines", "root": "main" },
+ { "click": "button:has-text('Requisition List')", "wait": 2500 },
+ { "dump": "reqlist", "root": "main" }
+]

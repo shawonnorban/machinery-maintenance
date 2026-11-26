@@ -37,7 +37,7 @@ class FactoryApiTest extends TestCase
         $this->delta = TenantFixture::company('Delta Apparels Ltd', 'DAL');
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->manager = TenantFixture::user($this->delta, 'FACTORY_MANAGER', 'fm@delta.test');
+        $this->manager = TenantFixture::user($this->delta, 'COMPANY_ADMIN', 'ca@delta.test'); // factory setup is admin-only
         $this->technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
     }
 
@@ -73,6 +73,32 @@ class FactoryApiTest extends TestCase
             ->getJson('/api/v1/factories')
             ->assertOk()
             ->assertJsonCount(1, 'data');
+    }
+
+    public function test_a_factory_code_can_change_and_what_keeps_it_as_text_follows(): void
+    {
+        $factory = TenantFixture::factory($this->delta, 'Dhaka Unit 1', 'DHK');
+        TenantFixture::factory($this->delta, 'Gazipur Unit', 'GAZ');
+        // A Pre-Budget requisition whose Factory column (source: factories) holds the code as text.
+        $now = now();
+        $group = strtolower((string) \Illuminate\Support\Str::ulid());
+        \Illuminate\Support\Facades\DB::table('pb_groups')->insert(['id' => $group, 'company_id' => $this->delta->id, 'sheet' => 'REQ', 'code' => '01', 'name' => 'Order', 'created_at' => $now, 'updated_at' => $now]);
+        \Illuminate\Support\Facades\DB::table('pb_columns')->insert(['id' => strtolower((string) \Illuminate\Support\Str::ulid()), 'company_id' => $this->delta->id, 'group_id' => $group, 'sheet' => 'REQ', 'key' => 'factory', 'label' => 'Factory', 'type' => 'dropdown', 'source' => 'factories', 'created_at' => $now, 'updated_at' => $now]);
+        $req = strtolower((string) \Illuminate\Support\Str::ulid());
+        \Illuminate\Support\Facades\DB::table('pb_requisitions')->insert(['id' => $req, 'company_id' => $this->delta->id, 'entry_type' => 'KNIT', 'status' => 'COMPLETE', 'values' => json_encode(['factory' => 'DHK', 'style' => 'S-1']), 'created_at' => $now, 'updated_at' => $now]);
+
+        $this->withToken($this->tokenFor($this->manager))
+            ->patchJson("/api/v1/factories/{$factory->id}", ['name' => 'Dhaka Unit 1', 'timezone' => 'Asia/Dhaka', 'code' => 'ncl'])
+            ->assertOk()
+            ->assertJsonPath('data.code', 'NCL');
+        $values = json_decode((string) \Illuminate\Support\Facades\DB::table('pb_requisitions')->where('id', $req)->value('values'), true);
+        $this->assertSame('NCL', $values['factory']);
+        $this->assertSame('S-1', $values['style']);
+
+        // Another factory's code is refused.
+        $this->withToken($this->tokenFor($this->manager))
+            ->patchJson("/api/v1/factories/{$factory->id}", ['name' => 'Dhaka Unit 1', 'timezone' => 'Asia/Dhaka', 'code' => 'GAZ'])
+            ->assertJsonValidationErrors('code');
     }
 
     public function test_a_factory_still_running_a_machine_cannot_be_deleted(): void

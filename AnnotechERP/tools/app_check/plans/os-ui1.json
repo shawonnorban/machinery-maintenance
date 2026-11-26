@@ -1,0 +1,194 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "goto": "/work-study/monthly-op-aso-salary-ot-rate?tab=new"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "shot": "o01-rate-new"
+ },
+ {
+  "pick": "Company",
+  "option": "Delta"
+ },
+ {
+  "pick": "Select Year",
+  "option": "2026"
+ },
+ {
+  "pick": "Month",
+  "option": "December"
+ },
+ {
+  "fill": "OP Salary (Avg)",
+  "text": "12000"
+ },
+ {
+  "fill": "ASO Salary (Avg)",
+  "text": "9000"
+ },
+ {
+  "fill": "OP OT Rate (Avg)",
+  "text": "60"
+ },
+ {
+  "fill": "ASO OT Rate (Avg)",
+  "text": "45"
+ },
+ {
+  "click": "main button:has-text('Save salary and OT rate')"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "o02-rate-records"
+ },
+ {
+  "goto": "/work-study/monthly-op-aso-salary-ot-rate?tab=rates"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Company",
+  "option": "Delta"
+ },
+ {
+  "pick": "Select Year",
+  "option": "2026"
+ },
+ {
+  "click": "main button:has-text('Show')"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='November OP Salary (Avg)']",
+  "text": "12500"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='November ASO Salary (Avg)']",
+  "text": "9200"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='November OP OT Rate (Avg)']",
+  "text": "62"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='November ASO OT Rate (Avg)']",
+  "text": "46"
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "o03-rate-sheet"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "o04-rates"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=profit&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "o05-profit-with-rates"
+ },
+ {
+  "goto": "/work-study/ot-plan-garment-division?tab=new"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "fill": "Date",
+  "text": "2026-12-19"
+ },
+ {
+  "pick": "Floor",
+  "option": "1st Floor \u2014 A-1F"
+ },
+ {
+  "wait": 800
+ },
+ {
+  "pick": "Line",
+  "option": "LINE01"
+ },
+ {
+  "pick": "Dept.",
+  "option": "Sewing"
+ },
+ {
+  "pick": "Designation",
+  "option": "Jr. Operator"
+ },
+ {
+  "fill": "MP (Gen.)",
+  "text": "36"
+ },
+ {
+  "fill": "WH (Gen.)",
+  "text": "8"
+ },
+ {
+  "fill": "OT Hours to Plan",
+  "text": "3"
+ },
+ {
+  "fill": "OP per hour",
+  "text": "30"
+ },
+ {
+  "fill": "ASO per hour",
+  "text": "6"
+ },
+ {
+  "fill": "Remarks",
+  "text": "Style change-over backlog"
+ },
+ {
+  "shot": "o06-ot-new"
+ },
+ {
+  "click": "main button:has-text('Save OT plan row')"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "o07-ot-records"
+ },
+ {
+  "goto": "/work-study/ot-plan-garment-division?tab=plan&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "o08-ot-plan"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "o09-ot-plan"
+ }
+]

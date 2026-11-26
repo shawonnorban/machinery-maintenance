@@ -1,0 +1,21 @@
+[
+ {"goto": "/hr-payroll/shift-master"},
+ {"wait": 25000},
+ {"shot": "qt160-shifts"},
+ {"goto": "/quality-tally/panels"},
+ {"wait": 12000},
+ {"click": "main button[role=tab]:has-text('T-Shirt')", "after": 800},
+ {"shot": "qt161-panels"},
+ {"goto": "/quality-tally/job-flow"},
+ {"wait": 12000},
+ {"shot": "qt162-flow"},
+ {"goto": "/quality-tally/sewing-target"},
+ {"wait": 12000},
+ {"shot": "qt163-sewtarget"},
+ {"goto": "/quality-tally/sewing-attendance"},
+ {"wait": 12000},
+ {"shot": "qt164-att"},
+ {"goto": "/capacity-planning/shift-master"},
+ {"wait": 15000},
+ {"shot": "qt165-planshift"}
+]

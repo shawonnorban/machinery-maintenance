@@ -1,0 +1,15 @@
+[
+ {"goto": "/m/knitting/collar-cuff-production"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"click": "main button:has-text('1x1 rib collar probe')", "wait": 3000},
+ {"fullshot": "cp-prod-sel"},
+ {"dump": "prod", "root": "main"},
+ {"click": "main button:has-text('Add')", "wait": 1500},
+ {"dump": "prod2", "root": "main"},
+ {"fullshot": "cp-prod-line"},
+ {"goto": "/m/knitting/collar-cuff-program-sc-out-house"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"peek": "main button:has-text('Supplier'), main label:has-text('Supplier') + * button", "wait": 1500},
+ {"popup": "sup_popup"},
+ {"fullshot": "pg-sup"}
+]

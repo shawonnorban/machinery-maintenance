@@ -1,0 +1,7 @@
+[
+ {"goto": "/pre-budget/budget-finalized?budget=PB-CNA-1126-0003"},
+ {"see": "Budget Print"},
+ {"printpdf": "a[aria-label='Budget Print PB-CNA-1126-0003']", "as": "budget"},
+ {"goto": "/pre-budget/stock-yarn-use?budget=PB-CNA-1126-0003"},
+ {"printpdf": "a[aria-label='Print PB-CNA-1126-0003']", "as": "stock_use"}
+]

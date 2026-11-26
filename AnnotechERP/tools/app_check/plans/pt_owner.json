@@ -1,0 +1,169 @@
+[
+ {
+  "goto": "/production-tracking/line-capacity"
+ },
+ {
+  "click": "role=button[name='Add Capacity']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select >> nth=0",
+  "option": "Sewing"
+ },
+ {
+  "choose": "[role=dialog] select >> nth=1",
+  "option": "LINE01 \u2014"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number] >> nth=0",
+  "text": "120"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number] >> nth=1",
+  "text": "80"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save']",
+  "after": 12000
+ },
+ {
+  "shot": "cap-LINE01"
+ },
+ {
+  "click": "role=button[name='Add Capacity']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select >> nth=0",
+  "option": "Sewing"
+ },
+ {
+  "choose": "[role=dialog] select >> nth=1",
+  "option": "LINE02 \u2014"
+ },
+ {
+  "click": "[role=dialog] >> text=Pieces per day",
+  "after": 300
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number] >> nth=0",
+  "text": "1000"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save']",
+  "after": 12000
+ },
+ {
+  "shot": "cap-LINE02"
+ },
+ {
+  "click": "role=button[name='Add Capacity']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select >> nth=0",
+  "option": "Finishing"
+ },
+ {
+  "choose": "[role=dialog] select >> nth=1",
+  "option": "Finishing Line1 \u2014"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number] >> nth=0",
+  "text": "150"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number] >> nth=1",
+  "text": "90"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save']",
+  "after": 12000
+ },
+ {
+  "shot": "cap-Finishing Line1"
+ },
+ {
+  "goto": "/production-tracking/daily-plan"
+ },
+ {
+  "click": "role=button[name='New Plan']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select >> nth=0",
+  "option": "LINE01 \u2014"
+ },
+ {
+  "choose": "[role=dialog] select >> nth=1",
+  "option": "PO-SS27-01"
+ },
+ {
+  "choose": "[role=dialog] select >> nth=4",
+  "option": "C \u2014"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "shot": "plan-form"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save as Draft']",
+  "after": 12000
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Close']",
+  "after": 800
+ },
+ {
+  "click": "role=button[name='New Plan']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select >> nth=0",
+  "option": "LINE02 \u2014"
+ },
+ {
+  "choose": "[role=dialog] select >> nth=1",
+  "option": "PO-1001"
+ },
+ {
+  "choose": "[role=dialog] select >> nth=4",
+  "option": "B \u2014"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save as Draft']",
+  "after": 12000
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Close']",
+  "after": 800
+ },
+ {
+  "shot": "plans-drafts"
+ },
+ {
+  "click": "role=button[name='Submit'] >> nth=0",
+  "after": 12000
+ },
+ {
+  "click": "role=button[name='Submit'] >> nth=0",
+  "after": 12000
+ },
+ {
+  "shot": "plans-submitted"
+ },
+ {
+  "see": "Pending Approval",
+  "as": "pending"
+ }
+]

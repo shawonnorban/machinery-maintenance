@@ -10,10 +10,12 @@ import { SupportPanel } from "./support-panel";
 import { TicketsPanel } from "./tickets-panel";
 import { AnalyticsPanel } from "./analytics-panel";
 import { DangerPanel } from "./danger-panel";
+import { ModulesPanel } from "./modules-panel";
 
 const TABS = [
   { value: "company", label: "Company" },
   { value: "billing", label: "Billing" },
+  { value: "modules", label: "Modules" },
   { value: "domains", label: "Domains" },
   { value: "support", label: "Support" },
   { value: "tickets", label: "Tickets" },
@@ -80,6 +82,10 @@ function TenantTabs({ data, actions }) {
           entitlementsAction={actions.updateEntitlements}
           invoiceActions={{ draft: actions.draftInvoice, issue: actions.issueInvoice, pay: actions.payInvoice, void: actions.voidInvoice }}
         />
+      </TabsPanel>
+
+      <TabsPanel value="modules">
+        <ModulesPanel modules={data.modules} setAction={actions.setModule} />
       </TabsPanel>
 
       <TabsPanel value="domains">

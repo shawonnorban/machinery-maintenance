@@ -89,6 +89,23 @@ class MaintenancePlanApiTest extends TestCase
             ->assertJsonPath('data.0.maintenance_plan_id', $planId);
     }
 
+    public function test_the_plan_list_searches_by_plan_name_and_machine_regardless_of_case(): void
+    {
+        foreach (['Monthly lubrication', 'Belt tension check'] as $name) {
+            $this->withToken($this->tokenFor($this->engineer))
+                ->postJson('/api/v1/maintenance-plans', $this->planPayload(['name' => $name]))
+                ->assertCreated();
+        }
+
+        $names = fn (string $term): array => array_column($this->withToken($this->tokenFor($this->engineer))
+            ->getJson('/api/v1/maintenance-plans?search='.urlencode($term))->assertOk()->json('data'), 'name');
+
+        $this->assertSame(['Belt tension check'], $names('BELT'));
+        // Both plans cover the same machine, so its code finds both.
+        $this->assertCount(2, $names(mb_strtolower($this->asset->asset_code)));
+        $this->assertSame([], $names('no such plan'));
+    }
+
     public function test_show_carries_the_template_version_number_and_a_schedules_trigger_facts(): void
     {
         $version = WorkOrderFixture::publishedChecklist($this->delta);
@@ -209,6 +226,26 @@ class MaintenancePlanApiTest extends TestCase
         $this->withToken($this->tokenFor($this->technician))
             ->postJson('/api/v1/maintenance-plans', $this->planPayload())
             ->assertForbidden();
+    }
+
+    public function test_a_plan_is_numbered_and_its_page_can_address_it_by_that_number(): void
+    {
+        $token = $this->tokenFor($this->engineer);
+
+        $first = $this->withToken($token)->postJson('/api/v1/maintenance-plans', $this->planPayload())->assertCreated();
+        $second = $this->withToken($token)->postJson('/api/v1/maintenance-plans', $this->planPayload(['name' => 'Same machine, second plan']))->assertCreated();
+
+        $this->assertMatchesRegularExpression('/^PM-\d{5}$/', (string) $first->json('data.plan_number'));
+        $this->assertNotSame($first->json('data.plan_number'), $second->json('data.plan_number'));
+
+        $this->withToken($token)->getJson('/api/v1/maintenance-plans/'.$second->json('data.plan_number'))
+            ->assertOk()
+            ->assertJsonPath('data.id', $second->json('data.id'));
+
+        $this->withToken($token)->getJson('/api/v1/maintenance-plans?per_page=1')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('meta.per_page', 1);
     }
 
     private function tokenFor(User $user): string

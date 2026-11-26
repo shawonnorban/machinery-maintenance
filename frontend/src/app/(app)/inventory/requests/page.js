@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { PartRequestsTable } from "@/components/inventory/part-requests-table";
 import { getT } from "@/lib/i18n-server";
 
@@ -12,8 +12,8 @@ export default async function PartRequestsPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("inventory") }, { label: t("part_requests") }]}
+      <ScreenHeader
+        url="/inventory/requests"
         title={t("part_requests")}
         description={t("part_requests_intro")}
       />

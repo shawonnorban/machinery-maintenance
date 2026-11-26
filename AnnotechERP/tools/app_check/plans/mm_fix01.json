@@ -1,0 +1,14 @@
+[
+ {"goto": "/work-orders/WO-DHK-202609-00004"}, {"wait": 15000}, {"shot": "f01-wo-header-icons"},
+ {"goto": "/maintenance/plans"}, {"wait": 15000}, {"shot": "f02-plans-list"},
+ {"click": "a:has-text('PM-00001')", "after": 15000}, {"shot": "f03-plan-detail"}, {"see": "PM-00001", "as": "plan_title_has_number"},
+ {"goto": "/maintenance/templates"}, {"wait": 12000},
+ {"click": "table a >> nth=0", "after": 15000}, {"shot": "f04-template-detail"},
+ {"goto": "/metering"}, {"wait": 12000}, {"shot": "f05-meters-list"},
+ {"click": "a:has-text('MTR-')", "after": 15000}, {"shot": "f06-meter-detail"},
+ {"goto": "/vendors/warranties"}, {"wait": 12000},
+ {"click": "a:has-text('WTY-')", "after": 15000}, {"shot": "f07-warranty-detail"},
+ {"goto": "/assets"}, {"wait": 15000},
+ {"choose": "select:near(:text('Rows'))", "option": "10", "after": 15000}, {"shot": "f08-assets-10-rows"},
+ {"goto": "/assets"}, {"wait": 15000}, {"shot": "f09-assets-remembered"}
+]

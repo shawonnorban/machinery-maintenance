@@ -1,0 +1,1 @@
+[{"goto":"/m/executive-dashboard/department-dashboards"},{"wait":4000},{"click":"Chief Executive Command Deck","exact":true},{"wait":6000},{"shot":"x0"},{"scroll":1},{"shot":"x1"}]

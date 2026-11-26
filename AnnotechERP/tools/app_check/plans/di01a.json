@@ -1,0 +1,19 @@
+[
+ {"goto": "/system-settings/attendance-devices"},
+ {"wait": 25000},
+ {"shot": "dev-empty"},
+ {"click": "main button[role=tab]:has-text('Register Device')", "after": 1500},
+ {"click": "main button:has-text('Save Device')", "after": 10000},
+ {"texts": "errors", "of": "main .text-danger"},
+ {"fill": "Device Code", "exact": true, "text": "GATE-01"},
+ {"fill": "Device Name", "exact": true, "text": "Main Gate Fingerprint"},
+ {"fill": "Model", "exact": true, "text": "F22"},
+ {"fill": "Serial Number", "exact": true, "text": "DEMO-SN-0001"},
+ {"fill": "Location", "exact": true, "text": "Factory gate"},
+ {"shot": "dev-form-device"},
+ {"click": "main button:has-text('Continue')", "after": 1000},
+ {"shot": "dev-form-attendance"},
+ {"click": "main button:has-text('Save Device')", "after": 12000},
+ {"texts": "rows", "of": "main tbody tr"},
+ {"shot": "dev-saved"}
+]

@@ -1,0 +1,207 @@
+[
+ {
+  "goto": "/work-study/gmt-item-specification-entry?tab=planner"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Style#']",
+  "text": "SS27-TEE01"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Variation']",
+  "text": "1"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Description']",
+  "text": "Ladies crew neck tee, s/s"
+ },
+ {
+  "choose": "select[aria-label='Fabric']",
+  "option": "Single Jersey"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Manpower OP']",
+  "text": "30"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Manpower ASO']",
+  "text": "6"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='SMV Sewing']",
+  "text": "9.2"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Efficiency Avg']",
+  "text": "62"
+ },
+ {
+  "upload": "input[type=file]",
+  "file": "out/ob-bulletin.pdf"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "click": "button:has-text('Add process group')",
+  "after": 400
+ },
+ {
+  "choose": "select[aria-label='Process Group']",
+  "option": "Collar"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Specification']",
+  "text": "Rib collar 1x1, coverstitch"
+ },
+ {
+  "click": "button:has-text('Add machine')",
+  "after": 400
+ },
+ {
+  "choose": "main table select[aria-label='Machine Type'] >> nth=0",
+  "option": "SNLS"
+ },
+ {
+  "fill": "x",
+  "sel": "main table input[aria-label='Requirement'] >> nth=0",
+  "text": "16"
+ },
+ {
+  "click": "button:has-text('Add machine')",
+  "after": 400
+ },
+ {
+  "choose": "main table select[aria-label='Machine Type'] >> nth=1",
+  "option": "Overlock"
+ },
+ {
+  "fill": "x",
+  "sel": "main table input[aria-label='Requirement'] >> nth=1",
+  "text": "12"
+ },
+ {
+  "click": "button:has-text('Save specification')",
+  "after": 15000
+ },
+ {
+  "texts": "badge",
+  "of": "main section span.rounded-full"
+ },
+ {
+  "html": "ob_html",
+  "of": "input[aria-label='OB File Upload']"
+ },
+ {
+  "shot": "se-saved"
+ },
+ {
+  "goto": "/work-study/gmt-item-specification-entry"
+ },
+ {
+  "texts": "records",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/work-study/gmt-item-specification"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "list",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "is-list"
+ },
+ {
+  "goto": "/work-study/gmt-item-specification?tab=groups"
+ },
+ {
+  "click": "main button:has-text('Knit Tops')",
+  "after": 6000
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "after": 500
+ },
+ {
+  "fill": "x",
+  "sel": "main tbody tr:last-child input",
+  "text": "Ladies Tank Top Racer"
+ },
+ {
+  "click": "main button:has-text('Save') >> nth=0",
+  "after": 10000
+ },
+ {
+  "texts": "cats",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/work-study/gmt-item-specification?tab=variations"
+ },
+ {
+  "click": "main button:has-text('Basic T-Shirt')",
+  "after": 6000
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "after": 500
+ },
+ {
+  "fill": "x",
+  "sel": "main tbody tr:last-child input >> nth=0",
+  "text": "Crew neck, s/s, 1 colour print"
+ },
+ {
+  "fill": "x",
+  "sel": "main tbody tr:last-child input >> nth=3",
+  "text": "9.2"
+ },
+ {
+  "fill": "x",
+  "sel": "main tbody tr:last-child input >> nth=4",
+  "text": "9.8"
+ },
+ {
+  "click": "main button:has-text('Save') >> nth=0",
+  "after": 10000
+ },
+ {
+  "texts": "vars",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "is-vars"
+ },
+ {
+  "goto": "/work-study/gmt-item-specification?tab=new"
+ },
+ {
+  "click": "main form button[type=submit]",
+  "after": 5000
+ },
+ {
+  "texts": "err",
+  "of": "main form p.text-danger"
+ },
+ {
+  "goto": "/work-study/gmt-item-specification?tab=records"
+ },
+ {
+  "texts": "var_records",
+  "of": "main tbody tr"
+ }
+]

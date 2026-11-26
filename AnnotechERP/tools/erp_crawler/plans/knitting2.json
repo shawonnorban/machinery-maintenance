@@ -1,0 +1,11 @@
+[
+ {"goto": "/m/knitting/machine-profile", "click": "Machine Reference Lists"},
+ {"click": "brand list", "shot": "mp_list_brand"},
+ {"click": "diameter list", "shot": "mp_list_dia"},
+ {"click": "gauge list", "shot": "mp_list_gg"},
+ {"goto": "/m/knitting/user-company-office-mapping", "click": "Mappings", "shot": "uo_records"},
+ {"goto": "/m/knitting/sc-party-rate", "click": "Quatation List", "shot": "sc_list"},
+ {"goto": "/m/knitting/sc-party-rate", "click": "Knitting", "exact": true},
+ {"peek": "button:has-text('Add')", "shot": "sc_add"},
+ {"goto": "/m/knitting/yarn-count-setup", "click": "Add New", "shot": "yc_new"}
+]

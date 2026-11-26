@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { FileClaimForm } from "@/components/vendor/file-claim-form";
 import { ClaimsList } from "@/components/vendor/claims-list";
 import { getT } from "@/lib/i18n-server";
 import { fileClaim, decideClaim } from "./actions";
+import { refOf } from "@/lib/ref-path";
+import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 
 const TYPE_KEYS = { MANUFACTURER: "type_manufacturer", EXTENDED: "type_extended", SERVICE: "type_service_warranty" };
 
@@ -22,13 +24,9 @@ export default async function WarrantyDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[
-          { label: t("vendors") },
-          { label: t("warranties"), href: "/vendors/warranties" },
-          { label: warranty.asset?.asset_code ?? t("warranty_title_fallback") },
-        ]}
-        title={warranty.asset?.asset_code ?? t("warranty_title_fallback")}
+      <ScreenHeader
+        parentUrl="/vendors/warranties"
+        title={[warranty.warranty_number, warranty.asset?.asset_code].filter(Boolean).join(" — ") || t("warranty_title_fallback")}
         description={warranty.asset?.name}
       />
 
@@ -52,7 +50,7 @@ export default async function WarrantyDetailPage({ params }) {
                 <dt className="text-foreground-muted">{t("vendor")}</dt>
                 <dd className="text-foreground">
                   {warranty.vendor ? (
-                    <Link href={`/vendors/${warranty.vendor.id}/edit`} className="text-brand hover:underline">
+                    <Link href={`/vendors/${refOf(warranty.vendor, "code")}/edit`} className="text-brand hover:underline">
                       {warranty.vendor.name}
                     </Link>
                   ) : (
@@ -64,9 +62,9 @@ export default async function WarrantyDetailPage({ params }) {
                 <dt className="text-foreground-muted">{t("reference")}</dt>
                 <dd className="text-foreground">{warranty.reference ?? "—"}</dd>
                 <dt className="text-foreground-muted">{t("start_date")}</dt>
-                <dd className="text-foreground">{warranty.start_date}</dd>
+                <dd className="text-foreground"><FormattedDateTime value={warranty.start_date} mode="date" /></dd>
                 <dt className="text-foreground-muted">{t("end_date")}</dt>
-                <dd className="text-foreground">{warranty.end_date}</dd>
+                <dd className="text-foreground"><FormattedDateTime value={warranty.end_date} mode="date" /></dd>
                 <dt className="text-foreground-muted">{t("coverage")}</dt>
                 <dd className="text-foreground">{warranty.coverage ?? "—"}</dd>
                 <dt className="text-foreground-muted">{t("exclusions")}</dt>

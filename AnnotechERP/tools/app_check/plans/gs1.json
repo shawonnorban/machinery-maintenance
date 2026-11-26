@@ -1,0 +1,7 @@
+[
+ { "goto": "/general-store/gs-receive" },
+ { "shot": "gs1-receive" },
+ { "click": "[aria-label='Item 1']", "after": 800 },
+ { "texts": "items", "of": "[role=option]" },
+ { "shot": "gs1-items" }
+]

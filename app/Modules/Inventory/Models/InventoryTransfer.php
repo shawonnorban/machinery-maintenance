@@ -6,6 +6,7 @@ namespace App\Modules\Inventory\Models;
 
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +22,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class InventoryTransfer extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'transfer_number';
 
     public const STATUSES = ['REQUESTED', 'APPROVED', 'IN_TRANSIT', 'RECEIVED', 'REJECTED', 'CANCELLED'];
 

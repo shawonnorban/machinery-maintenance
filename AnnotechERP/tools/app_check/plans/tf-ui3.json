@@ -1,0 +1,135 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> [data-slot=checkbox]"
+ },
+ {
+  "wait": 500
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=sheet&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "html": "pdf_link",
+  "of": "main a:has(svg.lucide-printer)"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "t07-targets"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=plans&floor=A-1F&line=LINE01"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> [data-slot=checkbox]"
+ },
+ {
+  "wait": 500
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "t10-plans"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "t11-plans"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=npt&floor=A-1F&date=2026-12-19&line=LINE01"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Order/Style 1']",
+  "text": "LPP-2026-000001"
+ },
+ {
+  "pick": "x",
+  "sel": "[aria-label='Reason Type 1']",
+  "option": "Machine Breakdown"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Reason Details 1']",
+  "text": "Overlock tension"
+ },
+ {
+  "pick": "x",
+  "sel": "[aria-label='Responsible Dept. 1']",
+  "option": "Maintenance"
+ },
+ {
+  "click": "[aria-label='Hours Slot 1']"
+ },
+ {
+  "wait": 600
+ },
+ {
+  "click": "xpath=//label[normalize-space(.)='3']"
+ },
+ {
+  "wait": 400
+ },
+ {
+  "press": "Escape"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Manpower 1']",
+  "text": "4"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='-Min 1']",
+  "text": "30"
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "t12-npt"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "t13-npt"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=config&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "t14-cost-config"
+ }
+]

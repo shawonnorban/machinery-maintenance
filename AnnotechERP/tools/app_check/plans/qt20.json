@@ -1,0 +1,16 @@
+[
+ {"goto": "/quality-tally/cutting-target"},
+ {"wait": 16000},
+ {"shot": "qt100-cutmgr-target"},
+ {"click": "main button:has-text('Give target') >> nth=0", "after": 2500},
+ {"shot": "qt101-cutmgr-form"},
+ {"choose": "[role=dialog] label:has-text('Line') select", "option": "C1"},
+ {"click": "[role=dialog] button:has-text('Save')", "after": 18000},
+ {"shot": "qt102-cutmgr-saved"},
+ {"goto": "/quality-tally/sewing-target"},
+ {"wait": 9000},
+ {"shot": "qt103-cutmgr-sewing-refused"},
+ {"goto": "/quality-tally/cutting-dashboard"},
+ {"wait": 12000},
+ {"shot": "qt104-cutmgr-dash"}
+]

@@ -1,0 +1,5 @@
+[
+ {"goto": "/finishing-line/finishing-qc-entry"},
+ {"wait": 25000},
+ {"shot": "qt172-fin"}
+]

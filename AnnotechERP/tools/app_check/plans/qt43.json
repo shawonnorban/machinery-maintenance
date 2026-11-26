@@ -1,0 +1,20 @@
+[
+ {"goto": "/quality-tally/cutting-input"},
+ {"wait": 15000},
+ {"choose": "main form select", "option": "C1"},
+ {"fill": "Scan bundle card", "text": "ZZ9"},
+ {"press": "Enter"},
+ {"wait": 12000},
+ {"shot": "qt141-missing"},
+ {"click": "[role=dialog] button:has-text('Manual entry')", "after": 1500},
+ {"shot": "qt142-manual"},
+ {"press": "Escape"},
+ {"wait": 1500},
+ {"fill": "Scan bundle card", "text": "BND-20261106-0001"},
+ {"press": "Enter"},
+ {"wait": 9000},
+ {"press": "Z", "after": 100},{"press": "Z", "after": 100},{"press": "9", "after": 100},
+ {"press": "Enter"},
+ {"wait": 9000},
+ {"shot": "qt144-next-refused"}
+]

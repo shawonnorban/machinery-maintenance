@@ -1,0 +1,8 @@
+[{"goto": "/finance-ledger/voucher-post-unpost"}, {"wait": 25000},
+ {"click": "main button[role=tab]:has-text('Post / Unpost')", "after": 2000},
+ {"click": "main aside button:has-text('Delta Apparels')", "after": 2000},
+ {"shot": "pu-board-before"},
+ {"click": "main button[aria-label='Post JV-2026-000001']", "after": 15000},
+ {"texts": "board", "of": "main tbody tr"},
+ {"shot": "pu-board"},
+ {"goto": "/finance-ledger/compliance-vouchers"}, {"wait": 20000}, {"texts": "statutory", "of": "main tbody tr"}]

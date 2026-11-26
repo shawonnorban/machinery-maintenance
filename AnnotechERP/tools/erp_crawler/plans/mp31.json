@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "click": "main table tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Add follow-up')", "wait": 2000 },
+ { "texts": "fu_ui", "of": "[role=dialog] h2, [role=dialog] p, [role=dialog] label, [role=dialog] button, [role=dialog] span, main form label, main form p" },
+ { "dump": "fu_dump", "root": "[role=dialog]" },
+ { "options": "status_opts", "of": "[role=dialog] select" },
+ { "fullshot": "mp31-fu-form" },
+ { "click": "[role=dialog] button[type=submit], [role=dialog] button:has-text('Save')", "wait": 2000 },
+ { "texts": "fu_empty", "of": "[role=dialog] p, [role=dialog] [role=alert], li[data-sonner-toast] *" }
+]

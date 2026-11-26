@@ -1,0 +1,80 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=plans&floor=A-1F&line=LINE01"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> [data-slot=checkbox]"
+ },
+ {
+  "wait": 500
+ },
+ {
+  "pick": "x",
+  "sel": "[aria-label='LPP-2026-000001 Set Status']",
+  "option": "Running"
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "t10-plans"
+ },
+ {
+  "goto": "/work-study/style-feeding-sco?tab=dashboard"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Floor",
+  "option": "1st Floor \u2014 A-1F"
+ },
+ {
+  "click": "main button:has-text('Search')"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "shot": "t04-sco-board"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=sheet&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "t06-target-sheet"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=npt&floor=A-1F&date=2026-12-19&line=LINE01"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "t12-npt"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=lines&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "t14-cost-lines"
+ }
+]

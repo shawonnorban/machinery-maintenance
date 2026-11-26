@@ -1,14 +1,12 @@
-import Link from "next/link";
-import { Plus, ListTodo, Play, PauseCircle, BadgeCheck } from "lucide-react";
+import { ListTodo, Play, PauseCircle, BadgeCheck } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { StatCard } from "@/components/ui/stat-card";
-import { cn } from "@/lib/utils";
 import { WorkOrdersTable } from "@/components/work-orders/work-orders-table";
 import { getT } from "@/lib/i18n-server";
+import { applyPerPage } from "@/lib/per-page";
 
-/** Mirrors `WorkOrderApiController::index` — `open=true` reads `WorkOrder::TERMINAL_STATUSES`, not a client-guessed list. */
+/** Mirrors `WorkOrderApiController::index` — `open=true` reads `WorkOrder::OPEN_STATUSES` (what the Open counter counts), not a client-guessed list. */
 export default async function WorkOrdersPage({ searchParams }) {
   const params = await searchParams;
   const page = Number(params.page ?? 1);
@@ -16,6 +14,7 @@ export default async function WorkOrdersPage({ searchParams }) {
   const priority = params.priority ?? "";
 
   const query = new URLSearchParams({ page: String(page), open });
+  await applyPerPage(query, "/work-orders");
   if (priority) query.set("priority", priority);
 
   const [workOrders, counts, t] = await Promise.all([
@@ -29,15 +28,10 @@ export default async function WorkOrdersPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("work_orders") }]}
+      <ScreenHeader
+        url="/work-orders"
         title={t("work_orders")}
         description={t("page_description")}
-        actions={
-          <Link href="/work-orders/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> {t("new_work_order")}
-          </Link>
-        }
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -47,7 +41,7 @@ export default async function WorkOrdersPage({ searchParams }) {
         <StatCard label={t("filter_awaiting_verification")} value={counts.awaiting_verification} icon={<BadgeCheck />} tone="success" />
       </div>
 
-      <WorkOrdersTable workOrders={workOrders.data} meta={workOrders.meta} page={page} open={open} priority={priority} />
+      <WorkOrdersTable addHref="/work-orders/create" workOrders={workOrders.data} meta={workOrders.meta} page={page} open={open} priority={priority} />
     </>
   );
 }

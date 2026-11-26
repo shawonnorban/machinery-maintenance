@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Create Direct Requisition')", "wait": 3000 },
+ { "peek": "main button:has-text('Select…') >> nth=0", "wait": 1500 },
+ { "peek": "[role=option]:has-text('FAB-001') >> nth=-1", "wait": 2000 },
+ { "click": "main button:has-text('Submit requisition')", "wait": 2500 },
+ { "texts": "no_qty", "of": "main p.text-red-500, main p[class*=danger], main p[class*=red], main [role=alert], li[data-sonner-toast] *, main p" },
+ { "fullshot": "mp10-no-qty" },
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Select Order & Create')", "wait": 3000 },
+ { "click": "main button:has-text('Save draft')", "wait": 2500 },
+ { "texts": "no_order", "of": "main p, main [role=alert], li[data-sonner-toast] *" }
+]

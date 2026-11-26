@@ -1,0 +1,9 @@
+[
+ {"goto": "/hr-payroll/hr-dashboard"},
+ {"wait": 20000},
+ {"shot": "d0-today"},
+ {"fill": "Date", "sel": "main [aria-label='Date']", "text": "2026-11-10"},
+ {"wait": 12000},
+ {"shot": "d1-10nov"},
+ {"click": "main [role=radio]:has-text('This Month')", "after": 12000}
+]

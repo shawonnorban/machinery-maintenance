@@ -1,0 +1,19 @@
+[
+ {"goto": "/access-control/ledger-integration"}, {"wait": 15000}, {"shot": "m01-ledger-sources"},
+ {"goto": "/access-control/ledger-integration?tab=entry"}, {"wait": 15000},
+ {"click": "a:has-text('Machinery — Other Costs')", "after": 15000}, {"shot": "m02-ledger-entry-empty"},
+ {"pick": "Debit / Credit", "option": "Debit"},
+ {"pick": "Chart of Account", "option": "5020104 — Factory Maintenance"},
+ {"click": "button:has-text('Save COA line'):visible", "after": 15000},
+ {"pick": "Debit / Credit", "option": "Credit"},
+ {"pick": "Chart of Account", "option": "2100 — Accounts Payable"},
+ {"click": "button:has-text('Save COA line'):visible", "after": 15000}, {"shot": "m03-ledger-lines-set"},
+ {"goto": "/general-store/gs-units"}, {"wait": 15000}, {"shot": "m04-gs-units"},
+ {"goto": "/general-store/gs-stores"}, {"wait": 15000}, {"shot": "m05-gs-stores"},
+ {"goto": "/general-store/gs-categories"}, {"wait": 15000}, {"shot": "m06-gs-categories"},
+ {"goto": "/hr-payroll/shift-master"}, {"wait": 15000}, {"shot": "m07-hr-shifts"},
+ {"goto": "/capacity-planning/shift-master"}, {"wait": 15000}, {"shot": "m08-capacity-line-shifts"},
+ {"goto": "/settings/master-data"}, {"wait": 12000}, {"shot": "m09-master-data"},
+ {"goto": "/company-management/designation"}, {"wait": 12000}, {"shot": "m10-company-no-grade"},
+ {"goto": "/vendors/create"}, {"wait": 15000}, {"shot": "m11-vendor-bank"}
+]

@@ -1,0 +1,5 @@
+[{"goto": "/trade-export/cash-incentives"}, {"wait": 20000},
+ {"click": "main button:has-text('Edit')", "after": 15000},
+ {"url": "u"}, {"shot": "ci-edit"},
+ {"goto": "/trade-export/cash-incentives?lc=LC-0098812"}, {"wait": 25000},
+ {"texts": "claims", "of": "main tbody tr"}]

@@ -1,0 +1,300 @@
+{
+    "save_changes": "Save changes",
+    "delete": "Delete",
+    "folder": {
+        "command": "COMMAND CENTER"
+    },
+    "screens": {
+        "department-dashboards": "Departmental Performance Boards",
+        "drill-down-explorer": "Metric Drill-down Explorer",
+        "dashboard-builder": "Dashboard Composer",
+        "command-deck": "Chief Executive Command Deck"
+    },
+    "descriptions": {
+        "department-dashboards": "One board per department, showing only what that department answers for.",
+        "drill-down-explorer": "A headline number opened up — division, buyer, style, line, shift.",
+        "dashboard-builder": "Boards assembled from the KPI library without asking for a new screen.",
+        "command-deck": "Factory-wide performance across merchandising, production, stores and finance."
+    },
+    "b": {
+        "title": "Departmental boards",
+        "subtitle": "Each board answers for one department and nothing else.",
+        "search": "Search boards…",
+        "new": "New board",
+        "edit_title": "Edit board",
+        "dialog_sub": "A board is defined by its department, its audience and how often it refreshes.",
+        "create": "Create board",
+        "empty_title": "No board yet",
+        "empty_text": "Give a department its board with New board.",
+        "delete_title": "Delete board",
+        "delete_text": ":name will be removed.",
+        "new_title": "New board",
+        "delete_aria": "Delete",
+        "check": "Published only",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "published": "Published",
+        "draft": "Draft",
+        "c": {
+            "board": "Board",
+            "tiles": "Tiles",
+            "refresh": "Refresh",
+            "audience": "Audience",
+            "health": "Data health",
+            "state": "State"
+        },
+        "f": {
+            "name": "Board name",
+            "department": "Department",
+            "owner": "Owner",
+            "tiles": "Tiles",
+            "refresh": "Refresh",
+            "audience": "Audience",
+            "health": "Data health",
+            "published": "Published",
+            "published_hint": "A draft board is visible only to its owner."
+        },
+        "t": {
+            "boards": "Boards",
+            "published": "Published",
+            "tiles": "Tiles in service",
+            "health": "Average data health"
+        }
+    },
+    "refresh": {
+        "LIVE": "Live",
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly"
+    },
+    "audience": {
+        "BOARD": "Board only",
+        "DEPT_HEADS": "Department heads",
+        "ALL_MANAGERS": "All managers",
+        "EVERYONE": "Everyone"
+    },
+    "d": {
+        "title": "Drill paths",
+        "subtitle": "How a headline number opens up: the dimensions it may be broken down by, in order.",
+        "search": "Search metrics…",
+        "pick_label": "Filter by domain",
+        "pick_all": "All domains",
+        "new": "New drill path",
+        "edit_title": "Edit drill path",
+        "dialog_sub": "A path is a metric plus the dimensions it may be opened along.",
+        "create": "Add path",
+        "empty_title": "No drill path yet",
+        "empty_text": "Say how a metric opens up with New drill path.",
+        "delete_title": "Delete drill path",
+        "delete_text": ":name will no longer drill down.",
+        "new_title": "New drill path",
+        "delete_aria": "Delete",
+        "c": {
+            "metric": "Metric",
+            "domain": "Domain",
+            "level_1": "Level 1",
+            "level_2": "Level 2",
+            "level_3": "Level 3",
+            "rows": "Rows"
+        },
+        "f": {
+            "metric": "Metric",
+            "domain": "Domain",
+            "level_1": "First level",
+            "level_2": "Second level",
+            "level_3": "Third level",
+            "source": "Source module",
+            "grain": "Finest grain",
+            "rows": "Rows behind it",
+            "rows_hint": "In thousands"
+        },
+        "t": {
+            "paths": "Drill paths",
+            "domains": "Domains covered",
+            "hourly": "Hourly grain",
+            "rows": "Rows indexed (thousands)"
+        }
+    },
+    "domain": {
+        "COMMERCIAL": "Commercial",
+        "PRODUCTION": "Production",
+        "QUALITY": "Quality",
+        "PEOPLE": "People",
+        "FINANCE": "Finance"
+    },
+    "lvl": {
+        "DIVISION": "Division",
+        "BUYER": "Buyer",
+        "SEASON": "Season",
+        "DEPARTMENT": "Department",
+        "COST_CENTRE": "Cost centre",
+        "STYLE": "Style",
+        "LINE": "Line",
+        "ORDER": "Order",
+        "MACHINE": "Machine",
+        "ACCOUNT": "Account",
+        "SHIFT": "Shift",
+        "OPERATOR": "Operator",
+        "COLOUR": "Colour",
+        "SIZE": "Size",
+        "DAY": "Day"
+    },
+    "source": {
+        "MERCHANDISING": "Merchandising",
+        "KNIT": "Knit Production",
+        "ASSEMBLY": "Assembly Floor",
+        "CUTTING": "Cutting Floor",
+        "ACCOUNTING": "Accounting",
+        "HR": "HR & Payroll"
+    },
+    "grain": {
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly"
+    },
+    "c": {
+        "title": "Compositions",
+        "subtitle": "Boards assembled from the KPI library — no new screen, no release, no developer.",
+        "search": "Search compositions…",
+        "pick_label": "Filter by layout",
+        "pick_all": "All layouts",
+        "new": "New composition",
+        "edit_title": "Edit composition",
+        "dialog_sub": "A composition is a layout, a set of tiles and the people it is for.",
+        "create": "Create",
+        "empty_title": "No composition yet",
+        "empty_text": "Assemble a board from the KPI library with New composition.",
+        "delete_title": "Delete composition",
+        "delete_text": ":name will be removed.",
+        "new_title": "New composition",
+        "delete_aria": "Delete",
+        "c": {
+            "composition": "Composition",
+            "layout": "Layout",
+            "tiles": "Tiles",
+            "charts": "Charts",
+            "shared": "Shared with",
+            "state": "State"
+        },
+        "f": {
+            "title": "Title",
+            "layout": "Layout",
+            "author": "Author",
+            "tiles": "Tiles",
+            "charts": "Charts",
+            "shared": "Shared with",
+            "state": "State",
+            "notes": "Notes",
+            "notes_ph": "What this composition is meant to answer"
+        },
+        "t": {
+            "compositions": "Compositions",
+            "released": "Released",
+            "tiles": "Tiles placed",
+            "authors": "Authors"
+        }
+    },
+    "layout": {
+        "TWO": "Two column",
+        "THREE": "Three column",
+        "SINGLE": "Single column",
+        "GRID": "Grid 2×3",
+        "FULL": "Full width"
+    },
+    "shared": {
+        "BOARD": "Board only",
+        "DIVISION_HEADS": "Division heads",
+        "ALL_MANAGERS": "All managers",
+        "EVERYONE": "Everyone"
+    },
+    "cstate": {
+        "DRAFT": "Draft",
+        "RELEASED": "Released",
+        "ARCHIVED": "Archived"
+    },
+    "v": {
+        "board": "Give the board a name.",
+        "board_taken": ":department already has a board — one board per department.",
+        "publish_empty": "A board with no tiles cannot be published.",
+        "metric": "Name the metric.",
+        "metric_taken": "This metric already has a drill path.",
+        "composition": "Give the composition a title.",
+        "composition_taken": "A composition by that title already exists.",
+        "release_empty": "An empty composition cannot be released — place a tile or a chart first."
+    },
+    "deck": {
+        "no_data": "No data recorded yet",
+        "empty_title": "No data recorded yet",
+        "empty_text": "This panel will fill in once real entries are posted in the related modules.",
+        "show_table": "Table",
+        "show_chart": "Chart",
+        "other": "Other",
+        "modules": "Modules",
+        "unconverted": ":n amounts have a currency with no rate in the currency master and are left out of the taka figures.",
+        "ago_m": ":n min ago",
+        "ago_h": ":n h ago",
+        "ago_d": ":n d ago",
+        "kpi": {
+            "revenue": "Revenue MTD",
+            "order_book": "Order Book",
+            "efficiency": "Production Efficiency",
+            "on_time": "On-Time Delivery",
+            "vs_last": ":p against the same days last month",
+            "invoices": "Commercial invoices this month: :n",
+            "orders": "Confirmed orders still to ship: :n",
+            "target": "Planned :p this month",
+            "shipped": "On time, last 90 days: :a of :n shipments"
+        },
+        "trend": {
+            "title": "Revenue, Cost & Shipment",
+            "sub": "Rolling 12 months, Bangladeshi taka",
+            "revenue": "Revenue",
+            "cost": "Cost",
+            "shipment": "Shipped value",
+            "month": "Month"
+        },
+        "buyers": {
+            "title": "Order Book by Buyer",
+            "sub": "Confirmed value, next six months",
+            "buyer": "Buyer",
+            "value": "Confirmed value"
+        },
+        "output": {
+            "title": "Output by Department",
+            "sub": "Sewing output against plan by floor, this week",
+            "floor": "Floor",
+            "plan": "Plan",
+            "actual": "Actual"
+        },
+        "lines": {
+            "title": "Sewing Line Efficiency",
+            "sub": "Against SMV target, this month",
+            "line": "Line",
+            "achieved": "Achieved",
+            "target": "Target"
+        },
+        "activity": {
+            "title": "Recent Activity",
+            "sub": "Across every module",
+            "system": "The system"
+        },
+        "actions": {
+            "CREATED": "created",
+            "UPDATED": "updated",
+            "DELETED": "deleted",
+            "STATUS_CHANGED": "changed the status of",
+            "COST_CHANGED": "changed the cost of"
+        },
+        "alerts": {
+            "title": "Top Alerts",
+            "sub": "Highest-priority items needing a decision",
+            "approval": "Approval waiting: :what",
+            "severity": {
+                "HIGH": "High",
+                "MEDIUM": "Medium",
+                "LOW": "Low"
+            }
+        }
+    }
+}

@@ -1,0 +1,119 @@
+[
+ {
+  "goto": "/production-tracking/all-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-all-dashboard"
+ },
+ {
+  "goto": "/production-tracking/cutting-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-cutting-dashboard"
+ },
+ {
+  "goto": "/production-tracking/sewing-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-sewing-dashboard"
+ },
+ {
+  "goto": "/production-tracking/finishing-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-finishing-dashboard"
+ },
+ {
+  "goto": "/production-tracking/buyer-wise"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-buyer-wise"
+ },
+ {
+  "goto": "/production-tracking/style-wise"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-style-wise"
+ },
+ {
+  "goto": "/production-tracking/po-wise"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-po-wise"
+ },
+ {
+  "goto": "/production-tracking/tv-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-tv-dashboard"
+ },
+ {
+  "goto": "/production-tracking/reports"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-reports"
+ },
+ {
+  "goto": "/production-tracking/production-data"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-production-data"
+ },
+ {
+  "goto": "/production-tracking/line-capacity"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-line-capacity"
+ },
+ {
+  "goto": "/production-tracking/daily-plan"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-daily-plan"
+ },
+ {
+  "goto": "/production-tracking/settings"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "pt-settings"
+ }
+]

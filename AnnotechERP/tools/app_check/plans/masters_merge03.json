@@ -1,0 +1,3 @@
+[
+ {"goto": "/finance-ledger/draft-voucher"}, {"wait": 15000}, {"shot": "p01-draft-vouchers"}
+]

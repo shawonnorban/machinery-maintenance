@@ -1,0 +1,13 @@
+[
+ {"goto": "/pre-budget/budget-finalized?budget=PB-CNA-1126-0003"},
+ {"see": "Budget Print"},
+ {"printpdf": "a[aria-label='Budget Print PB-CNA-1126-0003']", "as": "budget"},
+ {"printpdf": "a[aria-label='Cost Print PB-CNA-1126-0003']", "as": "cost"},
+ {"goto": "/pre-budget/all-requisition"},
+ {"see": "Print"},
+ {"printpdf": "a[title='Knit/Woven Requisition']", "as": "requisitions"},
+ {"goto": "/pre-budget/knit-dying-costing?budget=PB-CNA-1126-0003"},
+ {"printpdf": "a[aria-label='Print PB-CNA-1126-0003']", "as": "costing"},
+ {"goto": "/pre-budget/accessories-budget-pending?bom=PB-CNA-1126-0003-A1"},
+ {"printpdf": "a[aria-label='Print BOM PB-CNA-1126-0003']", "as": "bom"}
+]

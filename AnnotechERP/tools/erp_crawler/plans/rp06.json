@@ -1,0 +1,441 @@
+[
+{
+"goto": "/m/ie/ie-reports"
+},
+{
+"click": "main button[role=tab]:has-text('IE Reports')",
+"wait": 2000
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Efficiency Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p00",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h00",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Date Wise NPT Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p01",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h01",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Date Wise Input, Output & WIP Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p02",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h02",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Line Wise Profit-Loss Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p03",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h03",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Daily Line Costing Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p04",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h04",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Monthly Line Costing Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p05",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h05",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Manpower Requirment Plan\"])[1]",
+"wait": 700
+},
+{
+"texts": "p06",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h06",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Line Wise Plan + Actual Prod With Value\"])[1]",
+"wait": 700
+},
+{
+"texts": "p07",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h07",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"GMT Finishing WIP Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p08",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h08",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Floor Wise Plan Prod with Value\"])[1]",
+"wait": 700
+},
+{
+"texts": "p09",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h09",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Date Wise Target Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p10",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h10",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Machine Variance-Layout vs Costing\"])[1]",
+"wait": 700
+},
+{
+"texts": "p11",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h11",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Target & Achievement Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p12",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h12",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Monthly Achievement Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p13",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h13",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Capacity Vs Booking Summary Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p14",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h14",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Date Wise Plan Vs Target Vs Input Vs Production\"])[1]",
+"wait": 700
+},
+{
+"texts": "p15",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h15",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Cost Analysis for Print/Embroidery\"])[1]",
+"wait": 700
+},
+{
+"texts": "p16",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h16",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"IE-Gmt Item Analysis Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p17",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h17",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Target & Achv In Gen and OT Hour\"])[1]",
+"wait": 700
+},
+{
+"texts": "p18",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h18",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Manpower Utilization Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p19",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h19",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Pre-Post Layout Balancing Efficiency\"])[1]",
+"wait": 700
+},
+{
+"texts": "p20",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h20",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Day Wise Pre-Post Balancing Efficiency\"])[1]",
+"wait": 700
+},
+{
+"texts": "p21",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h21",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"GMT Item Wise Profit-Loss Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p22",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h22",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"GMT Item Wise Pcs Transactions\"])[1]",
+"wait": 700
+},
+{
+"texts": "p23",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h23",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Planning Vs IE Target Vs Production Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p24",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h24",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Daily Manpower Status\"])[1]",
+"wait": 700
+},
+{
+"texts": "p25",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h25",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Section Wise Profit-Loss Summary\"])[1]",
+"wait": 700
+},
+{
+"texts": "p26",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h26",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Order Wise Profit-Loss Transaction\"])[1]",
+"wait": 700
+},
+{
+"texts": "p27",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h27",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Line Wise Hourly Production Status\"])[1]",
+"wait": 700
+},
+{
+"texts": "p28",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h28",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Line Feeding & SCO Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p29",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h29",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"OT Plan- Garment Division\"])[1]",
+"wait": 700
+},
+{
+"texts": "p30",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h30",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"OT Plan vs Actual- Garment Division\"])[1]",
+"wait": 700
+},
+{
+"texts": "p31",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h31",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Line Wise Profit/Loss-Hour Slab\"])[1]",
+"wait": 700
+},
+{
+"texts": "p32",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h32",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Daily Manpower Utilization\"])[1]",
+"wait": 700
+},
+{
+"texts": "p33",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h33",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"Daily Line Wise Sewing Target\"])[1]",
+"wait": 700
+},
+{
+"texts": "p34",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h34",
+"of": "main fieldset > div > div:last-child"
+},
+{
+"click": "xpath=(//main//label[normalize-space(.)=\"CPM Based Profitability Report\"])[1]",
+"wait": 700
+},
+{
+"texts": "p35",
+"of": "main fieldset > div > div:last-child label, main fieldset > div > div:last-child span"
+},
+{
+"html": "h35",
+"of": "main fieldset > div > div:last-child"
+}
+]

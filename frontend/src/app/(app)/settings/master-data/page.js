@@ -5,7 +5,9 @@ import { Card } from "@/components/ui/card";
 import { getT } from "@/lib/i18n-server";
 
 // Mirrors MasterDataRegistry::GROUPS' order and lang/en/masterdata.php's group labels.
-const GROUP_ORDER = ["organisation", "asset", "breakdown", "maintenance", "inventory", "cost", "finance"];
+// The organisation lists (building … designation) are kept in Company
+// Management, Brickland's screens for them, so they are not listed here.
+const GROUP_ORDER = ["asset", "breakdown", "maintenance", "inventory", "cost", "finance"];
 
 /** Mirrors `MasterDataController::index` — one screen for two dozen lists, grouped the same way the registry itself groups them. */
 export default async function MasterDataIndexPage() {

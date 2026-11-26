@@ -1,0 +1,119 @@
+[
+ {
+  "goto": "/m/planning/projections"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "projections"
+ },
+ {
+  "texts": "projections",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/master-plan"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "master-plan"
+ },
+ {
+  "texts": "master_plan",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/master-plan-list"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "master-plan-list"
+ },
+ {
+  "texts": "master_plan_list",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/plan-vs-actual"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "plan-vs-actual"
+ },
+ {
+  "texts": "plan_vs_actual",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/revision-request"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "revision-request"
+ },
+ {
+  "texts": "revision_request",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/daily-plan"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "daily-plan"
+ },
+ {
+  "texts": "daily_plan",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/daily-plan-list"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "daily-plan-list"
+ },
+ {
+  "texts": "daily_plan_list",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/line-capacity-view"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "line-capacity-view"
+ },
+ {
+  "texts": "line_capacity_view",
+  "of": "main"
+ },
+ {
+  "goto": "/m/planning/plan-timeline"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "fullshot": "plan-timeline"
+ },
+ {
+  "texts": "plan_timeline",
+  "of": "main"
+ }
+]

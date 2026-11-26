@@ -6,6 +6,7 @@ namespace App\Modules\Identity\Http\Controllers\Api;
 
 use App\Modules\Identity\Actions\ManageCompanyUser;
 use App\Modules\Identity\Models\CompanyUser;
+use App\Modules\Identity\Models\PasswordChange;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserRole;
 use App\Shared\Http\Api\ApiController;
@@ -14,6 +15,7 @@ use App\Shared\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 /**
  * Who works here and what they may do (API 4.1, SRS 5).
@@ -69,7 +71,7 @@ class UserApiController extends ApiController
     {
         $this->allow('admin.user.manage');
 
-        $data = $this->validated($request, null);
+        $data = $this->validated($request, null) + ['changed_by' => $this->caller()->auditUserId()];
 
         $result = $action->invite($data, $data['roles'], $data['factory_id'] ?? null);
 
@@ -124,14 +126,60 @@ class UserApiController extends ApiController
      * A fresh password for somebody who has lost theirs — shown once, in
      * this response, the same rule `store()`'s own password follows.
      */
-    public function resetPassword(User $user, ManageCompanyUser $action): JsonResponse
+    public function resetPassword(Request $request, User $user, ManageCompanyUser $action): JsonResponse
     {
         $this->allow('admin.user.manage');
         $this->assertMember($user);
 
-        $password = $action->resetPassword($user);
+        $data = $request->validate(['memorable_word' => ['nullable', 'string', 'max:255']]);
+
+        $password = $action->resetPassword($user, $data['memorable_word'] ?? null, $this->caller()->auditUserId());
 
         return ApiResponse::ok(['password' => $password]);
+    }
+
+    /**
+     * Access Control → Password Change for somebody else (AnnotechERP 02/01):
+     * the administrator types the new password instead of being issued one.
+     */
+    public function setPassword(Request $request, User $user, ManageCompanyUser $action): JsonResponse
+    {
+        $this->allow('admin.user.manage');
+        $this->assertMember($user);
+
+        $data = $request->validate([
+            'password' => ['required', 'confirmed', PasswordRule::min(10)->uncompromised()],
+            'force_change' => ['sometimes', 'boolean'],
+            'memorable_word' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $action->setPassword($user, $data['password'], (bool) ($data['force_change'] ?? false), $data['memorable_word'] ?? null, $this->caller()->auditUserId());
+
+        return ApiResponse::ok($this->detail($user->fresh()));
+    }
+
+    /** Password Change's Records: who changed whose password, and when — never the password. */
+    public function passwordChanges(): JsonResponse
+    {
+        $this->allow('admin.user.manage');
+
+        $members = CompanyUser::where('company_id', $this->context->companyId())->pluck('user_id');
+        $changes = PasswordChange::query()
+            ->whereIn('user_id', $members)
+            ->with(['user:id,name,email,username', 'changedBy:id,name'])
+            ->latest('changed_at')
+            ->limit(200)
+            ->get();
+
+        return ApiResponse::ok($changes->map(fn (PasswordChange $change): array => [
+            'id' => $change->id,
+            'account' => $change->user?->username ?? $change->user?->email,
+            'name' => $change->user?->name,
+            'change_type' => $change->change_type,
+            'forced_change_next_login' => $change->forced_change_next_login,
+            'changed_at' => $change->changed_at?->toIso8601String(),
+            'changed_by' => $change->changedBy?->name,
+        ])->all());
     }
 
     /**
@@ -202,6 +250,18 @@ class UserApiController extends ApiController
             'phone' => $user->phone,
             'locale' => $user->locale,
             'status' => $membership?->status,
+            // Brickland's User Account Registration columns (AnnotechERP 02/01).
+            'username' => $user->username,
+            'user_type' => $user->user_type,
+            'employee_code' => $user->employee_code,
+            'two_factor_method' => $user->two_factor_method,
+            'account_status' => $user->status,
+            'last_login_at' => $user->last_login_at?->toIso8601String(),
+            // What User Account Registration's Edit dialog starts from.
+            'department_id' => $user->department_id,
+            'production_line_id' => $user->production_line_id,
+            'role_ids' => $user->roleAssignments->pluck('role_id')->unique()->values()->all(),
+            'factory_id' => $user->roleAssignments->firstWhere('factory_id', '!=', null)?->factory_id,
             // One row per factory the role applies to, so the same role
             // name repeats here for anyone assigned it at more than one
             // factory (`role_assignments`, on `detail()`, is where each of
@@ -230,7 +290,12 @@ class UserApiController extends ApiController
         $user->loadMissing(['department:id,name', 'productionLine:id,name']);
 
         return $this->summary($user) + [
-            'account_status' => $user->status,
+            'account_expires_at' => $user->account_expires_at?->format('Y-m-d'),
+            'must_change_password' => (bool) $user->must_change_password,
+            'cannot_change_password' => (bool) $user->cannot_change_password,
+            'password_never_expires' => (bool) $user->password_never_expires,
+            'has_memorable_word' => $user->memorable_word !== null,
+            'justification' => $user->justification,
             'department_id' => $user->department_id,
             'department' => $user->department?->name,
             'production_line_id' => $user->production_line_id,
@@ -280,6 +345,21 @@ class UserApiController extends ApiController
             // `BreakdownScopeGuard`. Harmless to hold for anyone else.
             'department_id' => ['nullable', 'string', 'size:26'],
             'production_line_id' => ['nullable', 'string', 'size:26'],
+            // Brickland's User Account Registration (AnnotechERP 02/01).
+            'username' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9._-]+$/', Rule::unique('users', 'username')->ignore($user?->id)],
+            'user_type' => ['sometimes', Rule::in(User::USER_TYPES)],
+            'employee_code' => ['nullable', 'string', 'max:64'],
+            'account_status' => ['sometimes', 'nullable', Rule::in(User::STATUSES)],
+            'account_expires_at' => ['nullable', 'date'],
+            'must_change_password' => ['sometimes', 'boolean'],
+            'cannot_change_password' => ['sometimes', 'boolean'],
+            'password_never_expires' => ['sometimes', 'boolean'],
+            'two_factor_method' => ['sometimes', Rule::in(User::TWO_FACTOR_METHODS)],
+            'justification' => ['nullable', 'string', 'max:2000'],
+            // Set only on create; an existing account's password changes
+            // through Password Change.
+            'password' => $user === null ? ['nullable', 'confirmed', PasswordRule::min(10)->uncompromised()] : ['prohibited'],
+            'memorable_word' => ['nullable', 'string', 'min:4', 'max:255', 'confirmed'],
         ]);
     }
 

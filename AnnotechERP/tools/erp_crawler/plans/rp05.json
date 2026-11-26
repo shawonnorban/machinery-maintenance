@@ -1,0 +1,10 @@
+[
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main button[role=tab]:has-text('IE Reports')", "wait": 2000},
+ {"click": "main label:has-text('Date Wise NPT Report')", "wait": 800},
+ {"choose": "main select[aria-label='Prod Flr(s)']", "label": "SWEING"},
+ {"fillsel": "main input[type=date] >> nth=0", "text": "2026-10-01"},
+ {"fillsel": "main input[type=date] >> nth=1", "text": "2026-10-31"},
+ {"netclick": "main button:not([role=tab]):has-text('Preview')", "as": "net", "wait": 20000},
+ {"fullshot": "after"}
+]

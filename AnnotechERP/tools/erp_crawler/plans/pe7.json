@@ -1,0 +1,63 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Pendings'), main [role=tab]:has-text('Pendings')",
+  "wait": 2500
+ },
+ {
+  "click": "role=button[name='LPP LPP 1']",
+  "wait": 3000
+ },
+ {
+  "click": "main table button:has-text('Confirm')",
+  "wait": 2000
+ },
+ {
+  "click": "[role=dialog] button:text-is('Confirm'), [role=alertdialog] button:text-is('Confirm')",
+  "wait": 3000
+ },
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "rows",
+  "of": "main table tbody tr"
+ },
+ {
+  "texts": "btns",
+  "of": "main table tbody tr:has-text('Confirmed') button"
+ },
+ {
+  "click": "main table tbody tr:has-text('Confirmed') button >> nth=0",
+  "wait": 2500
+ },
+ {
+  "url": "edit_url"
+ },
+ {
+  "texts": "edit_t",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:has-text('Pending') button >> nth=1",
+  "wait": 2000
+ },
+ {
+  "texts": "remove_dlg",
+  "of": "[role=dialog], [role=alertdialog]"
+ }
+]

@@ -1,0 +1,17 @@
+[
+ {"goto": "/m/knitting/collar-cuff-program-sc-out-house"},
+ {"click": "main button:has-text('Show')", "wait": 3000},
+ {"popclick": "main table tbody tr >> nth=0 >> button:has-text('Print')", "as": "pg_print"},
+ {"click": "main table tbody tr >> nth=0 >> button:has-text('Submit')", "wait": 3500},
+ {"texts": "pg_list_sub", "of": "main table tbody tr"},
+ {"click": "main table tbody tr >> nth=0 >> button:has-text('Approve')", "wait": 3500},
+ {"texts": "pg_list_app", "of": "main table tbody tr"},
+ {"goto": "/m/knitting/collar-cuff-trans-recv-store-bulk"},
+ {"click": "main button:has-text('Add New')", "wait": 2500},
+ {"texts": "cb_left", "of": "main table >> nth=0 >> tbody tr"},
+ {"fullshot": "cb-left"},
+ {"click": "main button:has-text('Include Parts')", "wait": 2000},
+ {"texts": "cb_lines", "of": "main table >> nth=1 >> tbody tr"},
+ {"html": "cb_line_html", "of": "main table >> nth=1 >> tbody tr >> nth=0"},
+ {"fullshot": "cb-included"}
+]

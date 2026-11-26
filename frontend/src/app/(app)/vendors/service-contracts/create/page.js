@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { ContractForm } from "@/components/vendor/contract-form";
 import { getT } from "@/lib/i18n-server";
 import { createContract } from "./actions";
@@ -15,20 +14,12 @@ export default async function CreateServiceContractPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[
-          { label: t("vendors") },
-          { label: t("contracts"), href: "/vendors/service-contracts" },
-          { label: t("new_contract") },
-        ]}
+      <ScreenHeader
+        parentUrl="/vendors/service-contracts"
         title={t("new_contract")}
       />
 
-      <Card>
-        <CardBody>
-          <ContractForm vendors={vendors} assets={assets} factories={factories} action={createContract} />
-        </CardBody>
-      </Card>
+      <ContractForm vendors={vendors} assets={assets} factories={factories} action={createContract} />
     </>
   );
 }

@@ -1,0 +1,266 @@
+[
+{
+"goto": "/m/knitting/fabric-production-order-bulk"
+},
+{
+"texts": "po_p0",
+"of": "main p"
+},
+{
+"texts": "po_btn0",
+"of": "main button"
+},
+{
+"texts": "po_tabs",
+"of": "main [role=tab]"
+},
+{
+"html": "po_sel0",
+"of": "main select"
+},
+{
+"texts": "po_h0",
+"of": "main table thead"
+},
+{
+"dump": "po-0",
+"root": "main"
+},
+{
+"fullshot": "po-0"
+},
+{
+"click": "main [role=tab]:has-text('Knit Programmes (KP)')",
+"wait": 2500
+},
+{
+"texts": "po_p1",
+"of": "main p"
+},
+{
+"texts": "po_btn1",
+"of": "main button"
+},
+{
+"texts": "po_h1",
+"of": "main table thead"
+},
+{
+"texts": "po_rows1",
+"of": "main table tbody tr"
+},
+{
+"dump": "po-1",
+"root": "main"
+},
+{
+"fullshot": "po-1"
+},
+{
+"click": "main [role=tab]:has-text('Knitcard')",
+"wait": 2500
+},
+{
+"texts": "po_p2",
+"of": "main p"
+},
+{
+"texts": "po_btn2",
+"of": "main button"
+},
+{
+"texts": "po_h2",
+"of": "main table thead"
+},
+{
+"texts": "po_rows2",
+"of": "main table tbody tr"
+},
+{
+"dump": "po-2",
+"root": "main"
+},
+{
+"fullshot": "po-2"
+},
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"texts": "mr_p0",
+"of": "main p"
+},
+{
+"texts": "mr_btn0",
+"of": "main button"
+},
+{
+"texts": "mr_tabs",
+"of": "main [role=tab]"
+},
+{
+"html": "mr_sel0",
+"of": "main select"
+},
+{
+"texts": "mr_h0",
+"of": "main table thead"
+},
+{
+"dump": "mr-0",
+"root": "main"
+},
+{
+"fullshot": "mr-0"
+},
+{
+"goto": "/m/knitting/roll-production-operator"
+},
+{
+"texts": "or_p0",
+"of": "main p"
+},
+{
+"texts": "or_btn0",
+"of": "main button"
+},
+{
+"texts": "or_tabs",
+"of": "main [role=tab]"
+},
+{
+"html": "or_sel0",
+"of": "main select"
+},
+{
+"texts": "or_h0",
+"of": "main table thead"
+},
+{
+"dump": "or-0",
+"root": "main"
+},
+{
+"fullshot": "or-0"
+},
+{
+"goto": "/m/knitting/daily-fabric-production"
+},
+{
+"texts": "dfo_p0",
+"of": "main p"
+},
+{
+"texts": "dfo_btn0",
+"of": "main button"
+},
+{
+"texts": "dfo_tabs",
+"of": "main [role=tab]"
+},
+{
+"html": "dfo_sel0",
+"of": "main select"
+},
+{
+"texts": "dfo_h0",
+"of": "main table thead"
+},
+{
+"dump": "dfo-0",
+"root": "main"
+},
+{
+"fullshot": "dfo-0"
+},
+{
+"goto": "/m/knitting/machine-loading-plan"
+},
+{
+"texts": "mlp_p0",
+"of": "main p"
+},
+{
+"texts": "mlp_btn0",
+"of": "main button"
+},
+{
+"texts": "mlp_tabs",
+"of": "main [role=tab]"
+},
+{
+"html": "mlp_sel0",
+"of": "main select"
+},
+{
+"texts": "mlp_h0",
+"of": "main table thead"
+},
+{
+"dump": "mlp-0",
+"root": "main"
+},
+{
+"fullshot": "mlp-0"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"texts": "gri_p0",
+"of": "main p"
+},
+{
+"texts": "gri_btn0",
+"of": "main button"
+},
+{
+"texts": "gri_tabs",
+"of": "main [role=tab]"
+},
+{
+"html": "gri_sel0",
+"of": "main select"
+},
+{
+"texts": "gri_h0",
+"of": "main table thead"
+},
+{
+"dump": "gri-0",
+"root": "main"
+},
+{
+"fullshot": "gri-0"
+},
+{
+"goto": "/m/knitting/grey-fabric-racking-board"
+},
+{
+"texts": "gfr_p0",
+"of": "main p"
+},
+{
+"texts": "gfr_btn0",
+"of": "main button"
+},
+{
+"texts": "gfr_tabs",
+"of": "main [role=tab]"
+},
+{
+"html": "gfr_sel0",
+"of": "main select"
+},
+{
+"texts": "gfr_h0",
+"of": "main table thead"
+},
+{
+"dump": "gfr-0",
+"root": "main"
+},
+{
+"fullshot": "gfr-0"
+}
+]

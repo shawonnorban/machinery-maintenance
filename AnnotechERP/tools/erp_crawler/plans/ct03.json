@@ -1,0 +1,9 @@
+[
+ {"goto": "/m/cutting/new-cutting"},
+ {"fullshot": "tall"},
+ {"html": "row_btns", "of": "main tbody tr >> nth=0 >> button"},
+ {"html": "row0", "of": "main tbody tr >> nth=0"},
+ {"click": "main tbody tr >> nth=0 >> td >> nth=3", "wait": 2500},
+ {"fullshot": "tall-row"},
+ {"texts": "preview", "of": "main div:has(> div:has-text('Bundle Card Preview')) >> nth=-1"}
+]

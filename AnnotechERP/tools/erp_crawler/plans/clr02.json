@@ -1,0 +1,158 @@
+[
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 1
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r1",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 2
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r2",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 3
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r3",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 4
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r4",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 5
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r5",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 6
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r6",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 7
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r7",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 8
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r8",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 9
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r9",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 10
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r10",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 11
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r11",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 12
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r12",
+"wait": 12000
+},
+{
+"goto": "/m/dyeing-lab/dyeing-lab-reports"
+},
+{
+"choose": "main select[name=report]",
+"index": 13
+},
+{
+"popclick": "main button:has-text('Preview')",
+"as": "r13",
+"wait": 12000
+}
+]

@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/hr-payroll/leave-application" }, { "wait": 8000 }, { "shot": "l1_records" },
+ { "clickSel": "main button:has-text('New')" }, { "wait": 2500 }, { "shot": "l1_new" },
+ { "clickSel": "main button:has-text('Leave Status')" }, { "wait": 2500 }, { "shot": "l1_status" },
+ { "goto": "/m/hr-payroll/ot-correction" }, { "wait": 9000 }, { "shot": "l2_correction", "rows": 6 },
+ { "clickSel": "main table tbody tr button" }, { "wait": 2500 }, { "shot": "l2_row_action" },
+ { "escape": true },
+ { "goto": "/m/hr-payroll/ot-eligibility" }, { "wait": 9000 }, { "shot": "l3_eligibility", "rows": 6 },
+ { "goto": "/m/hr-payroll/ot-request" }, { "wait": 9000 }, { "shot": "l4_request" },
+ { "goto": "/m/hr-payroll/ot-approval" }, { "wait": 9000 }, { "shot": "l5_approval" },
+ { "clickSel": "main button:has-text('Decided')" }, { "wait": 2500 }, { "shot": "l5_decided" }
+]

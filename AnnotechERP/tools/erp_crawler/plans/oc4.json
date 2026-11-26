@@ -1,0 +1,37 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Order Confirmation')",
+  "wait": 3500
+ },
+ {
+  "texts": "tab_text",
+  "of": "fieldset:has(legend:has-text('Working Style')) >> xpath=.."
+ },
+ {
+  "dump": "tab",
+  "root": "fieldset:has(legend:has-text('Working Style')) >> xpath=.."
+ },
+ {
+  "click": "button:has-text('New/Repeat/Development')",
+  "wait": 2500
+ },
+ {
+  "texts": "new_text",
+  "of": "body [role=dialog], fieldset:has(legend:has-text('Working Style')) >> xpath=.."
+ },
+ {
+  "dump": "new",
+  "root": "body"
+ }
+]

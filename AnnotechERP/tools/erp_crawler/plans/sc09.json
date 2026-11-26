@@ -1,0 +1,155 @@
+[
+{
+"goto": "/m/knitting/receive-sc-program-from-party"
+},
+{
+"click": "main [role=tab]:has-text('Knitting Sub-contract Program')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- Select --') >> nth=0",
+"wait": 1200
+},
+{
+"click": "[role=option] >> nth=2",
+"wait": 800
+},
+{
+"type": "main :is(input,select,textarea) >> nth=3",
+"text": "2026-10-29"
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=5",
+"index": 5
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=6",
+"index": 1
+},
+{
+"type": "main :is(input,select,textarea) >> nth=9",
+"text": "ARAFAH-PO-7781"
+},
+{
+"peek": "main button:has-text('--Select--') >> nth=3",
+"wait": 1200
+},
+{
+"popup": "fibcomp"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 800
+},
+{
+"peek": "main button:has-text('--Select--') >> nth=2",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Black') >> nth=0",
+"wait": 800
+},
+{
+"peek": "main button:has-text('--Select--') >> nth=1",
+"wait": 1200
+},
+{
+"click": "[role=option] >> nth=2",
+"wait": 800
+},
+{
+"type": "main :is(input,select,textarea) >> nth=14",
+"text": "180"
+},
+{
+"type": "main :is(input,select,textarea) >> nth=15",
+"text": "1200"
+},
+{
+"peek": "main button:has-text('Select\u2026') >> nth=0",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('kg') >> nth=0",
+"wait": 800
+},
+{
+"type": "main :is(input,select,textarea) >> nth=17",
+"text": "70"
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=18",
+"index": 1
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=19",
+"index": 1
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=20",
+"index": 1
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=22",
+"index": 2
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=23",
+"index": 4
+},
+{
+"choose": "main :is(input,select,textarea) >> nth=24",
+"index": 1
+},
+{
+"type": "main :is(input,select,textarea) >> nth=25",
+"text": "14"
+},
+{
+"click": "main button:has-text('Add To Grid')",
+"wait": 1500
+},
+{
+"texts": "toast",
+"of": "section li, ol li"
+},
+{
+"texts": "fab_h",
+"of": "main table thead"
+},
+{
+"texts": "fab_rows",
+"of": "main table tbody tr"
+},
+{
+"fullshot": "rc-filled"
+},
+{
+"netclick": "main button:has-text('Save programme')",
+"as": "save",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Sub-contract Program List')",
+"wait": 3000
+},
+{
+"texts": "list_lbl",
+"of": "main label"
+},
+{
+"texts": "list_h",
+"of": "main table thead"
+},
+{
+"texts": "list_rows",
+"of": "main table tbody tr"
+},
+{
+"html": "list_act",
+"of": "main table tbody tr >> nth=0 >> td >> nth=-1"
+},
+{
+"fullshot": "rc-list"
+}
+]

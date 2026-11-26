@@ -1,0 +1,674 @@
+[
+ {
+  "goto": "/m/dyeing/stock-opening-balance"
+ },
+ {
+  "texts": "s00_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s00_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s00_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s00_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s00_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s00-new"
+ },
+ {
+  "dump": "s00_new",
+  "root": "main"
+ },
+ {
+  "texts": "s00_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s00_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/daily-dyes-chemical-receive"
+ },
+ {
+  "texts": "s01_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s01_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s01_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s01_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s01_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s01-new"
+ },
+ {
+  "dump": "s01_new",
+  "root": "main"
+ },
+ {
+  "texts": "s01_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s01_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/loan-opening-balance"
+ },
+ {
+  "texts": "s02_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s02_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s02_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s02_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s02_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s02-new"
+ },
+ {
+  "dump": "s02_new",
+  "root": "main"
+ },
+ {
+  "texts": "s02_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s02_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/chemical-item-stock"
+ },
+ {
+  "texts": "s03_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s03_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s03_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s03_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s03_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s03-new"
+ },
+ {
+  "dump": "s03_new",
+  "root": "main"
+ },
+ {
+  "texts": "s03_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s03_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/daily-dyes-chemical-receive-return"
+ },
+ {
+  "texts": "s04_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s04_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s04_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s04_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s04_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s04-new"
+ },
+ {
+  "dump": "s04_new",
+  "root": "main"
+ },
+ {
+  "texts": "s04_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s04_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/store-transfer-requisition-and-issue"
+ },
+ {
+  "texts": "s05_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s05_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s05_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s05_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s05_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s05-new"
+ },
+ {
+  "dump": "s05_new",
+  "root": "main"
+ },
+ {
+  "texts": "s05_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s05_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/print-chemical-issue"
+ },
+ {
+  "texts": "s06_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s06_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s06_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s06_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s06_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s06-new"
+ },
+ {
+  "dump": "s06_new",
+  "root": "main"
+ },
+ {
+  "texts": "s06_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s06_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/machine-wash-and-finishing-issue"
+ },
+ {
+  "texts": "s07_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s07_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s07_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s07_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s07_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s07-new"
+ },
+ {
+  "dump": "s07_new",
+  "root": "main"
+ },
+ {
+  "texts": "s07_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s07_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/batch-program-issue"
+ },
+ {
+  "texts": "s08_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s08_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s08_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s08_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s08_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s08-new"
+ },
+ {
+  "dump": "s08_new",
+  "root": "main"
+ },
+ {
+  "texts": "s08_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s08_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/dyes-chemical-sales"
+ },
+ {
+  "texts": "s09_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s09_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s09_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s09_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s09_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s09-new"
+ },
+ {
+  "dump": "s09_new",
+  "root": "main"
+ },
+ {
+  "texts": "s09_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s09_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/chemical-cs"
+ },
+ {
+  "texts": "s10_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s10_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s10_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s10_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s10_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s10-new"
+ },
+ {
+  "dump": "s10_new",
+  "root": "main"
+ },
+ {
+  "texts": "s10_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s10_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/requisition-for-loan-issue"
+ },
+ {
+  "texts": "s11_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s11_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s11_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s11_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s11_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s11-new"
+ },
+ {
+  "dump": "s11_new",
+  "root": "main"
+ },
+ {
+  "texts": "s11_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s11_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/loan-return-by-party"
+ },
+ {
+  "texts": "s12_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s12_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s12_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s12_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s12_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s12-new"
+ },
+ {
+  "dump": "s12_new",
+  "root": "main"
+ },
+ {
+  "texts": "s12_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s12_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/dc-loan-receive"
+ },
+ {
+  "texts": "s13_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s13_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s13_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s13_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s13_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s13-new"
+ },
+ {
+  "dump": "s13_new",
+  "root": "main"
+ },
+ {
+  "texts": "s13_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s13_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/requisition-for-loan-return"
+ },
+ {
+  "texts": "s14_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s14_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s14_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s14_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s14_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s14-new"
+ },
+ {
+  "dump": "s14_new",
+  "root": "main"
+ },
+ {
+  "texts": "s14_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s14_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/month-closing"
+ },
+ {
+  "texts": "s15_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "s15_p",
+  "of": "main p, main h1, main h2"
+ },
+ {
+  "texts": "s15_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "s15_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "html": "s15_rowbtn",
+  "of": "main tbody tr >> nth=0 >> button"
+ },
+ {
+  "click": "main button:has-text('Add New'), main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "s15-new"
+ },
+ {
+  "dump": "s15_new",
+  "root": "main"
+ },
+ {
+  "texts": "s15_new_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "texts": "s15_new_th",
+  "of": "main thead th"
+ }
+]

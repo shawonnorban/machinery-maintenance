@@ -1,0 +1,247 @@
+[
+{
+"goto": "/m/knitting/issue-against-requisition"
+},
+{
+"texts": "ir_p0",
+"of": "main p"
+},
+{
+"texts": "ir_btn0",
+"of": "main button"
+},
+{
+"html": "ir_sel0",
+"of": "main select"
+},
+{
+"dump": "ir-0",
+"root": "main"
+},
+{
+"fullshot": "ir-0"
+},
+{
+"click": "main button[role=tab]:has-text('Yarn Requisition Entry')",
+"wait": 2500
+},
+{
+"texts": "ir_p1",
+"of": "main p"
+},
+{
+"texts": "ir_btn1",
+"of": "main button"
+},
+{
+"html": "ir_sel1",
+"of": "main select"
+},
+{
+"dump": "ir-1",
+"root": "main"
+},
+{
+"fullshot": "ir-1"
+},
+{
+"click": "main button[role=tab]:has-text('Yarn Issue Entry')",
+"wait": 2500
+},
+{
+"texts": "ir_p2",
+"of": "main p"
+},
+{
+"texts": "ir_btn2",
+"of": "main button"
+},
+{
+"html": "ir_sel2",
+"of": "main select"
+},
+{
+"dump": "ir-2",
+"root": "main"
+},
+{
+"fullshot": "ir-2"
+},
+{
+"goto": "/m/knitting/issue-return-against-requisition"
+},
+{
+"texts": "irr_p0",
+"of": "main p"
+},
+{
+"texts": "irr_btn0",
+"of": "main button"
+},
+{
+"html": "irr_sel0",
+"of": "main select"
+},
+{
+"dump": "irr-0",
+"root": "main"
+},
+{
+"fullshot": "irr-0"
+},
+{
+"click": "main button[role=tab]:has-text('Yarn Return Entry')",
+"wait": 2500
+},
+{
+"texts": "irr_p1",
+"of": "main p"
+},
+{
+"texts": "irr_btn1",
+"of": "main button"
+},
+{
+"html": "irr_sel1",
+"of": "main select"
+},
+{
+"dump": "irr-1",
+"root": "main"
+},
+{
+"fullshot": "irr-1"
+},
+{
+"goto": "/m/knitting/party-wise-yarn-issue-challan"
+},
+{
+"texts": "pw_p0",
+"of": "main p"
+},
+{
+"texts": "pw_btn0",
+"of": "main button"
+},
+{
+"html": "pw_sel0",
+"of": "main select"
+},
+{
+"dump": "pw-0",
+"root": "main"
+},
+{
+"fullshot": "pw-0"
+},
+{
+"click": "main button[role=tab]:has-text('Party Wise Yarn Issue Challan Entry')",
+"wait": 2500
+},
+{
+"texts": "pw_p1",
+"of": "main p"
+},
+{
+"texts": "pw_btn1",
+"of": "main button"
+},
+{
+"html": "pw_sel1",
+"of": "main select"
+},
+{
+"dump": "pw-1",
+"root": "main"
+},
+{
+"fullshot": "pw-1"
+},
+{
+"goto": "/m/knitting/issue-yarn-replace-by-supplier-list"
+},
+{
+"texts": "rp_p0",
+"of": "main p"
+},
+{
+"texts": "rp_btn0",
+"of": "main button"
+},
+{
+"html": "rp_sel0",
+"of": "main select"
+},
+{
+"dump": "rp-0",
+"root": "main"
+},
+{
+"fullshot": "rp-0"
+},
+{
+"click": "main button[role=tab]:has-text('Issue Yarn Replace by Supplier')",
+"wait": 2500
+},
+{
+"texts": "rp_p1",
+"of": "main p"
+},
+{
+"texts": "rp_btn1",
+"of": "main button"
+},
+{
+"html": "rp_sel1",
+"of": "main select"
+},
+{
+"dump": "rp-1",
+"root": "main"
+},
+{
+"fullshot": "rp-1"
+},
+{
+"goto": "/m/knitting/issue-yarn-replace-by-supplier-list"
+},
+{
+"click": "main button:has-text('Add New')",
+"wait": 2500
+},
+{
+"texts": "rp_dlg_p",
+"of": "[role=dialog] p, main p"
+},
+{
+"texts": "rp_dlg_btn",
+"of": "[role=dialog] button"
+},
+{
+"html": "rp_dlg_sel",
+"of": "[role=dialog] select"
+},
+{
+"dump": "rp-dlg",
+"root": "[role=dialog]"
+},
+{
+"goto": "/m/knitting/issue-return-against-requisition"
+},
+{
+"click": "main button:has-text('Add New')",
+"wait": 2500
+},
+{
+"texts": "irr_dlg_p",
+"of": "[role=dialog] p, main p"
+},
+{
+"html": "irr_dlg_sel",
+"of": "[role=dialog] select, main select"
+},
+{
+"dump": "irr-dlg",
+"root": "[role=dialog]"
+}
+]

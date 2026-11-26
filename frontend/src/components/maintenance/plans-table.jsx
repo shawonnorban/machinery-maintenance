@@ -3,16 +3,17 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
-import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `PlanController::index` — when maintenance is due, and the rule that decides it. */
-function PlansTable({ plans, meta, page, active, actions }) {
+function PlansTable({ plans, meta, page, active, search = "", actions, addHref }) {
   const t = useT("maintenance");
   const tc = useT("common");
   const router = useRouter();
@@ -26,10 +27,13 @@ function PlansTable({ plans, meta, page, active, actions }) {
     { value: "false", label: t("inactive") },
   ];
 
+
+
   function navigate(next) {
     const params = new URLSearchParams({
       page: String(next.page ?? page),
       active: next.active ?? active,
+      search: next.search ?? search,
     });
     for (const [key, value] of [...params.entries()]) {
       if (!value) params.delete(key);
@@ -61,18 +65,33 @@ function PlansTable({ plans, meta, page, active, actions }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full max-w-[220px]">
-        <Select options={activeOptions} value={active} onValueChange={(value) => navigate({ active: value, page: 1 })} />
-      </div>
+      <SearchingData
+        fields={[
+          { name: "search", label: t("name"), placeholder: t("search_plan_placeholder") },
+          { name: "active", label: t("status"), type: "select", options: activeOptions },
+        ]}
+        values={{ search, active }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+        addHref={addHref}
+      />
 
       <DataTable
         columns={[
+          {
+            key: "plan_number",
+            header: t("plan_no"),
+            render: (p) => (
+              <Link href={`/maintenance/plans/${refOf(p, "plan_number")}`} className="font-medium text-brand hover:underline">
+                {p.plan_number}
+              </Link>
+            ),
+          },
           {
             key: "name",
             header: t("plan"),
             render: (p) => (
               <div>
-                <Link href={`/maintenance/plans/${p.id}`} className="font-medium text-brand hover:underline">
+                <Link href={`/maintenance/plans/${refOf(p, "plan_number")}`} className="font-medium text-brand hover:underline">
                   {p.name}
                 </Link>
                 <div className="text-xs text-foreground-muted">{p.asset?.asset_code ?? p.asset_type ?? "—"}</div>
@@ -94,14 +113,15 @@ function PlansTable({ plans, meta, page, active, actions }) {
         ]}
         rows={plans}
         rowKey={(p) => p.id}
-        emptyTitle={t("no_plans")}
+        emptyTitle={search || active ? t("no_plans_match") : t("no_plans")}
         rowActions={(p) => [
-          { label: tc("view"), onSelect: () => router.push(`/maintenance/plans/${p.id}`) },
-          { label: tc("edit"), onSelect: () => router.push(`/maintenance/plans/${p.id}/edit`) },
-          { label: p.active ? t("deactivate") : t("activate"), onSelect: () => runToggle(p) },
-          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(p) },
+          { icon: "view", label: tc("view"), onSelect: () => router.push(`/maintenance/plans/${refOf(p, "plan_number")}`) },
+          { icon: "edit", label: tc("edit"), onSelect: () => router.push(`/maintenance/plans/${refOf(p, "plan_number")}/edit`) },
+          { icon: "toggle", label: p.active ? t("deactivate") : t("activate"), onSelect: () => runToggle(p) },
+          { icon: "delete", label: tc("delete"), destructive: true, onSelect: () => setDeleting(p) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
 

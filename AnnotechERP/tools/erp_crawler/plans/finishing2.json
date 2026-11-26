@@ -1,0 +1,9 @@
+[
+ {"goto": "/m/dyeing-finishing/dyeing-finishing-process-type", "click": "New process type"},
+ {"peek": "button:has-text('Stentering'), [role=combobox]:has-text('Stentering')", "shot": "opt_wip", "escape": true},
+ {"goto": "/m/dyeing-finishing/dyeing-finishing-machine-profile", "click": "New machine"},
+ {"peek": "button:has-text('-- Select Country --')", "shot": "opt_country", "escape": true},
+ {"peek": "button:has-text('-- Select MoU --')", "shot": "opt_mou", "escape": true},
+ {"goto": "/m/dyeing-finishing/machine-and-process-mapping", "click": "New mapping"},
+ {"peek": "button:has-text('Awaiting Load')", "shot": "opt_batch", "escape": true}
+]

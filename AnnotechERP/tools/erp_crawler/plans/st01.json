@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/inventory/store-dashboard" }, { "wait": 6000 },
+ { "texts": "dash", "of": "main h2, main h3, main p, main th, main td, main button, main label, main span" },
+ { "fullshot": "st01-dashboard" },
+ { "goto": "/m/inventory/in-house-grn" }, { "wait": 5000 },
+ { "texts": "grn_pr", "of": "main h2, main h3, main p, main th, main td, main button, main label, main span" },
+ { "fullshot": "st01-grn-pr" },
+ { "fill": "main input >> visible=true >> nth=0", "text": "PR-2026-00005" },
+ { "click": "main button:has-text('Search') >> visible=true >> nth=0", "wait": 4000 },
+ { "texts": "grn_pr_found", "of": "main h2, main h3, main p, main th, main td, main button, main label, main span, main input" },
+ { "fullshot": "st01-grn-pr-found" },
+ { "click": "main button:has-text('Direct Receive') >> visible=true >> nth=0", "wait": 3000 },
+ { "texts": "grn_direct", "of": "main h2, main h3, main p, main th, main td, main button, main label, main span" },
+ { "fullshot": "st01-grn-direct" },
+ { "goto": "/m/inventory/fabric-warehouse" }, { "wait": 5000 },
+ { "texts": "fw", "of": "main h2, main h3, main p, main th, main td, main button, main label" },
+ { "fullshot": "st01-fabric-wh" },
+ { "goto": "/m/inventory/trims-warehouse" }, { "wait": 5000 },
+ { "texts": "tw", "of": "main h2, main h3, main p, main th, main td, main button, main label" },
+ { "fullshot": "st01-trims-wh" }
+]

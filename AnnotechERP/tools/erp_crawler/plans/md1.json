@@ -1,0 +1,7 @@
+[
+ { "goto": "/m/merchandising/accessories-booking-view" },
+ { "wait": 4000 },
+ { "click": "aside button:has-text('MASTER DATA')", "wait": 2000 },
+ { "texts": "side", "of": "aside a, aside button" },
+ { "html": "links", "of": "aside a[href*='/m/merchandising/']" }
+]

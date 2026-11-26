@@ -83,6 +83,7 @@ return [
     // 'email'/'login' above rather than reusing them, so this screen's
     // exact wording ("Email address", "Log in") doesn't silently drift if
     // a shorter label elsewhere ever changes.
+    'email_or_user_id' => 'Email or User ID',
     'email_address' => 'Email address',
     'log_in_button' => 'Log in',
     'login_subtitle' => 'Enter your credentials to access Annotech RMG.',
@@ -119,4 +120,13 @@ return [
     'language_saved_toast' => 'Language preference saved',
     'language_saved_hint' => 'Saved to your account.',
     'could_not_save' => 'Could not save',
+    // Not-found and no-access pages (app/(app)/not-found.js, forbidden.js).
+    'page_status' => [
+        'nf_title' => 'Page not found',
+        'nf_text' => 'The page you were looking for does not exist or has moved. Check the address, or go back.',
+        'fb_title' => 'You do not have access to this page',
+        'fb_text' => 'Your role does not include this screen. Ask your administrator to give you access (Access Control → Role Menu Assignment).',
+        'back' => 'Go back',
+        'home' => 'Go to dashboard',
+    ],
 ];

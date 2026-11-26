@@ -1,0 +1,18 @@
+[
+ {"goto": "/m/ie/sec-wise-profit-loss-config"},
+ {"click": "main button[role=tab]:has-text('Income Target Config')", "wait": 2500},
+ {"choose": "main select[name=companyId]", "index": 1},
+ {"wait": 1500},
+ {"choose": "main select[name=year]", "label": "2026"},
+ {"wait": 1500},
+ {"peek": "main div:has(> label:text-is('Month')) button", "wait": 1500},
+ {"popup": "periods"},
+ {"click": "xpath=(//*[@role='option'][contains(normalize-space(.),'Oct')])[1]", "wait": 800},
+ {"click": "main button:has-text('Show')", "wait": 6000},
+ {"fullshot": "cfg-show"},
+ {"dump": "cfg_show", "root": "main"},
+ {"html": "cfg_head", "of": "main table thead"},
+ {"html": "cfg_row0", "of": "main table tbody tr >> nth=0"},
+ {"texts": "cfg_sections", "of": "main table tbody tr td:first-child"},
+ {"texts": "cfg_p2", "of": "main p"}
+]

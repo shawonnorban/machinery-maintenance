@@ -1,0 +1,21 @@
+[
+ {
+  "goto": "/hr-payroll/monthly-salary"
+ },
+ {
+  "wait": 20000
+ },
+ {
+  "pick": "Pay Period",
+  "sel": "main [aria-label='Pay Period']",
+  "option": "October 2026"
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "after": 12000
+ },
+ {
+  "printpdf": "main [aria-label='Payslip of EMP-000003']",
+  "as": "payslip-shawonoor"
+ }
+]

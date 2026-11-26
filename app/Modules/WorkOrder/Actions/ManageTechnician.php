@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Actions;
 
+use App\Modules\HrPayroll\Models\HrEmployee;
 use App\Modules\Tenancy\Models\Department;
 use App\Modules\Tenancy\Models\ProductionLine;
 use App\Modules\WorkOrder\Models\Technician;
@@ -38,6 +39,7 @@ class ManageTechnician
         $values = $this->values($data);
 
         $this->assertLoginAvailable($values['user_id']);
+        $this->assertEmployeeAvailable($values, null);
 
         return Technician::create($values + [
             'company_id' => $this->context->companyId(),
@@ -50,9 +52,10 @@ class ManageTechnician
      */
     public function update(Technician $technician, array $data): Technician
     {
-        $values = $this->values($data);
+        $values = $this->values($data, $technician);
 
         $this->assertLoginAvailable($values['user_id'], $technician->id);
+        $this->assertEmployeeAvailable($values, $technician->id);
 
         $technician->update($values);
 
@@ -97,8 +100,26 @@ class ManageTechnician
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    private function values(array $data): array
+    private function values(array $data, ?Technician $technician = null): array
     {
+        $employee = $this->employeeOf($data['hr_employee_id'] ?? null, $technician);
+
+        if ($employee !== null) {
+            // Who they are comes from HR, never typed twice; where they
+            // work defaults to their HR posting when the form left it open.
+            $data['name'] = $employee->name;
+            $data['employee_id'] = $employee->employee_code;
+            $data['phone'] = $employee->mobile ?? ($data['phone'] ?? null);
+            $data['email'] = $employee->email ?? ($data['email'] ?? null);
+            $data['joining_date'] = $employee->joining_date?->toDateString() ?? ($data['joining_date'] ?? null);
+
+            if (! filled($data['factory_id'] ?? null)) {
+                $data['factory_id'] = $employee->factory_id;
+                $data['department_id'] = $data['department_id'] ?? $employee->department_id;
+                $data['production_line_id'] = $data['production_line_id'] ?? $employee->line_id;
+            }
+        }
+
         $factoryId = $data['factory_id'] ?? null;
 
         if (! filled($factoryId) || ! $this->context->canAccessFactory((string) $factoryId)) {
@@ -123,6 +144,7 @@ class ManageTechnician
             'department_id' => $departmentId,
             'production_line_id' => $lineId,
             'user_id' => filled($data['user_id'] ?? null) ? $data['user_id'] : null,
+            'hr_employee_id' => $employee?->id,
             'employee_id' => $data['employee_id'],
             'name' => $data['name'],
             'phone' => $data['phone'] ?? null,
@@ -152,6 +174,57 @@ class ManageTechnician
         if ($alreadyLinked !== null) {
             throw ValidationException::withMessages([
                 'user_id' => __('technician.login_already_linked', ['name' => $alreadyLinked->name]),
+            ])->status(409);
+        }
+    }
+
+    /**
+     * The employee picked from HR & Payroll's list. Tenant-scoped, so another
+     * company's employee is simply not found; a separated or suspended
+     * employee can't be newly put on the roster, though one already linked
+     * keeps the link.
+     */
+    private function employeeOf(mixed $id, ?Technician $technician): ?HrEmployee
+    {
+        if (! filled($id)) {
+            return null;
+        }
+
+        $employee = HrEmployee::query()->whereKey($id)->first();
+        $keepsLink = $technician !== null && $employee !== null && $technician->hr_employee_id === $employee->id;
+
+        if ($employee === null || ($employee->status !== 'ACTIVE' && ! $keepsLink)) {
+            throw ValidationException::withMessages([
+                'hr_employee_id' => __('technician.employee_unavailable'),
+            ]);
+        }
+
+        return $employee;
+    }
+
+    /**
+     * One employee, one technician (`technicians_hr_employee_unique`), and
+     * the HR code they bring must not already be another roster row's
+     * employee ID: refused with the field and the name, not a raw
+     * constraint error.
+     *
+     * @param  array<string, mixed>  $values
+     */
+    private function assertEmployeeAvailable(array $values, ?string $excludingTechnicianId): void
+    {
+        if ($values['hr_employee_id'] === null) {
+            return;
+        }
+
+        $taken = Technician::query()
+            ->where(fn ($q) => $q->where('hr_employee_id', $values['hr_employee_id'])
+                ->orWhere('employee_id', $values['employee_id']))
+            ->when($excludingTechnicianId !== null, fn ($q) => $q->where('id', '!=', $excludingTechnicianId))
+            ->first();
+
+        if ($taken !== null) {
+            throw ValidationException::withMessages([
+                'hr_employee_id' => __('technician.employee_already_linked', ['name' => $taken->name]),
             ])->status(409);
         }
     }

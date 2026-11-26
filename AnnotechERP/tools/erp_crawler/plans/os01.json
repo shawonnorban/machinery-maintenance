@@ -1,0 +1,76 @@
+[
+ {
+  "goto": "/m/ie/monthly-op-aso-salary-ot-rate"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fullshot": "sr-records"
+ },
+ {
+  "dump": "sr_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Cost Particulars')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "sr-cp"
+ },
+ {
+  "dump": "sr_cp",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New salary')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "sr-new"
+ },
+ {
+  "dump": "sr_new",
+  "root": "main"
+ },
+ {
+  "html": "sr_new_boxes",
+  "of": "main form div:has(> label)"
+ },
+ {
+  "goto": "/m/ie/ot-plan-garment-division"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fullshot": "ot-records"
+ },
+ {
+  "dump": "ot_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('OT Plan')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "ot-plan"
+ },
+ {
+  "dump": "ot_plan",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New OT plan')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "ot-new"
+ },
+ {
+  "dump": "ot_new",
+  "root": "main"
+ }
+]

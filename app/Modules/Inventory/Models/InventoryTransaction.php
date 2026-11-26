@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Models;
 
+use App\Modules\Identity\Models\User;
 use App\Modules\WorkOrder\Models\WorkOrder;
 use App\Shared\Casts\MoneyCast;
 use App\Shared\Concerns\BelongsToTenant;
@@ -84,6 +85,12 @@ class InventoryTransaction extends BaseModel
     public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
+    }
+
+    /** Who posted the movement; null for a system post (an API client with no person). */
+    public function performer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'performed_by');
     }
 
     public function reverses(): BelongsTo

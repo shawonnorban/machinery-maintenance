@@ -1,0 +1,5 @@
+[
+ {"goto": "/order-summary/new"},
+ {"see": "You do not have access to this page"},
+ {"shot": "viewer_new"}
+]

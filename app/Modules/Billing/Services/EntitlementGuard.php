@@ -37,11 +37,14 @@ class EntitlementGuard
     ) {}
 
     /**
+     * `$companyId` defaults to the company in context; a caller adding to a
+     * group company they also administer (User Company Mapping) names it.
+     *
      * @throws ValidationException when the contract says BLOCK and the limit is reached
      */
-    public function assertCanAdd(string $metric): void
+    public function assertCanAdd(string $metric, ?string $companyId = null): void
     {
-        $companyId = $this->context->companyId();
+        $companyId ??= $this->context->companyId();
 
         if ($companyId === null) {
             return;
@@ -92,11 +95,8 @@ class EntitlementGuard
                 ->whereNotIn('status', ['RETIRED', 'SCRAPPED', 'LOST', 'DRAFT'])
                 ->count(),
 
-            'ACTIVE_USERS' => CompanyUser::withoutGlobalScope(TenantScope::class)
-                ->where('company_id', $companyId)
-                ->where('status', 'ACTIVE')
-                ->distinct()
-                ->count('user_id'),
+            // A supplier's portal login is no seat (CompanyUser::seatCount).
+            'ACTIVE_USERS' => CompanyUser::seatCount($companyId),
 
             default => 0,
         };

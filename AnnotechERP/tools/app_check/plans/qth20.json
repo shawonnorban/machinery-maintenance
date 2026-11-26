@@ -1,0 +1,5 @@
+[
+ {"goto": "/quality-tally/sewing-history"},
+ {"wait": 9000},
+ {"shot": "qth20-history"}
+]

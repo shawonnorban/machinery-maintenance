@@ -1,0 +1,5 @@
+[
+ {"goto": "/hr-payroll/employee-profile"},
+ {"see": "employee(s) found"},
+ {"shot": "profile"}
+]

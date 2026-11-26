@@ -1,0 +1,95 @@
+[
+ {
+  "goto": "/hr-payroll/employee-transfer"
+ },
+ {
+  "wait": 20000
+ },
+ {
+  "shot": "t0-records"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New transfer')",
+  "after": 1500
+ },
+ {
+  "pick": "Employee",
+  "sel": "main [aria-label='Employee']",
+  "option": "EMP-000002"
+ },
+ {
+  "pick": "New Department",
+  "sel": "main [aria-label='New Department']",
+  "option": "Finishing Department",
+  "exactOption": true
+ },
+ {
+  "pick": "New Section",
+  "sel": "main [aria-label='New Section']",
+  "option": "Finishing",
+  "exactOption": true
+ },
+ {
+  "pick": "New Line",
+  "sel": "main [aria-label='New Line']",
+  "option": "Finishing Line 1",
+  "exactOption": true
+ },
+ {
+  "fill": "Effective Date",
+  "sel": "main [aria-label='Effective Date']",
+  "text": "2026-11-12"
+ },
+ {
+  "fill": "Reason",
+  "sel": "main [aria-label='Reason']",
+  "text": "Finishing needs a cutter for the shade-band trims"
+ },
+ {
+  "pick": "Status",
+  "sel": "main [aria-label='Status']",
+  "option": "Draft"
+ },
+ {
+  "shot": "t1-form"
+ },
+ {
+  "click": "main button:has-text('Save transfer')",
+  "after": 12000
+ },
+ {
+  "texts": "transfers",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "t2-draft"
+ },
+ {
+  "click": "main tr:has-text('TRF-000001') button:has-text('Finalize')",
+  "after": 1500
+ },
+ {
+  "shot": "t3-confirm"
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Finalize')",
+  "after": 12000
+ },
+ {
+  "texts": "transfers_final",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "t4-finalized"
+ },
+ {
+  "goto": "/hr-payroll/employee-assignment"
+ },
+ {
+  "wait": 20000
+ },
+ {
+  "texts": "assignment_rows",
+  "of": "main tbody tr"
+ }
+]

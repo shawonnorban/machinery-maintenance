@@ -1,0 +1,13 @@
+[
+ {"goto": "/m/dyeing/lab-dip-recipe"},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Edit')", "wait": 3500},
+ {"url": "edit_url"},
+ {"fullshot": "ld-edit"},
+ {"dump": "ld_edit", "root": "main"},
+ {"texts": "edit_th", "of": "main thead th"},
+ {"texts": "edit_p", "of": "main p, main h2, main h3"},
+ {"goto": "/m/dyeing/lab-dip-recipe-view"},
+ {"texts": "view_rows", "of": "main tbody tr"},
+ {"html": "view_btns", "of": "main tbody tr button, main tbody tr a"},
+ {"fullshot": "ld-view2"}
+]

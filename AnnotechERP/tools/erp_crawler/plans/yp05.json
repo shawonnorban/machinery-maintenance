@@ -1,0 +1,23 @@
+[
+ {"goto": "/m/knitting/yr-pr-approve-list"},
+ {"fullshot": "ap"},
+ {"dump": "ap", "root": "main"},
+ {"texts": "ap_p", "of": "main p"},
+ {"html": "ap_head", "of": "main table thead"},
+ {"goto": "/m/knitting/comparative-statement"},
+ {"dump": "cs_list", "root": "main"},
+ {"texts": "cs_p", "of": "main p"},
+ {"click": "main button:has-text('Add New')", "wait": 2500},
+ {"fullshot": "cs-new"},
+ {"dump": "cs_new", "root": "main"},
+ {"texts": "cs_new_p", "of": "main p, [role=dialog] p"},
+ {"html": "cs_new_head", "of": "main table thead, [role=dialog] table thead"},
+ {"goto": "/m/knitting/yarn-purchase-order"},
+ {"dump": "po_list", "root": "main"},
+ {"texts": "po_p", "of": "main p"},
+ {"click": "main button[role=tab]:has-text('Yarn Purchase Order (PO)')", "wait": 2500},
+ {"fullshot": "po-form"},
+ {"dump": "po_form", "root": "main"},
+ {"texts": "po_form_p", "of": "main p"},
+ {"html": "po_form_head", "of": "main table thead"}
+]

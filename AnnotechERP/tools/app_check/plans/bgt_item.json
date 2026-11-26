@@ -1,0 +1,11 @@
+[
+ {"goto": "/merchandise-desk/budget-sheet?order=LPP-2026-000001"},
+ {"wait": 5000},
+ {"fill": "Conv. Loc.", "text": "120"},
+ {"click": "role=button[name='Add'] >> nth=2", "after": 1500},
+ {"pick": "Item", "option": "Button 18L"},
+ {"wait": 8000},
+ {"shot": "item-picked"},
+ {"click": "role=button[name='Save']", "after": 20000},
+ {"shot": "item-saved"}
+]

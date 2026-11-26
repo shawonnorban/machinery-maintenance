@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/merchandising/accessories-pr" },
+ { "click": "button:has-text('Requisition Entry')", "wait": 2500 },
+ { "click": "button:has-text('LPP-2026-000007')", "wait": 3000 },
+ { "html": "buyer_select", "of": "select[name=buyerAccountId]" },
+ { "fillsel": "input[name=reqDate]", "text": "2026-10-17" },
+ { "click": "button:has-text('Add item')", "wait": 1500 },
+ { "choose": "table select", "index": 3 },
+ { "fillsel": "table input[type=number]", "text": "500" },
+ { "click": "button:has-text('Save requisition')", "wait": 4000 },
+ { "texts": "after_save_buttons", "of": "main button" },
+ { "texts": "alerts", "of": "[role=alert]" },
+ { "fullshot": "pr-lpp-saved" }
+]

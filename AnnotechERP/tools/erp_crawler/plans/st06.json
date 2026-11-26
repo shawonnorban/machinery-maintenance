@@ -1,0 +1,18 @@
+[
+ { "goto": "/m/inventory/in-house-grn" }, { "wait": 6000 },
+ { "type": "main input[placeholder='PR-2026-00025']", "text": "PR-2026-00001" },
+ { "click": "main button:has-text('Search') >> visible=true >> nth=0", "wait": 4000 },
+ { "texts": "pr_submitted", "of": "main p, main span, main td, [role=alert], [data-sonner-toast]" },
+ { "type": "main input[placeholder='PR-2026-00025']", "text": "PR-2026-99999" },
+ { "click": "main button:has-text('Search') >> visible=true >> nth=0", "wait": 4000 },
+ { "texts": "pr_missing", "of": "main p, main span, [role=alert], [data-sonner-toast]" },
+ { "type": "main input[placeholder='PR-2026-00025']", "text": "PR-2026-00005" },
+ { "click": "main button:has-text('Search') >> visible=true >> nth=0", "wait": 4000 },
+ { "type": "main tbody input >> nth=0", "text": "99999" },
+ { "click": "main button:has-text('Confirm In-House') >> visible=true", "wait": 3000 },
+ { "texts": "grn_over", "of": "main p, main span, main td, [role=alert], [data-sonner-toast], [role=dialog] *" },
+ { "type": "main tbody input >> nth=0", "text": "1" },
+ { "click": "main button:has-text('Confirm In-House') >> visible=true", "wait": 5000 },
+ { "texts": "grn_done", "of": "main h2, main h3, main p, main span, main td, [role=alert], [data-sonner-toast], [role=dialog] *" },
+ { "fullshot": "st06-grn-done" }
+]

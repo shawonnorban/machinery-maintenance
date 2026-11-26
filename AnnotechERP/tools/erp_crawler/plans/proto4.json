@@ -1,0 +1,23 @@
+[
+ { "goto": "/m/sample/sample-requisition" },
+ { "wait": 3500 },
+ { "texts": "side", "of": "aside a, aside button, nav a, nav button" },
+ { "click": "button:has-text('Sample Fabric Requisition') >> nth=0", "wait": 2500 },
+ { "dump": "mr_form", "root": "main" },
+ { "choose": "main select >> nth=1", "index": 1 },
+ { "wait": 3000 },
+ { "texts": "mr_loaded", "of": "main h2, main h3, main h4, main p, main label, main th, main td, main li, main button" },
+ { "fullshot": "proto4-mr-loaded" },
+ { "click": "main button:has-text('Add Material')", "wait": 2500 },
+ { "dump": "mr_add", "root": "body" },
+ { "texts": "mr_add_texts", "of": "[role=dialog] *" },
+ { "fullshot": "proto4-mr-add" },
+ { "escape": true },
+ { "click": "button:has-text('Sample Programs')", "wait": 2500 },
+ { "texts": "programs", "of": "main h2, main h3, main p, main th, main td, main li, main button" },
+ { "fullshot": "proto4-programs" },
+ { "click": "button:has-text('Material Issue')", "wait": 2500 },
+ { "dump": "issue_form", "root": "main" },
+ { "texts": "issue_texts", "of": "main h2, main h3, main p, main label, main th, main td, main button" },
+ { "fullshot": "proto4-issue" }
+]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Settings\MasterData\Types;
 
+use App\Modules\Inventory\Models\UnitOfMeasure;
 use App\Modules\Inventory\Models\UomConversion;
 use App\Modules\Settings\MasterData\Field;
 use App\Modules\Settings\MasterData\MasterDataType;
@@ -41,8 +42,9 @@ class UomConversionData extends MasterDataType
     public function fields(): array
     {
         return [
-            Field::reference('from_uom_id', 'uoms'),
-            Field::reference('to_uom_id', 'uoms'),
+            // Units are General Store's one shared list (`units_of_measure`), not a master-data type.
+            Field::belongsTo('from_uom_id', UnitOfMeasure::class),
+            Field::belongsTo('to_uom_id', UnitOfMeasure::class),
             Field::number('factor'),
         ];
     }

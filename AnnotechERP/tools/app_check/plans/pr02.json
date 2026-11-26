@@ -1,0 +1,112 @@
+[
+ {
+  "goto": "/work-study/gmt-item-specification"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p01-itemlist"
+ },
+ {
+  "goto": "/capacity-planning/master-plan?plan=MP-2026120001&v=1"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p02-masterplan"
+ },
+ {
+  "goto": "/merchandise-desk/accessories-pr?tab=entry&ref=PRQ-ACC-2026100001"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p06-accreq"
+ },
+ {
+  "goto": "/merchandise-desk/purchase-fabric-pr?tab=entry&ref=PRQ-FAB-2026100001"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p07-pfab"
+ },
+ {
+  "goto": "/merchandise-desk/budget-sheet?order=Order"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p08-budget"
+ },
+ {
+  "goto": "/merchandise-desk/sample-production?batch=SMB-00001"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p09-samplecards"
+ },
+ {
+  "goto": "/prototype-desk/sample-360-view"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p12-s360"
+ },
+ {
+  "goto": "/prototype-desk/bundle-movement?tab=lookup"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p13-bundles"
+ },
+ {
+  "goto": "/store-material/in-house-grn?grn=GRN-2026-00001"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p14-grn"
+ },
+ {
+  "goto": "/store-material/store-reports"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p15-storereport"
+ },
+ {
+  "goto": "/assets/labels"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p16-labels"
+ }
+]

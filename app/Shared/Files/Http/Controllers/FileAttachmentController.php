@@ -30,7 +30,9 @@ class FileAttachmentController extends Controller
         $this->authorize(match ($attachment->attachable_type) {
             'asset' => 'asset.asset.view',
             'breakdown' => 'breakdown.breakdown.view',
+            'hr_employee_photo' => 'hrpayroll.employee.view',
             'fabric_roll', 'fabric_inspection' => 'itemmaster.roll.view_any',
+            'company_document' => 'settings.company.manage',
             default => 'work_order.work_order.view',
         });
 

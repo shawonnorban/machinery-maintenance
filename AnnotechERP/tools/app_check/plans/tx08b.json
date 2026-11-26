@@ -1,0 +1,17 @@
+[
+ {"goto": "/trade-export/bill-adjustment-not-used"},
+ {"wait": 20000},
+ {"click": "main button:has-text('Manage Bill Submit and Payment Date')", "after": 3000},
+ {"pick": "Export L/C No", "exact": true, "option": "LC-0098812"},
+ {"click": "main button:has-text('Search')", "after": 10000},
+ {"fill": "Bill Submit Date At Bank BE-2026-2201", "exact": true, "text": "2026-11-09"},
+ {"fill": "Payment Recv Date at Bank BE-2026-2201", "exact": true, "text": "2026-11-12"},
+ {"shot": "dates-entry"},
+ {"click": "main button:has-text('Save')", "after": 20000},
+ {"shot": "dates-saved"},
+ {"click": "main button:has-text('Back To List')", "after": 10000},
+ {"texts": "adj_after", "of": "main tbody tr"},
+ {"goto": "/trade-export/payment-receives"},
+ {"wait": 15000},
+ {"texts": "cm_rows", "of": "main tbody tr"}
+]

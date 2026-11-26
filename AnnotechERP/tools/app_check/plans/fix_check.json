@@ -1,0 +1,1 @@
+[{"goto":"/general-store/gs-items"},{"wait":3000},{"see":"GS-CLN-001","as":"gs_item_listed"},{"shot":"gs-items"},{"goto":"/capacity-planning/shift-master"},{"wait":3000},{"shot":"cp-shift-master"}]

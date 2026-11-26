@@ -1,13 +1,11 @@
-import Link from "next/link";
-import { Plus, AlertTriangle, BellRing, Wrench, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, BellRing, Wrench, CheckCircle2 } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { StatCard } from "@/components/ui/stat-card";
-import { cn } from "@/lib/utils";
 import { BreakdownsTable } from "@/components/breakdowns/breakdowns-table";
 import { BreakdownsLiveUpdates } from "@/components/breakdowns/breakdowns-live-updates";
 import { getT } from "@/lib/i18n-server";
+import { applyPerPage } from "@/lib/per-page";
 
 /**
  * Mirrors `BreakdownApiController::index` — `open=true` is the question a
@@ -21,6 +19,7 @@ export default async function BreakdownsPage({ searchParams }) {
   const priority = params.priority ?? "";
 
   const query = new URLSearchParams({ page: String(page), open });
+  await applyPerPage(query, "/breakdowns");
   if (priority) query.set("priority", priority);
 
   const [breakdowns, counts, me, permissions, t] = await Promise.all([
@@ -43,17 +42,10 @@ export default async function BreakdownsPage({ searchParams }) {
     <>
       <BreakdownsLiveUpdates companyId={me.company_id} />
 
-      <PageHeader
-        breadcrumb={[{ label: t("breakdowns") }]}
+      <ScreenHeader
+        url="/breakdowns"
         title={t("breakdowns")}
         description={t("page_description")}
-        actions={
-          canReport ? (
-            <Link href="/breakdowns/create" className={cn(buttonVariants({ size: "sm", variant: "danger" }))}>
-              <Plus /> {t("report_breakdown")}
-            </Link>
-          ) : null
-        }
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -63,7 +55,7 @@ export default async function BreakdownsPage({ searchParams }) {
         <StatCard label={t("filter_awaiting_closure")} value={counts.awaiting_closure} icon={<CheckCircle2 />} tone="info" />
       </div>
 
-      <BreakdownsTable breakdowns={breakdowns.data} meta={breakdowns.meta} page={page} open={open} priority={priority} />
+      <BreakdownsTable addHref={canReport ? "/breakdowns/create" : null} breakdowns={breakdowns.data} meta={breakdowns.meta} page={page} open={open} priority={priority} />
     </>
   );
 }

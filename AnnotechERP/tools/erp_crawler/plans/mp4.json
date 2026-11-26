@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Create Direct Requisition')", "wait": 3000 },
+ { "click": "main button:has-text('Accessories')", "wait": 1500 },
+ { "click": "main button:has-text('Add accessories line')", "wait": 1500 },
+ { "dump": "acc_line", "root": "main" },
+ { "peek": "main button:has-text('Select…') >> nth=0", "wait": 1500 },
+ { "popup": "acc_items" },
+ { "escape": true },
+ { "click": "main button:has-text('Submit requisition')", "wait": 2500 },
+ { "texts": "empty_submit", "of": "main p, main span, [role=alert], [role=dialog] *, li[data-sonner-toast] *" },
+ { "goto": "/m/approval/approval-inbox" },
+ { "wait": 4000 },
+ { "texts": "approval_inbox", "of": "main h1, main h2, main h3, main p, main th, main td, main button, main span" },
+ { "goto": "/m/material-procurement/price-review" },
+ { "wait": 4000 },
+ { "texts": "price_review", "of": "main h1, main h2, main h3, main h4, main p, main th, main td, main button, main span, main label, main option" },
+ { "fullshot": "mp4-price-review" }
+]

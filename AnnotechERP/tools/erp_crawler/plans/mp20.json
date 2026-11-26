@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/material-procurement/quotation-history" },
+ { "wait": 4000 },
+ { "texts": "sup_hist", "of": "main p, main span, main button, main td" },
+ { "goto": "/m/material-procurement/supplier-dashboard" },
+ { "wait": 3000 },
+ { "texts": "sup_dash", "of": "main p, main span, main li" },
+ { "goto": "/m/material-procurement/quotation-history" },
+ { "wait": 3000 },
+ { "click": "main button:has-text('Revise price') >> visible=true >> nth=0", "wait": 2000 },
+ { "texts": "revise_ui", "of": "[role=dialog] p, [role=dialog] dt, [role=dialog] dd, [role=dialog] span" },
+ { "type": "[role=dialog] input[type=number] >> nth=1", "text": "2.65" },
+ { "click": "[role=dialog] button:has-text('Submit quotation')", "wait": 4000 },
+ { "texts": "after_revise", "of": "main p, main span, li[data-sonner-toast] *" }
+]

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Http\Controllers\Api;
 
+use App\Modules\HrPayroll\Models\HrEmployee;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Department;
+use App\Modules\Tenancy\Models\Designation;
 use App\Modules\Tenancy\Models\Factory;
 use App\Modules\Tenancy\Models\ProductionLine;
 use App\Modules\WorkOrder\Actions\ManageTechnician;
@@ -38,7 +40,7 @@ class TechnicianApiController extends ApiController
         $this->allow('technician.technician.manage');
 
         $query = Technician::query()
-            ->with(['factory:id,name', 'department:id,name', 'productionLine:id,name'])
+            ->with(['factory:id,name', 'department:id,name', 'productionLine:id,name', 'hrEmployee:id,employee_code,name'])
             ->whereIn('factory_id', $this->context->accessibleFactoryIds())
             ->when($request->string('search')->trim()->toString(), function ($q, string $term): void {
                 $q->where(fn ($w) => $w->where('name', 'like', $term.'%')
@@ -58,7 +60,7 @@ class TechnicianApiController extends ApiController
         $this->allow('technician.technician.manage');
         $this->assertReachable($technician);
 
-        return ApiResponse::ok($this->detail($technician->load('skills')));
+        return ApiResponse::ok($this->detail($technician->load(['skills', 'hrEmployee:id,employee_code,name'])));
     }
 
     public function store(Request $request, ManageTechnician $action): JsonResponse
@@ -133,7 +135,46 @@ class TechnicianApiController extends ApiController
                 ->get(['id', 'name', 'email'])
                 ->all(),
             'proficiencies' => TechnicianSkillController::PROFICIENCIES,
+            'employees' => $this->employeeOptions(),
         ]);
+    }
+
+    /**
+     * The HR & Payroll employee list a technician is picked from: active
+     * employees posted to a factory this user can reach (or not yet posted),
+     * with what the form fills in from them and which technician, if any,
+     * already is that employee.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function employeeOptions(): array
+    {
+        $accessible = $this->context->accessibleFactoryIds();
+        $linked = Technician::query()->whereNotNull('hr_employee_id')->pluck('id', 'hr_employee_id');
+
+        $employees = HrEmployee::query()
+            ->where('status', 'ACTIVE')
+            ->where(fn ($q) => $q->whereNull('factory_id')->orWhereIn('factory_id', $accessible))
+            ->orderBy('name')
+            ->get(['id', 'employee_code', 'name', 'mobile', 'email', 'joining_date', 'factory_id', 'department_id', 'line_id', 'designation_id']);
+
+        $designations = Designation::query()
+            ->whereIn('id', $employees->pluck('designation_id')->filter()->unique())
+            ->pluck('name', 'id');
+
+        return $employees->map(fn (HrEmployee $e): array => [
+            'id' => $e->id,
+            'employee_code' => $e->employee_code,
+            'name' => $e->name,
+            'mobile' => $e->mobile,
+            'email' => $e->email,
+            'joining_date' => $e->joining_date?->toDateString(),
+            'factory_id' => $e->factory_id,
+            'department_id' => $e->department_id,
+            'line_id' => $e->line_id,
+            'designation' => $designations[$e->designation_id] ?? null,
+            'technician_id' => $linked[$e->id] ?? null,
+        ])->values()->all();
     }
 
     /**
@@ -239,8 +280,11 @@ class TechnicianApiController extends ApiController
         }
 
         return $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'employee_id' => ['required', 'string', 'max:64', $unique],
+            // Picked from HR & Payroll's employee list; when it is, the name
+            // and code come from the employee (ManageTechnician::values()).
+            'hr_employee_id' => ['nullable', 'string', 'size:26'],
+            'name' => ['required_without:hr_employee_id', 'nullable', 'string', 'max:255'],
+            'employee_id' => ['required_without:hr_employee_id', 'nullable', 'string', 'max:64', $unique],
             'factory_id' => ['required', 'string', 'size:26'],
             'department_id' => ['nullable', 'string', 'size:26'],
             'production_line_id' => ['nullable', 'string', 'size:26'],
@@ -265,6 +309,13 @@ class TechnicianApiController extends ApiController
             'factory' => $technician->factory === null ? null : ['id' => $technician->factory->id, 'name' => $technician->factory->name],
             'department' => $technician->department?->name,
             'production_line' => $technician->productionLine?->name,
+            // On the summary too: the list has a Specialization column.
+            'specialization' => $technician->specialization,
+            'hr_employee' => $technician->hrEmployee === null ? null : [
+                'id' => $technician->hrEmployee->id,
+                'employee_code' => $technician->hrEmployee->employee_code,
+                'name' => $technician->hrEmployee->name,
+            ],
             'status' => $technician->status,
             'phone' => $technician->phone,
             'email' => $technician->email,
@@ -279,11 +330,11 @@ class TechnicianApiController extends ApiController
     {
         return $this->summary($technician) + [
             'user_id' => $technician->user_id,
+            'hr_employee_id' => $technician->hr_employee_id,
             // Not on the list summary — needed so an edit form can preselect
             // these without a second round trip, same reasoning as Location's.
             'department_id' => $technician->department_id,
             'production_line_id' => $technician->production_line_id,
-            'specialization' => $technician->specialization,
             'joining_date' => $technician->joining_date?->toDateString(),
             'skills' => $technician->relationLoaded('skills') ? $technician->skills->map(fn ($s): array => [
                 'id' => $s->id,

@@ -10,6 +10,9 @@ const nextConfig = {
   experimental: {
     cpus: 1,
 
+    // forbidden(): a screen the caller's role does not include shows the no-access page (app/(app)/forbidden.js), not a 404.
+    authInterrupts: true,
+
     // Same shared-hosting constraint as `cpus: 1` above, the memory side of
     // it: the account's LVE memory ceiling is tight enough that a webpack
     // build gets OOM-killed outright partway through (confirmed live,
@@ -67,6 +70,33 @@ const nextConfig = {
     config.resolve.alias["next-intl/config"] = `${import.meta.dirname}/src/i18n/request.js`;
 
     return config;
+  },
+
+  // The machinery-era Settings screens were replaced by their Brickland ERP
+  // screens (the user's decision of 2026-11-15): an old bookmark lands on the
+  // screen that does the same job now. Temporary (307), so nothing caches it.
+  redirects() {
+    const moved = [
+      ["/settings/factories", "/company-management/factory"],
+      ["/settings/company", "/access-control/system-parameter?tab=settings"],
+      ["/settings/numbering", "/system-settings/document-numbering"],
+      ["/settings/approval-workflows", "/access-control/approval-workflow"],
+      ["/settings/users", "/access-control/user-account"],
+      ["/settings/roles", "/access-control/role-definition"],
+      ["/settings/webhooks", "/system-settings/api-keys-webhooks?tab=webhooks"],
+      ["/settings/api-clients", "/system-settings/api-keys-webhooks"],
+      ["/company-management/grade", "/hr-payroll/grade"],
+      ["/settings/calendar", "/hr-payroll/shift-master"],
+      ["/settings/gl-mapping", "/access-control/ledger-integration"],
+      ["/capacity-planning/factory-calendar", "/hr-payroll/festival-calendar?tab=holidays"],
+      // Pre-Budget's menu of 2026-11-19: Column Setup under Master Data, the lists as tabs of Pre-Budget Master Data.
+      ["/pre-budget/column-setup", "/pre-budget-master/requisition-column-setup"],
+      ...["accessory-items", "yarn-types", "wash-types", "additional-processes", "gsm", "sustainability", "order-types"].map((tab) => [`/pre-budget-master/${tab}`, `/pre-budget-master/master-data?tab=${tab}`]),
+    ];
+    return moved.flatMap(([source, destination]) => [
+      { source, destination, permanent: false },
+      { source: `${source}/:rest*`, destination, permanent: false },
+    ]);
   },
 };
 

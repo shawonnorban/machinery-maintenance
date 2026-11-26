@@ -23,7 +23,8 @@ function formatMessage(raw, params) {
 
   let result = raw;
 
-  for (const [key, value] of Object.entries(params)) {
+  // Longest first, as Laravel does, so `:page` never eats the start of `:pages`.
+  for (const [key, value] of Object.entries(params).sort((x, y) => y[0].length - x[0].length)) {
     const str = String(value);
     result = result
       .replaceAll(`:${key.toUpperCase()}`, str.toUpperCase())

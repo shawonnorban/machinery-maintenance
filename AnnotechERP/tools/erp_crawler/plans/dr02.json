@@ -1,0 +1,98 @@
+[
+ {
+  "goto": "/m/dyeing/update-reprocess"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New Re-Process')",
+  "wait": 2500
+ },
+ {
+  "fillsel": "main input[name=reqDate]",
+  "text": "2026-11-05"
+ },
+ {
+  "choose": "main select >> nth=1",
+  "label": "Re-Dyeing"
+ },
+ {
+  "choose": "main select >> nth=3",
+  "label": "Chemical Store (ST-CHM)"
+ },
+ {
+  "peek": "main button:has-text('-- Select Item --')",
+  "wait": 1200
+ },
+ {
+  "popclick": "[role=option] >> nth=1",
+  "wait": 1200
+ },
+ {
+  "fillsel": "main input[aria-label='Required Qty'], main input[type=number] >> nth=0",
+  "text": "5"
+ },
+ {
+  "peek": "main button:has-text('-- Unit --')",
+  "wait": 1200
+ },
+ {
+  "popclick": "[role=option]:has-text('Kg')",
+  "wait": 1200
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "fullshot": "rpu-filled"
+ },
+ {
+  "click": "main button:has-text('Save Re-Process requisition')",
+  "wait": 5000
+ },
+ {
+  "texts": "rpu_after",
+  "of": "main p, main [role=alert]"
+ },
+ {
+  "fullshot": "rpu-saved"
+ },
+ {
+  "goto": "/m/dyeing/update-reprocess"
+ },
+ {
+  "texts": "rpu_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "html": "rpu_btns",
+  "of": "main tbody tr >> nth=0 >> button, main tbody tr >> nth=0 >> a"
+ },
+ {
+  "goto": "/m/dyeing/reprocess-approval"
+ },
+ {
+  "texts": "rpa_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "html": "rpa_btns",
+  "of": "main tbody tr >> nth=0 >> button, main tbody tr >> nth=0 >> a"
+ },
+ {
+  "fullshot": "rpa-row"
+ },
+ {
+  "goto": "/m/dyeing/print-chemical-requisition"
+ },
+ {
+  "texts": "pc_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "html": "pc_btns",
+  "of": "main tbody tr >> nth=0 >> button, main tbody tr >> nth=0 >> a"
+ },
+ {
+  "fullshot": "pc-row"
+ }
+]

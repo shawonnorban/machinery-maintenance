@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "click": "main table tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Raise GRN')", "wait": 2500 },
+ { "texts": "grn_ui", "of": "[role=dialog] *, [role=alertdialog] *" },
+ { "dump": "grn_dump", "root": "[role=dialog], [role=alertdialog]" },
+ { "fullshot": "mp33-grn" }
+]

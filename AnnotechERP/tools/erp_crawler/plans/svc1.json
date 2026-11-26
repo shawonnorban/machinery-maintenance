@@ -1,0 +1,51 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Colour Mapping')",
+  "wait": 2000
+ },
+ {
+  "click": "[data-panel] button:text-is('Add New')",
+  "wait": 1200
+ },
+ {
+  "choose": "[data-panel] table tbody tr:first-child select >> nth=0",
+  "label": "Navy"
+ },
+ {
+  "choose": "[data-panel] table tbody tr:first-child select >> nth=1",
+  "label": "Solid"
+ },
+ {
+  "click": "[data-panel] button:text-is('Save') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Services')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "s_tab",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "[data-panel] button:has-text('Add Process')",
+  "wait": 1500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "s_proc",
+  "root": "[data-panel]"
+ }
+]

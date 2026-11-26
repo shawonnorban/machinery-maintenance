@@ -1,0 +1,19 @@
+[
+ { "goto": "/m/merchandising/accessories-mrr" },
+ { "click": "button:has-text('Receipt Entry')", "wait": 2500 },
+ { "peek": "div:has(> label:has-text('Supplier')) button", "wait": 1200 },
+ { "popup": "supplier_opts" },
+ { "escape": true },
+ { "peek": "div:has(> label:has-text('Receiving Store')) button", "wait": 1200 },
+ { "popup": "store_opts" },
+ { "escape": true },
+ { "peek": "div:has(> label:has-text('Requisition Type')) button", "wait": 1200 },
+ { "popup": "reqtype_opts" },
+ { "escape": true },
+ { "goto": "/m/merchandising/procurement-cost-head" },
+ { "texts": "ch_head", "of": "table thead th" },
+ { "texts": "ch_rows", "of": "table tbody tr" },
+ { "goto": "/m/merchandising/procurement-posting-setup" },
+ { "dump": "posting", "root": "main" },
+ { "fullshot": "posting-setup" }
+]

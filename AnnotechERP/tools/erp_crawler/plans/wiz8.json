@@ -1,0 +1,49 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:has-text('529') button:has-text('View') >> nth=0",
+  "wait": 3500
+ },
+ {
+  "texts": "view529",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Packing Instructions'), [role=dialog] li:has-text('Packing Instructions')",
+  "wait": 2500
+ },
+ {
+  "options": "pack_method",
+  "of": "[role=dialog] select >> nth=0"
+ },
+ {
+  "options": "carton_type",
+  "of": "[role=dialog] select >> nth=1"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('New Development Style')",
+  "wait": 3000
+ },
+ {
+  "click": "[role=dialog] button:has-text('Garment Items'), [role=dialog] li:has-text('Garment Items')",
+  "wait": 2000
+ },
+ {
+  "texts": "new_step2",
+  "of": "[role=dialog]"
+ }
+]

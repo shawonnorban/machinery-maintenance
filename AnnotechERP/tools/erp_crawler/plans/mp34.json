@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "click": "main table tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Raise GRN')", "wait": 2500 },
+ { "choose": "[role=dialog] select", "index": 1 },
+ { "wait": 1500 },
+ { "peek": "[role=dialog] button:has-text('Select…')", "wait": 1200 },
+ { "popup": "stores" },
+ { "peek": "[role=option] >> nth=1", "wait": 1200 },
+ { "type": "[role=dialog] input[type=text]", "text": "CH-PROBE-001" },
+ { "click": "[role=dialog] button:has-text('Raise draft GRN')", "wait": 4000 },
+ { "texts": "after", "of": "li[data-sonner-toast] *, main td, main a, main button" },
+ { "hrefs": "links", "of": "main a" }
+]

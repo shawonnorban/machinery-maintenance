@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/planning/projections" }, { "wait": 4000 },
+ { "click": "main tr:has-text('LPP-2026-000003') >> text=Open Plan", "wait": 5000 },
+ { "url": "open_url" }, { "fullshot": "plan-open" }, { "texts": "plan_open", "of": "main" },
+ { "goto": "/m/planning/projections" }, { "wait": 4000 },
+ { "click": "main tr:has-text('LPP-2026-000006') >> text=Create Plan", "wait": 5000 },
+ { "url": "create_url" }, { "fullshot": "plan-create" }, { "texts": "plan_create", "of": "main" },
+ { "html": "create_ctl", "of": "main select, main input, main button[aria-haspopup], main textarea" }
+]

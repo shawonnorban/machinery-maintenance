@@ -7,6 +7,7 @@ namespace App\Modules\Vendor\Models;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,6 +30,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class ServiceContract extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'contract_number';
 
     public const TYPES = ['AMC', 'CALIBRATION', 'INSPECTION', 'SUPPORT'];
 

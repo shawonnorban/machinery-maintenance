@@ -1,0 +1,447 @@
+[
+ {
+  "goto": "/m/ie/excess-yarn-target"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New excess yarn')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=year]",
+  "label": "2026"
+ },
+ {
+  "peek": "main div:has(> label:has-text('Month')) button",
+  "wait": 1000
+ },
+ {
+  "click": "[role=option]:has-text('October')",
+  "wait": 600
+ },
+ {
+  "peek": "main div:has(> label:has-text('Department')) button",
+  "wait": 1000
+ },
+ {
+  "popup": "ey_depts"
+ },
+ {
+  "click": "[role=option]:has-text('Knitting')",
+  "wait": 600
+ },
+ {
+  "type": "main input[name=targetQty]",
+  "text": "350"
+ },
+ {
+  "click": "main button:has-text('Save excess yarn target')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "ey-saved"
+ },
+ {
+  "goto": "/m/ie/excess-yarn-target"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "ey_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Excess Yarn Target')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "index": 1
+ },
+ {
+  "wait": 800
+ },
+ {
+  "peek": "main div:has(> label:has-text('Month')) button",
+  "wait": 1000
+ },
+ {
+  "popup": "ey_months"
+ },
+ {
+  "click": "[role=option]:has-text('October')",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Show')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "ey-sheet"
+ },
+ {
+  "dump": "ey_sheet",
+  "root": "main"
+ },
+ {
+  "texts": "ey_notes",
+  "of": "main p"
+ },
+ {
+  "goto": "/m/ie/style-feeding-sco"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New style change-over')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "popup": "sco_lines"
+ },
+ {
+  "click": "[role=option]:has-text('LN-001')",
+  "wait": 600
+ },
+ {
+  "type": "main input[name=changeoverDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "choose": "main select[name=newBuyerId]",
+  "index": 1
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "options": "sco_new_styles",
+  "of": "main select[name=newOrderStyle]"
+ },
+ {
+  "choose": "main select[name=newOrderStyle]",
+  "index": 1
+ },
+ {
+  "wait": 800
+ },
+ {
+  "html": "sco_after_style",
+  "of": "main input[name=newGmtItem]"
+ },
+ {
+  "choose": "main select[name=prevBuyerId]",
+  "index": 1
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "choose": "main select[name=prevOrderStyle]",
+  "index": 2
+ },
+ {
+  "type": "main input[name=prevOutputOn]",
+  "text": "2026-10-24"
+ },
+ {
+  "type": "main input[name=scoMinutes]",
+  "text": "45"
+ },
+ {
+  "type": "main input[name=feedingTime]",
+  "text": "2"
+ },
+ {
+  "type": "main textarea[name=remarks]",
+  "text": "Annotech probe change-over"
+ },
+ {
+  "fullshot": "sco-new-filled"
+ },
+ {
+  "click": "main button:has-text('Save style change-over')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "sco-saved"
+ },
+ {
+  "goto": "/m/ie/style-feeding-sco"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "sco_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Style Changeover Dashboard')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=fromDate]",
+  "text": "2026-10-01"
+ },
+ {
+  "type": "main input[name=toDate]",
+  "text": "2026-10-31"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "sco-dash"
+ },
+ {
+  "dump": "sco_dash",
+  "root": "main"
+ },
+ {
+  "texts": "sco_notes",
+  "of": "main p"
+ },
+ {
+  "goto": "/m/ie/gmt-target-setting"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New sewing target')",
+  "wait": 2500
+ },
+ {
+  "type": "main input[name=targetDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "[role=option]:has-text('LN-001')",
+  "wait": 600
+ },
+ {
+  "choose": "main select[name=buyerId]",
+  "index": 1
+ },
+ {
+  "type": "main input[name=orderStyle]",
+  "text": "PROBE-ORD-01"
+ },
+ {
+  "type": "main input[name=usedOp]",
+  "text": "30"
+ },
+ {
+  "type": "main input[name=usedAso]",
+  "text": "6"
+ },
+ {
+  "type": "main input[name=layoutOp]",
+  "text": "32"
+ },
+ {
+  "type": "main input[name=layoutAso]",
+  "text": "6"
+ },
+ {
+  "type": "main input[name=smv]",
+  "text": "8.5"
+ },
+ {
+  "type": "main input[name=targetEfficiency]",
+  "text": "65"
+ },
+ {
+  "type": "main input[name=workHour]",
+  "text": "10"
+ },
+ {
+  "type": "main input[name=workHourFrom]",
+  "text": "8"
+ },
+ {
+  "type": "main input[name=workHourTo]",
+  "text": "10"
+ },
+ {
+  "type": "main input[name=wipRfi]",
+  "text": "120"
+ },
+ {
+  "type": "main input[name=prodGenHr]",
+  "text": "800"
+ },
+ {
+  "type": "main input[name=prodOtHr]",
+  "text": "170"
+ },
+ {
+  "click": "main button:has-text('Save sewing target')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "gt-saved"
+ },
+ {
+  "goto": "/m/ie/gmt-target-setting"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "gt_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Sewing Target Setting')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=targetDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-sts"
+ },
+ {
+  "dump": "gt_sts",
+  "root": "main"
+ },
+ {
+  "texts": "gt_sts_notes",
+  "of": "main p"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "options": "pe_lines",
+  "of": "main select[name=lineId]"
+ },
+ {
+  "choose": "main select[name=lineId]",
+  "index": 1
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-pe"
+ },
+ {
+  "dump": "gt_pe",
+  "root": "main"
+ },
+ {
+  "texts": "gt_pe_notes",
+  "of": "main p"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Plans')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "choose": "main select[name=lineId]",
+  "index": 1
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-pp"
+ },
+ {
+  "dump": "gt_pp",
+  "root": "main"
+ },
+ {
+  "texts": "gt_pp_notes",
+  "of": "main p"
+ },
+ {
+  "click": "main button[role=tab]:has-text('NPT Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=nptDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "choose": "main select[name=lineId]",
+  "index": 1
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-npt"
+ },
+ {
+  "dump": "gt_npt",
+  "root": "main"
+ },
+ {
+  "texts": "gt_npt_notes",
+  "of": "main p"
+ }
+]

@@ -1,0 +1,215 @@
+[
+ {
+  "goto": "/finishing-line/df-production-entry-mc-wise?tab=records"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Post')",
+  "after": 1500
+ },
+ {
+  "shot": "p-confirm"
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Post'), [role=dialog] button:has-text('Post')",
+  "after": 15000
+ },
+ {
+  "texts": "sheets",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/df-process-wise-delivery"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "b-board"
+ },
+ {
+  "texts": "board",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "tiles",
+  "of": "main button[aria-pressed]"
+ },
+ {
+  "click": "main tbody tr:has-text('B-26110011') >> button:has-text('Deliver')",
+  "after": 1500
+ },
+ {
+  "pick": "to",
+  "sel": "[role=dialog] [data-slot=select-trigger] >> nth=0",
+  "option": "QC Inspection"
+ },
+ {
+  "fill": "rem",
+  "sel": "[role=dialog] input:not([disabled]) >> nth=-1",
+  "text": "Compacted, to QC"
+ },
+ {
+  "shot": "b-deliver"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Deliver')",
+  "after": 15000
+ },
+ {
+  "texts": "board_after",
+  "of": "main tbody tr"
+ },
+ {
+  "pdfhref": "main a:has-text('Pdf')",
+  "as": "board-pdf"
+ },
+ {
+  "goto": "/finishing-line/df-process-wise-delivery?dia=TUBE"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "board_tube",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/batch-return-to-re-process?tab=new"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "Return Date",
+  "exact": true,
+  "text": "2026-11-06"
+ },
+ {
+  "pick": "Batch (Receipt)",
+  "exact": true,
+  "option": "S-26110001"
+ },
+ {
+  "pick": "Reason",
+  "exact": true,
+  "option": "Shade"
+ },
+ {
+  "fill": "Qty (Kg)",
+  "exact": true,
+  "text": "39.5"
+ },
+ {
+  "fill": "Rolls",
+  "exact": true,
+  "text": "3"
+ },
+ {
+  "fill": "Remarks",
+  "exact": true,
+  "text": "Shade off against the approved lab dip"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 14000
+ },
+ {
+  "goto": "/finishing-line/batch-return-to-re-process"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "texts": "returns",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "rt-records"
+ },
+ {
+  "goto": "/finishing-line/df-production-amendment?tab=new"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "Amendment Date",
+  "exact": true,
+  "text": "2026-11-07"
+ },
+ {
+  "pick": "Production Line",
+  "exact": true,
+  "option": "MFL-01"
+ },
+ {
+  "fill": "Input (Kg)",
+  "exact": true,
+  "text": "99.2"
+ },
+ {
+  "fill": "Output (Kg)",
+  "exact": true,
+  "text": "97.9"
+ },
+ {
+  "fill": "Reason for Correction",
+  "exact": true,
+  "text": "Scale re-read at the stenter exit"
+ },
+ {
+  "shot": "am-new"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 14000
+ },
+ {
+  "goto": "/finishing-line/df-production-amendment"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "texts": "amends",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "am-records"
+ },
+ {
+  "goto": "/finishing-line/df-production-entry-mc-wise?tab=open&doc=DFP-2026110001"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "s-posted"
+ },
+ {
+  "texts": "badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "goto": "/finishing-line/df-production-entry-mc-wise?tab=tube"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "s-tube"
+ },
+ {
+  "goto": "/finishing-line/batch-receive-from-dyeing"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "texts": "receipts",
+  "of": "main tbody tr"
+ }
+]

@@ -1,0 +1,11 @@
+[
+ {"goto": "/pre-budget-master/master-data?tab=parts"},
+ {"see": "Parts"},
+ {"eval": "JSON.stringify({rows: document.querySelectorAll('tbody tr').length, h: document.body.scrollHeight})"},
+ {"shot": "parts"},
+ {"click": "[role=tab]:has-text('Yarn Count')"},
+ {"shot": "ycount"},
+ {"goto": "/pre-budget/add-requisition"},
+ {"see": "Add Requisition"},
+ {"shot": "add_req"}
+]

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360" fill="none" stroke="#5c4a32" stroke-opacity="0.11" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- AnnotechERP chat wallpaper: an original doodle tile (garment-factory things among chat ones). -->
+  <!-- speech bubble -->
+  <path d="M18 22h40a8 8 0 0 1 8 8v18a8 8 0 0 1-8 8H36l-10 9v-9h-8a8 8 0 0 1-8-8V30a8 8 0 0 1 8-8z"/>
+  <path d="M24 36h28M24 44h18"/>
+  <!-- t-shirt -->
+  <path d="M104 18l-14 8 6 12 8-4v30h28V34l8 4 6-12-14-8c-2 6-7 9-12 9s-10-3-12-9z"/>
+  <!-- heart -->
+  <path d="M190 34c-5-9-20-7-20 4 0 9 20 20 20 20s20-11 20-20c0-11-15-13-20-4z"/>
+  <!-- hanger -->
+  <path d="M246 26a6 6 0 1 1 8 6v6l26 16h-60l26-16"/>
+  <!-- star -->
+  <path d="M318 18l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z"/>
+  <!-- spool of thread -->
+  <path d="M30 104h28M30 140h28M34 104v36M54 104v36M34 112l20 6M34 122l20 6M34 132l20 4"/>
+  <path d="M58 122c10 0 14 8 20 14"/>
+  <!-- paper plane -->
+  <path d="M110 120l46-18-14 44-10-16-22-10zM132 130l24-28"/>
+  <!-- scissors -->
+  <circle cx="186" cy="138" r="7"/><circle cx="206" cy="138" r="7"/>
+  <path d="M190 132l26-30M202 132l-26-30"/>
+  <!-- cloud -->
+  <path d="M246 132h40a12 12 0 0 0 0-24 16 16 0 0 0-30-4 10 10 0 0 0-10 28z"/>
+  <!-- button (sewing) -->
+  <circle cx="324" cy="122" r="14"/><circle cx="319" cy="117" r="2"/><circle cx="329" cy="117" r="2"/><circle cx="319" cy="127" r="2"/><circle cx="329" cy="127" r="2"/>
+  <!-- coffee cup -->
+  <path d="M20 196h32v18a12 12 0 0 1-12 12h-8a12 12 0 0 1-12-12z"/><path d="M52 202h4a6 6 0 0 1 0 12h-4M28 186c0-4 4-4 4-8M40 186c0-4 4-4 4-8"/>
+  <!-- smiley -->
+  <circle cx="114" cy="204" r="16"/><path d="M107 209c4 5 10 5 14 0"/><path d="M108 199h.5M120 199h.5"/>
+  <!-- tape measure -->
+  <circle cx="192" cy="202" r="15"/><circle cx="192" cy="202" r="4"/><path d="M207 202h28v10h-28M213 202v4M219 202v6M225 202v4M231 202v6"/>
+  <!-- music note -->
+  <path d="M262 218v-30l20-5v28"/><circle cx="257" cy="218" r="5"/><circle cx="277" cy="211" r="5"/>
+  <!-- envelope -->
+  <path d="M306 190h40v26h-40zM306 190l20 15 20-15"/>
+  <!-- lightbulb -->
+  <path d="M36 262a14 14 0 1 1 20 12v8H40v-8a14 14 0 0 1-4-12zM42 290h12"/>
+  <!-- needle -->
+  <path d="M100 300l50-40M146 258a3 3 0 1 1 4 4"/><path d="M104 296c-8 8-6 18 6 16s14 10 4 18"/>
+  <!-- clock -->
+  <circle cx="196" cy="282" r="16"/><path d="M196 272v10l7 5"/>
+  <!-- gift -->
+  <path d="M250 272h34v24h-34zM246 264h42v8h-42zM267 264v32M267 264c-6-10-16-6-12 0M267 264c6-10 16-6 12 0"/>
+  <!-- leaf -->
+  <path d="M312 300c0-24 18-34 36-34 0 22-14 36-36 34zM312 300l22-20"/>
+  <!-- small dots and rings to fill -->
+  <circle cx="78" cy="78" r="3"/><circle cx="168" cy="80" r="2.5"/><circle cx="300" cy="78" r="3"/><circle cx="84" cy="168" r="2.5"/>
+  <circle cx="232" cy="168" r="3"/><circle cx="150" cy="240" r="2.5"/><circle cx="300" cy="248" r="3"/><circle cx="76" cy="336" r="2.5"/>
+  <circle cx="230" cy="338" r="3"/><circle cx="160" cy="340" r="2"/><circle cx="342" cy="64" r="2"/>
+</svg>

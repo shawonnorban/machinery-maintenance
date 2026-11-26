@@ -1,0 +1,51 @@
+[
+{
+"goto": "/m/knitting/issue-sc-knitting-program-bulk-solid"
+},
+{
+"popclick": "main table tbody tr >> nth=0 >> :text('Program Challan')",
+"as": "challan",
+"wait": 8000
+},
+{
+"click": "main table tbody tr >> nth=0 >> button:has-text('Submit')",
+"wait": 4000
+},
+{
+"texts": "rows_after_submit",
+"of": "main table tbody tr"
+},
+{
+"texts": "dlg",
+"of": "[role=dialog]"
+},
+{
+"fullshot": "bs-submitted"
+},
+{
+"goto": "/m/knitting/issue-sc-knitting-program-sample-solid"
+},
+{
+"click": "main [role=tab]:has-text('New S/C')",
+"wait": 2500
+},
+{
+"html": "ss_sel",
+"of": "main select"
+},
+{
+"texts": "ss_lbl",
+"of": "main label"
+},
+{
+"goto": "/m/knitting/issue-sc-knitting-program-party-yd"
+},
+{
+"click": "main [role=tab]:has-text('New S/C')",
+"wait": 2500
+},
+{
+"html": "yd_sel",
+"of": "main select"
+}
+]

@@ -75,6 +75,7 @@ return [
     'overview' => 'সারসংক্ষেপ',
 
     // সাইন-ইন স্ক্রিনের নিজস্ব টেক্সট।
+    'email_or_user_id' => 'ইমেইল বা ইউজার আইডি',
     'email_address' => 'ইমেইল ঠিকানা',
     'log_in_button' => 'লগ ইন',
     'login_subtitle' => 'Annotech RMG-এ প্রবেশ করতে আপনার তথ্য দিন।',
@@ -110,4 +111,13 @@ return [
     'language_saved_toast' => 'ভাষা পছন্দ সংরক্ষিত হয়েছে',
     'language_saved_hint' => 'আপনার অ্যাকাউন্টে সংরক্ষিত হয়েছে।',
     'could_not_save' => 'সংরক্ষণ করা যায়নি',
+    // Not-found and no-access pages (app/(app)/not-found.js, forbidden.js).
+    'page_status' => [
+        'nf_title' => 'পাতাটা পাওয়া যায়নি',
+        'nf_text' => 'যে পাতা খুঁজছেন সেটা নেই বা সরে গেছে। ঠিকানাটা আবার দেখুন, অথবা আগের পাতায় ফিরে যান।',
+        'fb_title' => 'এই পাতা দেখার অনুমতি আপনার নেই',
+        'fb_text' => 'আপনার role-এ এই স্ক্রিন নেই। অনুমতির জন্য অ্যাডমিনকে বলুন (Access Control → Role Menu Assignment)।',
+        'back' => 'আগের পাতায় ফিরুন',
+        'home' => 'ড্যাশবোর্ডে যান',
+    ],
 ];

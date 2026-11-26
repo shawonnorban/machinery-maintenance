@@ -1,0 +1,183 @@
+/*
+ * Pre-Budget prints, laid out like Norban's PDFs (Budget, Cost, Accessories
+ * Budget, Stock Yarn Budget Declaration, Use from Stock, Knit/Woven
+ * Requisition): Segoe UI, black text, dark table borders, grey column
+ * headers, blue capital table titles. Everything sits under .nbp so nothing
+ * leaks into the app.
+ */
+
+/* Norban's PDF faces (resources/fonts): Segoe UI, and Calibri for the Cost, Declaration and Requisition prints —
+   regular and bold, so bold text is the real bold on any computer. */
+@font-face { font-family: "NB Segoe UI"; src: url("/fonts/print/segoe-ui.ttf") format("truetype"); font-weight: 400; font-display: block; }
+@font-face { font-family: "NB Segoe UI"; src: url("/fonts/print/segoe-ui-bold.ttf") format("truetype"); font-weight: 700; font-display: block; }
+@font-face { font-family: "NB Calibri"; src: url("/fonts/print/calibri.ttf") format("truetype"); font-weight: 400; font-display: block; }
+@font-face { font-family: "NB Calibri"; src: url("/fonts/print/calibri-bold.ttf") format("truetype"); font-weight: 700; font-display: block; }
+
+/* ---- the frame: a sheet of paper on grey, a toolbar above ---- */
+.nbp-screen { min-height: 100vh; background: #e5e7eb; padding: 56px 16px 32px; }
+.nbp-bar {
+  position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: #fff; border-bottom: 1px solid #d1d5db; font: 13px/1.4 var(--font-segoe-ui), "Segoe UI", Arial, sans-serif; color: #111827;
+}
+.nbp-bar .nbp-bar-title { margin-right: auto; font-weight: 600; }
+.nbp-bar button, .nbp-bar a {
+  display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 6px; border: 1px solid #d1d5db;
+  background: #fff; color: #111827; font: inherit; cursor: pointer; text-decoration: none;
+}
+.nbp-bar button.nbp-primary { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+.nbp-bar button[aria-pressed="true"] { background: #eef2ff; border-color: #6366f1; color: #3730a3; }
+.nbp-paper { position: relative; margin: 0 auto; background: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18); overflow: hidden; }
+.nbp-page { border-collapse: collapse; border: 0; }
+.nbp-page > thead > tr > td, .nbp-page > tfoot > tr > td, .nbp-page > tbody > tr > td { padding: 0; border: 0; vertical-align: top; }
+.nbp-foot { position: absolute; bottom: 4mm; font: 9px "NB Segoe UI", "Segoe UI", Arial, sans-serif; color: #000; }
+
+@media print {
+  .nbp-bar { display: none !important; }
+  .nbp-screen { padding: 0 !important; background: #fff !important; min-height: 0; }
+  .nbp-paper { box-shadow: none !important; width: auto !important; min-height: 0 !important; margin: 0 !important; overflow: visible !important; }
+  .nbp-foot { position: fixed; bottom: 4mm; }
+  html, body { background: #fff !important; }
+}
+
+/* ---- the sheet ---- */
+.nbp {
+  font-family: "NB Segoe UI", "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 13px; line-height: 1.5; color: #000; background: #fff;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.nbp *, .nbp *::before, .nbp *::after { box-sizing: border-box; }
+.nbp p { margin: 0 0 2px; }
+.nbp table { border-collapse: collapse; }
+
+/* header: Pre-Budget No on the right, "<title> : <factory>", Buyer / Contract No */
+.nbp .nbp-no { text-align: right; font-weight: 600; }
+.nbp .nbp-title { font-size: 15px; font-weight: 700; line-height: 1.2; margin: 0 0 8px; }
+.nbp .nbp-details { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+.nbp .nbp-details span { display: block; margin-bottom: 4px; }
+
+/* table titles: small, bold, capitals, blue */
+.nbp .nbp-ttl { font-size: 12px; font-weight: 700; line-height: 1.2; text-transform: uppercase; color: #2b5fad; margin: 0; padding: 6px 0 4px; }
+.nbp .nbp-ttl-import { color: #b45309; }
+
+/* ---- Budget print (Pre-Budget Approval) ---- */
+.nbp-budget table.t { width: 100%; outline: 1px solid #6a6a6a; outline-offset: -1px; }
+.nbp-budget table.t th, .nbp-budget table.t td { border: 1px solid #6a6a6a; font-size: 11px; vertical-align: middle; }
+.nbp-budget table.t th { background: #c7c7c7; font-weight: 700; padding: 3px 4px; line-height: 1.15; text-align: center; }
+.nbp-budget table.t th.l { text-align: left; }
+.nbp-budget table.t td { padding: 3px 4px; line-height: 1.2; }
+.nbp-budget table.t tr.b td { font-weight: 700; }
+.nbp-budget .c { text-align: center; } .nbp-budget .r { text-align: right; } .nbp-budget .nw { white-space: nowrap; }
+.nbp-budget td.tint { background: #dbe7f9; }
+.nbp-budget .bold { font-weight: 700; }
+.nbp-budget .stock-sep { margin-left: 6px; padding-left: 6px; border-left: 1px solid #9aa0a6; }
+.nbp-budget .foot { text-align: right; font-weight: 700; font-size: 11px; white-space: nowrap; padding: 4px 0 1px; }
+.nbp-budget .foot .sep { color: #9aa0a6; margin: 0 10px; }
+.nbp-budget .gap { margin-top: 6px; }
+.nbp-budget .item-sum th, .nbp-budget .item-sum td { white-space: nowrap; }
+.nbp-budget table.fob { border-collapse: collapse; }
+.nbp-budget table.fob th, .nbp-budget table.fob td { background: #dbe7f9; border: 1px solid #94a3b8; padding: 1px 6px; font-size: 12px; line-height: 1.25; font-weight: 700; text-align: left; white-space: nowrap; }
+.nbp-budget table.layout { width: 100%; border: 0; }
+.nbp-budget table.layout > tbody > tr > td { border: 0; padding: 0; vertical-align: top; }
+.nbp-budget table.layout > tbody > tr > td.bottom { vertical-align: bottom; }
+.nbp-budget table.layout > tbody > tr > td.gapc { width: 7px; }
+.nbp-budget tr.cost-total > td { background: #c7c7c7; font-weight: 700; font-size: 12px; }
+.nbp-budget tr.cost-cm > td { background: #e2edfd; font-size: 12px; }
+.nbp-budget tr.cost-cm.b > td { font-weight: 700; }
+.nbp-budget .note { font-size: 10px; white-space: pre-line; }
+.nbp-budget .signs { display: table; width: 100%; table-layout: fixed; margin-top: 40px; text-align: center; font-size: 13px; }
+.nbp-budget .signs > div { display: table-cell; }
+.nbp-budget .signs u { display: block; margin-bottom: 4px; }
+
+/* ---- Cost print (Knitting & Dyeing / Embellishment Cost) ---- */
+.nbp-cost, .nbp-cost *, .nbp-decl, .nbp-decl *, .nbp-req, .nbp-req * { font-family: "NB Calibri", Calibri, "NB Segoe UI", Arial, sans-serif; }
+.nbp-cost .nbp-details, .nbp-cost .nbp-details span { font-size: 12px; font-weight: 700; margin: 0 0 6px; }
+.nbp-cost table.t { width: 100%; outline: 1px solid #3f4041; outline-offset: -1px; margin-bottom: 6px; }
+.nbp-cost table.t th, .nbp-cost table.t td { border: 1px solid #3f4041; font-size: 10px; line-height: 1.15; padding: 3px 4px; vertical-align: middle; }
+.nbp-cost table.t thead th { background: #e9ebee; font-weight: 700; padding: 4px; text-align: center; }
+.nbp-cost table.t thead th.l { text-align: left; }
+.nbp-cost table.t thead tr.avg th { background: #fff; font-weight: 700; }
+.nbp-cost table.t thead tr.avg th.avg-label { text-align: left; }
+.nbp-cost table.t thead tr.avg th.avg-cell { background: #d9d9d9; font-size: 12px; }
+.nbp-cost table.t thead tr.tot th { background: #fff; }
+.nbp-cost table.t thead tr.tot th.tot-cell { background: #000; color: #fff; font-size: 12px; }
+.nbp-cost .c { text-align: center; }
+.nbp-cost .head-line { display: table; width: 100%; }
+.nbp-cost .head-line > * { display: table-cell; vertical-align: bottom; }
+.nbp-cost .cm-per-dz { text-align: right; font-weight: 700; font-size: 13px; padding: 5px 0 4px; white-space: nowrap; }
+.nbp-cost .note { margin: 3px 0 6px; font-size: 10px; }
+
+/* ---- Accessories Budget ---- */
+.nbp-acc { font-size: 10px; color: #333; }
+.nbp-acc .nbp-no { font-size: 11px; font-weight: 700; }
+.nbp-acc .nbp-title { font-size: 16px; font-weight: 700; margin: 0 0 6px; }
+.nbp-acc .nbp-details span { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+.nbp-acc .strip { float: right; width: 62%; margin: 0 0 6px; }
+.nbp-acc .strip td { width: 25%; background: #f9f9f9; border: 1px solid #e5e7eb; padding: 3px 6px; text-align: center; vertical-align: middle; }
+.nbp-acc .strip .lbl { display: block; font-size: 9px; color: #6b7280; text-transform: uppercase; font-weight: 600; margin-bottom: 1px; }
+.nbp-acc .strip .val { display: block; font-size: 11px; font-weight: 700; color: #111827; }
+.nbp-acc .clear { clear: both; }
+.nbp-acc table.ws { width: 100%; margin-bottom: 10px; }
+.nbp-acc table.ws th, .nbp-acc table.ws td { font-size: 10px; }
+.nbp-acc table.ws th { background: #e9ebee; border: 1px solid #3f4041; padding: 4px 3px; text-align: center; vertical-align: middle; font-weight: 700; color: #000; text-transform: uppercase; line-height: 1.15; }
+.nbp-acc table.ws td { border: 1px solid #424242; padding: 3px; vertical-align: middle; color: #000; }
+.nbp-acc table.ws .c { text-align: center; } .nbp-acc table.ws .r { text-align: right; } .nbp-acc table.ws .b { font-weight: 700; }
+.nbp-acc table.ws .val { font-weight: 700; }
+.nbp-acc table.ws .muted { color: #999; }
+.nbp-acc table.ws td.style-cell { background: #fff; text-align: center; white-space: nowrap; }
+.nbp-acc table.ws tr.style-total td { background: #f9fc53; font-weight: 700; }
+.nbp-acc table.ws .rot { padding: 4px 2px; }
+.nbp-acc table.ws .rot > span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; line-height: 1.2; }
+.nbp-acc table.ws img { max-width: 40px; max-height: 40px; display: block; margin: 0 auto; }
+
+/* ---- Stock Yarn Budget Declaration / Use from Stock ---- */
+.nbp-stock .nbp-details span { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+.nbp-stock table.g { border-collapse: collapse; width: 100%; font-size: 10px; }
+.nbp-stock table.g th, .nbp-stock table.g td { border: 1px solid #3f4041; padding: 3px 5px 4px; white-space: nowrap; text-align: center; line-height: 1.1; color: #000; }
+.nbp-stock table.g thead th { background: #e9ebee; font-weight: 700; white-space: normal; }
+.nbp-stock table.g .num { text-align: right; }
+.nbp-stock table.g .left { text-align: left; }
+.nbp-stock table.g .strong { font-weight: 700; }
+.nbp-stock table.g tr.total td { font-weight: 700; }
+.nbp-stock table.g .empty { color: #8a93a3; padding: 12px; }
+.nbp-stock table.g th.h-import { background: #fbf0e1; }
+.nbp-stock table.g th.h-local { background: #eaf1fb; }
+.nbp-stock table.g th.h-grand { background: #e4f3ef; }
+.nbp-stock .summary { width: 57%; margin: 0 0 6px auto; }
+.nbp-stock .block { margin-bottom: 6px; }
+/* Use from Stock: the store's own lighter look (rounded card, light lines) */
+.nbp-store .card { border: 1px solid #e1e4e8; border-radius: 4px; padding: 14px; }
+.nbp-store table.g th, .nbp-store table.g td { border: 1px solid #e1e4e8; padding: 7px 6px; color: #333; }
+.nbp-store table.g thead th { background: #f4f5f7; color: #5b6472; }
+.nbp-store table.g tbody tr:nth-child(even) td { background: #f4f5f7; }
+.nbp-store table.g th.h-import { background: #fbf0e1; color: #b45309; }
+.nbp-store table.g th.h-local { background: #eaf1fb; color: #2b5fad; }
+.nbp-store table.g th.h-grand { background: #e4f3ef; color: #0b5548; }
+.nbp-store .summary { width: 100%; }
+.nbp-store .sub-card { border: 1px solid #e1e4e8; border-radius: 4px; margin-top: 14px; }
+.nbp-store .sub-card .nbp-ttl { padding: 11px 14px; border-bottom: 1px solid #e1e4e8; }
+
+/* ---- Knit/Woven Requisition ---- */
+.nbp-req .nbp-title { font-size: 18px; font-weight: 700; margin: 0 0 4px; }
+.nbp-req .head-line { font-size: 13px; font-weight: 700; margin: 0 0 3px; }
+.nbp-req table.sum { float: right; margin: 0 0 6px; }
+.nbp-req table.sum td { border: 1px solid #3f4041; background: #f9f9f9; padding: 2px 8px 4px; text-align: center; white-space: nowrap; }
+.nbp-req table.sum .lbl { display: block; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+.nbp-req table.sum .val { display: block; font-size: 12px; font-weight: 700; }
+.nbp-req .clear { clear: both; }
+.nbp-req table.rq { width: 100%; table-layout: fixed; }
+.nbp-req table.rq th, .nbp-req table.rq td { border: 1px solid #3f4041; padding: 2px 3px 3px; font-size: 10px; line-height: 1.15; vertical-align: middle; overflow-wrap: break-word; }
+.nbp-req table.rq th { background: #e9ebee; text-align: center; font-weight: 700; }
+.nbp-req table.rq td.nw { white-space: nowrap; }
+.nbp-req table.rq tr.style-row td { color: #2b5fad; font-weight: 700; text-transform: uppercase; padding-top: 5px; }
+.nbp-req table.rq img { width: 40px; height: 40px; object-fit: contain; display: block; margin: 0 auto; }
+
+/* ---- Order Summary (View All's Print): the requisition print's table, with the sheet's group row and colours ---- */
+.nbp-os .os-head { float: left; }
+.nbp-os table.sum td { max-width: 160px; white-space: normal; }
+.nbp-os table.rq th.grp { font-size: 10px; padding: 3px; border-bottom: 0; }
+.nbp-os table.rq td.c { text-align: center; }
+.nbp-os table.rq td.r { text-align: right; }
+.nbp-os table.rq th.vert span, .nbp-os table.rq td.vert span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+.nbp-os table.rq td { height: 44px; white-space: pre-line; }
+.nbp-os table.rq img { width: auto; max-width: 100%; height: 40px; }
+.nbp-os table.rq tbody tr { break-inside: avoid; }

@@ -1,0 +1,83 @@
+[
+ {
+  "goto": "/m/buyer-portal/portal-analytics"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "u0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "u1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "u2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/buyer-portal/portal-branding"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "b0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "b1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "b2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/buyer-portal/portal-activity-log"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "l0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "l1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "l2-edit"
+ },
+ {
+  "escape": true
+ }
+]

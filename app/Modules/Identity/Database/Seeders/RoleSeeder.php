@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Database\Seeders;
 
+use App\Modules\Identity\Support\RoleBlueprint;
+use App\Modules\Identity\Support\RoleProvisioner;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -267,9 +269,10 @@ class RoleSeeder extends Seeder
         $companyAdmin = array_values(array_diff($all, [
             'billing.subscription.manage',
             'billing.payment.manage',
+            'settings.backup.restore',
         ]));
 
-        return [
+        $matrix = [
             'PLATFORM_SUPER_ADMIN' => [
                 'name' => 'Platform Super Admin',
                 'scope' => 'PLATFORM',
@@ -340,6 +343,394 @@ class RoleSeeder extends Seeder
                 )),
             ],
         ];
+
+        // Everyone who works in the company can raise a request and decide
+        // the ones that reach them (Approval Center, AnnotechERP 04); viewers
+        // and auditors only look.
+        foreach ($matrix as $code => $role) {
+            if (is_array($role['permissions']) && ! in_array($code, ['PLATFORM_SUPER_ADMIN', 'VIEWER', 'AUDITOR'], true)) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$role['permissions'], 'approval.ticket.create']));
+            }
+        }
+
+        // Merchandise Desk's reference lists (AnnotechERP 06/01): the factory
+        // admin keeps them, as with the other master data; managers and the
+        // store read them.
+        // Inquiries and development styles (AnnotechERP 06/05) go with the merchandising master data.
+        foreach (['FACTORY_ADMIN' => ['merchandise.master.view', 'merchandise.master.manage', 'merchandise.inquiry.view', 'merchandise.inquiry.manage', 'merchandise.style.view', 'merchandise.style.manage', 'merchandise.style.approve', 'merchandise.order.view', 'merchandise.order.manage', 'merchandise.costing.view', 'merchandise.costing.manage', 'merchandise.costing.approve', 'merchandise.sample.view', 'merchandise.sample.manage', 'merchandise.booking.view', 'merchandise.booking.manage', 'merchandise.tna.view', 'merchandise.tna.manage', 'merchandise.report.view', 'merchandise.accessories.view', 'merchandise.accessories.manage', 'merchandise.accessories.approve'], 'FACTORY_MANAGER' => ['merchandise.master.view', 'merchandise.inquiry.view', 'merchandise.style.view', 'merchandise.order.view', 'merchandise.costing.view', 'merchandise.sample.view', 'merchandise.booking.view', 'merchandise.tna.view', 'merchandise.report.view', 'merchandise.accessories.view', 'merchandise.accessories.approve'], 'STORE_MANAGER' => ['merchandise.master.view', 'merchandise.booking.view', 'merchandise.accessories.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Buyer Gateway → Access & Onboarding (AnnotechERP 25/01): the factory
+        // admin and manager run the buyer portal's accounts; the auditor reads them.
+        foreach (['FACTORY_ADMIN' => ['buyergateway.access.view', 'buyergateway.access.manage', 'buyergateway.visibility.view', 'buyergateway.visibility.manage', 'buyergateway.billing.view', 'buyergateway.billing.manage', 'buyergateway.engagement.view', 'buyergateway.engagement.manage', 'buyergateway.admin.view', 'buyergateway.admin.manage', 'aiimport.intake.view', 'aiimport.intake.manage', 'commandcenter.command.view', 'commandcenter.command.manage'], 'FACTORY_MANAGER' => ['buyergateway.access.view', 'buyergateway.access.manage', 'buyergateway.visibility.view', 'buyergateway.visibility.manage', 'buyergateway.billing.view', 'buyergateway.billing.manage', 'buyergateway.engagement.view', 'buyergateway.engagement.manage', 'buyergateway.admin.view', 'buyergateway.admin.manage', 'aiimport.intake.view', 'aiimport.intake.manage', 'commandcenter.command.view', 'commandcenter.command.manage'], 'AUDITOR' => ['buyergateway.access.view', 'buyergateway.visibility.view', 'buyergateway.billing.view', 'buyergateway.engagement.view', 'buyergateway.admin.view', 'aiimport.intake.view', 'commandcenter.command.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // HR & Payroll masters (AnnotechERP 24/01): the factory admin keeps
+        // them — pay elements, shifts, leave and OT rules, gazettes, pay
+        // periods; the factory manager and the auditor read them.
+        foreach (['FACTORY_ADMIN' => ['hrpayroll.master.view', 'hrpayroll.master.manage', 'hrpayroll.employee.view', 'hrpayroll.employee.manage', 'hrpayroll.biometric.view', 'hrpayroll.biometric.manage', 'settings.device.view', 'settings.device.manage', 'hrpayroll.attendance.view', 'hrpayroll.attendance.manage', 'hrpayroll.attendance.approve', 'hrpayroll.leave.view', 'hrpayroll.leave.manage', 'hrpayroll.ot.view', 'hrpayroll.ot.manage', 'hrpayroll.ot.approve', 'hrpayroll.salary.view', 'hrpayroll.salary.calculate', 'hrpayroll.salary.approve', 'hrpayroll.salary.finalize', 'hrpayroll.adjustment.manage', 'hrpayroll.adjustment.approve', 'hrpayroll.movement.view', 'hrpayroll.movement.manage', 'hrpayroll.movement.approve', 'hrpayroll.separation.view', 'hrpayroll.separation.manage', 'hrpayroll.separation.approve', 'hrpayroll.letter.view', 'hrpayroll.letter.template', 'hrpayroll.letter.generate', 'hrpayroll.dashboard.view', 'hrpayroll.report.view', 'hrpayroll.report.export'], 'FACTORY_MANAGER' => ['hrpayroll.master.view', 'hrpayroll.employee.view', 'hrpayroll.biometric.view', 'settings.device.view', 'hrpayroll.attendance.view', 'hrpayroll.attendance.approve', 'hrpayroll.leave.view', 'hrpayroll.ot.view', 'hrpayroll.ot.approve', 'hrpayroll.salary.view', 'hrpayroll.salary.approve', 'hrpayroll.adjustment.approve', 'hrpayroll.movement.view', 'hrpayroll.movement.approve', 'hrpayroll.separation.view', 'hrpayroll.separation.approve', 'hrpayroll.letter.view', 'hrpayroll.letter.template', 'hrpayroll.letter.generate', 'hrpayroll.dashboard.view', 'hrpayroll.report.view', 'hrpayroll.report.export'], 'AUDITOR' => ['hrpayroll.master.view', 'hrpayroll.employee.view', 'hrpayroll.biometric.view', 'settings.device.view', 'hrpayroll.attendance.view', 'hrpayroll.leave.view', 'hrpayroll.ot.view', 'hrpayroll.salary.view', 'hrpayroll.movement.view', 'hrpayroll.separation.view', 'hrpayroll.letter.view', 'hrpayroll.dashboard.view', 'hrpayroll.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Finance & Ledger masters (AnnotechERP 23/01): kept at company level —
+        // the owner and the company admin hold every permission — and read by
+        // the auditor.
+        foreach (['FACTORY_ADMIN' => ['accounting.voucher.view', 'accounting.voucher.manage', 'accounting.voucher.post', 'accounting.bill.view', 'accounting.bill.manage', 'accounting.period.view', 'accounting.period.manage', 'accounting.cheque.view', 'accounting.cheque.manage', 'accounting.report.view', 'accounting.report.manage'], 'FACTORY_MANAGER' => ['accounting.voucher.view', 'accounting.voucher.manage', 'accounting.voucher.post', 'accounting.bill.view', 'accounting.bill.manage', 'accounting.period.view', 'accounting.period.manage', 'accounting.cheque.view', 'accounting.cheque.manage', 'accounting.report.view', 'accounting.report.manage'], 'AUDITOR' => ['accounting.master.view', 'accounting.voucher.view', 'accounting.bill.view', 'accounting.period.view', 'accounting.cheque.view', 'accounting.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Trade & Export masters (AnnotechERP 22/01): the factory admin and the
+        // factory manager keep them; the auditor reads them.
+        // Sales & Shipment → Operation (AnnotechERP 21/01): the factory admin
+        // and the factory manager set the module's rules and prefixes; the
+        // auditor reads them.
+        // Order & Delivery (AnnotechERP 21/02): the factory admin and manager run the whole book (only the
+        // admin closes a month over its exceptions); the store manager and storekeeper raise challans and
+        // returns against the orders they read; the auditor reads everything.
+        foreach (['FACTORY_ADMIN' => ['salesshipment.settings.view', 'salesshipment.settings.manage', 'salesshipment.order.view', 'salesshipment.order.manage', 'salesshipment.order.approve', 'salesshipment.delivery.view', 'salesshipment.delivery.manage', 'salesshipment.bill.view', 'salesshipment.bill.manage', 'salesshipment.bill.approve', 'salesshipment.close.manage', 'salesshipment.close.override', 'salesshipment.subcon.view', 'salesshipment.subcon.manage', 'salesshipment.subcon.reopen', 'salesshipment.shipment.view', 'salesshipment.shipment.manage', 'salesshipment.shipment.confirm', 'salesshipment.shipment.reopen', 'salesshipment.exportdoc.view', 'salesshipment.exportdoc.manage', 'salesshipment.report.view'], 'FACTORY_MANAGER' => ['salesshipment.settings.view', 'salesshipment.settings.manage', 'salesshipment.order.view', 'salesshipment.order.manage', 'salesshipment.order.approve', 'salesshipment.delivery.view', 'salesshipment.delivery.manage', 'salesshipment.bill.view', 'salesshipment.bill.manage', 'salesshipment.bill.approve', 'salesshipment.close.manage', 'salesshipment.subcon.view', 'salesshipment.subcon.manage', 'salesshipment.shipment.view', 'salesshipment.shipment.manage', 'salesshipment.shipment.confirm', 'salesshipment.exportdoc.view', 'salesshipment.exportdoc.manage', 'salesshipment.report.view'], 'STORE_MANAGER' => ['salesshipment.order.view', 'salesshipment.delivery.view', 'salesshipment.delivery.manage', 'salesshipment.subcon.view', 'salesshipment.subcon.manage', 'salesshipment.shipment.view', 'salesshipment.exportdoc.view', 'salesshipment.report.view'], 'STOREKEEPER' => ['salesshipment.order.view', 'salesshipment.delivery.view', 'salesshipment.delivery.manage', 'salesshipment.subcon.view', 'salesshipment.subcon.manage'], 'AUDITOR' => ['salesshipment.settings.view', 'salesshipment.order.view', 'salesshipment.delivery.view', 'salesshipment.bill.view', 'salesshipment.subcon.view', 'salesshipment.shipment.view', 'salesshipment.exportdoc.view', 'salesshipment.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        foreach (['FACTORY_ADMIN' => ['tradeexport.master.view', 'tradeexport.master.manage', 'tradeexport.export.view', 'tradeexport.export.manage', 'tradeexport.import.view', 'tradeexport.import.manage', 'tradeexport.report.view'], 'FACTORY_MANAGER' => ['tradeexport.master.view', 'tradeexport.master.manage', 'tradeexport.export.view', 'tradeexport.export.manage', 'tradeexport.import.view', 'tradeexport.import.manage', 'tradeexport.report.view'], 'AUDITOR' => ['tradeexport.master.view', 'tradeexport.export.view', 'tradeexport.import.view', 'tradeexport.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Cutting Floor (AnnotechERP 19): the factory admin, the factory manager
+        // and the line chief cut and print bundle cards; the store manager reads them.
+        // Reports (19/04): all four read them.
+        foreach (['FACTORY_ADMIN' => ['cutting.bundle.view', 'cutting.bundle.manage', 'cutting.input.manage', 'cutting.report.view'], 'FACTORY_MANAGER' => ['cutting.bundle.view', 'cutting.bundle.manage', 'cutting.input.manage', 'cutting.report.view'], 'LINE_CHIEF' => ['cutting.bundle.view', 'cutting.bundle.manage', 'cutting.report.view'], 'STORE_MANAGER' => ['cutting.bundle.view', 'cutting.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Production Tracking (AnnotechERP 30), Brickland's "who may": everyone with
+        // the module views; the factory and production managers prepare plans and
+        // set TVs; the factory manager approves (never their own) and sets
+        // capacity; the line chief keys Production Master Data.
+        foreach (['FACTORY_ADMIN' => ['productiontracking.view', 'productiontracking.entry.manage', 'productiontracking.capacity.manage', 'productiontracking.plan.prepare', 'productiontracking.plan.approve', 'productiontracking.tv.manage', 'productiontracking.settings.manage'], 'FACTORY_MANAGER' => ['productiontracking.view', 'productiontracking.entry.manage', 'productiontracking.capacity.manage', 'productiontracking.plan.prepare', 'productiontracking.plan.approve', 'productiontracking.tv.manage'], 'LINE_CHIEF' => ['productiontracking.view', 'productiontracking.entry.manage'], 'MAINTENANCE_MANAGER' => ['productiontracking.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Dev Sample Status (AnnotechERP 31): the factory admin does everything;
+        // the factory manager reads every sample and runs the Pivot Report.
+        foreach (['FACTORY_ADMIN' => ['devsample.view', 'devsample.view_all', 'devsample.create', 'devsample.update', 'devsample.delete', 'devsample.report', 'devsample.columns.manage'], 'FACTORY_MANAGER' => ['devsample.view', 'devsample.view_all', 'devsample.report']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Export Statement (AnnotechERP 35): the factory admin does everything, its edits saved at once;
+        // the factory manager reads the statements and exports them.
+        foreach (['FACTORY_ADMIN' => ['exportstatement.view', 'exportstatement.create', 'exportstatement.update', 'exportstatement.delete', 'exportstatement.import', 'exportstatement.export', 'exportstatement.approve', 'exportstatement.columns.manage'], 'FACTORY_MANAGER' => ['exportstatement.view', 'exportstatement.export']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Quality Tally (AnnotechERP 36): the factory admin and manager run it; a line chief reads sewing's.
+        // (Nothing shows until the platform switches the module on — LicensedModules.)
+        foreach (['FACTORY_ADMIN' => ['qtally.view', 'qtally.tally.create', 'qtally.job.manage', 'qtally.target.manage', 'qtally.inspector.manage', 'qtally.phone.manage', 'qtally.defect.manage', 'qtally.cutting.manage', 'qtally.sewing.manage', 'qtally.quality.manage'], 'FACTORY_MANAGER' => ['qtally.view', 'qtally.job.manage', 'qtally.target.manage', 'qtally.inspector.manage', 'qtally.phone.manage', 'qtally.cutting.manage', 'qtally.sewing.manage', 'qtally.quality.manage'], 'LINE_CHIEF' => ['qtally.sewing.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Order Summary (AnnotechERP 32): the factory admin does everything; the
+        // factory manager reads every order and runs the reports.
+        foreach (['FACTORY_ADMIN' => ['ordersummary.view', 'ordersummary.view_all', 'ordersummary.create', 'ordersummary.update', 'ordersummary.delete', 'ordersummary.report', 'ordersummary.columns.manage', 'ordersummary.team.manage', 'ordersummary.mail.manage', 'ordersummary.rebudget'], 'FACTORY_MANAGER' => ['ordersummary.view', 'ordersummary.view_all', 'ordersummary.report']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Pre-Budget (AnnotechERP 33/34): the factory admin does everything; the
+        // factory manager reads every budget; Store fills the stock yarn use.
+        foreach (['FACTORY_ADMIN' => ['prebudget.view', 'prebudget.view_all', 'prebudget.create', 'prebudget.update', 'prebudget.delete', 'prebudget.stock', 'prebudget.columns.manage', 'prebudget.master.view', 'prebudget.master.manage'], 'FACTORY_MANAGER' => ['prebudget.view', 'prebudget.view_all', 'prebudget.master.view'], 'STORE_MANAGER' => ['prebudget.stock'], 'STOREKEEPER' => ['prebudget.stock']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Sewing (AnnotechERP 20/01): the factory admin, the
+        // factory manager and the line chief scan bundles on and off the lines.
+        foreach (['FACTORY_ADMIN' => ['assembly.sewing.view', 'assembly.sewing.manage'], 'FACTORY_MANAGER' => ['assembly.sewing.view', 'assembly.sewing.manage'], 'LINE_CHIEF' => ['assembly.sewing.view', 'assembly.sewing.manage']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Finishing (AnnotechERP 20/02): the factory admin,
+        // the factory manager and the line chief scan bundles on and off the
+        // finishing lines; the admin and the manager supervise the rework.
+        foreach (['FACTORY_ADMIN' => ['assembly.finishing.view', 'assembly.finishing.manage', 'assembly.finishing.supervise'], 'FACTORY_MANAGER' => ['assembly.finishing.view', 'assembly.finishing.manage', 'assembly.finishing.supervise'], 'LINE_CHIEF' => ['assembly.finishing.view', 'assembly.finishing.manage']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Quality Management (AnnotechERP 20/03): the factory
+        // admin, the factory manager and the line chief receive, inspect and
+        // release bundles; the admin and the manager supervise the rework.
+        foreach (['FACTORY_ADMIN' => ['assembly.quality.view', 'assembly.quality.manage', 'assembly.quality.supervise'], 'FACTORY_MANAGER' => ['assembly.quality.view', 'assembly.quality.manage', 'assembly.quality.supervise'], 'LINE_CHIEF' => ['assembly.quality.view', 'assembly.quality.manage']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Packing and Packing Process (AnnotechERP 20/04–05):
+        // the factory admin, the factory manager and the line chief pack in,
+        // run the processes and pack out; the admin and the manager supervise
+        // (remove a scan, reopen a process, unseal a carton).
+        foreach (['FACTORY_ADMIN' => ['assembly.packing.view', 'assembly.packing.manage', 'assembly.packing.supervise'], 'FACTORY_MANAGER' => ['assembly.packing.view', 'assembly.packing.manage', 'assembly.packing.supervise'], 'LINE_CHIEF' => ['assembly.packing.view', 'assembly.packing.manage']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Ready For Shipment (AnnotechERP 20/06): the factory
+        // admin, the factory manager and the line chief read what is ready to
+        // ship and the finished goods stock.
+        foreach (['FACTORY_ADMIN' => ['assembly.ready.view'], 'FACTORY_MANAGER' => ['assembly.ready.view'], 'LINE_CHIEF' => ['assembly.ready.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Shipment (AnnotechERP 20/07): the factory admin and
+        // the factory manager enter, confirm, ship and correct shipments; the
+        // line chief sees them.
+        foreach (['FACTORY_ADMIN' => ['assembly.shipment.view', 'assembly.shipment.manage', 'assembly.shipment.supervise'], 'FACTORY_MANAGER' => ['assembly.shipment.view', 'assembly.shipment.manage', 'assembly.shipment.supervise'], 'LINE_CHIEF' => ['assembly.shipment.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Accessories Store (AnnotechERP 20/08): the factory
+        // admin, the factory manager and the store manager run the floor's
+        // trims store and approve issues; the storekeeper writes the papers;
+        // the line chief asks (writes issues) and sees the store.
+        foreach (['FACTORY_ADMIN' => ['assembly.trims.view', 'assembly.trims.manage', 'assembly.trims.approve'], 'FACTORY_MANAGER' => ['assembly.trims.view', 'assembly.trims.manage', 'assembly.trims.approve'], 'STORE_MANAGER' => ['assembly.trims.view', 'assembly.trims.manage', 'assembly.trims.approve'], 'STOREKEEPER' => ['assembly.trims.view', 'assembly.trims.manage'], 'LINE_CHIEF' => ['assembly.trims.view', 'assembly.trims.manage']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Assembly Floor → Reports (AnnotechERP 20/09): the factory admin, the
+        // factory manager and the line chief run the Apparel Assembly Reports.
+        foreach (['FACTORY_ADMIN' => ['assembly.report.view'], 'FACTORY_MANAGER' => ['assembly.report.view'], 'LINE_CHIEF' => ['assembly.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Finishing Line masters (AnnotechERP 18/01): the factory admin and the
+        // factory manager keep them; a line chief reads them. DF Production
+        // (18/02): the admin, the manager and the line chief run the floor;
+        // the store manager watches what reaches it. S/C Process (18/03): the
+        // admin, the manager and the store (which sends the fabric out and
+        // takes it back) keep it; the line chief reads it. QC Process (18/04):
+        // the admin and the manager keep it; the line chief and the store read it.
+        // Fabric Store (18/05): the admin, the manager and the store keep it;
+        // the line chief reads it. Report (18/06): all four read it.
+        foreach (['FACTORY_ADMIN' => ['finishing.master.view', 'finishing.master.manage', 'finishing.production.view', 'finishing.production.manage', 'finishing.sc.view', 'finishing.sc.manage', 'finishing.qc.view', 'finishing.qc.manage', 'finishing.store.view', 'finishing.store.manage', 'finishing.report.view'], 'FACTORY_MANAGER' => ['finishing.master.view', 'finishing.master.manage', 'finishing.production.view', 'finishing.production.manage', 'finishing.sc.view', 'finishing.sc.manage', 'finishing.qc.view', 'finishing.qc.manage', 'finishing.store.view', 'finishing.store.manage', 'finishing.report.view'], 'LINE_CHIEF' => ['finishing.master.view', 'finishing.production.view', 'finishing.production.manage', 'finishing.sc.view', 'finishing.qc.view', 'finishing.store.view', 'finishing.report.view'], 'STORE_MANAGER' => ['finishing.production.view', 'finishing.sc.view', 'finishing.sc.manage', 'finishing.qc.view', 'finishing.store.view', 'finishing.store.manage', 'finishing.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Knit Production masters (AnnotechERP 15/01): the factory admin and the
+        // factory manager keep them; a line chief reads them.
+        foreach (['FACTORY_ADMIN' => ['knitting.master.view', 'knitting.master.manage', 'knitting.yarn.view', 'knitting.yarn.manage', 'knitting.yarn.approve', 'knitting.ystore.view', 'knitting.ystore.manage', 'knitting.production.view', 'knitting.production.manage', 'knitting.fstore.view', 'knitting.fstore.manage', 'knitting.needle.view', 'knitting.needle.manage', 'knitting.report.view', 'colourlab.view', 'colourlab.manage', 'colourlab.approve', 'colourlab.report.view'], 'FACTORY_MANAGER' => ['knitting.master.view', 'knitting.master.manage', 'knitting.yarn.view', 'knitting.yarn.manage', 'knitting.yarn.approve', 'knitting.ystore.view', 'knitting.ystore.manage', 'knitting.production.view', 'knitting.production.manage', 'knitting.fstore.view', 'knitting.fstore.manage', 'knitting.needle.view', 'knitting.needle.manage', 'knitting.report.view', 'colourlab.view', 'colourlab.approve', 'colourlab.report.view'], 'LINE_CHIEF' => ['knitting.master.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Work Study masters (AnnotechERP 14/01): the factory admin and the
+        // factory manager keep them; a line chief reads them.
+        foreach (['FACTORY_ADMIN' => ['workstudy.master.view', 'workstudy.master.manage', 'workstudy.spec.view', 'workstudy.spec.manage', 'workstudy.costing.view', 'workstudy.costing.manage', 'workstudy.ot.view', 'workstudy.ot.manage', 'workstudy.target.view', 'workstudy.target.manage', 'workstudy.floorops.view', 'workstudy.floorops.manage', 'workstudy.profit.view', 'workstudy.profit.manage', 'workstudy.report.view'], 'FACTORY_MANAGER' => ['workstudy.master.view', 'workstudy.master.manage', 'workstudy.spec.view', 'workstudy.spec.manage', 'workstudy.costing.view', 'workstudy.costing.manage', 'workstudy.ot.view', 'workstudy.ot.manage', 'workstudy.target.view', 'workstudy.target.manage', 'workstudy.floorops.view', 'workstudy.floorops.manage', 'workstudy.profit.view', 'workstudy.profit.manage', 'workstudy.report.view'], 'LINE_CHIEF' => ['workstudy.master.view', 'workstudy.target.view', 'workstudy.floorops.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Fabric Requirement masters (AnnotechERP 13/01): the factory admin
+        // and the factory manager, who plan batches, keep them.
+        foreach (['FACTORY_ADMIN' => ['fabricplanning.master.view', 'fabricplanning.master.manage', 'fabricplanning.plan.view', 'fabricplanning.plan.manage', 'fabricplanning.report.view'], 'FACTORY_MANAGER' => ['fabricplanning.master.view', 'fabricplanning.master.manage', 'fabricplanning.plan.view', 'fabricplanning.plan.manage', 'fabricplanning.report.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Prototype Desk (AnnotechERP 07/03): the factory admin runs the
+        // sample room's documents end to end; the factory manager reads them
+        // and takes the approval levels.
+        $proto = ['prototype.dashboard.view', 'prototype.sample360.view', 'prototype.alerts.view', 'prototype.requisition.view', 'prototype.development.view', 'prototype.revision.view', 'prototype.material.view', 'prototype.bundle.view', 'prototype.tracking.view', 'prototype.target.view', 'prototype.quality.view', 'prototype.approval.view', 'prototype.feedback.view', 'prototype.handover.view'];
+        foreach (['FACTORY_ADMIN' => [...$proto, 'prototype.sample360.manage', 'prototype.alerts.manage', 'prototype.requisition.manage', 'prototype.requisition.approve', 'prototype.development.manage', 'prototype.revision.manage', 'prototype.revision.approve', 'prototype.material.manage', 'prototype.material.approve', 'prototype.material.issue', 'prototype.bundle.manage', 'prototype.tracking.manage', 'prototype.target.manage', 'prototype.quality.manage', 'prototype.approval.manage', 'prototype.feedback.manage', 'prototype.handover.manage'], 'FACTORY_MANAGER' => [...$proto, 'prototype.requisition.approve', 'prototype.revision.approve', 'prototype.material.approve']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Dye House masters, Lab-Dip and Batch (Bulk) (AnnotechERP 17/01–17/03):
+        // the factory admin and the factory manager keep them; the store manager,
+        // who issues dyes, chemicals and the batch store's grey, reads them and
+        // issues against a batch indent.
+        foreach (['FACTORY_ADMIN' => ['dyehouse.master.view', 'dyehouse.master.manage', 'dyehouse.labdip.view', 'dyehouse.labdip.manage', 'dyehouse.batch.view', 'dyehouse.batch.manage', 'dyehouse.batch.issue', 'dyehouse.requisition.view', 'dyehouse.requisition.manage', 'dyehouse.requisition.approve', 'dyehouse.requisition.issue', 'dyehouse.chemstore.view', 'dyehouse.chemstore.manage', 'dyehouse.chemstore.issue', 'dyehouse.chemstore.approve', 'dyehouse.chemstore.close', 'dyehouse.production.view', 'dyehouse.production.manage', 'dyehouse.production.close', 'dyehouse.qc.view', 'dyehouse.qc.manage', 'dyehouse.sc.view', 'dyehouse.sc.manage', 'dyehouse.sc.issue'], 'FACTORY_MANAGER' => ['dyehouse.master.view', 'dyehouse.master.manage', 'dyehouse.labdip.view', 'dyehouse.labdip.manage', 'dyehouse.batch.view', 'dyehouse.batch.manage', 'dyehouse.requisition.view', 'dyehouse.requisition.manage', 'dyehouse.requisition.approve', 'dyehouse.chemstore.view', 'dyehouse.chemstore.manage', 'dyehouse.chemstore.approve', 'dyehouse.production.view', 'dyehouse.production.manage', 'dyehouse.production.close', 'dyehouse.qc.view', 'dyehouse.qc.manage', 'dyehouse.sc.view', 'dyehouse.sc.manage'], 'STORE_MANAGER' => ['dyehouse.master.view', 'dyehouse.labdip.view', 'dyehouse.batch.view', 'dyehouse.batch.issue', 'dyehouse.requisition.view', 'dyehouse.requisition.issue', 'dyehouse.chemstore.view', 'dyehouse.chemstore.manage', 'dyehouse.chemstore.issue', 'dyehouse.chemstore.close', 'dyehouse.sc.view', 'dyehouse.sc.issue']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Capacity Planning's masters (AnnotechERP 12/01): the factory admin and
+        // the factory manager, who plans the lines, keep them; line chiefs read
+        // the standards their lines are planned on.
+        foreach (['FACTORY_ADMIN' => ['planning.master.view', 'planning.master.manage'], 'FACTORY_MANAGER' => ['planning.master.view', 'planning.master.manage'], 'LINE_CHIEF' => ['planning.master.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Production Plan (AnnotechERP 12/02): the factory manager plans and, as
+        // planning manager, confirms and decides revisions, with the factory
+        // admin; line chiefs follow the plans of their lines.
+        $plans = ['planning.plan.view', 'planning.plan.manage', 'planning.plan.approve'];
+        foreach (['FACTORY_ADMIN' => $plans, 'FACTORY_MANAGER' => $plans, 'LINE_CHIEF' => ['planning.plan.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Gate Pass lists (AnnotechERP 11/01): the factory admin and the store
+        // manager keep them; the factory manager and the storekeeper, who
+        // raise passes, read them.
+        foreach (['FACTORY_ADMIN' => ['gatepass.master.view', 'gatepass.master.manage'], 'STORE_MANAGER' => ['gatepass.master.view', 'gatepass.master.manage'], 'FACTORY_MANAGER' => ['gatepass.master.view'], 'STOREKEEPER' => ['gatepass.master.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Gate passes (AnnotechERP 11/02–11/04): the factory admin does it all;
+        // the factory manager prepares and approves; the store manager also
+        // works the gate; the storekeeper prepares passes and works the gate.
+        $passes = ['gatepass.view', 'gatepass.create'];
+        foreach (['FACTORY_ADMIN' => [...$passes, 'gatepass.approve', 'gatepass.gate'], 'FACTORY_MANAGER' => [...$passes, 'gatepass.approve'], 'STORE_MANAGER' => [...$passes, 'gatepass.approve', 'gatepass.gate'], 'STOREKEEPER' => [...$passes, 'gatepass.gate']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // General Store's lists (AnnotechERP 10/01): the store manager and the
+        // storekeeper keep them, with the factory admin; managers who draw on
+        // the store read them.
+        foreach (['FACTORY_ADMIN' => ['store.master.view', 'store.master.manage'], 'STORE_MANAGER' => ['store.master.view', 'store.master.manage'], 'STOREKEEPER' => ['store.master.view', 'store.master.manage'], 'FACTORY_MANAGER' => ['store.master.view'], 'MAINTENANCE_MANAGER' => ['store.master.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // General Store's stock (AnnotechERP 10/02–10/03): the storekeeper posts
+        // documents; the store manager and the factory admin also cancel them;
+        // managers who draw on the store see the stock and the ledger.
+        // Requisition and Administration (10/04–10/07): anyone who draws on the
+        // store raises requisitions; the store manager and the factory admin
+        // approve them, read the audit log and keep the settings.
+        $manage = ['store.requisition.create', 'store.requisition.approve', 'store.audit.view', 'store.settings.manage'];
+        foreach (['FACTORY_ADMIN' => $manage, 'STORE_MANAGER' => $manage, 'STOREKEEPER' => ['store.requisition.create'], 'FACTORY_MANAGER' => ['store.requisition.create'], 'MAINTENANCE_MANAGER' => ['store.requisition.create']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+        $inventory = ['store.inventory.view', 'store.inventory.post'];
+        foreach (['FACTORY_ADMIN' => [...$inventory, 'store.inventory.cancel'], 'STORE_MANAGER' => [...$inventory, 'store.inventory.cancel'], 'STOREKEEPER' => $inventory, 'FACTORY_MANAGER' => ['store.inventory.view'], 'MAINTENANCE_MANAGER' => ['store.inventory.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Material Procurement's catalogue and suppliers (AnnotechERP 08/01):
+        // the factory admin and the store manager, who buys, keep them; the
+        // factory manager and the storekeeper read them.
+        // Purchase requisitions (08/03): raised by the factory admin and the
+        // store manager; the factory manager and the storekeeper follow them.
+        foreach (['FACTORY_ADMIN' => ['material.master.view', 'material.master.manage', 'material.requisition.view', 'material.requisition.manage', 'material.portal_access.manage', 'material.price.approve', 'material.followup.view', 'material.followup.monitor', 'material.audit.view'], 'STORE_MANAGER' => ['material.master.view', 'material.master.manage', 'material.requisition.view', 'material.requisition.manage', 'material.followup.view'], 'FACTORY_MANAGER' => ['material.master.view', 'material.requisition.view', 'material.followup.view', 'material.followup.monitor', 'material.audit.view'], 'STOREKEEPER' => ['material.master.view', 'material.requisition.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Store & Material (09): the Store Manager reverses GRNs and approves adjustments; storekeepers receive, issue and count.
+        $store = ['storematerial.view', 'storematerial.receive', 'storematerial.issue', 'storematerial.adjust'];
+        foreach (['FACTORY_ADMIN' => [...$store, 'storematerial.manage'], 'STORE_MANAGER' => [...$store, 'storematerial.manage'], 'STOREKEEPER' => $store, 'FACTORY_MANAGER' => ['storematerial.view']] as $code => $extra) {
+            if (isset($matrix[$code]) && is_array($matrix[$code]['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...$extra]));
+            }
+        }
+
+        // Brickland's supplier portal account (08/07): an outside supplier who
+        // signs in on the normal login page and works only in the Supplier
+        // Portal — no request, no approval, nothing of the company's own.
+        $matrix['SUPPLIER'] = ['name' => 'Supplier', 'scope' => 'COMPANY', 'permissions' => ['material.portal.view']];
+
+        return self::byDepartment($matrix, $all);
+    }
+
+    /**
+     * Roles by department and designation (user, 2026-11-22): each
+     * department's Executive and Head with only the modules it works in; the
+     * stores also keep the yarn, fabric, finished fabric and chemical stores;
+     * Factory Manager becomes Management (GM / Director) — every module seen
+     * and approved; and nobody but an admin keeps master data, company
+     * settings or setup (RoleBlueprint::ADMIN_ONLY).
+     *
+     * @param  array<string, array{name: string, scope: string, permissions: list<string>|string}>  $matrix
+     * @param  list<string>  $all
+     * @return array<string, array{name: string, scope: string, permissions: list<string>|string, name_bn?: string, rank?: int}>
+     */
+    private static function byDepartment(array $matrix, array $all): array
+    {
+        $rank = 100;
+        foreach (RoleBlueprint::departments() as $code => [$name, $nameBn, , $tier, $patterns]) {
+            $matrix[$code] = ['name' => $name, 'name_bn' => $nameBn, 'scope' => 'FACTORY', 'rank' => $rank += 10,
+                // Quality Tally's section roles see their own section's menu and nothing else (user, 2026-11-25).
+                'permissions' => [...RoleBlueprint::expand($patterns, $tier, $all), ...(str_starts_with($code, 'QT_') ? [] : ['approval.ticket.create'])]];
+        }
+        $stores = ['knitting.ystore.*', 'knitting.fstore.*', 'knitting.needle.*', 'finishing.store.*', 'dyehouse.chemstore.*', 'assembly.trims.*', 'knitting.master.view', 'finishing.master.view', 'dyehouse.master.view'];
+        foreach (['STOREKEEPER' => 'EXECUTIVE', 'STORE_MANAGER' => 'HEAD'] as $code => $tier) {
+            $matrix[$code]['permissions'] = array_values(array_unique([...$matrix[$code]['permissions'], ...RoleBlueprint::expand($stores, $tier, $all)]));
+        }
+        $matrix['EMPLOYEE'] = ['name' => 'Employee', 'name_bn' => 'কর্মী', 'scope' => 'FACTORY', 'rank' => 900, 'permissions' => ['approval.ticket.create']];
+
+        // Management sees every module and signs what reaches it.
+        $oversee = array_filter($all, fn (string $c): bool => in_array(RoleBlueprint::verb($c), ['view', 'view_any', 'view_all', 'report', 'approve', 'reject', 'supervise', 'see_all', 'export'], true));
+        $matrix['FACTORY_MANAGER']['name'] = 'Management (GM / Director)';
+        $matrix['FACTORY_MANAGER']['name_bn'] = 'ম্যানেজমেন্ট (জিএম / ডিরেক্টর)';
+        $matrix['FACTORY_MANAGER']['permissions'] = array_values(array_unique([...$matrix['FACTORY_MANAGER']['permissions'], ...$oversee]));
+
+        foreach ($matrix as $code => $role) {
+            if (! in_array($code, RoleBlueprint::ADMIN_ROLES, true) && is_array($role['permissions'])) {
+                $matrix[$code]['permissions'] = array_values(array_filter($role['permissions'], fn (string $c): bool => ! RoleBlueprint::adminOnly($c)));
+            }
+        }
+
+        return $matrix;
     }
 
     public function run(): void
@@ -356,7 +747,7 @@ class RoleSeeder extends Seeder
                     'description' => $definition['name'],
                     'scope' => $definition['scope'],
                     'is_system' => true,
-                ],
+                ] + array_intersect_key($definition, array_flip(['name_bn', 'rank'])),
             );
 
             $ids = [];
@@ -369,5 +760,10 @@ class RoleSeeder extends Seeder
 
             $role->permissions()->sync(array_unique($ids));
         }
+
+        // Each company's own (editable) copies follow the templates: a new
+        // template is copied, a permission the template gained or lost is
+        // carried over, and the company's own changes are kept.
+        RoleProvisioner::syncAll();
     }
 }

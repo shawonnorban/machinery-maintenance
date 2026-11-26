@@ -1,0 +1,14 @@
+[
+ {"goto": "/knit-production/yarn-opening"}, {"shot": "op"},
+ {"goto": "/knit-production/opening-balance"}, {"shot": "ob-list"},
+ {"goto": "/knit-production/opening-balance?tab=entry"}, {"shot": "ob-entry"},
+ {"goto": "/knit-production/daily-receive"}, {"shot": "mrr-list"},
+ {"goto": "/knit-production/daily-receive?tab=entry"}, {"shot": "mrr-entry"},
+ {"goto": "/knit-production/daily-receive?tab=returns"}, {"shot": "mrr-returns"},
+ {"goto": "/knit-production/yarn-stock-racking-board"}, {"shot": "rack-board"},
+ {"goto": "/knit-production/yarn-stock-racking-board?tab=assign"}, {"shot": "rack-assign"},
+ {"goto": "/knit-production/daily-receive-return"}, {"shot": "rr-list"},
+ {"goto": "/knit-production/yarn-month-closing"}, {"shot": "mc"},
+ {"goto": "/knit-production/yarn-adjustment"}, {"shot": "adj-list"},
+ {"goto": "/knit-production/yarn-adjustment?tab=entry"}, {"shot": "adj-entry"}
+]

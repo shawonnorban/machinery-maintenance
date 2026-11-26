@@ -1,0 +1,1208 @@
+{
+    "folder": {
+        "access": "ACCESS & ONBOARDING",
+        "visibility": "ORDER & SHIPMENT VISIBILITY",
+        "billing": "PRICING & BILLING",
+        "engagement": "BUYER ENGAGEMENT",
+        "admin": "PORTAL ADMINISTRATION"
+    },
+    "screens": {
+        "portal-users": "Portal User Accounts",
+        "access-permissions": "Portal Access Permissions",
+        "buyer-onboarding": "Buyer Onboarding Workflow",
+        "notification-preferences": "Notification Settings",
+        "order-visibility": "Order Visibility Rules",
+        "sample-status": "Sample Progress View",
+        "shipment-status": "Shipment Progress View",
+        "document-sharing": "Shared Document Vault",
+        "rfq-inbox": "Quotation Request Inbox",
+        "buyer-price-lists": "Buyer Price Schedules",
+        "invoice-view": "Invoice Lookup",
+        "payment-status": "Payment Progress View",
+        "buyer-requests": "Buyer Request Inbox",
+        "complaint-register": "Complaint & Claim Register",
+        "announcements": "Portal Announcements",
+        "feedback-survey": "Buyer Feedback Survey",
+        "support-tickets": "Support Ticket Desk",
+        "portal-analytics": "Portal Usage Insight",
+        "portal-branding": "Portal Branding Setup",
+        "portal-activity-log": "Portal Activity Trail"
+    },
+    "descriptions": {
+        "portal-users": "The buyer-side people who hold a login, and which buyer each belongs to.",
+        "access-permissions": "What each portal user may open, download and act on, per buyer account.",
+        "buyer-onboarding": "A new buyer taken from signed account to working portal login, step by step.",
+        "notification-preferences": "Which events reach a buyer by mail, and which stay inside the portal.",
+        "order-visibility": "Which orders a buyer may see, and how much of each order's progress.",
+        "sample-status": "Where every sample stands, as the buyer reads it: sent, commented, approved.",
+        "shipment-status": "Booked, gated out, on the water or delivered, against the agreed date.",
+        "document-sharing": "Tech packs, test reports and shipping documents released to the buyer.",
+        "rfq-inbox": "Requests for quotation arriving from buyers, before they become an inquiry.",
+        "buyer-price-lists": "The agreed prices a buyer sees, by product, season and validity period.",
+        "invoice-view": "Commercial invoices published to the buyer, exactly as they were issued.",
+        "payment-status": "What has been billed, what has been received and what is due.",
+        "buyer-requests": "What a buyer asks for through the portal, routed to the desk that answers it.",
+        "complaint-register": "Complaints raised by a buyer, with the shipment, the cause and the resolution.",
+        "announcements": "Notices published to the portal — holidays, capacity, policy changes.",
+        "feedback-survey": "Surveys sent to buyers and the scores that come back, season by season.",
+        "support-tickets": "Portal problems a buyer reports, with owner, priority and time to close.",
+        "portal-analytics": "What buyers look at, how often, and where they stop looking.",
+        "portal-branding": "Logo, colours and wording a buyer sees when the portal is opened.",
+        "portal-activity-log": "Every login, download and approval made from the buyer's side, timestamped."
+    },
+    "save_changes": "Save changes",
+    "delete": "Delete",
+    "u": {
+        "title": "Portal users",
+        "subtitle": "The buyer-side people who hold a login, and which buyer each belongs to.",
+        "search": "Search users…",
+        "pick_label": "Filter by buyer",
+        "pick_all": "All buyers",
+        "new": "New portal user",
+        "new_title": "New portal user",
+        "edit_title": "Edit portal user",
+        "dialog_sub": "A portal user always belongs to exactly one buyer account.",
+        "create": "Create user",
+        "empty_title": "No portal user yet",
+        "empty_text": "Add the buyer-side people who will log in with New portal user.",
+        "delete_title": "Delete portal user",
+        "delete_aria": "Delete",
+        "delete_text": ":name will lose access to the portal immediately.",
+        "c": {
+            "user": "User",
+            "buyer": "Buyer",
+            "role": "Role",
+            "last_seen": "Last seen",
+            "state": "State",
+            "login_enabled": "LOGIN"
+        },
+        "f": {
+            "name": "Full name",
+            "email": "Email",
+            "buyer": "Buyer",
+            "role": "Role",
+            "country": "Country",
+            "last_seen": "Last seen",
+            "state": "State",
+            "login": "Login enabled"
+        },
+        "t": {
+            "users": "Portal users",
+            "active": "Active",
+            "suspended": "Suspended",
+            "buyers": "Buyer accounts"
+        }
+    },
+    "p": {
+        "title": "Permission sets",
+        "subtitle": "What each portal user may open, download and act on, per buyer account.",
+        "search": "Search permission sets…",
+        "pick_label": "Filter by buyer",
+        "pick_all": "All buyers",
+        "new": "New permission set",
+        "new_title": "New permission set",
+        "edit_title": "Edit permission set",
+        "dialog_sub": "Permissions are granted per role per buyer, never per person.",
+        "create": "Save set",
+        "empty_title": "No permission set yet",
+        "empty_text": "Say what each role may see for a buyer with New permission set.",
+        "delete_title": "Delete permission set",
+        "delete_aria": "Delete",
+        "delete_text": "Portal users with the :name role lose these permissions.",
+        "c": {
+            "role": "Role",
+            "orders": "Orders",
+            "samples": "Samples",
+            "documents": "Documents",
+            "commercial": "Commercial",
+            "may_approve": "APPROVE"
+        },
+        "f": {
+            "role": "Role",
+            "buyer": "Buyer",
+            "orders": "Orders",
+            "samples": "Samples",
+            "documents": "Documents",
+            "commercial": "Commercial",
+            "set_on": "Set on"
+        },
+        "t": {
+            "sets": "Permission sets",
+            "approve": "May approve",
+            "buyers": "Buyers covered",
+            "roles": "Roles in use"
+        }
+    },
+    "o": {
+        "title": "Onboarding",
+        "subtitle": "A new buyer taken from signed account to working portal login, step by step.",
+        "search": "Search onboardings…",
+        "pick_label": "Filter by step",
+        "pick_all": "All steps",
+        "new": "Start onboarding",
+        "new_title": "Start onboarding",
+        "edit_title": "Edit onboarding",
+        "dialog_sub": "Progress is the share of the eight onboarding steps completed.",
+        "create": "Start",
+        "empty_title": "No onboarding yet",
+        "empty_text": "Take a new buyer onto the portal with Start onboarding.",
+        "delete_title": "Delete onboarding",
+        "delete_aria": "Delete",
+        "delete_text": ":name's onboarding and its progress will be removed.",
+        "c": {
+            "buyer": "Buyer",
+            "step": "Current step",
+            "progress": "Progress",
+            "users": "Users",
+            "target_live": "Target live",
+            "state": "State"
+        },
+        "f": {
+            "buyer": "Buyer",
+            "step": "Current step",
+            "owner": "Owner",
+            "started": "Started",
+            "target_live": "Target live",
+            "progress": "Progress",
+            "users": "Users invited",
+            "state": "State"
+        },
+        "t": {
+            "onboardings": "Onboardings",
+            "on_track": "On track",
+            "blocked": "Blocked",
+            "average": "Average progress"
+        }
+    },
+    "n": {
+        "title": "Notification settings",
+        "subtitle": "Which events reach a buyer by mail, and which stay inside the portal.",
+        "search": "Search events…",
+        "pick_label": "Filter by channel",
+        "pick_all": "All channels",
+        "new": "New preference",
+        "new_title": "New preference",
+        "edit_title": "Edit preference",
+        "dialog_sub": "Set per buyer per event. Anything not listed stays inside the portal.",
+        "create": "Save preference",
+        "empty_title": "No preference yet",
+        "empty_text": "Choose how an event reaches a buyer with New preference.",
+        "delete_title": "Delete preference",
+        "delete_aria": "Delete",
+        "delete_text": ":name will stay inside the portal for this buyer.",
+        "c": {
+            "event": "Event",
+            "channel": "Channel",
+            "digest": "Digest",
+            "recipients": "Recipients",
+            "enabled": "ENABLED"
+        },
+        "f": {
+            "event": "Event",
+            "buyer": "Buyer",
+            "channel": "Channel",
+            "digest": "Digest",
+            "recipients": "Recipients",
+            "set_on": "Set on"
+        },
+        "t": {
+            "preferences": "Preferences",
+            "enabled": "Enabled",
+            "muted": "Muted",
+            "buyers": "Buyers configured"
+        }
+    },
+    "role": {
+        "MERCHANDISER": "Merchandiser",
+        "QUALITY_MANAGER": "Quality manager",
+        "SOURCING_HEAD": "Sourcing head",
+        "LOGISTICS": "Logistics",
+        "FINANCE": "Finance",
+        "READ_ONLY": "Read only"
+    },
+    "state": {
+        "ACTIVE": "Active",
+        "INVITED": "Invited",
+        "SUSPENDED": "Suspended",
+        "LOCKED": "Locked"
+    },
+    "access": {
+        "FULL": "Full",
+        "READ_ONLY": "Read only",
+        "HIDDEN": "Hidden"
+    },
+    "doc": {
+        "DOWNLOAD": "Download",
+        "VIEW_ONLY": "View only",
+        "HIDDEN": "Hidden"
+    },
+    "step": {
+        "CONTRACT_SIGNED": "Contract signed",
+        "ACCOUNT_CREATED": "Account created",
+        "USERS_INVITED": "Users invited",
+        "PERMISSIONS_SET": "Permissions set",
+        "BRANDING_APPLIED": "Branding applied",
+        "VISIBILITY_AGREED": "Visibility agreed",
+        "TRAINING_DONE": "Training done",
+        "LIVE": "Live"
+    },
+    "ostate": {
+        "ON_TRACK": "On track",
+        "AT_RISK": "At risk",
+        "BLOCKED": "Blocked",
+        "COMPLETE": "Complete"
+    },
+    "event": {
+        "SAMPLE_APPROVED": "Sample approved",
+        "SAMPLE_COMMENTED": "Sample commented",
+        "SHIPMENT_BOOKED": "Shipment booked",
+        "SHIPMENT_DELIVERED": "Shipment delivered",
+        "DOCUMENT_SHARED": "Document shared",
+        "INVOICE_PUBLISHED": "Invoice published",
+        "ANNOUNCEMENT_POSTED": "Announcement posted",
+        "REQUEST_ANSWERED": "Request answered"
+    },
+    "channel": {
+        "EMAIL": "Email",
+        "IN_PORTAL": "In-portal",
+        "BOTH": "Email + In-portal",
+        "MUTED": "Muted"
+    },
+    "digest": {
+        "IMMEDIATE": "Immediate",
+        "DAILY": "Daily digest",
+        "WEEKLY": "Weekly digest"
+    },
+    "recipients": {
+        "ALL": "All portal users",
+        "MERCHANDISERS": "Merchandisers only",
+        "NAMED": "Named contacts",
+        "OWNER": "Account owner"
+    },
+    "v": {
+        "user_name": "Name the user.",
+        "email": "An email is required.",
+        "email_format": "Enter a valid email address.",
+        "email_taken": "That email already has a portal login.",
+        "buyer": "Choose the buyer.",
+        "login_blocked": ":name is :state — make them Active or Invited before switching the login on.",
+        "role": "Choose the role.",
+        "set_taken": "This role already has a permission set for :buyer.",
+        "buyer_name": "Name the buyer.",
+        "onboarding_taken": "This buyer is already being onboarded.",
+        "target_before_start": "Target live cannot be before the start.",
+        "event": "Choose the event.",
+        "pref_taken": "This event already has a preference for :buyer.",
+        "muted": "A muted event stays off — give it a channel first.",
+        "title": "Visibility rules",
+        "subtitle": "Which orders a buyer may see, and how much of each order's progress.",
+        "search": "Search rules…",
+        "pick_label": "Filter by depth",
+        "pick_all": "All depths",
+        "new": "New rule",
+        "new_title": "New rule",
+        "edit_title": "Edit visibility rule",
+        "dialog_sub": "Depth is the whole control: a buyer sees status, milestones or the floor.",
+        "create": "Add rule",
+        "empty_title": "No visibility rule yet",
+        "empty_text": "Say how much of its orders each buyer sees with New rule.",
+        "delete_title": "Delete visibility rule",
+        "delete_aria": "Delete",
+        "delete_text": ":name will see nothing of its orders until a new rule is set.",
+        "c": {
+            "buyer": "Buyer",
+            "scope": "Scope",
+            "depth": "Depth",
+            "delays": "Delays",
+            "active": "ACTIVE"
+        },
+        "f": {
+            "buyer": "Buyer",
+            "scope": "Scope",
+            "depth": "Depth",
+            "delays": "Shows delays",
+            "effective_from": "Effective from",
+            "set_by": "Set by",
+            "note": "Note",
+            "note_ph": "Why this buyer is at this depth"
+        },
+        "t": {
+            "rules": "Rules",
+            "active": "Active",
+            "full": "Full trail",
+            "delays": "Delays always shown"
+        },
+        "rule_taken": ":buyer already has a visibility rule — edit it instead.",
+        "style": "Enter the style.",
+        "sample_taken": "This style already has this sample type at this version.",
+        "sent_required": "A sample past In development needs its sent date.",
+        "due_before_sent": "The decision cannot be due before the sample was sent.",
+        "order": "Enter the order.",
+        "actual_required": "Arrived and Delivered need the actual date.",
+        "document": "Name the document.",
+        "file": "Attach the file through Attach file.",
+        "rfq_taken": "That reference is already in the inbox.",
+        "respond_before_received": "The answer cannot be due before the request arrived.",
+        "product": "Name the product.",
+        "valid_to_before_from": "The price cannot end before it starts.",
+        "invoice": "Enter the invoice number.",
+        "invoice_taken": "That invoice is already published.",
+        "due_before_issued": "An invoice cannot fall due before it was issued.",
+        "payment_taken": ":buyer already has a payment line — edit it instead.",
+        "received_over_billed": "Received cannot be more than billed.",
+        "subject": "Enter the subject.",
+        "route_first": "Route the request to a desk first — an unrouted request cannot be worked on.",
+        "complaint_taken": "That reference is already in the register.",
+        "resolution": "Write down the resolution before settling or rejecting.",
+        "expires_before_published": "An announcement cannot expire before it is published.",
+        "one_buyer": "Choose the buyer for a one-buyer announcement.",
+        "survey": "Name the survey.",
+        "responses_over_recipients": "More responses than recipients.",
+        "score_without_responses": "A survey has no score until someone responds.",
+        "survey_unsent": "An open or closed survey needs its sent date.",
+        "ticket_taken": "That reference is already on the desk.",
+        "notice_title": "Give the announcement a title.",
+        "period": "Choose one of the last twelve months.",
+        "usage_taken": ":buyer already has a line for this month.",
+        "users_over_logins": "More active users than logins.",
+        "profile_taken": ":buyer already has a branding profile.",
+        "logo_file": "That logo was not uploaded here.",
+        "logo_type": "A logo is a PNG, JPEG or WebP image.",
+        "logo_size": "A logo is at most 2 MB.",
+        "actor": "Name the actor.",
+        "time": "Write the time as HH:MM, 24-hour.",
+        "activity_future": "An entry cannot be in the future."
+    },
+    "scope": {
+        "ALL": "All orders",
+        "CONFIRMED": "Confirmed orders only",
+        "SEASON": "Current season",
+        "NAMED": "Named orders"
+    },
+    "depth": {
+        "STATUS": "Status only",
+        "MILESTONES": "Status + milestones",
+        "QUANTITIES": "Milestones + quantities",
+        "FULL": "Full production trail"
+    },
+    "delays": {
+        "ALWAYS": "Always",
+        "REVIEWED": "After internal review",
+        "NEVER": "Never"
+    },
+    "s": {
+        "title": "Sample progress",
+        "subtitle": "Where every sample stands, as the buyer reads it: sent, commented, approved.",
+        "search": "Search samples…",
+        "pick_label": "Filter by stage",
+        "pick_all": "All stages",
+        "new": "Add sample",
+        "new_title": "Add sample",
+        "edit_title": "Edit sample",
+        "dialog_sub": "This is the buyer's view — internal rework rounds are not published here.",
+        "create": "Add sample",
+        "empty_title": "No sample yet",
+        "empty_text": "Add the samples a buyer follows with Add sample.",
+        "delete_title": "Delete sample",
+        "delete_aria": "Delete",
+        "delete_text": ":name will no longer show to the buyer.",
+        "c": {
+            "style": "Style",
+            "buyer": "Buyer",
+            "version": "Ver",
+            "sent": "Sent",
+            "decision_due": "Decision due",
+            "courier": "Courier",
+            "stage": "Stage"
+        },
+        "f": {
+            "style": "Style",
+            "buyer": "Buyer",
+            "type": "Sample type",
+            "stage": "Stage",
+            "sent_on": "Sent on",
+            "decision_due": "Decision due",
+            "version": "Version",
+            "courier": "Courier"
+        },
+        "t": {
+            "samples": "Samples",
+            "awaiting": "Awaiting the buyer",
+            "approved": "Approved",
+            "rejected": "Rejected"
+        }
+    },
+    "stype": {
+        "PROTO": "Proto",
+        "FIT": "Fit",
+        "SIZE_SET": "Size set",
+        "PP": "PP",
+        "SHIPMENT": "Shipment",
+        "PHOTO": "Photo"
+    },
+    "sstage": {
+        "IN_DEVELOPMENT": "In development",
+        "SENT": "Sent",
+        "COMMENTED": "Commented",
+        "REVISED": "Revised",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+    },
+    "courier": {
+        "DHL": "DHL",
+        "FEDEX": "FedEx",
+        "ARAMEX": "Aramex",
+        "HAND": "Hand carried",
+        "NOT_SENT": "Not yet sent"
+    },
+    "h": {
+        "title": "Shipment progress",
+        "subtitle": "Booked, gated out, on the water or delivered, against the agreed date.",
+        "search": "Search shipments…",
+        "pick_label": "Filter by stage",
+        "pick_all": "All stages",
+        "new": "Add shipment",
+        "new_title": "Add shipment",
+        "edit_title": "Edit shipment",
+        "dialog_sub": "The agreed date is the buyer's date, not the internal plan date.",
+        "create": "Add shipment",
+        "empty_title": "No shipment yet",
+        "empty_text": "Add the shipments a buyer follows with Add shipment.",
+        "delete_title": "Delete shipment",
+        "delete_aria": "Delete",
+        "delete_text": ":name will no longer show to the buyer.",
+        "c": {
+            "order": "Order",
+            "buyer": "Buyer",
+            "quantity": "Quantity",
+            "cartons": "Cartons",
+            "agreed": "Agreed",
+            "actual": "Actual",
+            "stage": "Stage"
+        },
+        "f": {
+            "order": "Order",
+            "buyer": "Buyer",
+            "mode": "Mode",
+            "stage": "Stage",
+            "agreed": "Agreed date",
+            "actual": "Actual date",
+            "quantity": "Quantity",
+            "cartons": "Cartons"
+        },
+        "t": {
+            "shipments": "Shipments",
+            "delivered": "Delivered",
+            "transit": "In transit",
+            "pieces": "Pieces shipped"
+        }
+    },
+    "mode": {
+        "SEA": "Sea",
+        "AIR": "Air",
+        "SEA_AIR": "Sea-air",
+        "ROAD": "Road"
+    },
+    "hstage": {
+        "BOOKED": "Booked",
+        "GATE_OUT": "Gate out",
+        "ON_THE_WATER": "On the water",
+        "ARRIVED": "Arrived",
+        "DELIVERED": "Delivered"
+    },
+    "d": {
+        "title": "Shared documents",
+        "subtitle": "Tech packs, test reports and shipping documents released to the buyer.",
+        "search": "Search documents…",
+        "pick_label": "Filter by kind",
+        "pick_all": "All kinds",
+        "new": "Share document",
+        "new_title": "Share document",
+        "edit_title": "Edit document",
+        "dialog_sub": "Releasing a document is a decision — it is logged and it can be withdrawn.",
+        "create": "Share",
+        "empty_title": "No document shared yet",
+        "empty_text": "Release tech packs, test reports and shipping documents with Share document.",
+        "delete_title": "Delete document",
+        "delete_aria": "Delete",
+        "delete_text": ":name will be removed from the vault.",
+        "c": {
+            "document": "Document",
+            "kind": "Kind",
+            "shared": "Shared",
+            "size": "Size",
+            "downloads": "Downloads",
+            "state": "State",
+            "file": "File",
+            "download": "Download"
+        },
+        "f": {
+            "document": "Document",
+            "buyer": "Buyer",
+            "kind": "Kind",
+            "shared_on": "Shared on",
+            "shared_by": "Shared by",
+            "size": "Size (MB)",
+            "size_hint": "An attached file sets it.",
+            "downloads": "Downloads",
+            "state": "State",
+            "file": "File",
+            "attach": "Attach file",
+            "file_ph": "PDF, Excel or image, up to 10 MB"
+        },
+        "t": {
+            "documents": "Documents",
+            "shared": "Currently shared",
+            "downloads": "Downloads",
+            "withdrawn": "Withdrawn"
+        }
+    },
+    "kind": {
+        "TECH_PACK": "Tech pack",
+        "TEST_REPORT": "Test report",
+        "INSPECTION": "Inspection report",
+        "PACKING_LIST": "Packing list",
+        "INVOICE": "Invoice",
+        "CERTIFICATE": "Certificate"
+    },
+    "dstate": {
+        "SHARED": "Shared",
+        "WITHDRAWN": "Withdrawn",
+        "EXPIRED": "Expired"
+    },
+    "q": {
+        "title": "Quotation requests",
+        "subtitle": "Requests for quotation arriving from buyers, before they become an inquiry.",
+        "search": "Search requests…",
+        "pick_label": "Filter by state",
+        "pick_all": "All states",
+        "new": "Log an RFQ",
+        "edit_title": "Edit request",
+        "dialog_sub": "An RFQ becomes an inquiry once it is accepted; until then it lives here.",
+        "create": "Log RFQ",
+        "empty_title": "No request yet",
+        "empty_text": "Log the requests for quotation buyers send with Log an RFQ.",
+        "delete_title": "Delete request",
+        "delete_text": ":name will be removed from the inbox.",
+        "new_title": "Log an RFQ",
+        "delete_aria": "Delete",
+        "c": {
+            "reference": "Reference",
+            "buyer": "Buyer",
+            "quantity": "Quantity",
+            "target": "Target",
+            "respond_by": "Respond by",
+            "state": "State"
+        },
+        "f": {
+            "reference": "Reference",
+            "buyer": "Buyer",
+            "product": "Product",
+            "quantity": "Quantity",
+            "target": "Target price",
+            "received": "Received",
+            "respond_by": "Respond by",
+            "state": "State"
+        },
+        "t": {
+            "requests": "Requests",
+            "new": "New",
+            "converted": "Converted",
+            "pieces": "Pieces requested"
+        }
+    },
+    "rstate": {
+        "NEW": "New",
+        "UNDER_COSTING": "Under costing",
+        "QUOTED": "Quoted",
+        "DECLINED": "Declined",
+        "CONVERTED": "Converted"
+    },
+    "l": {
+        "title": "Price schedules",
+        "subtitle": "The agreed prices a buyer sees, by product, season and validity period.",
+        "search": "Search prices…",
+        "pick_label": "Filter by season",
+        "pick_all": "All seasons",
+        "new": "New price line",
+        "edit_title": "Edit price line",
+        "dialog_sub": "A price is published to the buyer only once its validity window opens.",
+        "create": "Add price",
+        "empty_title": "No price line yet",
+        "empty_text": "Add the prices agreed with a buyer with New price line.",
+        "delete_title": "Delete price line",
+        "delete_text": ":name will no longer show to the buyer.",
+        "new_title": "New price line",
+        "delete_aria": "Delete",
+        "c": {
+            "product": "Product",
+            "season": "Season",
+            "price": "Price",
+            "incoterm": "Incoterm",
+            "min_qty": "Min qty",
+            "valid_to": "Valid to"
+        },
+        "f": {
+            "product": "Product",
+            "buyer": "Buyer",
+            "season": "Season",
+            "price": "Price",
+            "incoterm": "Incoterm",
+            "min_qty": "Minimum quantity",
+            "valid_from": "Valid from",
+            "valid_to": "Valid to"
+        },
+        "t": {
+            "lines": "Price lines",
+            "buyers": "Buyers",
+            "seasons": "Seasons",
+            "average": "Average price"
+        }
+    },
+    "i": {
+        "title": "Invoice lookup",
+        "subtitle": "Commercial invoices published to the buyer, exactly as they were issued.",
+        "search": "Search invoices…",
+        "pick_label": "Filter by state",
+        "pick_all": "All states",
+        "new": "Publish invoice",
+        "edit_title": "Edit invoice",
+        "dialog_sub": "Published means visible to the buyer; issued means booked in the ledger.",
+        "create": "Publish",
+        "empty_title": "No invoice published yet",
+        "empty_text": "Publish the commercial invoices a buyer may see with Publish invoice.",
+        "delete_title": "Delete invoice",
+        "delete_text": ":name will no longer show to the buyer.",
+        "new_title": "Publish invoice",
+        "delete_aria": "Delete",
+        "c": {
+            "invoice": "Invoice",
+            "buyer": "Buyer",
+            "amount": "Amount",
+            "issued": "Issued",
+            "due": "Due",
+            "state": "State"
+        },
+        "f": {
+            "number": "Invoice number",
+            "buyer": "Buyer",
+            "order": "Against order",
+            "amount": "Amount (USD)",
+            "issued": "Issued",
+            "due": "Due",
+            "state": "State"
+        },
+        "t": {
+            "invoices": "Invoices",
+            "value": "Value published",
+            "overdue": "Overdue",
+            "paid": "Paid"
+        }
+    },
+    "istate": {
+        "PUBLISHED": "Published",
+        "PAID": "Paid",
+        "OVERDUE": "Overdue",
+        "UNPUBLISHED": "Unpublished"
+    },
+    "y": {
+        "title": "Payment progress",
+        "subtitle": "What has been billed, what has been received and what is due.",
+        "search": "Search buyers…",
+        "pick_label": "Filter by ageing band",
+        "pick_all": "All ageing bands",
+        "new": "Add payment line",
+        "edit_title": "Edit payment line",
+        "dialog_sub": "Outstanding is billed less received; the ageing band follows the due date.",
+        "create": "Add line",
+        "empty_title": "No payment line yet",
+        "empty_text": "Track each buyer's billed and received with Add payment line.",
+        "delete_title": "Delete payment line",
+        "delete_text": ":name's payment line will be removed.",
+        "new_title": "Add payment line",
+        "delete_aria": "Delete",
+        "c": {
+            "buyer": "Buyer",
+            "billed": "Billed",
+            "received": "Received",
+            "outstanding": "Outstanding",
+            "next_due": "Next due",
+            "ageing": "Ageing"
+        },
+        "f": {
+            "buyer": "Buyer",
+            "billed": "Billed (USD)",
+            "received": "Received (USD)",
+            "terms": "Payment terms",
+            "next_due": "Next due"
+        },
+        "t": {
+            "billed": "Billed",
+            "received": "Received",
+            "outstanding": "Outstanding",
+            "over_90": "Over 90 days"
+        }
+    },
+    "ageing": {
+        "NOT_DUE": "Not due",
+        "D30": "1–30 days",
+        "D60": "31–60 days",
+        "D90": "61–90 days",
+        "OVER_90": "Over 90 days"
+    },
+    "terms": {
+        "LC_SIGHT": "L/C at sight",
+        "LC_60": "L/C 60 days",
+        "TT_30": "TT 30 days",
+        "TT_60": "TT 60 days",
+        "OPEN_90": "Open account 90 days"
+    },
+    "r": {
+        "title": "Request inbox",
+        "subtitle": "What a buyer asks for through the portal, routed to the desk that answers it.",
+        "search": "Search requests…",
+        "pick_label": "Filter by kind",
+        "pick_all": "All kinds",
+        "new": "Log request",
+        "edit_title": "Edit request",
+        "dialog_sub": "Routing is the point: an unrouted request is an unanswered one.",
+        "create": "Log request",
+        "empty_title": "No request yet",
+        "empty_text": "Log what a buyer asks for with Log request.",
+        "delete_title": "Delete request",
+        "delete_text": ":name will be removed from the inbox.",
+        "new_title": "Log request",
+        "delete_aria": "Delete",
+        "c": {
+            "request": "Request",
+            "kind": "Kind",
+            "routed_to": "Routed to",
+            "age": "Age",
+            "priority": "Priority",
+            "state": "State"
+        },
+        "f": {
+            "subject": "Subject",
+            "buyer": "Buyer",
+            "kind": "Kind",
+            "routed_to": "Routed to",
+            "raised_on": "Raised on",
+            "age": "Age",
+            "age_hint": "Counted from Raised on",
+            "priority": "Priority",
+            "state": "State"
+        },
+        "t": {
+            "requests": "Requests",
+            "new": "New",
+            "unrouted": "Unrouted",
+            "urgent": "Urgent"
+        }
+    },
+    "rkind": {
+        "ORDER_CHANGE": "Order change",
+        "SAMPLE": "Sample request",
+        "DOCUMENT": "Document request",
+        "PRICE": "Price query",
+        "SHIPMENT": "Shipment query",
+        "OTHER": "Other"
+    },
+    "desk": {
+        "MERCHANDISING": "Merchandising",
+        "SAMPLE_ROOM": "Sample room",
+        "COMMERCIAL": "Commercial",
+        "PLANNING": "Planning",
+        "QUALITY": "Quality",
+        "UNROUTED": "Unrouted"
+    },
+    "prio": {
+        "URGENT": "Urgent",
+        "NORMAL": "Normal",
+        "LOW": "Low"
+    },
+    "qstate": {
+        "NEW": "New",
+        "IN_PROGRESS": "In progress",
+        "ANSWERED": "Answered",
+        "CLOSED": "Closed"
+    },
+    "c": {
+        "title": "Complaints and claims",
+        "subtitle": "Complaints raised by a buyer, with the shipment, the cause and the resolution.",
+        "search": "Search complaints…",
+        "pick_label": "Filter by state",
+        "pick_all": "All states",
+        "new": "Log complaint",
+        "edit_title": "Edit complaint",
+        "dialog_sub": "A complaint carries a claim value only once the buyer has quantified it.",
+        "create": "Log complaint",
+        "empty_title": "No complaint yet",
+        "empty_text": "Log what a buyer complains about with Log complaint.",
+        "delete_title": "Delete complaint",
+        "delete_text": ":name will be removed from the register.",
+        "new_title": "Log complaint",
+        "delete_aria": "Delete",
+        "c": {
+            "reference": "Reference",
+            "buyer": "Buyer",
+            "shipment": "Shipment",
+            "cause": "Cause",
+            "claim": "Claim",
+            "state": "State"
+        },
+        "f": {
+            "reference": "Reference",
+            "buyer": "Buyer",
+            "shipment": "Shipment",
+            "cause": "Cause",
+            "claim": "Claim value (USD)",
+            "raised_on": "Raised on",
+            "state": "State",
+            "resolution": "Resolution",
+            "resolution_ph": "What was agreed, and what it cost"
+        },
+        "t": {
+            "complaints": "Complaints",
+            "open": "Open",
+            "claims": "Claim value",
+            "settled": "Settled"
+        }
+    },
+    "cause": {
+        "SHADE": "Shade variation",
+        "MEASUREMENT": "Measurement",
+        "STITCHING": "Stitching",
+        "PACKING": "Packing",
+        "SHORT_SHIPMENT": "Short shipment",
+        "LATE_DELIVERY": "Late delivery",
+        "NOT_ESTABLISHED": "Not established"
+    },
+    "cstate": {
+        "OPEN": "Open",
+        "INVESTIGATING": "Investigating",
+        "OFFER_MADE": "Offer made",
+        "SETTLED": "Settled",
+        "REJECTED": "Rejected"
+    },
+    "a": {
+        "title": "Announcements",
+        "subtitle": "Notices published to the portal — holidays, capacity, policy changes.",
+        "search": "Search announcements…",
+        "pick_label": "Filter by audience",
+        "pick_all": "All audiences",
+        "new": "New announcement",
+        "edit_title": "Edit announcement",
+        "dialog_sub": "An announcement is published to an audience for a window, then it expires.",
+        "create": "Publish",
+        "empty_title": "No announcement yet",
+        "empty_text": "Tell buyers about holidays, capacity and policy with New announcement.",
+        "delete_title": "Delete announcement",
+        "delete_text": ":name will be taken off the portal.",
+        "new_title": "New announcement",
+        "delete_aria": "Delete",
+        "c": {
+            "announcement": "Announcement",
+            "kind": "Kind",
+            "audience": "Audience",
+            "expires": "Expires",
+            "reads": "Reads",
+            "state": "State"
+        },
+        "f": {
+            "title": "Title",
+            "audience": "Audience",
+            "buyer": "Buyer",
+            "kind": "Kind",
+            "published": "Published",
+            "expires": "Expires",
+            "reads": "Reads",
+            "state": "State",
+            "state_hint": "Only Draft is kept; the rest follows the dates.",
+            "body": "Body",
+            "body_ph": "What buyers need to know"
+        },
+        "t": {
+            "announcements": "Announcements",
+            "live": "Live",
+            "scheduled": "Scheduled",
+            "reads": "Reads"
+        }
+    },
+    "audience": {
+        "ALL": "All buyers",
+        "STRATEGIC": "Strategic buyers",
+        "ONE": "One buyer",
+        "LOGISTICS": "Logistics contacts"
+    },
+    "nkind": {
+        "HOLIDAY": "Holiday",
+        "CAPACITY": "Capacity",
+        "POLICY": "Policy",
+        "SYSTEM": "System",
+        "GENERAL": "General"
+    },
+    "nstate": {
+        "LIVE": "Live",
+        "SCHEDULED": "Scheduled",
+        "EXPIRED": "Expired",
+        "DRAFT": "Draft"
+    },
+    "f": {
+        "title": "Feedback surveys",
+        "subtitle": "Surveys sent to buyers and the scores that come back, season by season.",
+        "search": "Search surveys…",
+        "pick_label": "Filter by state",
+        "pick_all": "All states",
+        "new": "New survey",
+        "edit_title": "Edit survey",
+        "dialog_sub": "Response rate is what decides whether a score means anything.",
+        "create": "Send survey",
+        "empty_title": "No survey yet",
+        "empty_text": "Ask buyers how a season went with New survey.",
+        "delete_title": "Delete survey",
+        "delete_text": ":name and its scores will be removed.",
+        "new_title": "New survey",
+        "delete_aria": "Delete",
+        "c": {
+            "survey": "Survey",
+            "season": "Season",
+            "sent": "Sent",
+            "replies": "Replies",
+            "score": "Score",
+            "sent_on": "Sent on",
+            "state": "State"
+        },
+        "f": {
+            "survey": "Survey",
+            "buyer": "Buyer",
+            "season": "Season",
+            "sent_on": "Sent on",
+            "recipients": "Recipients",
+            "responses": "Responses",
+            "score": "Average score",
+            "score_hint": "Out of 10",
+            "state": "State"
+        },
+        "t": {
+            "surveys": "Surveys",
+            "responses": "Responses",
+            "average": "Average score",
+            "open": "Open"
+        }
+    },
+    "fstate": {
+        "OPEN": "Open",
+        "CLOSED": "Closed",
+        "DRAFT": "Draft"
+    },
+    "t": {
+        "title": "Support tickets",
+        "subtitle": "Portal problems a buyer reports, with owner, priority and time to close.",
+        "search": "Search tickets…",
+        "pick_label": "Filter by state",
+        "pick_all": "All states",
+        "new": "New ticket",
+        "edit_title": "Edit ticket",
+        "dialog_sub": "A ticket is a portal problem, not an order problem — those go to requests.",
+        "create": "Raise ticket",
+        "empty_title": "No ticket yet",
+        "empty_text": "Log portal problems a buyer reports with New ticket.",
+        "delete_title": "Delete ticket",
+        "delete_text": ":name will be removed from the desk.",
+        "new_title": "New ticket",
+        "delete_aria": "Delete",
+        "c": {
+            "reference": "Reference",
+            "subject": "Subject",
+            "owner": "Owner",
+            "hours": "Hours",
+            "priority": "Priority",
+            "state": "State"
+        },
+        "f": {
+            "reference": "Reference",
+            "subject": "Subject",
+            "buyer": "Buyer",
+            "priority": "Priority",
+            "owner": "Owner",
+            "raised_on": "Raised on",
+            "state": "State"
+        },
+        "unassigned": "Unassigned",
+        "t": {
+            "tickets": "Tickets",
+            "open": "Open",
+            "unassigned": "Unassigned",
+            "urgent": "Urgent"
+        }
+    },
+    "tprio": {
+        "URGENT": "Urgent",
+        "HIGH": "High",
+        "NORMAL": "Normal",
+        "LOW": "Low"
+    },
+    "tstate": {
+        "NEW": "New",
+        "IN_PROGRESS": "In progress",
+        "WAITING": "Waiting on buyer",
+        "RESOLVED": "Resolved",
+        "CLOSED": "Closed"
+    },
+    "g": {
+        "title": "Portal usage",
+        "subtitle": "What buyers look at, how often, and where they stop looking.",
+        "search": "Search buyers…",
+        "pick_label": "Filter by period",
+        "pick_all": "All periods",
+        "new": "Add usage line",
+        "edit_title": "Edit usage line",
+        "dialog_sub": "Usage is held per buyer per month, which is the grain the account review uses.",
+        "create": "Add line",
+        "empty_title": "No usage yet",
+        "empty_text": "Record a buyer's month with Add usage line.",
+        "delete_title": "Delete usage line",
+        "delete_text": ":name's line for the month will be removed.",
+        "new_title": "Add usage line",
+        "delete_aria": "Delete",
+        "c": {
+            "buyer": "Buyer",
+            "period": "Period",
+            "logins": "Logins",
+            "users": "Users",
+            "downloads": "Downloads",
+            "session": "Avg session",
+            "adoption": "Adoption"
+        },
+        "f": {
+            "buyer": "Buyer",
+            "period": "Period",
+            "logins": "Logins",
+            "users": "Active users",
+            "most_opened": "Most opened",
+            "downloads": "Downloads",
+            "session": "Average session",
+            "adoption": "Adoption"
+        },
+        "t": {
+            "logins": "Logins",
+            "users": "Active users",
+            "downloads": "Downloads",
+            "adoption": "Average adoption"
+        }
+    },
+    "page": {
+        "ORDERS": "Order visibility",
+        "SHIPMENTS": "Shipment progress",
+        "SAMPLES": "Sample progress",
+        "DOCUMENTS": "Document vault",
+        "INVOICES": "Invoice lookup"
+    },
+    "b": {
+        "title": "Branding profiles",
+        "subtitle": "Logo, colours and wording a buyer sees when the portal is opened.",
+        "search": "Search profiles…",
+        "pick_label": "Filter by theme",
+        "pick_all": "All themes",
+        "new": "New profile",
+        "edit_title": "Edit branding profile",
+        "dialog_sub": "One profile per buyer. A buyer without one gets the group default.",
+        "create": "Save profile",
+        "empty_title": "No branding profile yet",
+        "empty_text": "Give a buyer the portal's look with New profile.",
+        "delete_title": "Delete branding profile",
+        "delete_text": ":name will get the group default.",
+        "new_title": "New profile",
+        "delete_aria": "Delete",
+        "c": {
+            "buyer": "Buyer",
+            "theme": "Theme",
+            "accent": "Accent",
+            "logo": "Logo",
+            "updated": "Updated",
+            "live": "Live"
+        },
+        "f": {
+            "buyer": "Buyer",
+            "theme": "Theme",
+            "accent": "Accent slot",
+            "logo": "Logo file",
+            "attach": "Upload logo",
+            "logo_hint": "PNG, JPEG or WebP, up to 2 MB — or just the file name",
+            "welcome": "Welcome line",
+            "welcome_ph": "Welcome to your production view",
+            "support": "Support address",
+            "updated": "Last updated",
+            "updated_hint": "Left blank, the day it is saved",
+            "live": "Live"
+        },
+        "slot": "Slot :n",
+        "t": {
+            "profiles": "Profiles",
+            "live": "Live",
+            "default": "On the default",
+            "themes": "Themes in use"
+        }
+    },
+    "theme": {
+        "LIGHT": "Light",
+        "DARK": "Dark",
+        "SYSTEM": "Follows the viewer",
+        "HIGH_CONTRAST": "High contrast"
+    },
+    "e": {
+        "title": "Activity trail",
+        "subtitle": "Every login, download and approval made from the buyer's side, timestamped.",
+        "search": "Search activity…",
+        "pick_label": "Filter by action",
+        "pick_all": "All actions",
+        "new": "Add entry",
+        "edit_title": "Edit activity entry",
+        "dialog_sub": "The trail is written by the portal; entries added here are corrections.",
+        "create": "Add entry",
+        "empty_title": "No activity yet",
+        "empty_text": "Correct the trail with Add entry.",
+        "delete_title": "Delete activity entry",
+        "delete_text": ":name's entry will be removed from the trail.",
+        "new_title": "Add entry",
+        "delete_aria": "Delete",
+        "c": {
+            "date": "Date",
+            "time": "Time",
+            "actor": "Actor",
+            "buyer": "Buyer",
+            "action": "Action",
+            "device": "Device"
+        },
+        "f": {
+            "actor": "Actor",
+            "buyer": "Buyer",
+            "action": "Action",
+            "target": "Target",
+            "date": "Date",
+            "date_hint": "Left blank, today",
+            "time": "Time",
+            "time_hint": "24-hour, HH:MM — left blank, now",
+            "device": "Device"
+        },
+        "t": {
+            "entries": "Entries",
+            "downloads": "Downloads",
+            "approvals": "Approvals",
+            "actors": "Distinct actors"
+        }
+    },
+    "action": {
+        "SIGNED_IN": "Signed in",
+        "DOWNLOADED": "Downloaded",
+        "APPROVED": "Approved",
+        "COMMENTED": "Commented",
+        "RAISED_REQUEST": "Raised request",
+        "SIGNED_OUT": "Signed out"
+    },
+    "device": {
+        "DESKTOP": "Desktop",
+        "MOBILE": "Mobile",
+        "TABLET": "Tablet"
+    }
+}

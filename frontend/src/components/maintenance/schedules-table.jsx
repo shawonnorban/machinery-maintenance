@@ -3,8 +3,8 @@
 import { startTransition, useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
-import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Modal } from "@/components/ui/modal";
 import { FormField } from "@/components/ui/form-field";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `ScheduleController::index` — one concrete occurrence of a plan. */
 function SchedulesTable({ schedules, meta, page, status, actions }) {
@@ -57,11 +58,11 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-3">
-        <div className="w-full max-w-[220px]">
-          <Select options={statusOptions} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
-        </div>
-      </div>
+      <SearchingData
+        fields={[{ name: "status", label: t("status"), type: "select", all: false, options: statusOptions }]}
+        values={{ status }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+      />
 
       <DataTable
         columns={[
@@ -70,7 +71,7 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
             header: t("asset"),
             render: (s) => (
               <div>
-                <Link href={`/assets/${s.asset?.id}`} className="font-medium text-brand hover:underline">
+                <Link href={`/assets/${refOf(s.asset, "asset_code")}`} className="font-medium text-brand hover:underline">
                   {s.asset?.asset_code}
                 </Link>
                 <div className="text-xs text-foreground-muted">{s.plan_name}</div>
@@ -98,13 +99,14 @@ function SchedulesTable({ schedules, meta, page, status, actions }) {
         rowActions={(s) =>
           ["PLANNED", "DUE", "OVERDUE", "IN_PROGRESS"].includes(s.status)
             ? [
-                { label: t("complete"), onSelect: () => runComplete(s) },
-                { label: t("reschedule"), onSelect: () => setModal({ type: "reschedule", schedule: s }) },
-                { label: t("skip"), destructive: true, onSelect: () => setModal({ type: "skip", schedule: s }) },
+                { icon: "complete", label: t("complete"), onSelect: () => runComplete(s) },
+                { icon: "reschedule", label: t("reschedule"), onSelect: () => setModal({ type: "reschedule", schedule: s }) },
+                { icon: "skip", label: t("skip"), destructive: true, onSelect: () => setModal({ type: "skip", schedule: s }) },
               ]
             : []
         }
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
 

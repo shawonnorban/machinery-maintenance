@@ -1,0 +1,12 @@
+[
+ {"goto": "/knit-production/opening-balance?tab=entry"},
+ {"texts": "ob_store", "of": "main [data-slot='select-trigger']"},
+ {"goto": "/knit-production/yarn-stock-racking-board"}, {"shot": "c-rack-board"},
+ {"goto": "/knit-production/yarn-opening"},
+ {"pick": "Store", "exact": true, "option": "DHK-YRN"},
+ {"pick": "Month", "exact": true, "option": "2026-10"},
+ {"click": "main button:has-text('Search')", "after": 8000},
+ {"shot": "c-grid"},
+ {"goto": "/knit-production/daily-receive"}, {"shot": "c-mrr-list"},
+ {"goto": "/knit-production/opening-balance"}, {"shot": "c-ob-list"}
+]

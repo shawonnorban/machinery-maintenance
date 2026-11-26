@@ -1,5 +1,7 @@
 import { platformApiFetch } from "@/lib/platform-api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { Ticket } from "lucide-react";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { PlatformHeader } from "@/components/platform/ui";
 import { TicketThread } from "@/components/platform/ticket-thread";
 import { replyToTicket, setTicketStatus, assignTicket, reclassifyTicket, uploadTicketAttachment } from "../actions";
 
@@ -13,10 +15,13 @@ export default async function PlatformTicketDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
+      <PlatformHeader
         breadcrumb={[{ label: "Tickets", href: "/platform/tickets" }, { label: ticket.subject }]}
         title={ticket.subject}
         description={`${ticket.company?.name ?? "—"} · opened by ${ticket.opener?.name ?? "—"}`}
+        icon={<Ticket />}
+        tone="warning"
+        badge={<StatusBadge status={ticket.status} />}
       />
       <TicketThread
         ticket={ticket}

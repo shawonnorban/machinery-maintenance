@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `WarrantyApiController::store` (`RecordWarranty`). `redirect()` stays outside the try/catch — it works by throwing internally. */
 async function createWarranty(previousState, formData) {
@@ -29,7 +30,7 @@ async function createWarranty(previousState, formData) {
     throw error;
   }
 
-  redirect(`/vendors/warranties/${warranty.id}`);
+  redirect(`/vendors/warranties/${refOf(warranty, "warranty_number")}`);
 }
 
 export { createWarranty };

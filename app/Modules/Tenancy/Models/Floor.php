@@ -13,5 +13,5 @@ class Floor extends BaseModel
 
     protected $table = 'floors';
 
-    protected $fillable = ['company_id', 'building_id', 'name', 'code'];
+    protected $fillable = ['company_id', 'building_id', 'name', 'code', 'capacity', 'status'];
 }

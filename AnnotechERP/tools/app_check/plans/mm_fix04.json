@@ -1,0 +1,6 @@
+[
+ {"goto": "/breakdowns/BD-DHK-202609-00008"}, {"wait": 15000}, {"shot": "i01-breakdown-header"},
+ {"goto": "/inventory/parts/JK-DDL9000-HOOK"}, {"wait": 15000}, {"shot": "i02-part-header"},
+ {"goto": "/technicians/EMP-1003/edit"}, {"wait": 15000}, {"shot": "i03-legacy-tech-edit"},
+ {"goto": "/technicians"}, {"wait": 12000}, {"shot": "i04-technicians"}
+]

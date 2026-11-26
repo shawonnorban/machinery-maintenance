@@ -98,7 +98,7 @@ class FileApiTest extends TestCase
 
         $response = $this->withToken($this->tokenFor($this->engineer))
             ->postJson("/api/v1/work-orders/{$workOrder->id}/attachments", [
-                'file' => UploadedFile::fake()->image('finished.jpg'),
+                'file' => UploadedFile::fake()->image('finished.png'),
             ])
             ->assertCreated()
             ->assertJsonPath('data.attachable_type', 'work_order')
@@ -120,7 +120,7 @@ class FileApiTest extends TestCase
         // standalone attachment, as opposed to a checklist photo, rides on.
         $this->withToken($this->tokenFor($this->technician))
             ->postJson("/api/v1/work-orders/{$workOrder->id}/attachments", [
-                'file' => UploadedFile::fake()->image('finished.jpg'),
+                'file' => UploadedFile::fake()->image('finished.png'),
             ])
             ->assertForbidden();
     }
@@ -220,7 +220,7 @@ class FileApiTest extends TestCase
 
         $photo = $this->withToken($this->tokenFor($this->engineer))
             ->postJson("/api/v1/work-orders/{$workOrder->id}/attachments", [
-                'file' => UploadedFile::fake()->image('reading.jpg'),
+                'file' => UploadedFile::fake()->image('reading.png'),
             ])
             ->json('data.id');
 

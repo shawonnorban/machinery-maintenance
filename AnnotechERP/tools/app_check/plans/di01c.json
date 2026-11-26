@@ -1,0 +1,1 @@
+[{"goto": "/system-settings/integration-activity"},{"wait": 20000},{"goto": "/hr-payroll/id-card-print"},{"wait": 15000}]

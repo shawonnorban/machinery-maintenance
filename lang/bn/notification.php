@@ -58,6 +58,7 @@ return [
 
     'received' => 'প্রাপ্ত',
     'event_label' => 'ঘটনা',
+    'locked_by_company' => 'কোম্পানি ঠিক করে দিয়েছে',
     'escalated' => 'এসকেলেট করা হয়েছে',
     'escalation_level' => 'এসকেলেশনের স্তর',
     'escalated_from' => 'কেউ দায়িত্ব গ্রহণ না করায় এসকেলেট করা হয়েছে',
@@ -100,11 +101,96 @@ return [
     'event_support_access' => 'সাপোর্ট আপনার তথ্য দেখেছে',
     'event_ticket_replied' => 'আপনার টিকেটে উত্তর এসেছে',
     'event_ticket_resolved' => 'টিকেট সমাধান হিসেবে চিহ্নিত হয়েছে',
+    'event_floor_requisition_submitted' => 'ফ্লোর রিকুইজিশন জমা হয়েছে',
+    'event_floor_requisition_issued' => 'ফ্লোর রিকুইজিশন ইস্যু হয়েছে',
+    'event_floor_requisition_shortage' => 'ফ্লোর রিকুইজিশনে ঘাটতি',
+    'event_earmark_stock_arrived' => 'নির্ধারিত স্টক এসেছে',
+    'event_returnable_overdue' => 'ফেরতযোগ্য জিনিস বকেয়া',
+    'event_earmark_waiting' => 'ঘাটতি এখনো অপূর্ণ',
+    'event_fabric_inspection_failed' => 'ফ্যাব্রিক ইন্সপেকশন ব্যর্থ',
+    'event_lot_expiring' => 'লটের মেয়াদ ফুরিয়ে আসছে',
+    'event_stock_count_stale' => 'স্টক গণনা খোলা পড়ে আছে',
+    'event_shipment_arriving' => 'শিপমেন্ট আসছে',
+    'event_shipment_delayed' => 'শিপমেন্টে দেরি',
+    'event_lc_expiring' => 'LC-র মেয়াদ ফুরিয়ে আসছে',
+    'event_global_broadcast' => 'কোম্পানির ঘোষণা',
+    'event_approval_overdue' => 'অনুমোদনের রিকোয়েস্টের সময় পেরিয়েছে',
 
     // --- Notification Messages ---
     // SRS 48: Notification message is generated and stored
     // in the recipient's selected language.
+    'event_os_orders_changed' => 'Order Summary: অর্ডার বদল',
+    'event_os_pending_work' => 'Order Summary: প্রতিদিনের বাকি কাজ',
+    'event_ds_samples_changed' => 'Dev Sample: স্যাম্পল বদল',
+    'event_ds_deadline_due' => 'Dev Sample: সাবমিশন ডেডলাইন',
+    'event_pb_requisitions_changed' => 'Pre-Budget: রিকুইজিশন বদল',
+    'event_pb_budget_changed' => 'Pre-Budget: বাজেট বদল',
+    'event_pb_stock_needed' => 'Pre-Budget: স্টক ইয়ার্ন ব্যবহার দরকার',
+    'event_pb_pending_work' => 'Pre-Budget: প্রতিদিনের বাকি কাজ',
+    'event_es_statements_changed' => 'Export Statement: স্টেটমেন্ট বদল',
+    'event_es_pending_work' => 'Export Statement: প্রতিদিনের বাকি কাজ',
+    'sheet' => [
+        'kind' => [
+            'CREATE' => 'যোগ করেছেন',
+            'EDIT' => 'বদলেছেন',
+            'DELETE' => 'মুছেছেন',
+            'COMPLETE' => 'সম্পন্ন করেছেন',
+            'ADD_STYLE' => 'স্টাইল যোগ করেছেন',
+            'REMOVE_STYLE' => 'স্টাইল বাদ দিয়েছেন',
+            'COSTING' => 'কস্টিং সেভ করেছেন',
+            'COSTING_DONE' => 'নিট/ডাইং কস্টিং শেষ করেছেন',
+            'STOCK' => 'স্টক ইয়ার্ন সেভ করেছেন',
+            'STOCK_DONE' => 'স্টক ইয়ার্ন ব্যবহার শেষ করেছেন',
+            'BOM_CREATE' => 'এক্সেসরিজ BOM বানিয়েছেন',
+            'BOM_UPDATE' => 'এক্সেসরিজ BOM বদলেছেন',
+            'BOM_DELETE' => 'এক্সেসরিজ BOM মুছেছেন',
+            'WITHDRAW' => 'ফেরত নিয়েছেন',
+            'REVISE' => 'রিভাইজ করেছেন',
+            'CANCEL' => 'বাতিল করেছেন (অর্ডার বদলেছে)',
+        ],
+    ],
     'event' => [
+        // Order Summary, Dev Sample Status and Pre-Budget (user, 2026-11-21).
+        'OS_ORDERS_CHANGED' => [
+            'title' => 'Order Summary: :by :n টি অর্ডার :action',
+            'body' => ':buyers — :orders · :cells ঘর',
+        ],
+        'OS_PENDING_WORK' => [
+            'title' => 'Order Summary: অর্ডারে নজর দরকার',
+            'body' => ':overdue টির RFI/SD পেরিয়েছে, :week টি ৭ দিনের মধ্যে, :booking টির বুকিং বাকি (LDD/ETD ১৪ দিনের মধ্যে) — :buyers',
+        ],
+        'DS_SAMPLES_CHANGED' => [
+            'title' => 'Dev Sample: :by :n টি স্যাম্পল :action',
+            'body' => ':samples · :cells ঘর',
+        ],
+        'DS_DEADLINE_DUE' => [
+            'title' => 'Dev Sample: সাবমিশন ডেডলাইন',
+            'body' => ':overdue টির ডেডলাইন পেরিয়েছে, :soon টি ২ দিনের মধ্যে — :samples',
+        ],
+        'PB_REQUISITIONS_CHANGED' => [
+            'title' => 'Pre-Budget: :by :n টি রিকুইজিশন :action',
+            'body' => ':buyers — :styles · :cells ঘর',
+        ],
+        'PB_BUDGET_CHANGED' => [
+            'title' => 'Pre-Budget: :by :budget — :action',
+            'body' => ':budget · :buyer',
+        ],
+        'PB_STOCK_NEEDED' => [
+            'title' => 'স্টক ইয়ার্ন ব্যবহার দরকার: :budget',
+            'body' => ':by :budget (:buyer) — :action। এর Stock Yarn Use পূরণ করুন।',
+        ],
+        'PB_PENDING_WORK' => [
+            'title' => 'Pre-Budget: বাজেটের কাজ বাকি',
+            'body' => ':costing টি কস্টিং, :stock টি স্টক ইয়ার্ন, :accessories টি এক্সেসরিজ বাজেট বাকি — :budgets',
+        ],
+        'ES_STATEMENTS_CHANGED' => [
+            'title' => 'Export Statement: :by :n টি ইনভয়েস :action',
+            'body' => ':invoices · নিট :value · :cells ঘর',
+        ],
+        'ES_PENDING_WORK' => [
+            'title' => 'Export Statement: ডকুমেন্ট ও ক্লেইমের সময়',
+            'body' => ':docs_overdue টির ১০ দিনের ডকুমেন্ট জমার সময় পেরিয়েছে, :docs_soon টি ২ দিনের মধ্যে, :claim_soon টির ক্যাশ ইনসেনটিভ ক্লেইমের সময় ৩০ দিনের মধ্যে শেষ — :invoices',
+        ],
         'MAINTENANCE_DUE' => [
             'title' => 'মেইনটেনেন্স নির্ধারিত: :asset',
             'body' => ':plan-এর নির্ধারিত সময় :due_at।',
@@ -153,6 +239,10 @@ return [
             'title' => 'অনুমোদনের সিদ্ধান্ত :decision: :number',
             'body' => ':title-এর সিদ্ধান্ত :decision হয়েছে।',
         ],
+        'APPROVAL_OVERDUE' => [
+            'title' => 'সময় পেরোনো অনুমোদন: :number',
+            'body' => ':title-এর শেষ তারিখ পেরিয়েছে, এখনো :waiting_on-এর অপেক্ষায়।',
+        ],
 
         'LOW_STOCK' => [
             'title' => 'স্টক কম: :part',
@@ -185,7 +275,7 @@ return [
         'FABRIC_INSPECTION_FAILED' => [
             'title' => 'ইন্সপেকশন ফেল: :number',
             'body' => 'লটে :percent পয়েন্ট উঠেছে, সীমা :threshold। '
-                .'বড় ইন্সপেকশন খুলুন, নয়তো সাপ্লায়ারের সাথে কথা বলুন।',
+                .'বড় ইন্সপেকশন খুলুন, নয়তো সাপ্লায়ারের সাথে কথা বলুন।',
         ],
         'LOT_EXPIRING' => [
             'title' => 'মেয়াদ শেষ হচ্ছে: :item, লট :lot_no',
@@ -224,6 +314,58 @@ return [
         'TICKET_REPLIED' => [
             'title' => 'আপনার টিকিটে উত্তর: :subject',
             'body' => 'সাপোর্টের :name উত্তর দিয়েছেন।',
+        ],
+        'GLOBAL_BROADCAST' => [
+            'title' => ':title',
+            'body' => ':message',
+        ],
+        'MP_QUOTATION_NEGOTIATION' => [
+            'title' => 'দাম রিভাইজের অনুরোধ',
+            'body' => ':pr-এর :item-এর জন্য :qt: :message',
+        ],
+        'MP_QUOTATION_REJECTED' => [
+            'title' => 'কোটেশন প্রত্যাখ্যাত',
+            'body' => ':pr-এর :item-এর জন্য :qt প্রত্যাখ্যাত: :reason',
+        ],
+        'MP_QUOTATION_APPROVED' => [
+            'title' => 'কোটেশন অনুমোদিত',
+            'body' => ':pr-এর :item-এর জন্য :qt :price দামে অনুমোদিত।',
+        ],
+        'HR_OT_REQUESTED' => [
+            'title' => 'আপনার অনুমোদনের অপেক্ষায় OT অনুরোধ',
+            'body' => ':no — :line, :date, :window, :n জন কর্মী।',
+        ],
+        'HR_OT_DECIDED' => [
+            'title' => 'OT অনুরোধ :status',
+            'body' => ':no — :line, :date — :by :status করেছেন।',
+        ],
+        'MP_QUOTATION_RECEIVED' => [
+            'title' => 'সরবরাহকারীর নতুন কোটেশন',
+            'body' => ':supplier :pr-এর :item-এর জন্য কোট দিয়েছে (:qt)।',
+        ],
+        'MP_QUOTATION_REVISED' => [
+            'title' => 'সরবরাহকারী কোটেশন রিভাইজ করেছে',
+            'body' => ':supplier :pr-এর :item-এর জন্য রিভিশন :revision পাঠিয়েছে (:qt)।',
+        ],
+        'MP_MATERIAL_RECEIVED' => [
+            'title' => 'ম্যাটেরিয়াল এসেছে',
+            'body' => ':pr-এর :item: :required :uom-এর মধ্যে :received এসেছে।',
+        ],
+        'MP_MATERIAL_ASSIGNED' => [
+            'title' => 'অনুমোদিত ম্যাটেরিয়াল আপনার দায়িত্বে',
+            'body' => ':supplier-এর :item (:pr, :qt) ফলো-আপ করার দায়িত্ব আপনার।',
+        ],
+        'MP_REQUIREMENT_AVAILABLE' => [
+            'title' => 'নতুন ম্যাটেরিয়াল চাহিদা এসেছে',
+            'body' => ':pr: :linesটা ম্যাটেরিয়াল লাইন কোটেশনের জন্য খোলা।',
+        ],
+        'SAMPLE_ASSIGNED' => [
+            'title' => 'স্যাম্পল :sample আপনাকে দেওয়া হয়েছে',
+            'body' => 'রিকুইজিশন :requisition অনুমোদিত হয়েছে; এর স্যাম্পল :sample তৈরির দায়িত্ব আপনার।',
+        ],
+        'SAMPLE_FEEDBACK_ACTION' => [
+            'title' => 'বায়ার ফিডব্যাক :feedback-এ আপনার পদক্ষেপ দরকার',
+            'body' => 'স্যাম্পল :sample-এর ফিডব্যাক আপনাকে দেওয়া হয়েছে, শেষ তারিখ :due।',
         ],
         'TICKET_RESOLVED' => [
             'title' => 'টিকিট সমাধান হয়েছে বলে চিহ্নিত: :subject',

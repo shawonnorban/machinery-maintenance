@@ -1,0 +1,162 @@
+[
+ {
+  "goto": "/dye-house/sc-order-list?tab=new"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "Prog Date",
+  "exact": true,
+  "text": "2026-11-06"
+ },
+ {
+  "pick": "Party",
+  "exact": true,
+  "option": "Square Textiles"
+ },
+ {
+  "pick": "Order No",
+  "exact": true,
+  "option": "SS27-TEE01"
+ },
+ {
+  "click": "main label:has-text('Dyeing Finishing') [role=checkbox]",
+  "after": 300
+ },
+ {
+  "pick": "Status",
+  "exact": true,
+  "option": "S/C OH Submitted"
+ },
+ {
+  "fill": "Remarks",
+  "exact": true,
+  "text": "Body and rib, two shades"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/sc-order-list"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "prog_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/sc-in-house-fabric-receive?tab=new"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "Challan No.",
+  "exact": true,
+  "text": "SQ-CH-1105"
+ },
+ {
+  "fill": "Challan Date",
+  "exact": true,
+  "text": "2026-11-06"
+ },
+ {
+  "pick": "Program No.",
+  "exact": true,
+  "option": "DFSCI-"
+ },
+ {
+  "pick": "Store",
+  "exact": true,
+  "option": "Fabric store (DHK-FAB)"
+ },
+ {
+  "fill": "Qty(Kg)",
+  "exact": true,
+  "text": "420"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/sc-in-house-fabric-receive"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "rcv_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/sc-order-list"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "prog_after",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/dyeing-sc-party-rate-in-house"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "sci-rate-empty"
+ },
+ {
+  "click": "main button:has-text('Yarn Twist') >> nth=0",
+  "after": 3000
+ },
+ {
+  "pick": "party",
+  "sel": "main label:has(> span:text-matches(\"^S/C Party\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Square Textiles"
+ },
+ {
+  "pick": "cur",
+  "sel": "main label:has(> span:text-matches(\"^Currency\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "BDT"
+ },
+ {
+  "pick": "status",
+  "sel": "main label:has(> span:text-matches(\"^Status\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Submitted"
+ },
+ {
+  "fill": "head",
+  "sel": "main input[placeholder='Rate head']",
+  "text": "Dyeing (dark shade)"
+ },
+ {
+  "fill": "rate",
+  "sel": "main label:has(> span:text-matches(\"^Rate\\*?$\")) input >> nth=0",
+  "text": "145"
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "after": 800
+ },
+ {
+  "shot": "sci-rate-filled"
+ },
+ {
+  "click": "main button:has-text('Save quotation')",
+  "after": 15000
+ },
+ {
+  "texts": "rate_badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "shot": "sci-rate-saved"
+ }
+]

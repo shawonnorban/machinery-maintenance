@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Modules\Inventory\Http\Controllers\Api\InventoryTransferApiController;
 use App\Modules\Inventory\Http\Controllers\Api\SparePartApiController;
 use App\Modules\Inventory\Http\Controllers\Api\SparePartCompatibilityApiController;
+use App\Modules\Inventory\Http\Controllers\Api\UomLookupApiController;
 use App\Modules\Inventory\Http\Controllers\Api\WorkOrderPartApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::middleware(['api.auth', 'throttle:api', 'idempotent'])->group(function (): void {
+    // The unit pick lists of every screen that keeps a unit as its code (AnnotechERP).
+    Route::get('/lookups/uoms', [UomLookupApiController::class, 'index'])->name('lookups.uoms');
+
     // Ahead of GET /spare-parts/{part}: a static segment registered after a
     // wildcard route sharing its prefix is swallowed by it.
     Route::get('/spare-parts/low-stock', [SparePartApiController::class, 'lowStock'])
@@ -53,6 +57,8 @@ Route::middleware(['api.auth', 'throttle:api', 'idempotent'])->group(function ()
     Route::delete('/spare-parts/{part}/compatibility/{compatibility}', [SparePartCompatibilityApiController::class, 'destroy'])
         ->name('spare-parts.compatibility.destroy');
 
+    Route::get('/inventory-transactions/issue-return', [SparePartApiController::class, 'issueReturnHistory'])
+        ->name('inventory-transactions.issue-return');
     Route::post('/inventory-transactions/{transaction}/reverse', [SparePartApiController::class, 'reverseTransaction'])
         ->name('inventory-transactions.reverse');
 

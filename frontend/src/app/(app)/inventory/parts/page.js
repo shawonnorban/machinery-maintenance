@@ -1,11 +1,8 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { SparePartsTable } from "@/components/inventory/spare-parts-table";
 import { getT } from "@/lib/i18n-server";
+import { applyPerPage } from "@/lib/per-page";
 
 /**
  * The spare-parts catalogue (docs/03-API-Specification.md §13; behaviour
@@ -22,6 +19,7 @@ export default async function SparePartsPage({ searchParams }) {
   const direction = params.direction ?? "asc";
 
   const query = new URLSearchParams({ page: String(page), sort, direction });
+  await applyPerPage(query, "/inventory/parts");
   if (search) query.set("search", search);
   if (active) query.set("active", active);
 
@@ -32,18 +30,14 @@ export default async function SparePartsPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("spare_parts") }]}
+      <ScreenHeader
+        url="/inventory/parts"
         title={t("spare_parts")}
         description={t("spare_parts_page_description")}
-        actions={
-          <Link href="/inventory/parts/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> {t("new_part")}
-          </Link>
-        }
       />
 
       <SparePartsTable
+        addHref="/inventory/parts/create"
         parts={parts.data}
         meta={parts.meta}
         page={page}

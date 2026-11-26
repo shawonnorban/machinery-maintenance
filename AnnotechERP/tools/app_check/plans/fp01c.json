@@ -1,0 +1,131 @@
+[
+ {
+  "goto": "/finishing-line/df-production-entry-mc-wise"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "s-open-empty"
+ },
+ {
+  "pick": "shift",
+  "sel": "main label:has(> span:text-matches(\"^Shift.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "A"
+ },
+ {
+  "pick": "floor",
+  "sel": "main label:has(> span:text-matches(\"^Prod. Floor.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "1st Floor"
+ },
+ {
+  "pick": "batch",
+  "sel": "main label:has(> span:text-matches(\"^Batch.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "B-26110011"
+ },
+ {
+  "pick": "machine",
+  "sel": "main label:has(> span:text-matches(\"^Machine.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "MFL-01"
+ },
+ {
+  "pick": "process",
+  "sel": "main label:has(> span:text-matches(\"^Process.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Stentering (ST)"
+ },
+ {
+  "fill": "out",
+  "sel": "main label:has(> span:text-matches(\"^Output .Kg..?$\")) input >> nth=0",
+  "text": "98.4"
+ },
+ {
+  "fill": "gsm",
+  "sel": "main label:has(> span:text-matches(\"^Fin. GSM.?$\")) input >> nth=0",
+  "text": "180"
+ },
+ {
+  "fill": "dia",
+  "sel": "main label:has(> span:text-matches(\"^Fin. Dia.?$\")) input >> nth=0",
+  "text": "72"
+ },
+ {
+  "fill": "load",
+  "sel": "main label:has(> span:text-matches(\"^Load Time.?$\")) input >> nth=0",
+  "text": "2026-11-06T08:00"
+ },
+ {
+  "fill": "unload",
+  "sel": "main label:has(> span:text-matches(\"^Unload Time.?$\")) input >> nth=0",
+  "text": "2026-11-06T09:40"
+ },
+ {
+  "click": "main button:has-text('Add Row')",
+  "after": 800
+ },
+ {
+  "pick": "batch2",
+  "sel": "main label:has(> span:text-matches(\"^Batch.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "B-26110011"
+ },
+ {
+  "pick": "machine2",
+  "sel": "main label:has(> span:text-matches(\"^Machine.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "CP-01"
+ },
+ {
+  "pick": "process2",
+  "sel": "main label:has(> span:text-matches(\"^Process.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Open Compacting (OC)"
+ },
+ {
+  "fill": "in2",
+  "sel": "main label:has(> span:text-matches(\"^Input .Kg..?$\")) input >> nth=0",
+  "text": "98.4"
+ },
+ {
+  "fill": "out2",
+  "sel": "main label:has(> span:text-matches(\"^Output .Kg..?$\")) input >> nth=0",
+  "text": "96.9"
+ },
+ {
+  "fill": "load2",
+  "sel": "main label:has(> span:text-matches(\"^Load Time.?$\")) input >> nth=0",
+  "text": "2026-11-06T10:00"
+ },
+ {
+  "fill": "unload2",
+  "sel": "main label:has(> span:text-matches(\"^Unload Time.?$\")) input >> nth=0",
+  "text": "2026-11-06T11:15"
+ },
+ {
+  "click": "main button:has-text('Add Row')",
+  "after": 800
+ },
+ {
+  "shot": "s-open-filled"
+ },
+ {
+  "click": "main button:has-text('Save Sheet')",
+  "after": 16000
+ },
+ {
+  "texts": "badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "shot": "s-open-saved"
+ },
+ {
+  "goto": "/finishing-line/df-production-entry-mc-wise?tab=records"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "sheets",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "s-register"
+ }
+]

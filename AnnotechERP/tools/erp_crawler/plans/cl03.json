@@ -1,0 +1,20 @@
+[
+ {"goto": "/m/dyeing-lab/certificate-list/new"},
+ {"html": "cert_plus", "of": "main button"},
+ {"click": "main button.btn-primary >> nth=0, main button:has(svg) >> nth=0", "wait": 2000},
+ {"fullshot": "cert-plus1"},
+ {"dump": "cert_plus1", "root": "body"},
+ {"escape": true},
+ {"goto": "/m/dyeing-lab/chemical-trial-lab/new"},
+ {"click": "main button:has-text('Add Row'), main a:has-text('Add Row')", "wait": 1500},
+ {"click": "main button:has-text('Add Row'), main a:has-text('Add Row')", "wait": 1500},
+ {"fullshot": "trial-row"},
+ {"dump": "trial_row", "root": "main"},
+ {"texts": "trial_th", "of": "main thead th"},
+ {"goto": "/m/dyeing-lab/inh-fab-test"},
+ {"texts": "inh_th", "of": "main thead th"},
+ {"click": "main a:has-text('Add New'), main button:has-text('Add New')", "wait": 4000},
+ {"url": "inh_add_url"},
+ {"fullshot": "inh-add"},
+ {"dump": "inh_add", "root": "main"}
+]

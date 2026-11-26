@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Select Order & Create')", "wait": 3000 },
+ { "peek": "main button:has-text('Select a confirmed order')", "wait": 1500 },
+ { "peek": "[role=option]:has-text('LPP-2026-000048') >> nth=-1", "wait": 3000 },
+ { "texts": "order_loaded", "of": "main section *, main div.grid *" },
+ { "fullshot": "mp8-order-loaded" },
+ { "peek": "main button:has-text('Select…') >> nth=0", "wait": 1500 },
+ { "peek": "[role=option]:has-text('FAB-005') >> nth=-1", "wait": 2000 },
+ { "type": "main input[type=number] >> nth=0", "text": "300" },
+ { "type": "main input[type=date] >> nth=0", "text": "2026-11-25" },
+ { "click": "main button:has-text('Save draft')", "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00007') >> nth=0", "wait": 2500 },
+ { "hrefs": "row_links", "of": "main a" },
+ { "texts": "row7", "of": "main dt, main dd, main p, main span, main td" },
+ { "fullshot": "mp8-row7" },
+ { "click": "main button:has-text('Delete draft')", "wait": 2500 },
+ { "texts": "delete_ui", "of": "[role=dialog] *, [role=alertdialog] *, li[data-sonner-toast] *" }
+]

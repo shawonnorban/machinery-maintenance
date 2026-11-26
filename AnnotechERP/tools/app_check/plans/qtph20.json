@@ -1,0 +1,10 @@
+[
+ {"goto": "/quality-tally/phones"},
+ {"wait": 6000},
+ {"click": "main button:has-text('Approve')", "after": 2500},
+ {"fill": "x", "sel": "[role=dialog] input", "text": "Phone 03"},
+ {"click": "[role=dialog] button:has-text('Approve')", "after": 25000},
+ {"goto": "/quality-tally/phones"},
+ {"wait": 5000},
+ {"shot": "qtph20-approved"}
+]

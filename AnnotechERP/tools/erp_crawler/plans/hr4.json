@@ -1,0 +1,1 @@
+[{"goto": "/m/hr-payroll/salary-policy-and-rules", "clickSel": "[role=tab]:has-text(\"Wage Gazette\"), button:has-text(\"Wage Gazette\")", "last": true}, {"select": "select", "value": "1", "shot": "wg_loaded", "rows": 20}]

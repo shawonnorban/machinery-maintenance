@@ -1,0 +1,6 @@
+[
+ {"goto": "/colour-lab/certificate-list"},
+ {"wait": 12000},
+ {"shot": "cl-cert-list"},
+ {"texts": "h1", "of": "main h1, main h2"}
+]

@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
-import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { formatQuantity } from "@/lib/format";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 const STALE_AFTER_DAYS = 14;
 
@@ -43,18 +44,29 @@ function MetersTable({ meters, meta, page, status, assetId }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="max-w-[200px]">
-        <Select options={STATUS_OPTIONS} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
-      </div>
+      <SearchingData
+        fields={[{ name: "status", label: t("status"), type: "select", all: false, options: STATUS_OPTIONS }]}
+        values={{ status }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+      />
 
       <DataTable
         columns={[
+          {
+            key: "meter_number",
+            header: t("meter_no"),
+            render: (meter) => (
+              <Link href={`/metering/${refOf(meter, "meter_number")}`} className="font-medium text-brand hover:underline">
+                {meter.meter_number}
+              </Link>
+            ),
+          },
           {
             key: "asset",
             header: t("asset"),
             render: (meter) => (
               <div>
-                <Link href={`/metering/${meter.id}`} className="font-medium text-brand hover:underline">
+                <Link href={`/metering/${refOf(meter, "meter_number")}`} className="font-medium text-brand hover:underline">
                   {meter.asset?.asset_code}
                 </Link>
                 <div className="text-xs text-foreground-muted">{meter.asset?.name}</div>
@@ -75,7 +87,8 @@ function MetersTable({ meters, meta, page, status, assetId }) {
             key: "current_value",
             header: t("current_value"),
             align: "right",
-            render: (meter) => formatQuantity(meter.current_value, meter.type?.unit),
+            // Two decimals: a counter read off a machine, not a ledger amount.
+            render: (meter) => formatQuantity(meter.current_value, meter.type?.unit, { maximumFractionDigits: 2 }),
           },
           {
             key: "last_reading_at",
@@ -96,9 +109,10 @@ function MetersTable({ meters, meta, page, status, assetId }) {
         emptyTitle={t("no_meters")}
         emptyDescription={t("no_meters_hint")}
         rowActions={(meter) => [
-          { label: t("record_reading"), onSelect: () => router.push(`/metering/${meter.id}`) },
+          { icon: "reading", label: t("record_reading"), onSelect: () => router.push(`/metering/${refOf(meter, "meter_number")}`) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
     </div>

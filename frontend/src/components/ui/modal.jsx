@@ -22,7 +22,8 @@ function Modal({ open, onOpenChange, title, description, children, footer, class
         <Dialog.Popup
           className={cn(
             "fixed top-1/2 left-1/2 z-50 w-[calc(100vw-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2",
-            "rounded-sm border border-border bg-surface p-6 shadow-lg outline-none",
+            // A long form scrolls inside the dialog instead of running off the screen.
+            "max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-sm border border-border bg-surface p-6 shadow-lg outline-none",
             "transition-all duration-150 ease-out data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
             "data-[ending-style]:scale-95 data-[ending-style]:opacity-0",
             className,

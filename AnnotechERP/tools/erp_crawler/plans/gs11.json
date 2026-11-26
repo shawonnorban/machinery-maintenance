@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/general-store/gs-req-pending" }, { "wait": 5000 },
+ { "click": "main tbody tr:first-child [aria-label^='Cancel']", "wait": 2000 },
+ { "texts": "cancel_dialog", "of": "[role=dialog]" },
+ { "escape": true },
+ { "goto": "/m/general-store/gs-req-new" }, { "wait": 5000 },
+ { "click": "main button:has-text('Submit')", "wait": 2500 },
+ { "fullshot": "gs11-empty-submit" },
+ { "click": "main button[aria-haspopup=listbox] >> nth=0", "wait": 1200 },
+ { "click": "[role=option]:has-text('IT')", "wait": 800 },
+ { "click": "main button[aria-haspopup=listbox] >> nth=1", "wait": 1200 },
+ { "popup": "item_options" },
+ { "click": "[role=option]:has-text('STAPLAR PIN')", "wait": 1200 },
+ { "fullshot": "gs11-item-picked" },
+ { "fillsel": "main input[type=number] >> nth=0", "text": "1" },
+ { "fillsel": "main textarea >> nth=0", "text": "Annotech probe draft — will be cancelled" },
+ { "click": "main button:has-text('Save Draft')", "wait": 4000 },
+ { "fullshot": "gs11-draft-saved" },
+ { "html": "draft_btns", "of": "main tbody tr:first-child td:last-child button, main tbody tr:first-child td:last-child a" },
+ { "texts": "draft_row", "of": "main tbody tr:first-child" }
+]

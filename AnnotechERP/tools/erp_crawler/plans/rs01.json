@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/garments/ready-dashboard"},
+ {"fullshot": "rd"},
+ {"texts": "rd_p", "of": "main p, main h2, main h3, main label, main button, main thead th, main tbody tr, main span.text-xs"},
+ {"options": "rd_status", "of": "main select >> nth=1"},
+ {"goto": "/m/garments/finished-goods-stock"},
+ {"fullshot": "fg"},
+ {"texts": "fg_p", "of": "main p, main h2, main h3, main label, main button, main thead th, main tbody tr, main span.text-xs"},
+ {"click": "main button:has-text('Ledger')"},
+ {"fullshot": "fg_ledger"},
+ {"texts": "fg_l", "of": "main p, main h2, main h3, main thead th, main tbody tr"}
+]

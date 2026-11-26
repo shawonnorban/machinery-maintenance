@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardBody, CardFooter } from "@/components/ui/card";
+import { Plus, Receipt, Trash2 } from "lucide-react";
+import { Card, CardBody, CardFooter } from "@/components/ui/card";
+import { PanelHead } from "@/components/platform/ui";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -22,9 +23,7 @@ function ExpensesCard({ expenses, meta, storeAction, removeAction }) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Expenses ({meta.total})</CardTitle>
-      </CardHeader>
+      <PanelHead title="Expenses" subtitle={`${meta.total} recorded — what running the platform costs`} icon={Receipt} />
       <CardBody className="flex flex-col divide-y divide-border p-0">
         {expenses.length === 0 ? (
           <p className="p-5 text-sm text-foreground-muted">No expenses recorded yet.</p>

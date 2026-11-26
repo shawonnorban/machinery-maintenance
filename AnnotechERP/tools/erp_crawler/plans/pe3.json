@@ -1,0 +1,82 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('New embellishment rate'), main [role=tab]:has-text('New embellishment rate')",
+  "wait": 2500
+ },
+ {
+  "choose": "main form select >> nth=0",
+  "label": "Embroidery"
+ },
+ {
+  "click": "main form button:near(:text('Style')) >> nth=0",
+  "wait": 1200
+ },
+ {
+  "popup": "style_popup"
+ },
+ {
+  "escape": true
+ },
+ {
+  "choose": "main form select >> nth=2",
+  "label": "LPP (LPP)"
+ },
+ {
+  "click": "main form button:near(:text('Supplier')) >> nth=0",
+  "wait": 1200
+ },
+ {
+  "popup": "supplier_popup"
+ },
+ {
+  "escape": true
+ },
+ {
+  "type": "main form textarea",
+  "text": "Probe: left chest logo embroidery 8k stitches"
+ },
+ {
+  "type": "main form input[type=number] >> nth=0",
+  "text": "0.80"
+ },
+ {
+  "click": "main button:has-text('Save embellishment rate')",
+  "wait": 3000
+ },
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "rows",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main a:has-text('Pendings'), main [role=tab]:has-text('Pendings')",
+  "wait": 2500
+ },
+ {
+  "texts": "pend_list",
+  "of": "main"
+ },
+ {
+  "click": "main aside li >> nth=0, main ul li button >> nth=0, main nav li >> nth=0",
+  "wait": 2500
+ },
+ {
+  "texts": "pend_lpp",
+  "of": "main"
+ },
+ {
+  "dump": "pend_d",
+  "root": "main"
+ }
+]

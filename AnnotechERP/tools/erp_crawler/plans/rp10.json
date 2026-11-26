@@ -1,0 +1,7 @@
+[
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main button[role=tab]:has-text('Records')", "wait": 4000},
+ {"choose": "main select[aria-label='Items per page']", "label": "100"},
+ {"wait": 2000},
+ {"texts": "rows", "of": "main table tbody tr"}
+]

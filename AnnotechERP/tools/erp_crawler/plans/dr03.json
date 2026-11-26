@@ -1,0 +1,15 @@
+[
+ {"goto": "/m/dyeing/reprocess-approval"},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Approve')", "wait": 2500},
+ {"fullshot": "rpa-approve"},
+ {"texts": "rpa_dialog", "of": "[role=dialog] p, [role=dialog] h2, [role=dialog] label, [role=alertdialog] p, [role=alertdialog] h2"},
+ {"html": "rpa_dialog_btns", "of": "[role=dialog] button, [role=alertdialog] button"},
+ {"escape": true},
+ {"goto": "/m/dyeing/print-chemical-requisition"},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Issue')", "wait": 3000},
+ {"url": "after_issue_url"},
+ {"fullshot": "pc-issue"},
+ {"texts": "pc_issue_p", "of": "[role=dialog] p, [role=dialog] h2, main h2, main p"},
+ {"goto": "/m/dyeing/update-reprocess"},
+ {"html": "rpu_row", "of": "main tbody tr >> nth=0"}
+]

@@ -1,0 +1,173 @@
+[
+ {
+  "goto": "/m/merchandising/purchase-fabric-closing"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "purchase-fabric-closing__rec",
+  "of": "main p, main h1"
+ },
+ {
+  "click": "button:has-text('Month Close')",
+  "wait": 1500
+ },
+ {
+  "texts": "purchase-fabric-closing__mc",
+  "of": "main h2, main h3, main p, main label"
+ },
+ {
+  "goto": "/m/merchandising/finish-fabric-closing"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "finish-fabric-closing__rec",
+  "of": "main p, main h1"
+ },
+ {
+  "click": "button:has-text('Month Close')",
+  "wait": 1500
+ },
+ {
+  "texts": "finish-fabric-closing__mc",
+  "of": "main h2, main h3, main p, main label"
+ },
+ {
+  "goto": "/m/merchandising/trims-closing"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "trims-closing__rec",
+  "of": "main p, main h1"
+ },
+ {
+  "click": "button:has-text('Month Close')",
+  "wait": 1500
+ },
+ {
+  "texts": "trims-closing__mc",
+  "of": "main h2, main h3, main p, main label"
+ },
+ {
+  "goto": "/m/merchandising/batch-fabric-closing"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "batch-fabric-closing__rec",
+  "of": "main p, main h1"
+ },
+ {
+  "click": "button:has-text('Month Close')",
+  "wait": 1500
+ },
+ {
+  "texts": "batch-fabric-closing__mc",
+  "of": "main h2, main h3, main p, main label"
+ },
+ {
+  "goto": "/m/merchandising/gray-fab-left-over-closing"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "gray-fab-left-over-closing__rec",
+  "of": "main p, main h1"
+ },
+ {
+  "click": "button:has-text('Month Close')",
+  "wait": 1500
+ },
+ {
+  "texts": "gray-fab-left-over-closing__mc",
+  "of": "main h2, main h3, main p, main label"
+ },
+ {
+  "goto": "/m/merchandising/finish-fab-left-over-closing"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "finish-fab-left-over-closing__rec",
+  "of": "main p, main h1"
+ },
+ {
+  "click": "button:has-text('Month Close')",
+  "wait": 1500
+ },
+ {
+  "texts": "finish-fab-left-over-closing__mc",
+  "of": "main h2, main h3, main p, main label"
+ },
+ {
+  "goto": "/m/merchandising/purchase-fabric-closing"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "click": "button:has-text('Month Close')",
+  "wait": 1500
+ },
+ {
+  "fillsel": "input[name='period']",
+  "text": "Jul/2026"
+ },
+ {
+  "fillsel": "textarea[name='remarks']",
+  "text": "probe"
+ },
+ {
+  "click": "main button:has-text('Month Close') >> nth=-1",
+  "wait": 3000
+ },
+ {
+  "texts": "after_close",
+  "of": "main p, [role=alert], [data-sonner-toast]"
+ },
+ {
+  "goto": "/m/merchandising/purchase-fabric-closing"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "rec_head",
+  "of": "main table thead th"
+ },
+ {
+  "texts": "rec_rows",
+  "of": "main table tbody tr"
+ },
+ {
+  "texts": "rec_buttons",
+  "of": "main table tbody tr button"
+ },
+ {
+  "click": "button:has-text('Show Exception')",
+  "wait": 2000
+ },
+ {
+  "texts": "periods",
+  "of": "main li, main button, main td"
+ },
+ {
+  "click": "main li button >> nth=0",
+  "wait": 2500
+ },
+ {
+  "texts": "exc_after",
+  "of": "main p, main h3, main th, main td, main li"
+ },
+ {
+  "fullshot": "clo-exc2"
+ }
+]

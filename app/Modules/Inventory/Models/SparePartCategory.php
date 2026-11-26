@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class SparePartCategory extends BaseModel
 {
-    protected $table = 'spare_part_categories';
+    /** The one category list: `item_categories`, kept on General Store → Categories (user, 2026-11-15). */
+    protected $table = 'item_categories';
 
     protected $fillable = ['company_id', 'name', 'name_bn', 'code', 'active'];
 

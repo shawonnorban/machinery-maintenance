@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/hr-payroll/hr-dashboard"},
+ {"wait": 6000},
+ {"shot": "d0-top"},
+ {"scroll": 0.35}, {"shot": "d1"},
+ {"scroll": 0.7}, {"shot": "d2"},
+ {"scroll": 1}, {"shot": "d3"},
+ {"click": "This Month"},
+ {"wait": 5000},
+ {"scroll": 0}, {"shot": "d4-month"},
+ {"scroll": 0.6}, {"shot": "d5-month"}
+]

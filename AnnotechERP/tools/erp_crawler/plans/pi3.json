@@ -1,0 +1,36 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('529') button:has-text('Sheet') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Packing Instruction')",
+  "wait": 3500
+ },
+ {
+  "click": "input[placeholder^='Search'] >> nth=0",
+  "wait": 1500
+ },
+ {
+  "dump": "order_open",
+  "root": "body"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "input[type=radio] >> nth=1",
+  "wait": 1200
+ },
+ {
+  "dump": "uniform",
+  "root": "body"
+ }
+]

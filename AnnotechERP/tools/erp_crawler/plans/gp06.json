@@ -1,0 +1,22 @@
+[
+ { "goto": "/m/gate-pass/gp-approval" }, { "wait": 5000 },
+ { "click": "main tbody tr:has-text('GP-2026-000001')", "wait": 2500 },
+ { "texts": "approved_panel_btns", "of": "main button" },
+ { "goto": "/m/gate-pass/gp-out" }, { "wait": 5000 },
+ { "fillsel": "main input >> nth=0", "text": "GP-2026-000001" },
+ { "click": "main button:has-text('Search')", "wait": 3000 },
+ { "fillsel": "main textarea >> nth=0", "text": "Probe — out through gate 1" },
+ { "click": "main button:has-text('CONFIRM OUT')", "wait": 2500 },
+ { "texts": "out_dialog", "of": "[role=dialog]" },
+ { "fullshot": "gp06-out-dialog" },
+ { "click": "[role=dialog] button:has-text('Confirm'), [role=dialog] button:has-text('OUT')", "wait": 4000 },
+ { "texts": "out_after", "of": "main tbody tr" },
+ { "fullshot": "gp06-out-done" },
+ { "goto": "/m/gate-pass/gp-in" }, { "wait": 5000 },
+ { "texts": "in_rows", "of": "main tbody tr" },
+ { "fillsel": "main input >> nth=0", "text": "GP-2026-000001" },
+ { "click": "main button:has-text('Search')", "wait": 3000 },
+ { "texts": "in_loaded", "of": "main h3, main th, main td, main label, main button, main p" },
+ { "html": "in_inputs", "of": "main input[type=number], main textarea" },
+ { "fullshot": "gp06-in-loaded" }
+]

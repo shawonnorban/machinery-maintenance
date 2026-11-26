@@ -1,0 +1,131 @@
+[
+ {
+  "goto": "/m/merchandising/style-order-confirmation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "oc_a",
+  "of": "main a"
+ },
+ {
+  "texts": "oc_btn",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "goto": "/m/merchandising/order-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "reg_a",
+  "of": "main a"
+ },
+ {
+  "texts": "reg_btn",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "goto": "/m/merchandising/style-dashboard"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "spb_a",
+  "of": "main a"
+ },
+ {
+  "texts": "spb_btn",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "goto": "/m/merchandising/pms-buyer-wise-style-and-order-followup-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "fu_a",
+  "of": "main a"
+ },
+ {
+  "texts": "fu_btn",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "goto": "/m/merchandising/projection-call-off-order"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "prj_a",
+  "of": "main a"
+ },
+ {
+  "texts": "prj_btn",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "sre_a",
+  "of": "main a"
+ },
+ {
+  "texts": "sre_btn",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "goto": "/m/merchandising/style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "sg_a",
+  "of": "main a"
+ },
+ {
+  "texts": "sg_btn",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Registration'), main [role=tab]:has-text('Registration')",
+  "wait": 2500
+ },
+ {
+  "url": "sre_reg_url"
+ },
+ {
+  "dump": "sre_reg",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Size Range'), main [role=tab]:has-text('Size Range')",
+  "wait": 2500
+ },
+ {
+  "dump": "sre_size",
+  "root": "main"
+ }
+]

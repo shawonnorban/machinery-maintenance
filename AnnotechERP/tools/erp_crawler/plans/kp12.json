@@ -1,0 +1,117 @@
+[
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"click": "main button:has-text('Go')",
+"wait": 3000
+},
+{
+"popclick": "main table tbody tr >> nth=1 >> button:has-text('Print Label')",
+"as": "label",
+"wait": 8000
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"texts": "gi_list_rows",
+"of": "main table tbody tr"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"options": "gi_rolls",
+"of": "main select[name=rollId]"
+},
+{
+"choose": "main select[name=rollId]",
+"index": 1
+},
+{
+"wait": 1500
+},
+{
+"html": "gi_vals",
+"of": "main input"
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Slub')",
+"wait": 1000
+},
+{
+"html": "gi_line_inputs",
+"of": "main table input, main table select"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1500
+},
+{
+"texts": "gi_after_add",
+"of": "main table tbody tr"
+},
+{
+"texts": "gi_totals",
+"of": "main p, main label"
+},
+{
+"fullshot": "gi-filled"
+},
+{
+"netclick": "main button:has-text('Save inspection sheet')",
+"as": "gi_net",
+"wait": 5000
+},
+{
+"texts": "gi_saved_p",
+"of": "main p"
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"texts": "gi_tabs",
+"of": "main [role=tab]"
+},
+{
+"texts": "gi_list_h",
+"of": "main table thead"
+},
+{
+"texts": "gi_list_rows2",
+"of": "main table tbody tr"
+},
+{
+"texts": "gi_list_btn",
+"of": "main button"
+},
+{
+"fullshot": "gi-list"
+},
+{
+"goto": "/m/knitting/daily-fabric-production"
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 3000
+},
+{
+"texts": "dfo_h",
+"of": "main table thead"
+},
+{
+"texts": "dfo_rows",
+"of": "main table tbody tr"
+},
+{
+"fullshot": "dfo"
+}
+]

@@ -1,0 +1,8 @@
+[
+ {"goto": "/dye-house/grey-fab-requisition-list-dyeing-sc"}, {"wait": 10000},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Issue')", "after": 20000},
+ {"texts": "issue_dialog", "of": "[role=dialog] h2, [role=dialog] tbody tr"}, {"shot": "sc-issue2"},
+ {"click": "[role=dialog] button:has-text('Issue') >> nth=-1", "after": 20000},
+ {"texts": "indent_after", "of": "main tbody tr"},
+ {"goto": "/dye-house/dyeing-sc-program-batch"}, {"wait": 10000}, {"texts": "rq_list", "of": "main tbody tr"}
+]

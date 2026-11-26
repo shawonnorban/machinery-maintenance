@@ -1,0 +1,22 @@
+[
+ {"goto": "/m/knitting/knitting-reports"},
+ {"fullshot": "kr"},
+ {"html": "params", "of": "main select, main input:not([type=radio]), main button[role=tab]"},
+ {"click": "main label:has-text('Daily M/C and Shift wise Knitting Statement')", "wait": 800},
+ {"html": "params2", "of": "main select, main input:not([type=radio])"},
+ {"fillsel": "main input[type=date] >> nth=0", "text": "2026-10-01"},
+ {"fillsel": "main input[type=date] >> nth=1", "text": "2026-10-31"},
+ {"netclick": "main button:has-text('Preview'):not([role=tab]) >> nth=-1", "as": "net", "wait": 8000},
+ {"fullshot": "kr-after"},
+ {"texts": "after", "of": "main"},
+ {"goto": "/m/knitting/yarn-current-stock"},
+ {"fullshot": "ycs"},
+ {"goto": "/m/knitting/fabric-current-stock"},
+ {"fullshot": "fcs"},
+ {"goto": "/m/knitting/daily-knitting-production-report"},
+ {"fullshot": "dkp"},
+ {"goto": "/m/knitting/yarn-store-report"},
+ {"fullshot": "ysr"},
+ {"goto": "/m/knitting/qc-report"},
+ {"fullshot": "qcr"}
+]

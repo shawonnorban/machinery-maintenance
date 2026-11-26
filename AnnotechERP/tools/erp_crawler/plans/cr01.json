@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/cutting/bundle-report"},
+ {"fullshot": "r1"},
+ {"texts": "r1_p", "of": "main p, main h2, main h3, main thead th, main button"},
+ {"texts": "r1_rows", "of": "main tbody tr"},
+ {"hrefs": "r1_links", "of": "main a"},
+ {"goto": "/m/cutting/size-wise-bundle-report"},
+ {"texts": "r4_p", "of": "main p, main h2, main h3, main thead th, main button"},
+ {"texts": "r4_rows", "of": "main tbody tr"},
+ {"goto": "/m/cutting/po-wise-bundle-report"},
+ {"texts": "r2_rows", "of": "main tbody tr, main tfoot tr"}
+]

@@ -18,8 +18,9 @@ function PreferencesForm({ preferences, action }) {
   const toastManager = useToastManager();
 
   function eventLabel(event) {
-    const value = t(`event_${event}`);
-    return value === `event_${event}` ? event : value;
+    const key = `event_${event.toLowerCase()}`;
+    const value = t(key);
+    return value === key ? event : value;
   }
 
   useEffect(() => {
@@ -66,7 +67,10 @@ function PreferencesForm({ preferences, action }) {
           <tbody>
             {Object.keys(values).map((event) => (
               <tr key={event} className="border-b border-border last:border-0">
-                <td className="px-4 py-3">{eventLabel(event)}</td>
+                <td className="px-4 py-3">
+                  {eventLabel(event)}
+                  {values[event].locked ? <span className="ml-2 rounded-md bg-warning-subtle px-1.5 py-0.5 text-xs text-warning">{t("locked_by_company")}</span> : null}
+                </td>
                 <td className="px-4 py-3 text-center">
                   <Checkbox checked disabled aria-label={t("channel_in_app")} />
                 </td>
@@ -75,6 +79,7 @@ function PreferencesForm({ preferences, action }) {
                     <Checkbox
                       checked={Boolean(values[event][channel])}
                       onCheckedChange={() => toggle(event, channel)}
+                      disabled={Boolean(values[event].locked)}
                       aria-label={channel}
                     />
                   </td>

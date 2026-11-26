@@ -1,0 +1,271 @@
+[
+ {
+  "goto": "/finishing-line/finish-fabric-store-receive?tab=entry"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "pick": "store",
+  "sel": "main label:has(> span:text-matches(\"^Receiving Store.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Fabric store"
+ },
+ {
+  "pick": "batch",
+  "sel": "main label:has(> span:text-matches(\"^Batch No.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "B-26110011"
+ },
+ {
+  "pick": "ft",
+  "sel": "main label:has(> span:text-matches(\"^Fabric Type.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Single Jersey"
+ },
+ {
+  "fill": "fd",
+  "sel": "main label:has(> span:text-matches(\"^Fabric Details.?$\")) input >> nth=0",
+  "text": "30/1 combed, 180 GSM"
+ },
+ {
+  "fill": "sh",
+  "sel": "main label:has(> span:text-matches(\"^Shade No.?$\")) input >> nth=0",
+  "text": "SH-2"
+ },
+ {
+  "fill": "gsm",
+  "sel": "main label:has(> span:text-matches(\"^Fin. GSM.?$\")) input >> nth=0",
+  "text": "180"
+ },
+ {
+  "fill": "dia",
+  "sel": "main label:has(> span:text-matches(\"^Fin. Dia.?$\")) input >> nth=0",
+  "text": "72"
+ },
+ {
+  "fill": "fq",
+  "sel": "main label:has(> span:text-matches(\"^Finish Qty.?$\")) input >> nth=0",
+  "text": "97.9"
+ },
+ {
+  "fill": "rate",
+  "sel": "main label:has(> span:text-matches(\"^Rate.?$\")) input >> nth=0",
+  "text": "12"
+ },
+ {
+  "click": "main button:has-text('Add Lot')",
+  "after": 800
+ },
+ {
+  "shot": "d-filled"
+ },
+ {
+  "click": "main button:has-text('Save') >> nth=-1",
+  "after": 16000
+ },
+ {
+  "texts": "d_badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "goto": "/finishing-line/finish-fabric-store-receive"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Send')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Send'), [role=dialog] button:has-text('Send')",
+  "after": 15000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Receive')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Receive'), [role=dialog] button:has-text('Receive')",
+  "after": 15000
+ },
+ {
+  "texts": "deliveries",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "d-list"
+ },
+ {
+  "goto": "/finishing-line/df-process-wise-delivery?stage=DELIVERED"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "board",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/roll-wise-racking-barcode?tab=new"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "Lot",
+  "exact": true,
+  "option": "FSL-"
+ },
+ {
+  "fill": "Roll No",
+  "exact": true,
+  "text": "r-01"
+ },
+ {
+  "fill": "Weight (Kg)",
+  "exact": true,
+  "text": "16.5"
+ },
+ {
+  "fill": "Rack",
+  "exact": true,
+  "text": "r-a1"
+ },
+ {
+  "fill": "Bin",
+  "exact": true,
+  "text": "b-03"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 14000
+ },
+ {
+  "goto": "/finishing-line/roll-wise-racking-barcode"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "rolls",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/fabric-issue-to-cutting?tab=entry"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "no",
+  "sel": "main label:has(> span:text-matches(\"^Req No.?$\")) input >> nth=0",
+  "text": "cr-101"
+ },
+ {
+  "pick": "store",
+  "sel": "main label:has(> span:text-matches(\"^Store.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Fabric store"
+ },
+ {
+  "fill": "ws",
+  "sel": "main label:has(> span:text-matches(\"^Work Style.?$\")) input >> nth=0",
+  "text": "SS27-TEE01"
+ },
+ {
+  "pick": "status",
+  "sel": "main label:has(> span:text-matches(\"^Status.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Partial"
+ },
+ {
+  "pick": "lot",
+  "sel": "main label:has(> span:text-matches(\"^Lot.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "FSL-"
+ },
+ {
+  "fill": "iq",
+  "sel": "main label:has(> span:text-matches(\"^Issue Qty.?$\")) input >> nth=0",
+  "text": "40"
+ },
+ {
+  "fill": "rl",
+  "sel": "main label:has(> span:text-matches(\"^Rolls.?$\")) input >> nth=0",
+  "text": "2"
+ },
+ {
+  "click": "main button:has-text('Add Lot')",
+  "after": 800
+ },
+ {
+  "shot": "r-filled"
+ },
+ {
+  "click": "main button:has-text('Save') >> nth=-1",
+  "after": 16000
+ },
+ {
+  "texts": "r_badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "goto": "/finishing-line/fabric-issue-to-cutting"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "reqs",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/fabric-store-return-transfer?tab=new"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "fill": "Date",
+  "exact": true,
+  "text": "2026-11-06"
+ },
+ {
+  "pick": "Return / Transfer",
+  "exact": true,
+  "option": "Return from Cutting"
+ },
+ {
+  "pick": "Lot",
+  "exact": true,
+  "option": "FSL-"
+ },
+ {
+  "pick": "Requisition",
+  "exact": true,
+  "option": "CR-101"
+ },
+ {
+  "fill": "Qty (Kg)",
+  "exact": true,
+  "text": "5"
+ },
+ {
+  "fill": "Reason",
+  "exact": true,
+  "text": "Cut plan reduced"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 14000
+ },
+ {
+  "goto": "/finishing-line/fabric-store-return-transfer"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "returns",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "t-list"
+ }
+]

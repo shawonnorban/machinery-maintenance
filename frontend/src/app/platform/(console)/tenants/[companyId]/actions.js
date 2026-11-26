@@ -146,6 +146,19 @@ async function updateEntitlements(companyId, previousState, formData) {
   return ok();
 }
 
+/** Switches modules on or off for this customer (one switch, or "all on" / "all off"). */
+async function setModule(companyId, codes, enabled) {
+  let modules;
+  try {
+    modules = await platformApiFetch(`/tenants/${companyId}/modules`, { method: "PUT", body: JSON.stringify({ codes, enabled }) });
+  } catch (error) {
+    return fail(error);
+  }
+  revalidatePath(`/platform/tenants/${companyId}`);
+  // The panel shows these at once — the page's own refresh can miss in dev (see tenant-tabs).
+  return ok({ modules });
+}
+
 async function draftInvoice(companyId, previousState, formData) {
   try {
     await platformApiFetch(`/tenants/${companyId}/invoices`, {
@@ -346,6 +359,7 @@ export {
   purgeTenant,
   storeContract,
   updateEntitlements,
+  setModule,
   draftInvoice,
   issueInvoice,
   payInvoice,

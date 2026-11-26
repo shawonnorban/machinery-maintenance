@@ -1,0 +1,325 @@
+[
+ {
+  "goto": "/m/knitting/mc-needle-loan-opening"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-needle-loan-opening|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-needle-loan-opening|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-needle-loan-opening-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "dump": "mc-needle-loan-opening|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-needle-loan-opening-1"
+ },
+ {
+  "goto": "/m/knitting/mc-needle-loan-requisition"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-needle-loan-requisition|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-needle-loan-requisition|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-needle-loan-requisition-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "mc-needle-loan-requisition|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-needle-loan-requisition-1"
+ },
+ {
+  "goto": "/m/knitting/mc-needle-receive"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-needle-receive|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-needle-receive|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-needle-receive-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "mc-needle-receive|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-needle-receive-1"
+ },
+ {
+  "click": "main [role=tab] >> nth=2",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "mc-needle-receive|t2",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-needle-receive-2"
+ },
+ {
+  "goto": "/m/knitting/mc-needle-opening-balance"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-needle-opening-balance|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-needle-opening-balance|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-needle-opening-balance-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "mc-needle-opening-balance|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-needle-opening-balance-1"
+ },
+ {
+  "goto": "/m/knitting/mc-wise-needle-assign"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-wise-needle-assign|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-wise-needle-assign|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-wise-needle-assign-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "mc-wise-needle-assign|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-wise-needle-assign-1"
+ },
+ {
+  "goto": "/m/knitting/mc-wise-needle-broken"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-wise-needle-broken|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-wise-needle-broken|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-wise-needle-broken-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Machine')",
+  "wait": 1500
+ },
+ {
+  "dump": "mc-wise-needle-broken|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-wise-needle-broken-1"
+ },
+ {
+  "goto": "/m/knitting/mc-wise-needle-requisition"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-wise-needle-requisition|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-wise-needle-requisition|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-wise-needle-requisition-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "mc-wise-needle-requisition|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-wise-needle-requisition-1"
+ },
+ {
+  "goto": "/m/knitting/mc-wise-needle-issue"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-wise-needle-issue|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-wise-needle-issue|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-wise-needle-issue-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "mc-wise-needle-issue|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-wise-needle-issue-1"
+ },
+ {
+  "goto": "/m/knitting/mc-needle-closing"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-needle-closing|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-needle-closing|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-needle-closing-0"
+ },
+ {
+  "dump": "mc-needle-closing|t0",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-needle-closing-1"
+ },
+ {
+  "goto": "/m/knitting/mc-needle-receive-return-list"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-needle-receive-return-list|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-needle-receive-return-list|p0",
+  "of": "main p"
+ },
+ {
+  "fullshot": "mc-needle-receive-return-list-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "mc-needle-receive-return-list|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-needle-receive-return-list-1"
+ }
+]

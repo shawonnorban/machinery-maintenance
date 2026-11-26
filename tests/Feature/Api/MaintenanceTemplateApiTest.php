@@ -161,6 +161,23 @@ class MaintenanceTemplateApiTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_a_template_is_addressed_by_its_code_and_the_companys_own_wins_over_the_platforms(): void
+    {
+        MaintenanceTemplate::create(['company_id' => null, 'name' => 'Platform weekly', 'code' => 'PM-WEEKLY', 'status' => 'ACTIVE']);
+
+        $own = $this->asEngineer()->postJson('/api/v1/maintenance-templates', [
+            'name' => 'Our own weekly',
+            'code' => 'PM-WEEKLY',
+            'estimated_duration_minutes' => 30,
+        ])->assertCreated();
+
+        $this->asEngineer()->getJson('/api/v1/maintenance-templates/PM-WEEKLY')
+            ->assertOk()
+            ->assertJsonPath('data.id', $own->json('data.id'));
+
+        $this->asEngineer()->getJson('/api/v1/maintenance-templates/NO-SUCH-CODE')->assertNotFound();
+    }
+
     public function test_a_technician_does_not_reach_the_checklist_library(): void
     {
         $technicianToken = app(IssueApiToken::class)->forUser($this->technician, $this->delta->id, 'x')['plain'];

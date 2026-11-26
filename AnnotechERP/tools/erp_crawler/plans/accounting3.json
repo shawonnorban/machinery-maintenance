@@ -1,0 +1,1 @@
+[{"goto": "/m/accounting/chart-of-account", "select": "select", "value": "100"}, {"clickSel": "th button:text-is(\"Code\"), button:text-is(\"Code\")"}, {"clickSel": "th button:text-is(\"Code\"), button:text-is(\"Code\")", "shot": "coa_desc", "rows": 40}]

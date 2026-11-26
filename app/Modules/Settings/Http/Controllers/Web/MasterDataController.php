@@ -171,6 +171,10 @@ class MasterDataController extends Controller
                 if ($model === Factory::class) {
                     $query->whereIn('id', $this->context->accessibleFactoryIds());
                 }
+                // A shared list (units: the platform's plus this company's) offers only what the company may use.
+                if (method_exists($model, 'scopeAvailableTo')) {
+                    $query->availableTo($this->context->companyId());
+                }
 
                 $options[$field->name] = $this->asOptions($query->get(), 'name');
             }

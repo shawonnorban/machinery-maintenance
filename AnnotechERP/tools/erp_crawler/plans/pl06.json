@@ -1,0 +1,10 @@
+[
+ { "goto": "/m/planning/master-plan?order=53" }, { "wait": 6000 },
+ { "fullshot": "c-0" }, { "texts": "lines", "of": "main table >> nth=0" },
+ { "click": "main input[aria-label='Select 13']", "wait": 1500 },
+ { "click": "main input[aria-label='Select LINE01']", "wait": 1500 },
+ { "fullshot": "c-1" }, { "texts": "input_tbl", "of": "main" },
+ { "html": "input_ctl", "of": "main table input, main table select" },
+ { "click": "main button:has-text('Calculate Plan') >> nth=0", "wait": 4000 },
+ { "fullshot": "c-2" }, { "texts": "result", "of": "main" }
+]

@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/general-store/gs-req-new" }, { "wait": 5000 },
+ { "click": "main tbody tr:has-text('REQ-2026-000012') >> button:has-text('Edit')", "wait": 2500 },
+ { "fullshot": "gs12-edit" },
+ { "texts": "form_head", "of": "main section h2, main section p, main section button" },
+ { "goto": "/m/general-store/gs-req-new" }, { "wait": 5000 },
+ { "click": "main tbody tr:has-text('REQ-2026-000012') [aria-label^='Cancel']", "wait": 2000 },
+ { "fillsel": "[role=dialog] textarea", "text": "Annotech audit probe — not a real request" },
+ { "click": "[role=dialog] button:has-text('Cancel Requisition')", "wait": 4000 },
+ { "texts": "row_after", "of": "main tbody tr:has-text('REQ-2026-000012')" },
+ { "fullshot": "gs12-cancelled" }
+]

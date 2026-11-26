@@ -1,0 +1,17 @@
+[
+ { "goto": "/m/gate-pass/gp-approval" }, { "wait": 5000 },
+ { "click": "main tbody tr >> nth=0", "wait": 2500 },
+ { "texts": "audit_trail", "of": "main section:has-text('Audit Trail'), main div:has(> h3:has-text('Audit Trail'))" },
+ { "click": "main button:has-text('Approve')", "wait": 2500 },
+ { "texts": "approve_dialog", "of": "[role=dialog]" },
+ { "html": "approve_inputs", "of": "[role=dialog] textarea, [role=dialog] input, [role=dialog] button" },
+ { "fullshot": "gp05-approve-dialog" },
+ { "click": "[role=dialog] button:has-text('Approve')", "wait": 4000 },
+ { "fullshot": "gp05-approved" },
+ { "texts": "approval_after", "of": "main tbody tr, main h2, main h3" },
+ { "goto": "/m/gate-pass/gp-out" }, { "wait": 5000 },
+ { "fillsel": "main input >> nth=0", "text": "GP-2026-000001" },
+ { "click": "main button:has-text('Search')", "wait": 3000 },
+ { "texts": "out_loaded", "of": "main h2, main h3, main button, main p, main label" },
+ { "fullshot": "gp05-out-loaded" }
+]

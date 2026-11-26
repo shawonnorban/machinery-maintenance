@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -32,9 +32,9 @@ export default async function MeterDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("meters"), href: "/metering" }, { label: meter.asset?.asset_code }]}
-        title={meter.type?.name}
+      <ScreenHeader
+        parentUrl="/metering"
+        title={meter.meter_number ? `${meter.meter_number} — ${meter.type?.name}` : meter.type?.name}
         description={`${meter.asset?.asset_code} — ${meter.asset?.name}`}
         actions={
           <Link href="/metering" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>

@@ -1,0 +1,87 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "peek": "button:text-is('Item List')",
+  "wait": 2000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "d_itemlist",
+  "root": "body"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "button:text-is('Colour Mapping')",
+  "wait": 2000
+ },
+ {
+  "peek": "[data-panel] button:text-is('Add New'), button:text-is('Add New')",
+  "wait": 2000
+ },
+ {
+  "dump": "d_colour_new",
+  "root": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "button:text-is('Services')",
+  "wait": 2000
+ },
+ {
+  "peek": "button:text-is('Add Process')",
+  "wait": 2000
+ },
+ {
+  "dump": "d_process_new",
+  "root": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "button:text-is('BOM')",
+  "wait": 2000
+ },
+ {
+  "peek": "button[aria-label='Add a BOM line']",
+  "wait": 1500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "d_bom_added",
+  "root": "[data-panel]"
+ },
+ {
+  "peek": "button:text-is('Approve BOM')",
+  "wait": 1500
+ },
+ {
+  "dump": "d_bom_approve",
+  "root": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "button:text-is('Order Confirmation')",
+  "wait": 3000
+ },
+ {
+  "dump": "d_order_conf",
+  "root": "main"
+ }
+]

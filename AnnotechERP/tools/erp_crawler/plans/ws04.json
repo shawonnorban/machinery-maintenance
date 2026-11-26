@@ -1,0 +1,1 @@
+[{"goto": "/m/ie/gmt-item-specification-entry"}, {"wait": 4000},{"click": "main button[role=tab]:has-text(\"Garments Item Specification\")", "wait": 2500},{"html": "st", "of": "main input[name=smvSampleType] ~ *, main label:has-text(\"SMV/SampleType\") ~ *"},{"peek":"main button:near(:text(\"SMV/SampleType\"))","wait":1500},{"popup":"st_opts"}]

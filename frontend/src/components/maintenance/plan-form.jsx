@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { startTransition, useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -98,14 +100,15 @@ function PlanForm({ plan = null, options, action, previewAction }) {
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
+      <FormSection>
       <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
         {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
       </FormField>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("target_asset")} error={state?.errors?.asset_id?.[0]}>
           {(fieldProps) => (
             <Select
@@ -136,7 +139,7 @@ function PlanForm({ plan = null, options, action, previewAction }) {
         </FormField>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("maintenance_type")} required error={state?.errors?.maintenance_type_id?.[0]}>
           {(fieldProps) => (
             <Select
@@ -162,7 +165,7 @@ function PlanForm({ plan = null, options, action, previewAction }) {
 
       <hr className="border-border" />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("trigger")} required>
           {(fieldProps) => <Select {...fieldProps} value={triggerType} onValueChange={setTriggerType} options={TRIGGER_OPTIONS} />}
         </FormField>
@@ -177,7 +180,7 @@ function PlanForm({ plan = null, options, action, previewAction }) {
       </div>
 
       {triggerType === "TIME" || triggerType === "COMBINED" ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
           <FormField label={t("every")} required error={state?.errors?.interval_value?.[0]}>
             {(fieldProps) => (
               <Input {...fieldProps} type="number" min="1" max="9999" value={intervalValue} onChange={(e) => setIntervalValue(e.target.value)} required />
@@ -190,7 +193,7 @@ function PlanForm({ plan = null, options, action, previewAction }) {
       ) : null}
 
       {triggerType === "METER" || triggerType === "COMBINED" ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
           <FormField label={t("meter_threshold")} required error={state?.errors?.meter_threshold?.[0]}>
             {(fieldProps) => (
               <Input {...fieldProps} type="number" step="0.0001" min="0" value={meterThreshold} onChange={(e) => setMeterThreshold(e.target.value)} required />
@@ -212,7 +215,7 @@ function PlanForm({ plan = null, options, action, previewAction }) {
 
       <hr className="border-border" />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("start_date")} required error={state?.errors?.start_date?.[0]}>
           {() => <DatePicker value={startDate} onChange={setStartDate} />}
         </FormField>
@@ -251,18 +254,19 @@ function PlanForm({ plan = null, options, action, previewAction }) {
         </FormField>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-foreground">
+      <label className="flex items-center gap-2 sm:ml-[11.25rem] text-sm text-foreground">
         <Checkbox checked={requiresShutdown} onCheckedChange={setRequiresShutdown} /> {t("requires_shutdown_checkbox")}
       </label>
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? t("save_changes") : t("create_plan")}
+          <Save /> {isEdit ? t("save_changes") : t("create_plan")}
         </Button>
-      </div>
+      </FormActions>
       </form>
 
       <PlanPreviewPanel

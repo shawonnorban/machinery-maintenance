@@ -1,0 +1,14 @@
+[
+ {"goto": "/quality-tally/phones"},
+ {"wait": 5000},
+ {"shot": "qtph02-waiting"},
+ {"click": "main button:has-text('Approve')", "after": 2500},
+ {"fill": "Name", "text": "Phone 01"},
+ {"choose": "[role=dialog] select", "option": "Sewing · LINE01 — Line 01"},
+ {"shot": "qtph02-form"},
+ {"click": "[role=dialog] button:has-text('Approve')", "after": 20000},
+ {"shot": "qtph02-approved"},
+ {"goto": "/quality-tally/qc-assignment"},
+ {"wait": 5000},
+ {"shot": "qtph02-qc"}
+]

@@ -1,0 +1,27 @@
+[
+ {"goto": "/m/knitting/user-company-office-mapping", "shot": "uo_main"},
+ {"clickSel": "main ul li button, main [role=listitem] button", "shot": "uo_pick"},
+
+ {"goto": "/m/knitting/machine-capacity-hour-plan-list", "shot": "cp_main"},
+ {"click": "New capacity band", "shot": "cp_new"},
+
+ {"goto": "/m/knitting/machine-profile", "shot": "mp_main"},
+ {"click": "Machine Reference Lists", "shot": "mp_lists"},
+ {"click": "M/C Type", "shot": "mp_list_type"},
+ {"click": "Key Information", "shot": "mp_new"},
+
+ {"goto": "/m/knitting/assign-machine-operator", "shot": "op_main"},
+ {"click": "Machine Wise Operator Assign", "shot": "op_mw"},
+ {"click": "New Assign", "shot": "op_new"},
+
+ {"goto": "/m/knitting/yarn-count-setup", "shot": "yc_main"},
+ {"peek": "table tbody tr button:has-text('Edit')", "shot": "yc_edit", "escape": true},
+ {"click": "Add New", "shot": "yc_new"},
+
+ {"goto": "/m/knitting/label-printer-setup", "shot": "lp_main"},
+ {"click": "Add Printer", "shot": "lp_new"},
+
+ {"goto": "/m/knitting/sc-party-rate", "shot": "sc_main"},
+ {"click": "S/C Party Wise Rate Entry", "shot": "sc_entry"},
+ {"click": "Knitting", "exact": true, "shot": "sc_knit"}
+]

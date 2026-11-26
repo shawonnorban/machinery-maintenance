@@ -1,0 +1,170 @@
+[
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"click": "main [role=tab]:has-text('Roll Weight Entry')",
+"wait": 2500
+},
+{
+"choose": "main select[name=jobCardId]",
+"index": 1
+},
+{
+"wait": 1500
+},
+{
+"texts": "rw_head_vals",
+"of": "main p, main [class*=stat]"
+},
+{
+"html": "rw_head_inputs",
+"of": "main input[type=text]"
+},
+{
+"click": "main button:has-text('Add Roll')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Add Roll')",
+"wait": 1200
+},
+{
+"type": "main table input[aria-label='Roll Weight'] >> nth=0",
+"text": "22.5"
+},
+{
+"type": "main table input[aria-label='Roll Weight'] >> nth=1",
+"text": "21.8"
+},
+{
+"type": "main table input[aria-label='Deducted'] >> nth=1",
+"text": "0.3"
+},
+{
+"choose": "main table select[aria-label='Shift'] >> nth=0",
+"index": 1
+},
+{
+"choose": "main table select[aria-label='Operator'] >> nth=0",
+"index": 1
+},
+{
+"fullshot": "rw-filled"
+},
+{
+"click": "main button:has-text('Save roll sheet')",
+"wait": 5000
+},
+{
+"texts": "rw_saved_p",
+"of": "main p"
+},
+{
+"html": "rw_saved_sel",
+"of": "main select"
+},
+{
+"fullshot": "rw-saved"
+},
+{
+"click": "main [role=tab]:has-text('Roll List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Go')",
+"wait": 3000
+},
+{
+"texts": "rl_h",
+"of": "main table thead"
+},
+{
+"texts": "rl_rows",
+"of": "main table tbody tr"
+},
+{
+"texts": "rl_btn",
+"of": "main button"
+},
+{
+"fullshot": "rl"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"texts": "gi_list_h",
+"of": "main table thead"
+},
+{
+"texts": "gi_list_rows",
+"of": "main table tbody tr"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"html": "gi_roll_opts",
+"of": "main select[name=rollId]"
+},
+{
+"texts": "gi_side_rows",
+"of": "main table tbody tr"
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1500
+},
+{
+"popup": "defects"
+},
+{
+"fullshot": "gi"
+},
+{
+"goto": "/m/knitting/machine-loading-plan"
+},
+{
+"click": "main [role=tab]:has-text('Machine Loading Plan')",
+"wait": 3000
+},
+{
+"texts": "mlp_p",
+"of": "main p"
+},
+{
+"texts": "mlp_h",
+"of": "main table thead"
+},
+{
+"texts": "mlp_rows",
+"of": "main table tbody tr"
+},
+{
+"fullshot": "mlp"
+},
+{
+"goto": "/m/knitting/daily-fabric-production"
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 3000
+},
+{
+"texts": "dfo_h",
+"of": "main table thead"
+},
+{
+"texts": "dfo_rows",
+"of": "main table tbody tr"
+},
+{
+"texts": "dfo_p",
+"of": "main p"
+},
+{
+"fullshot": "dfo"
+}
+]

@@ -1,0 +1,255 @@
+[
+ {
+  "goto": "/finishing-line/sc-delivery-challan-gatepass"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "c-list"
+ },
+ {
+  "goto": "/finishing-line/sc-delivery-challan-gatepass?tab=entry"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "pick": "sup",
+  "sel": "main label:has(> span:text-matches(\"^Supplier.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Square Textiles"
+ },
+ {
+  "pick": "store",
+  "sel": "main label:has(> span:text-matches(\"^Store.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Fabric store"
+ },
+ {
+  "fill": "veh",
+  "sel": "main label:has(> span:text-matches(\"^Vehicle No.?$\")) input >> nth=0",
+  "text": "DM-TA-11-2233"
+ },
+ {
+  "pick": "batch",
+  "sel": "main label:has(> span:text-matches(\"^Batch.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "B-26110011"
+ },
+ {
+  "pick": "proc",
+  "sel": "main label:has(> span:text-matches(\"^Process.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Calendering (CAL)"
+ },
+ {
+  "fill": "lot",
+  "sel": "main label:has(> span:text-matches(\"^Lot No.?$\")) input >> nth=0",
+  "text": "LOT-B11"
+ },
+ {
+  "click": "main button:has-text('Add Shade')",
+  "after": 800
+ },
+ {
+  "shot": "c-filled"
+ },
+ {
+  "click": "main button:has-text('Save Challan')",
+  "after": 16000
+ },
+ {
+  "texts": "c_badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "goto": "/finishing-line/sc-delivery-challan-gatepass"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Post')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Post'), [role=dialog] button:has-text('Post')",
+  "after": 15000
+ },
+ {
+  "texts": "challans",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "c-posted"
+ },
+ {
+  "goto": "/finishing-line/df-process-wise-delivery"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "board",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "board_links",
+  "of": "main a"
+ },
+ {
+  "goto": "/finishing-line/sc-receive-finished?tab=entry"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "pick": "ch",
+  "sel": "main label:has(> span:text-matches(\"^Challan No.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "FSC-CH-"
+ },
+ {
+  "pick": "store",
+  "sel": "main label:has(> span:text-matches(\"^Store.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Fabric store"
+ },
+ {
+  "fill": "gp",
+  "sel": "main label:has(> span:text-matches(\"^Gate Pass No.?$\")) input >> nth=0",
+  "text": "IN-501"
+ },
+ {
+  "pick": "line",
+  "sel": "main label:has(> span:text-matches(\"^Batch.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "B-26110011"
+ },
+ {
+  "fill": "recv",
+  "sel": "main label:has(> span:text-matches(\"^Received .Kg..?$\")) input >> nth=0",
+  "text": "98.5"
+ },
+ {
+  "fill": "short",
+  "sel": "main label:has(> span:text-matches(\"^Short .Kg..?$\")) input >> nth=0",
+  "text": "0.7"
+ },
+ {
+  "click": "main button:has-text('Add Line')",
+  "after": 800
+ },
+ {
+  "shot": "r-filled"
+ },
+ {
+  "click": "main button:has-text('Save Receipt')",
+  "after": 16000
+ },
+ {
+  "texts": "r_badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "goto": "/finishing-line/sc-receive-finished"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Post')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Post'), [role=dialog] button:has-text('Post')",
+  "after": 15000
+ },
+ {
+  "texts": "receipts",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/sc-process-bill-entry?tab=entry"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "billno",
+  "sel": "main label:has(> span:text-matches(\"^Bill #.?$\")) input >> nth=0",
+  "text": "sq-inv-101"
+ },
+ {
+  "pick": "sup",
+  "sel": "main label:has(> span:text-matches(\"^Supplier.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Square Textiles"
+ },
+ {
+  "pick": "ch",
+  "sel": "main label:has(> span:text-matches(\"^Challan.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "FSC-CH-"
+ },
+ {
+  "pick": "proc",
+  "sel": "main label:has(> span:text-matches(\"^Process.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Calendering (CAL)"
+ },
+ {
+  "fill": "qty",
+  "sel": "main label:has(> span:text-matches(\"^Qty .Kg..?$\")) input >> nth=0",
+  "text": "98.5"
+ },
+ {
+  "click": "main button:has-text('Add Line')",
+  "after": 800
+ },
+ {
+  "shot": "b-filled"
+ },
+ {
+  "click": "main button:has-text('Save Bill')",
+  "after": 16000
+ },
+ {
+  "texts": "b_badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "goto": "/finishing-line/sc-process-bill-entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Submit')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Submit'), [role=dialog] button:has-text('Submit')",
+  "after": 15000
+ },
+ {
+  "texts": "bills",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "b-list"
+ },
+ {
+  "goto": "/finishing-line/sc-party-wise-balance"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "balance",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "pb"
+ },
+ {
+  "goto": "/finishing-line/sc-receive-finished?tab=new"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "r-pointer"
+ }
+]

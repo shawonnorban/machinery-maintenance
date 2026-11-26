@@ -1,0 +1,141 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "clickSel": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "press": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 2500
+ },
+ {
+  "clickSel": "button:text-is('Item/Combo/Model Registration')",
+  "wait": 2000,
+  "shot": "p0_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p0_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p0_bottom",
+  "rows": 8
+ },
+ {
+  "clickSel": "button:text-is('Colour Mapping')",
+  "wait": 2000,
+  "shot": "p1_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p1_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p1_bottom",
+  "rows": 8
+ },
+ {
+  "clickSel": "button:text-is('Fabrication')",
+  "wait": 2000,
+  "shot": "p2_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p2_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p2_bottom",
+  "rows": 8
+ },
+ {
+  "clickSel": "button:text-is('Services')",
+  "wait": 2000,
+  "shot": "p3_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p3_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p3_bottom",
+  "rows": 8
+ },
+ {
+  "clickSel": "button:text-is('BOM')",
+  "wait": 2000,
+  "shot": "p4_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p4_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p4_bottom",
+  "rows": 8
+ },
+ {
+  "clickSel": "button:text-is('Order Confirmation')",
+  "wait": 2000,
+  "shot": "p5_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p5_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p5_bottom",
+  "rows": 8
+ },
+ {
+  "clickSel": "button:text-is('Yarn/Fabric Mapping')",
+  "wait": 2000,
+  "shot": "p6_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p6_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p6_bottom",
+  "rows": 8
+ },
+ {
+  "clickSel": "button:text-is('Packing Instruction')",
+  "wait": 2000,
+  "shot": "p7_top",
+  "rows": 8
+ },
+ {
+  "scroll": 0.6,
+  "shot": "p7_mid",
+  "rows": 8
+ },
+ {
+  "scroll": true,
+  "shot": "p7_bottom",
+  "rows": 8
+ }
+]

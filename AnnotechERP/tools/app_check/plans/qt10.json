@@ -1,0 +1,19 @@
+[
+ {"goto": "/quality-tally/cutting-input"},
+ {"wait": 9000},
+ {"choose": "main form select", "option": "C1"},
+ {"fill": "Scan bundle card", "text": "BND-20261116-0001"},
+ {"press": "Enter", "after": 9000},
+ {"shot": "qt55-ci-second-scan"},
+ {"fill": "Scan bundle card", "text": "BND-20261116-0004"},
+ {"press": "Enter", "after": 9000},
+ {"shot": "qt56-ci-already"},
+ {"fill": "Bundle No", "text": "M-101"},
+ {"choose": "main label:has-text('Job') select", "option": "26DAL00103"},
+ {"choose": "main label:has-text('Garment type') select", "option": "T-Shirt", "after": 600},
+ {"choose": "main label:has-text('Panel') select", "option": "All panels"},
+ {"fill": "Size", "text": "M", "exact": true},
+ {"fill": "Bundle Qty", "text": "2"},
+ {"click": "main button:has-text('Give to QC')", "after": 15000},
+ {"shot": "qt57-ci-manual"}
+]

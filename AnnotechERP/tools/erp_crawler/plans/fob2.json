@@ -1,0 +1,22 @@
+[
+ { "goto": "/m/merchandising/purchase-fabric-opening-balance" },
+ { "click": "button:has-text('Opening Balance Entry')", "wait": 2500 },
+ { "peek": "div:has(> label:has-text('Fabric Type')) button", "wait": 1200 },
+ { "popup": "fabric_types" },
+ { "click": "[role=option]:has-text('Single Jersey') >> nth=0", "wait": 600 },
+ { "peek": "div:has(> label:has-text('Color')) button", "wait": 1200 },
+ { "popup": "colors" },
+ { "click": "[role=option] >> nth=1", "wait": 600 },
+ { "peek": "div:has(> label:has-text('Composition')) button", "wait": 1200 },
+ { "popup": "compositions" },
+ { "escape": true },
+ { "fillsel": "div:has(> label:has-text('Description')) input", "text": "Probe SJ 160" },
+ { "fillsel": "div:has(> label:has-text('Batch No')) input", "text": "B-PROBE-1" },
+ { "fillsel": "div:has(> label:has-text('No. of Roll')) input", "text": "2" },
+ { "fillsel": "div:has(> label:has-text('OB Qty')) input", "text": "40" },
+ { "fillsel": "div:has(> label:has-text('OB Rate')) input", "text": "3.5" },
+ { "click": "button:has-text('Add Row')", "wait": 1500 },
+ { "texts": "add_msgs", "of": "main p" },
+ { "dump": "after_add", "root": "main" },
+ { "fullshot": "fob-after-add" }
+]

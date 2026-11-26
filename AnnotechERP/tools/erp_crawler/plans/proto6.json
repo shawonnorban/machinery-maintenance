@@ -1,0 +1,23 @@
+[
+ { "goto": "/m/sample/sample-requisition" },
+ { "wait": 3500 },
+ { "click": "button:has-text('Sample Fabric Requisition') >> nth=0", "wait": 2500 },
+ { "peek": "main label:has-text('Department') >> xpath=following::button[1]", "wait": 1200 },
+ { "popup": "pop_department" },
+ { "escape": true },
+ { "peek": "main label:has-text('Requested By') >> xpath=following::button[1]", "wait": 1200 },
+ { "popup": "pop_requested" },
+ { "escape": true },
+ { "peek": "main label:has-text('Requisition Type') >> xpath=following::button[1]", "wait": 1200 },
+ { "popup": "pop_type" },
+ { "escape": true },
+ { "peek": "main label:has-text('Requisition To') >> xpath=following::button[1]", "wait": 1200 },
+ { "popup": "pop_to" },
+ { "escape": true },
+ { "peek": "main label:has-text('Delivery To') >> xpath=following::button[1]", "wait": 1200 },
+ { "popup": "pop_delivery" },
+ { "escape": true },
+ { "click": "main button:has-text('Add') >> nth=0", "wait": 1500 },
+ { "texts": "prog_add", "of": "main table th, main table td, [role=dialog] *" },
+ { "fullshot": "proto6-progadd" }
+]

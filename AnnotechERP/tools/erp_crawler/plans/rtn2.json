@@ -1,0 +1,10 @@
+[
+ { "goto": "/m/merchandising/accessories-return-challan-to-supplier" },
+ { "click": "button:has-text('Accessories Return Challan to Supplier')", "wait": 2500 },
+ { "peek": "div:has(> label:has-text('Return By')) button", "wait": 1500 },
+ { "popup": "return_by" },
+ { "escape": true },
+ { "peek": "div:has(> label:has-text('Returning Store')) button", "wait": 1500 },
+ { "popup": "stores" },
+ { "escape": true }
+]

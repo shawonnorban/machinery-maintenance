@@ -1,0 +1,11 @@
+[
+ {"goto": "/m/ie/ie-reports"},
+ {"fullshot": "main"},
+ {"dump": "main", "root": "main"},
+ {"html": "radios", "of": "main input[type=radio]"},
+ {"texts": "p", "of": "main p"},
+ {"click": "main button[role=tab]:has-text('Preview')", "wait": 2500},
+ {"fullshot": "preview"},
+ {"dump": "preview", "root": "main"},
+ {"texts": "p2", "of": "main p"}
+]

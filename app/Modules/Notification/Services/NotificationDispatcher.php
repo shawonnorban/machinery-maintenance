@@ -8,6 +8,7 @@ use App\Modules\Identity\Models\User;
 use App\Modules\Notification\Events\NotificationCreated;
 use App\Modules\Notification\Models\Notification;
 use App\Modules\Notification\Models\NotificationDelivery;
+use App\Modules\Notification\Models\NotificationEventDefault;
 use App\Modules\Notification\Models\NotificationPreference;
 use App\Shared\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -215,20 +216,29 @@ class NotificationDispatcher
     }
 
     /**
-     * The user's setting, or the default for the event.
+     * Which channels one person gets for one event.
      *
-     * Defaults are per event rather than blanket: a critical breakdown mails
-     * people, a maintenance reminder does not, and starting everyone on
-     * "email me everything" trains them to filter the lot into a folder.
+     * A locked company default (Settings → Notification Preferences) applies to
+     * everybody; otherwise the person's own setting, then the company's default,
+     * then the built-in one. Built-in defaults are per event rather than
+     * blanket: a critical breakdown mails people, a maintenance reminder does
+     * not, and starting everyone on "email me everything" trains them to filter
+     * the lot into a folder.
      */
     public function preferenceFor(User $user, string $eventType): NotificationPreference
     {
-        $existing = NotificationPreference::where('user_id', $user->id)
-            ->where('event_type', $eventType)
-            ->first();
+        $company = $this->context->hasContext()
+            ? NotificationEventDefault::query()->where('event_type', $eventType)->first()
+            : null;
 
-        if ($existing !== null) {
-            return $existing;
+        if ($company === null || ! $company->locked) {
+            $existing = NotificationPreference::where('user_id', $user->id)
+                ->where('event_type', $eventType)
+                ->first();
+
+            if ($existing !== null) {
+                return $existing;
+            }
         }
 
         return new NotificationPreference([
@@ -236,10 +246,16 @@ class NotificationDispatcher
             'user_id' => $user->id,
             'event_type' => $eventType,
             'in_app' => true,
-            'email' => in_array($eventType, self::EMAIL_BY_DEFAULT, true),
-            'sms' => false,
-            'whatsapp' => false,
+            'email' => $company?->email ?? self::emailsByDefault($eventType),
+            'sms' => $company?->sms ?? false,
+            'whatsapp' => $company?->whatsapp ?? false,
         ]);
+    }
+
+    /** The built-in default, before a company or a person has chosen. */
+    public static function emailsByDefault(string $eventType): bool
+    {
+        return in_array($eventType, self::EMAIL_BY_DEFAULT, true);
     }
 
     /**

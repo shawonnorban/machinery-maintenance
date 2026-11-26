@@ -1,0 +1,6 @@
+[
+ {"goto": "/assets/create"}, {"wait": 15000}, {"shot": "f01-asset-create"},
+ {"goto": "/trade-export/commercial-invoice"}, {"wait": 15000},
+ {"click": "main button:has-text('Add New')", "after": 8000}, {"shot": "f02-ci-new"},
+ {"goto": "/vendors/create"}, {"wait": 12000}, {"shot": "f03-vendor-create"}
+]

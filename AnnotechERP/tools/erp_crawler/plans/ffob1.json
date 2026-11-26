@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/merchandising/finish-fabric-opening-balance" },
+ { "dump": "records", "root": "main" },
+ { "fullshot": "ffob-records" },
+ { "click": "button:has-text('Opening Balance Entry')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "fullshot": "ffob-entry" },
+ { "texts": "hints", "of": "main p, main small, main legend, main h2, main h3" },
+ { "click": "button:has-text('Add Row')", "wait": 1500 },
+ { "texts": "add_msgs", "of": "main p, [role=alert]" },
+ { "fullshot": "ffob-addrow" },
+ { "click": "button:has-text('Save opening balance')", "wait": 2500 },
+ { "texts": "save_msgs", "of": "main p, [role=alert]" }
+]

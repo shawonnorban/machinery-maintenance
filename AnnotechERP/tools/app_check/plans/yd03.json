@@ -1,0 +1,63 @@
+[
+ {
+  "goto": "/knit-production/issue-against-requisition?tab=issue"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "pick": "Requisition No",
+  "exact": true,
+  "option": "YIR-2026110001"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "issue_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "pick": "Requisition Line 1",
+  "exact": true,
+  "option": "Cotton"
+ },
+ {
+  "pick": "Stock Line 1",
+  "exact": true,
+  "option": "SQ-3011"
+ },
+ {
+  "fill": "Issue Qty 1",
+  "exact": true,
+  "text": "100"
+ },
+ {
+  "click": "main button:has-text('Save issue')",
+  "after": 15000
+ },
+ {
+  "texts": "is_err",
+  "of": "main [role=alert]"
+ },
+ {
+  "texts": "is_head",
+  "of": "main h2"
+ },
+ {
+  "shot": "yd-yis"
+ },
+ {
+  "goto": "/knit-production/yd-program-list"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "reg_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "yd-register"
+ }
+]

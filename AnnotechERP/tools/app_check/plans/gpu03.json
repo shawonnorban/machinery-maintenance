@@ -1,0 +1,23 @@
+[
+ {"goto": "/gate-pass/gp-in"},
+ {"click": "td >> text=GP-2026-000002", "after": 8000},
+ {"fill": "Return quantity for Polo Shirt (finished)", "text": "3"},
+ {"shot": "in-partial"},
+ {"texts": "outcome", "of": "text=/stays out|closes|declared/"},
+ {"click": "role=button[name='CONFIRM IN']", "after": 2000},
+ {"shot": "in-dialog1"},
+ {"click": "role=dialog >> role=button[name='Confirm IN']", "after": 15000},
+ {"shot": "in-after1"},
+ {"fill": "Return quantity for Polo Shirt (finished)", "text": "1"},
+ {"fill": "Return quantity for Grey Fabric", "text": "2"},
+ {"click": "text=Final return — nothing more is coming back"},
+ {"pick": "Short Reason", "option": "Missing"},
+ {"fill": "Remarks", "text": "One shirt lost at the wash", "exact": true},
+ {"shot": "in-final"},
+ {"texts": "outcome2", "of": "text=/stays out|closes|declared/"},
+ {"click": "role=button[name='CONFIRM IN']", "after": 2000},
+ {"shot": "in-dialog2"},
+ {"click": "role=dialog >> role=button[name='Confirm IN']", "after": 15000},
+ {"shot": "in-after2"},
+ {"texts": "tables", "of": "section h2"}
+]

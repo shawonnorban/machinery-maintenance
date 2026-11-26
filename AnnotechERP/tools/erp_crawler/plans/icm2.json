@@ -1,0 +1,85 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Item/Combo/Model Registration')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t0",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "button:text-is('Colour Mapping')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t1",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "button:text-is('Fabrication')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t2",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "button:text-is('Services')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t3",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "button:text-is('BOM')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t4",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "button:text-is('Order Confirmation')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t5",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "button:text-is('Yarn/Fabric Mapping')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t6",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "button:text-is('Packing Instruction')",
+  "wait": 2500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "t7",
+  "root": "[data-panel]"
+ }
+]

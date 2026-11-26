@@ -1,0 +1,80 @@
+[
+ {
+  "goto": "/m/dyeing/dyeing-batch-plan"
+ },
+ {
+  "click": "main button:has-text('New Plan')",
+  "wait": 2500
+ },
+ {
+  "dump": "newplan",
+  "root": "main"
+ },
+ {
+  "texts": "newplan_p",
+  "of": "main p"
+ },
+ {
+  "fillsel": "main input[name=name]",
+  "text": "November 2026 - Bulk Loading"
+ },
+ {
+  "fillsel": "main input[name=code]",
+  "text": "BP-2611-01"
+ },
+ {
+  "fillsel": "main input[type=date]",
+  "text": "2026-11-03"
+ },
+ {
+  "choose": "main select >> nth=1",
+  "label": "Bulk"
+ },
+ {
+  "choose": "main select >> nth=2",
+  "label": "4Hr"
+ },
+ {
+  "fillsel": "main input[type=number]",
+  "text": "20"
+ },
+ {
+  "fullshot": "newplan-filled"
+ },
+ {
+  "click": "main button[type=submit], main button:has-text('Save')",
+  "wait": 5000
+ },
+ {
+  "texts": "after_save",
+  "of": "main p, main [role=alert]"
+ },
+ {
+  "fullshot": "newplan-saved"
+ },
+ {
+  "goto": "/m/dyeing/dyeing-batch-plan"
+ },
+ {
+  "choose": "main select >> nth=0",
+  "index": 1
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fullshot": "board-open"
+ },
+ {
+  "dump": "board_open",
+  "root": "main"
+ },
+ {
+  "texts": "board_open_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "html": "board_btns",
+  "of": "main button"
+ }
+]

@@ -1,0 +1,130 @@
+[
+{
+"goto": "/m/knitting/fabric-production-order-bulk"
+},
+{
+"click": "main [role=tab]:has-text('Save Production Order')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- Select Order --')",
+"wait": 1500
+},
+{
+"click": "[role=option]:has-text('LPP-2026-000060')",
+"wait": 2500
+},
+{
+"choose": "main select[name=companyId]",
+"label": "Brickland Composite Ltd."
+},
+{
+"peek": "main button:has-text('-- Select Category --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Bulk Booking')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Continue')",
+"wait": 2000
+},
+{
+"peek": "main button:has-text('-- Select Fabric --')",
+"wait": 1500
+},
+{
+"click": "[role=option]:has-text('Single Jersey') >> nth=0",
+"wait": 1500
+},
+{
+"type": "main input[name=fabricDesc]",
+"text": "S/J 30/1 Combed 160 GSM"
+},
+{
+"peek": "main button:has-text('-- Select Colour --')",
+"wait": 1500
+},
+{
+"click": "[role=option]:has-text('Black (COL-BLK)')",
+"wait": 1500
+},
+{
+"type": "main input[name=finishDia]",
+"text": "72"
+},
+{
+"type": "main input[name=gsm]",
+"text": "160"
+},
+{
+"click": "main button:has-text('Continue')",
+"wait": 2000
+},
+{
+"type": "main input[name=reqQty]",
+"text": "850"
+},
+{
+"type": "main input[name=adjustedQty]",
+"text": "-20"
+},
+{
+"choose": "main select[name=status]",
+"label": "Running"
+},
+{
+"fullshot": "pf-filled"
+},
+{
+"netclick": "main button:has-text('Save Production Order') >> nth=1",
+"as": "save_net",
+"wait": 6000
+},
+{
+"texts": "save_toast",
+"of": "[data-sonner-toast], [role=status]"
+},
+{
+"texts": "save_p",
+"of": "main p"
+},
+{
+"fullshot": "pf-saved"
+},
+{
+"click": "main [role=tab]:has-text('Fabric Production Knitting Order')",
+"wait": 3000
+},
+{
+"click": "main button:has-text('Show')",
+"wait": 3000
+},
+{
+"texts": "list_h",
+"of": "main table thead"
+},
+{
+"texts": "list_rows",
+"of": "main table tbody tr"
+},
+{
+"texts": "list_btn",
+"of": "main button"
+},
+{
+"fullshot": "pf-list"
+},
+{
+"click": "main [role=tab]:has-text('Knit Programmes')",
+"wait": 3000
+},
+{
+"texts": "kp_left",
+"of": "main li, main [role=button]"
+},
+{
+"fullshot": "kp-0"
+}
+]

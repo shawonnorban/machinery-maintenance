@@ -40,6 +40,7 @@
     "export_ready_toast": "এক্সপোর্ট প্রস্তুত",
     "my_exports": "আমার এক্সপোর্ট",
     "groups": {
+        "quality": "কোয়ালিটি টালি",
         "compliance": "বন্ড ও কাস্টমস",
         "procurement": "ক্রয়",
         "requisition": "ফ্লোর রিকুইজিশন",
@@ -79,6 +80,34 @@
         "asset": "মেশিন"
     },
     "columns": {
+        "qt_section": "সেকশন",
+        "qt_line": "লাইন",
+        "qt_job_no": "জব নং",
+        "qt_buyer": "বায়ার",
+        "qt_style": "স্টাইল",
+        "qt_target": "টার্গেট",
+        "qt_checked": "চেকড",
+        "qt_rft": "RFT",
+        "qt_defect": "ডিফেক্ট",
+        "qt_rectify": "রেক্টিফাই",
+        "qt_reject": "রিজেক্ট",
+        "qt_pass": "পাস",
+        "qt_dhu": "DHU %",
+        "qt_rft_pct": "RFT %",
+        "qt_achievement": "অর্জন %",
+        "qt_efficiency": "এফিসিয়েন্সি %",
+        "qt_defect_code": "কোড",
+        "qt_defect_name": "ডিফেক্ট",
+        "qt_found": "পাওয়া গেছে",
+        "qt_share": "অংশ %",
+        "qt_lines": "লাইন",
+        "qt_jobs": "জব",
+        "qt_qc": "QC",
+        "qt_employee_code": "এমপ্লয়ি কোড",
+        "qt_days": "দিন",
+        "qt_taps": "ট্যাপ",
+        "qt_checked_per_day": "চেকড / দিন",
+        "qt_hour": "ঘণ্টা",
         "licence_no": "লাইসেন্স নম্বর",
         "valid_to": "মেয়াদ শেষ",
         "entitled": "অনুমোদিত",
@@ -535,5 +564,25 @@
     "compliance_duty_summary": {
         "title": "শুল্ক অব্যাহতি সারসংক্ষেপ",
         "description": "বন্ড থেকে মাল বেরোনোয় যে শুল্ক ধার্য হয়েছে, আর কী কারণে বেরিয়েছে।"
+    },
+    "pdf_truncated": "এই PDF-এ শুধু প্রথম :n সারি আছে — পুরো রিপোর্টের জন্য Excel নিন।",
+    "pdf_printed_by": ":user প্রিন্ট করেছেন, :when",
+    "pdf_printed": "প্রিন্ট: :when",
+    "pdf_page": "পৃষ্ঠা",
+    "qt_daily_summary": {
+        "title": "দৈনিক কোয়ালিটি সারাংশ",
+        "description": "দিন অনুযায়ী প্রতিটি লাইন ও জব: টার্গেট, RFT, ডিফেক্ট, রেক্টিফাই, রিজেক্ট, পাস, DHU, RFT %, অর্জন ও এফিসিয়েন্সি।"
+    },
+    "qt_defect_analysis": {
+        "title": "ডিফেক্ট বিশ্লেষণ",
+        "description": "সময়কালে প্রতিটি ডিফেক্ট কতবার পাওয়া গেছে, সেকশনে তার অংশ, আর কতগুলো লাইন ও জবে।"
+    },
+    "qt_inspector_performance": {
+        "title": "QC পারফরম্যান্স",
+        "description": "সময়কালে প্রতিটি QC: কত দিন ট্যাপ করেছে, কত গার্মেন্ট চেক করেছে, কত ডিফেক্ট পেয়েছে আর DHU।"
+    },
+    "qt_hourly_tally": {
+        "title": "ঘণ্টাওয়ারি টালি",
+        "description": "সব লাইনের টালি শিট: দিন, লাইন ও ঘণ্টা অনুযায়ী RFT, ডিফেক্ট, রেক্টিফাই, রিজেক্ট, পাস ও DHU।"
     }
 }

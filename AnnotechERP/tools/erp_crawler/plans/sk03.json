@@ -1,0 +1,11 @@
+[
+ {"goto": "/m/knitting/knit-plan-for-sample-solid"},
+ {"click": "main [role=tab] >> nth=0", "wait": 2500},
+ {"click": "main button:has-text('Search')", "wait": 3000},
+ {"popclick": "main tbody a:has-text('Print')", "wait": 5000, "as": "print"},
+ {"click": "main button[aria-label^='Submit Requisition knit plan']", "wait": 1500},
+ {"click": "[role=dialog] button >> nth=2", "wait": 5000},
+ {"texts": "after_dlg", "of": "[role=dialog]"},
+ {"texts": "after_alert", "of": "main [role=alert], [data-sonner-toast], [role=status]"},
+ {"texts": "rows", "of": "main tbody tr"}
+]

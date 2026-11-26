@@ -73,6 +73,19 @@ class RoleMatrixTest extends TestCase
         // `finance.gl.view_any` instead — they read what their movements
         // posted; they do not decide where it posts.
         'finance.gl.manage',
+        // Finance & Ledger's masters — the chart of accounts, fiscal years,
+        // maker-checker grants, the company's bank accounts (AnnotechERP
+        // 23/01) — are a company-level finance sign-off for the same reason.
+        // No accountant role exists yet; the auditor reads them.
+        'accounting.master.manage',
+        // Writing a backup back over the company's data (Settings → Backup &
+        // Restore, AnnotechERP 03/04) is the owner's call alone.
+        'settings.backup.restore',
+        // Shaping the request types and chains (Approval Center, AnnotechERP 04)
+        // is administration; the people doing the work raise and decide
+        // requests with approval.ticket.create. (Seeing every request is now
+        // Management's, roles by department 2026-11-22.)
+        'approval.type.manage',
     ];
 
     /**
@@ -171,9 +184,11 @@ class RoleMatrixTest extends TestCase
     {
         $roles = Role::whereNull('company_id')->get();
 
-        // 12 from SRS 5 plus Line Chief, added for the breakdown line/department
-        // restriction (SRS 15 "Line/Department Restriction").
-        $this->assertCount(13, $roles, 'Expected the 13 roles defined in SRS 5.');
+        // SRS 5's roles, Line Chief, the Supplier portal account, and since
+        // 2026-11-22 the department roles (Executive/Head) and Employee: the
+        // templates are exactly the seeder's matrix.
+        $this->assertCount(count(RoleSeeder::matrix()), $roles, 'Expected one template per role of the seeder matrix.');
+        $this->assertGreaterThan(14, $roles->count());
 
         foreach ($roles as $role) {
             $this->assertTrue($role->is_system, "{$role->name} must be a system role.");

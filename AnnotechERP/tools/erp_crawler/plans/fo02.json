@@ -1,0 +1,16 @@
+[
+ {"goto": "/m/ie/sewing-prod-adjustment"},
+ {"click": "main button[role=tab]:has-text('Sewing Prod Adjustment')", "wait": 2500},
+ {"dump": "spa_tab", "root": "main"},
+ {"html": "spa_tab_ctl", "of": "main select, main input, main button"},
+ {"fullshot": "spa-tab"},
+ {"goto": "/m/ie/man-minutes-adjustment"},
+ {"click": "main button[role=tab]:has-text('Man Minutes Adjustment')", "wait": 2500},
+ {"dump": "mm_tab", "root": "main"},
+ {"html": "mm_tab_ctl", "of": "main select, main input, main button"},
+ {"fullshot": "mm-tab"},
+ {"goto": "/m/ie/gmt-wash-requisition"},
+ {"click": "main button[role=tab]:has-text('Wash Requisition List')", "wait": 2500},
+ {"dump": "gw_tab", "root": "main"},
+ {"fullshot": "gw-tab"}
+]

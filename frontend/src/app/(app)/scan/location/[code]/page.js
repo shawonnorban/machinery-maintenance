@@ -2,11 +2,12 @@ import Link from "next/link";
 import { MapPin, Boxes } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getT } from "@/lib/i18n-server";
+import { refOf } from "@/lib/ref-path";
 
 /**
  * Where a scanned location QR code lands — replaces Blade's
@@ -33,7 +34,7 @@ export default async function ScanLocationPage({ params }) {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: t("scan") }]} title={location.name} description={location.full_path} />
+      <ScreenHeader parentUrl="/assets" title={location.name} description={location.full_path} />
 
       <div className="mx-auto flex max-w-lg flex-col gap-4">
         <p className="text-sm font-medium text-foreground-muted">
@@ -52,7 +53,7 @@ export default async function ScanLocationPage({ params }) {
               {assets.map((asset) => (
                 <Link
                   key={asset.id}
-                  href={`/assets/${asset.id}`}
+                  href={`/assets/${refOf(asset, "asset_code")}`}
                   className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-surface-muted"
                 >
                   <div>

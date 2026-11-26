@@ -1,4 +1,4 @@
-import { Geist_Mono } from "next/font/google";
+import { Geist_Mono, Noto_Color_Emoji } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
@@ -24,6 +24,18 @@ const anekBangla = localFont({
   src: "./fonts/AnekBangla-Regular.ttf",
   variable: "--font-anek-bangla",
   display: "swap",
+});
+
+// Chat's emoji (user 2026-11-23: "as on WhatsApp"): one round, colourful
+// set on every system instead of each OS's own (Windows' are flat outlines).
+// Only the chat uses it (the .chat-emoji stack in globals.css); Google serves
+// it in unicode-range slices, so a page loads just the glyphs it shows.
+const notoEmoji = Noto_Color_Emoji({
+  variable: "--font-noto-emoji",
+  subsets: ["emoji"],
+  weight: "400",
+  display: "swap",
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
@@ -56,7 +68,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${segoeUI.variable} ${anekBangla.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${segoeUI.variable} ${anekBangla.variable} ${geistMono.variable} ${notoEmoji.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">

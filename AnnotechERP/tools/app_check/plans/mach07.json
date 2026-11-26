@@ -1,0 +1,13 @@
+[
+ {"goto": "/assets/create"}, {"wait": 15000}, {"shot": "g01-asset-create"},
+ {"goto": "/breakdowns/create"}, {"wait": 12000}, {"shot": "g02-breakdown-create"},
+ {"goto": "/work-orders/create"}, {"wait": 12000}, {"shot": "g03-wo-create"},
+ {"goto": "/maintenance/plans/create"}, {"wait": 12000}, {"shot": "g04-plan-create"},
+ {"goto": "/maintenance/templates/create"}, {"wait": 12000}, {"shot": "g05-template-create"},
+ {"goto": "/inventory/parts/create"}, {"wait": 12000}, {"shot": "g06-part-create"},
+ {"goto": "/inventory/transfers/create"}, {"wait": 12000}, {"shot": "g07-transfer-create"},
+ {"goto": "/technicians/create"}, {"wait": 12000}, {"shot": "g08-tech-create"},
+ {"goto": "/vendors/create"}, {"wait": 12000}, {"shot": "g09-vendor-create"},
+ {"goto": "/vendors/warranties/create"}, {"wait": 12000}, {"shot": "g10-warranty-create"},
+ {"goto": "/vendors/service-contracts/create"}, {"wait": 12000}, {"shot": "g11-contract-create"}
+]

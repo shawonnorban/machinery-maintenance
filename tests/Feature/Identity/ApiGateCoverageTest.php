@@ -105,6 +105,28 @@ class ApiGateCoverageTest extends TestCase
         // somebody else's is a 404 from the scope rather than a 403.
         'api/v1/subscription',
         'api/v1/support/',
+        // Chat (Norban's chat module): a company's people talking — reached by
+        // being in the chat (a 404 otherwise), not by a permission, as one's
+        // own notifications are.
+        'api/v1/chat/',
+        // The caller's own sidebar (AnnotechERP 02/01): the menu tree
+        // already filtered to their own View permissions — the menu-shaped
+        // twin of auth/permissions. Editing menus and grants stays gated.
+        'api/v1/access/navigation',
+        'api/v1/access/restricted-screens',
+        // Which modules the platform has not given the caller's own company
+        // (LicensedModules) — its own switches, used to show "not enabled".
+        'api/v1/access/locked-modules',
+        // A factory TV (Production Tracking): no login at all — the unguessable
+        // link token issued from the TV screen setup is the key, and the
+        // screen only reads that link's own board.
+        'api/v1/public/production-tracking/tv/',
+        // The QC's phone (AnnotechERP 37): `mobile/` is the PIN sign-in and that
+        // PIN session's own person, PIN and end (pinSession() refuses any other
+        // token); `phone/` is the approved phone itself, by its id and secret
+        // (AuthenticatePhone), and each tap is checked against its QC's permission.
+        'api/v1/quality-tally/mobile/',
+        'api/v1/quality-tally/phone/',
     ];
 
     public function test_every_api_endpoint_reaches_a_permission_check(): void

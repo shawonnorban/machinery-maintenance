@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/merchandising/purchase-fabric-pr" },
+ { "dump": "records", "root": "main" },
+ { "click": "button:has-text('Fabric Import Requisition Entry')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "fullshot": "fpr-entry" },
+ { "click": "main table tbody tr:first-child button", "wait": 3000 },
+ { "dump": "after_order", "root": "main" },
+ { "click": "button:has-text('Add item')", "wait": 1500 },
+ { "dump": "after_add", "root": "main" },
+ { "fullshot": "fpr-after-add" }
+]

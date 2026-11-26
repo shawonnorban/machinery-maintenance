@@ -1,0 +1,118 @@
+[
+ {
+  "goto": "/finishing-line/dyeing-finishing-report"
+ },
+ {
+  "wait": 14000
+ },
+ {
+  "shot": "r-first"
+ },
+ {
+  "texts": "first_stats",
+  "of": "main section >> nth=1 >> span.inline-flex"
+ },
+ {
+  "texts": "first_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main label:has-text('Daily Production Report of Dyeing Finishing') input[type=radio]",
+  "after": 500
+ },
+ {
+  "click": "main button:has-text('Preview')",
+  "after": 9000
+ },
+ {
+  "texts": "daily_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "daily_alert",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main label:has-text('Dyeing Finishing Process Running (Floor Status)') input[type=radio]",
+  "after": 500
+ },
+ {
+  "click": "main button:has-text('Preview')",
+  "after": 9000
+ },
+ {
+  "texts": "floor_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "floor_alert",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main label:has-text('Finish Fabric Current Stock') input[type=radio]",
+  "after": 500
+ },
+ {
+  "click": "main button:has-text('Preview')",
+  "after": 9000
+ },
+ {
+  "texts": "stock_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "stock_alert",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main label:has-text('Order Monitoring Report') input[type=radio]",
+  "after": 500
+ },
+ {
+  "click": "main button:has-text('Preview')",
+  "after": 9000
+ },
+ {
+  "texts": "order_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "order_alert",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main label:has-text('S/C AOP Ledger') input[type=radio]",
+  "after": 500
+ },
+ {
+  "click": "main button:has-text('Preview')",
+  "after": 9000
+ },
+ {
+  "texts": "aop_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "aop_alert",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main label:has-text('Four-Point Inspection Register') input[type=radio]",
+  "after": 500
+ },
+ {
+  "click": "main button:has-text('Preview')",
+  "after": 9000
+ },
+ {
+  "texts": "fourpt_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "fourpt_alert",
+  "of": "main [role=alert]"
+ },
+ {
+  "shot": "r-last"
+ }
+]

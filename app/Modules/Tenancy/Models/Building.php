@@ -13,5 +13,5 @@ class Building extends BaseModel
 
     protected $table = 'buildings';
 
-    protected $fillable = ['company_id', 'factory_id', 'name', 'code'];
+    protected $fillable = ['company_id', 'factory_id', 'name', 'code', 'number_of_floors', 'status', 'remarks'];
 }

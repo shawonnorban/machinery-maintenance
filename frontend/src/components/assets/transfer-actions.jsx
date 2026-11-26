@@ -9,6 +9,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { ActionIcon } from "@/components/ui/action-icon";
 
 /** Status-driven, the same as `TransfersTable`'s own row actions — only one status is ever current, so which buttons render is a pure function of it. */
 function TransferActions({ transfer, actions }) {
@@ -59,17 +60,17 @@ function TransferActions({ transfer, actions }) {
       <CardBody className="flex flex-wrap gap-2">
         {canApprove ? (
           <Button loading={pending} onClick={runApprove}>
-            {t("approve")}
+            <ActionIcon name="approve" /> {t("approve")}
           </Button>
         ) : null}
         {canReceive ? (
           <Button variant="outline" loading={pending} onClick={runReceive}>
-            {t("receive")}
+            <ActionIcon name="receive" /> {t("receive")}
           </Button>
         ) : null}
         {canReject ? (
           <Button variant="danger" onClick={() => setRejecting(true)}>
-            {t("reject")}
+            <ActionIcon name="reject" /> {t("reject")}
           </Button>
         ) : null}
       </CardBody>

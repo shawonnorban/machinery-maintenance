@@ -1,0 +1,11 @@
+[
+ {"goto": "/quality-tally/analytics"},
+ {"wait": 8000},
+ {"shot": "qt27-analytics"},
+ {"goto": "/quality-tally/reports"},
+ {"wait": 5000},
+ {"shot": "qt28-reports"},
+ {"download": "main section:has-text('Daily quality summary') button:has-text('Download')", "as": "qt-daily-summary", "timeout": 120000},
+ {"choose": "main section:has-text('Defect analysis') select >> nth=1", "option": "PDF"},
+ {"download": "main section:has-text('Defect analysis') button:has-text('Download')", "as": "qt-defect-analysis", "timeout": 120000}
+]

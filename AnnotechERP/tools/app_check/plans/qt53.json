@@ -1,0 +1,11 @@
+[
+ {"goto": "/quality-tally/cutting-tally"},
+ {"wait": 25000},
+ {"choose": "main label:has-text('Line') select", "option": "C1", "after": 9000},
+ {"fill": "Scan bundle card", "text": "BND202611250006"},
+ {"press": "Enter"},
+ {"wait": 8000},
+ {"click": "main button.bg-success", "after": 900},
+ {"click": "main button.bg-success", "after": 7000},
+ {"shot": "qt200-qc"}
+]

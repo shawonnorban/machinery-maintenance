@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/sample/sample-requisition" },
+ { "wait": 3500 },
+ { "click": "button:has-text('Sample Fabric Requisition') >> nth=0", "wait": 2500 },
+ { "choose": "main select >> nth=0", "index": 1 },
+ { "wait": 2500 },
+ { "type": "main table tbody tr >> nth=0 >> td >> nth=9 >> input", "text": "8" },
+ { "choose": "main table tbody tr >> nth=0 >> td >> nth=12 >> select", "index": 4 },
+ { "wait": 800 },
+ { "texts": "row_filled", "of": "main table tbody tr >> nth=0 >> td" },
+ { "click": "main button:has-text('Save changes')", "wait": 5000 },
+ { "texts": "row_saved", "of": "main table tbody tr >> nth=0 >> td" },
+ { "click": "main button:has-text('Store Verify')", "wait": 2000 },
+ { "click": "[role=alertdialog] button:has-text('Store Verify'), [role=dialog] button:has-text('Store Verify')", "wait": 5000 },
+ { "texts": "after_verify", "of": "main button, main input[disabled], [role=alert], li[role=status]" },
+ { "click": "main button:has-text('Approve')", "wait": 2000 },
+ { "texts": "approve_dlg", "of": "[role=dialog] p, [role=alertdialog] p, [role=dialog] h2, [role=alertdialog] h2" },
+ { "click": "[role=alertdialog] button >> nth=-1, [role=dialog] button >> nth=-1", "wait": 5000 },
+ { "texts": "after_approve", "of": "main button, main input[disabled]" },
+ { "fullshot": "proto15-approved" }
+]

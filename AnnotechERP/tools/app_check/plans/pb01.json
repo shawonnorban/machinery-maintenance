@@ -1,0 +1,400 @@
+[
+ {
+  "goto": "/dye-house/batch-production?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "pb-bulk-empty"
+ },
+ {
+  "texts": "bulk_list",
+  "of": "main h2, main tbody tr"
+ },
+ {
+  "click": "main button:has-text('B-26110011')",
+  "after": 6000
+ },
+ {
+  "pick": "M/C No",
+  "sel": "main label:has(> span:text-matches(\"^M/C No\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "DM-02"
+ },
+ {
+  "fill": "Model/Combo",
+  "sel": "main label:has(> span:text-matches(\"^Model/Combo\\\\*?$\")) input >> nth=0",
+  "text": "Body + Rib"
+ },
+ {
+  "fill": "Lab-dip #",
+  "sel": "main label:has(> span:text-matches(\"^Lab-dip #\\\\*?$\")) input >> nth=0",
+  "text": "LD-2611-004"
+ },
+ {
+  "fill": "Liqur Ratio",
+  "sel": "main label:has(> span:text-matches(\"^Liqur Ratio\\\\*?$\")) input >> nth=0",
+  "text": "1:8"
+ },
+ {
+  "click": "main label:has-text('Scouring') [role=checkbox]",
+  "after": 400
+ },
+ {
+  "fill": "Remarks",
+  "sel": "main label:has(> span:text-matches(\"^Remarks\\\\*?$\")) textarea >> nth=0",
+  "text": "First bulk run"
+ },
+ {
+  "click": "main button:has-text('Add Load')",
+  "after": 800
+ },
+ {
+  "pick": "load mc",
+  "sel": "main [aria-label='M/C No 1']",
+  "option": "DM-02"
+ },
+ {
+  "fill": "lt",
+  "sel": "main [aria-label='Load Time 1']",
+  "text": "2026-11-05T08:00"
+ },
+ {
+  "fill": "ut",
+  "sel": "main [aria-label='Unload Time 1']",
+  "text": "2026-11-05T13:30"
+ },
+ {
+  "fill": "cr",
+  "sel": "main [aria-label='Chk Roll Dt 1']",
+  "text": "2026-11-05T14:00"
+ },
+ {
+  "pick": "st",
+  "sel": "main [aria-label='Status 1']",
+  "option": "Unloaded"
+ },
+ {
+  "shot": "pb-bulk-filled"
+ },
+ {
+  "click": "main button:has-text('Save production')",
+  "after": 15000
+ },
+ {
+  "shot": "pb-bulk-saved"
+ },
+ {
+  "goto": "/dye-house/batch-production"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "bulk_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/daily-batch-production-for-bulk-manual"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "manual_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "fill": "lt",
+  "sel": "main [aria-label='Load Time B-26110011']",
+  "text": "2026-11-05T07:30"
+ },
+ {
+  "shot": "pb-manual-edited"
+ },
+ {
+  "click": "main button:has-text('Save Production')",
+  "after": 12000
+ },
+ {
+  "texts": "manual_after",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/machine-wash-production?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "Requisition No",
+  "sel": "main label:has(> span:text-matches(\"^Requisition No\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "IR-DC-2026110003"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Department",
+  "sel": "main label:has(> span:text-matches(\"^Department\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Dyeing Department"
+ },
+ {
+  "pick": "Item Name",
+  "sel": "main label:has(> span:text-matches(\"^Item Name\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "ACETIC"
+ },
+ {
+  "fill": "GM",
+  "sel": "main label:has(> span:text-matches(\"^GM\\\\*?$\")) input >> nth=0",
+  "text": "500"
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "after": 800
+ },
+ {
+  "shot": "pb-wash-filled"
+ },
+ {
+  "texts": "wash_totals",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main button:has-text('Save wash production')",
+  "after": 15000
+ },
+ {
+  "goto": "/dye-house/machine-wash-production"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "wash_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/direct-fabric-booking?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "Prod. Type",
+  "sel": "main label:has(> span:text-matches(\"^Prod. Type\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Bulk"
+ },
+ {
+  "pick": "Style/Ord#",
+  "sel": "main label:has(> span:text-matches(\"^Style/Ord#\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "SS27-TEE01"
+ },
+ {
+  "pick": "Status",
+  "sel": "main label:has(> span:text-matches(\"^Status\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Submitted"
+ },
+ {
+  "fill": "Fabric Description",
+  "sel": "main label:has(> span:text-matches(\"^Fabric Description\\\\*?$\")) input >> nth=0",
+  "text": "S/J 160 GSM 100% Cotton"
+ },
+ {
+  "pick": "Color",
+  "sel": "main label:has(> span:text-matches(\"^Color\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Black"
+ },
+ {
+  "fill": "Qty\\\\(Kg\\\\)",
+  "sel": "main label:has(> span:text-matches(\"^Qty\\\\(Kg\\\\)\\\\*?$\")) input >> nth=0",
+  "text": "420"
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "after": 800
+ },
+ {
+  "click": "main button:has-text('Save booking')",
+  "after": 15000
+ },
+ {
+  "shot": "pb-dfb-saved"
+ },
+ {
+  "goto": "/dye-house/direct-fabric-booking"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "dfb_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/general-fabric-booking?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "Prod. Type",
+  "sel": "main label:has(> span:text-matches(\"^Prod. Type\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Sample"
+ },
+ {
+  "fill": "Fabric Description",
+  "sel": "main label:has(> span:text-matches(\"^Fabric Description\\\\*?$\")) input >> nth=0",
+  "text": "1x1 Rib 220 GSM"
+ },
+ {
+  "fill": "Qty\\\\(Kg\\\\)",
+  "sel": "main label:has(> span:text-matches(\"^Qty\\\\(Kg\\\\)\\\\*?$\")) input >> nth=0",
+  "text": "35"
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "after": 800
+ },
+ {
+  "click": "main button:has-text('Save booking')",
+  "after": 15000
+ },
+ {
+  "goto": "/dye-house/general-fabric-booking"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "gfb_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/dyeing-program-for-trims?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "Prod. Type",
+  "sel": "main label:has(> span:text-matches(\"^Prod. Type\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Bulk"
+ },
+ {
+  "pick": "Style/Ord#",
+  "sel": "main label:has(> span:text-matches(\"^Style/Ord#\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "SS27-TEE01"
+ },
+ {
+  "pick": "Status",
+  "sel": "main label:has(> span:text-matches(\"^Status\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Draft"
+ },
+ {
+  "fill": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) input >> nth=0",
+  "text": "Neck tape 12mm"
+ },
+ {
+  "pick": "Color",
+  "sel": "main label:has(> span:text-matches(\"^Color\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Black"
+ },
+ {
+  "fill": "YDs",
+  "sel": "main label:has(> span:text-matches(\"^YDs\\\\*?$\")) input >> nth=0",
+  "text": "1500"
+ },
+ {
+  "fill": "Qty\\\\(Kg\\\\)",
+  "sel": "main label:has(> span:text-matches(\"^Qty\\\\(Kg\\\\)\\\\*?$\")) input >> nth=0",
+  "text": "6.5"
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "after": 800
+ },
+ {
+  "click": "main button:has-text('Save trim programme')",
+  "after": 15000
+ },
+ {
+  "shot": "pb-trim-saved"
+ },
+ {
+  "goto": "/dye-house/dyeing-program-for-trims"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "trim_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/check-roll-parameter?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "fill": "GSM Tolerance %",
+  "exact": true,
+  "text": "5"
+ },
+ {
+  "fill": "Width Tolerance %",
+  "exact": true,
+  "text": "3"
+ },
+ {
+  "fill": "Shade Tolerance (\u0394E)",
+  "exact": true,
+  "text": "1"
+ },
+ {
+  "fill": "Shrinkage Length %",
+  "exact": true,
+  "text": "5"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/check-roll-parameter"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "param_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/dyeing-and-finishing-close"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "dfc_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "pb-dfc"
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Close')",
+  "after": 1500
+ },
+ {
+  "texts": "dfc_dialog",
+  "of": "[role=alertdialog] h2, [role=alertdialog] p"
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Keep')",
+  "after": 1000
+ }
+]

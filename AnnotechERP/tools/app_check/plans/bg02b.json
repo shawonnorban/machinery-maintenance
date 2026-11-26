@@ -1,0 +1,23 @@
+[
+ {"goto": "/buyer-gateway/document-sharing"},
+ {"wait": 15000},
+ {"click": "main tbody tr:has-text('OEKO') button:has-text('Edit')", "after": 2000},
+ {"fill": "Document", "exact": true, "text": "ST-4471 tech pack rev 3"},
+ {"pick": "Buyer", "exact": true, "option": "H&M", "exactOption": true},
+ {"pick": "Kind", "exact": true, "option": "Tech pack"},
+ {"pick": "State", "exact": true, "option": "Shared"},
+ {"fill": "Downloads", "exact": true, "text": "18"},
+ {"shot": "d2-edit"},
+ {"click": "[role=dialog] button:has-text('Save changes')", "after": 25000},
+ {"click": "main button:has-text('Share document')", "after": 2000},
+ {"fill": "Document", "exact": true, "text": "OEKO-TEX certificate 2026"},
+ {"pick": "Buyer", "exact": true, "option": "TAKKO"},
+ {"pick": "Kind", "exact": true, "option": "Certificate"},
+ {"fill": "Size (MB)", "exact": true, "text": "1.4"},
+ {"pick": "State", "exact": true, "option": "Expired"},
+ {"click": "[role=dialog] button:has-text('Share')", "after": 25000},
+ {"shot": "d3-list"},
+ {"goto": "/buyer-gateway/shipment-status"},
+ {"wait": 15000},
+ {"shot": "h1-list"}
+]

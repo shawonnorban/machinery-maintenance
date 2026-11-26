@@ -21,7 +21,7 @@ import { useT } from "@/lib/i18n";
  * via a `useEffect` on prop change would need to call `setState` directly
  * in the effect body, which React's own lint flags as a smell.
  */
-function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row, action }) {
+function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row, action, autoCodeHint, submitLabel }) {
   const t = useT("masterdata");
   const tc = useT("common");
   const [state, dispatch, pending] = useActionState(action, null);
@@ -70,6 +70,7 @@ function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row
             onChange={(value) => setValues((current) => ({ ...current, [field.name]: value }))}
             referenceOptions={referenceOptions}
             error={state?.errors?.[field.name]?.[0]}
+            autoCodeHint={autoCodeHint}
           />
         ))}
 
@@ -78,7 +79,7 @@ function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row
             {tc("cancel")}
           </Button>
           <Button type="submit" loading={pending}>
-            {row ? tc("save") : t("create")}
+            {row ? tc("save") : (submitLabel ?? t("create"))}
           </Button>
         </div>
       </form>
@@ -89,7 +90,8 @@ function RowFormModal({ open, onOpenChange, title, schema, referenceOptions, row
 function initialValues(schema, row) {
   const values = {};
   for (const field of schema.fields) {
-    values[field.name] = row ? (row[field.name] ?? (field.type === "BOOLEAN" ? false : "")) : field.type === "BOOLEAN" ? true : "";
+    const fresh = field.type === "BOOLEAN" ? true : (field.default ?? "");
+    values[field.name] = row ? (row[field.name] ?? (field.type === "BOOLEAN" ? false : "")) : fresh;
   }
   return values;
 }

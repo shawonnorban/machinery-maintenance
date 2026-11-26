@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/garments/garments-reports"},
+ {"click": "main label:has-text('Order Closing Report')"},
+ {"fullshot": "form_closing"},
+ {"texts": "labels", "of": "main label, main legend, main h2, main h3, main button"},
+ {"options": "sel0", "of": "main select >> nth=0"},
+ {"options": "sel1", "of": "main select >> nth=1"},
+ {"options": "sel2", "of": "main select >> nth=2"},
+ {"options": "sel3", "of": "main select >> nth=3"},
+ {"options": "sel4", "of": "main select >> nth=4"},
+ {"options": "sel5", "of": "main select >> nth=5"}
+]

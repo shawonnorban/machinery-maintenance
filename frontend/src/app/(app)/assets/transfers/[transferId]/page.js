@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { TransferActions } from "@/components/assets/transfer-actions";
 import { getT } from "@/lib/i18n-server";
 import { approveTransfer, receiveTransfer, rejectTransfer } from "../actions";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `AssetTransferApiController::show` — no equivalent page exists on the web (everything happens from the pending-queue index instead); this is a genuinely new, more discoverable detail view for the same data. */
 export default async function AssetTransferDetailPage({ params }) {
@@ -23,8 +24,8 @@ export default async function AssetTransferDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: t("transfers"), href: "/assets/transfers" }, { label: transfer.transfer_number }]}
+      <ScreenHeader
+        parentUrl="/assets/transfers"
         title={transfer.transfer_number}
         description={`${transfer.from_factory?.name ?? "—"} → ${transfer.to_factory?.name ?? "—"}`}
         actions={
@@ -46,7 +47,7 @@ export default async function AssetTransferDetailPage({ params }) {
             <CardBody>
               <dl className="flex flex-col gap-2 text-sm">
                 <Row label={t("asset")}>
-                  <Link href={`/assets/${transfer.asset?.id}`} className="text-brand hover:underline">
+                  <Link href={`/assets/${refOf(transfer.asset, "asset_code")}`} className="text-brand hover:underline">
                     {transfer.asset?.asset_code}
                   </Link>{" "}
                   — {transfer.asset?.name}

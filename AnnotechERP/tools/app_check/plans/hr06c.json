@@ -1,0 +1,11 @@
+[
+ {"goto": "/hr-payroll/payroll-adjustment"},
+ {"wait": 30000},
+ {"pick": "Show", "sel": "main [aria-label='Show']", "option": "All finalized slips"},
+ {"click": "main button:has-text('Show')", "after": 12000},
+ {"texts": "before", "of": "main tbody tr"},
+ {"click": "main tr:has-text('PADJ-000002') button:has-text('Decide')", "after": 1500},
+ {"click": "[role=dialog] button:has-text('Approve')", "after": 12000},
+ {"texts": "after", "of": "main tbody tr"},
+ {"shot": "c1-after-decide"}
+]

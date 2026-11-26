@@ -1,0 +1,17 @@
+[
+ { "goto": "/m/sample/sample-requisition" },
+ { "wait": 3500 },
+ { "click": "button:has-text('Sample Fabric Requisition') >> nth=0", "wait": 2500 },
+ { "choose": "main select >> nth=0", "index": 1 },
+ { "wait": 2500 },
+ { "click": "main button:has-text('Submit')", "wait": 3000 },
+ { "texts": "dlg1", "of": "[role=dialog] *, [role=alertdialog] *" },
+ { "click": "[role=dialog] button:has-text('Submit'), [role=alertdialog] button:has-text('Submit')", "wait": 4000 },
+ { "texts": "after_submit", "of": "main button, main input[disabled]" },
+ { "click": "main button:has-text('Dept'), main button:has-text('Department')", "wait": 3000 },
+ { "texts": "dlg2", "of": "[role=dialog] *, [role=alertdialog] *" },
+ { "click": "[role=dialog] button >> nth=-1, [role=alertdialog] button >> nth=-1", "wait": 4000 },
+ { "texts": "after_dept", "of": "main button, main input[disabled], main table th" },
+ { "dump": "dept_form", "root": "main" },
+ { "fullshot": "proto13-dept" }
+]

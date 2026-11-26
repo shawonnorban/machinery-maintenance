@@ -1,0 +1,109 @@
+<?php
+
+declare(strict_types=1);
+
+// Export Statement (AnnotechERP 35, from the user's Norban ERP — "MD Sir Export Status").
+return [
+    'folders' => ['statements' => 'Statements', 'setup' => 'Setup'],
+    'screens' => [
+        'dashboard' => 'Dashboard',
+        'list' => 'View All Export Statements',
+        'new' => 'Add Export Statement',
+        'approvals' => 'Pending Approvals',
+        'columns' => 'Column Setup',
+    ],
+    'descriptions' => [
+        'dashboard' => 'The export invoices at a glance: payment and collection, cash incentive and government documents, documents and shipment, quantity and time.',
+        'list' => 'Every export invoice as a sheet: filter any column, tick rows and Bulk Edit them, import or export Excel. An edit waits for approval before it is saved.',
+        'new' => 'New export invoices, typed into the sheet like Excel (or pasted). One Company Name + Invoice No. is one entry; a new entry is saved at once.',
+        'approvals' => 'Edits waiting for approval: each changed field with its current and new value. The entry keeps its values until the last approver approves.',
+        'columns' => 'The statement sheet\'s groups and columns: add or change columns, formulas, colour rules, widths, freeze panes and who sees each column.',
+    ],
+
+    'dash' => [
+        'total' => 'Total Entries: :n', 'approved' => 'Approved: :n', 'pending' => 'Pending Approval: :n',
+        'groups' => ['payment' => 'Payment & Collection', 'incentive' => 'Cash Incentive & Govt. Documents', 'documents' => 'Documents & Shipment', 'quantity' => 'Quantity & Time'],
+        'card' => [
+            'total_net' => 'Total Net Value', 'total_net_sub' => ':n invoices',
+            'total_realized' => 'Total Realized', 'total_realized_sub' => ':n invoices paid',
+            'due' => 'Due Payment', 'due_sub' => ':n invoices DUE',
+            'due_90' => 'Due Aging 90+ Days', 'due_90_sub' => ':n invoices DUE over 90 days',
+            'realization_pct' => 'Realization %', 'realization_pct_sub' => 'of the net value realized',
+            'shortage' => 'Shortage / Over', 'shortage_sub' => 'on paid invoices',
+            'avg_days' => 'Avg. Realization Days', 'avg_days_value' => ':n days', 'avg_days_sub' => 'invoice → realized, :n invoices',
+            'commission' => 'Commission / Deduction', 'commission_sub' => 'deducted from gross value',
+            'freight' => 'Freight Charge', 'freight_sub' => 'mostly air / sea-air',
+            'claimed' => 'Incentive Claimed', 'claimed_sub' => ':n claims',
+            'potential' => 'Incentive Potential', 'potential_sub' => '≈ :rate% of the open claims',
+            'open' => 'Open Claims', 'open_sub' => 'within :days days of realization',
+            'due_soon' => 'Claim Due ≤ 30 Days', 'due_soon_sub' => 'claim before they expire',
+            'expired' => 'Expired Claims', 'expired_sub' => ':days days passed, not claimed',
+            'prc' => 'PRC Pending', 'prc_sub' => 'realized, PRC not received',
+            'exp_dup' => 'EXP Duplicate Pending', 'exp_dup_sub' => 'EXP duplicate not received',
+            'rex' => 'REX Pending', 'rex_sub' => 'shipped, REX not submitted',
+            'docs_overdue' => 'Docs Overdue', 'docs_overdue_sub' => 'BL + :days days passed, not at the bank',
+            'late_docs' => 'Late Docs Submitted', 'late_docs_sub' => 'avg :n days late',
+            'bl_surrender' => 'B/L Surrender Pending', 'bl_surrender_sub' => 'sea shipments, BL not surrendered',
+            'cargo' => 'Cargo Arriving (7 Days)', 'cargo_sub' => 'ETA within the next 7 days',
+            'export_qty' => 'Export Qty', 'export_qty_sub' => 'pcs, :n invoices',
+            'month' => 'Shipped This Month', 'month_sub' => ':n invoices, ex-factory :month',
+            'mode' => 'Sea / Air Split', 'mode_sub' => 'Sea · Air :air% · Sea-Air :sea_air% · Road :road%',
+        ],
+    ],
+
+    'appr' => [
+        'empty' => 'No edit is waiting for approval.', 'invoice' => 'Invoice No.', 'company' => 'Company', 'buyer' => 'Buyer',
+        'requested' => ':name on :at', 'source' => ['EDIT' => 'Edit', 'IMPORT' => 'Excel import'],
+        'field' => 'Field', 'current' => 'Current value', 'new' => 'New value',
+        'step' => 'Step :step of :steps — :name', 'approvers' => 'Approvers: :names', 'no_approvers' => 'nobody is set for this step',
+        'note' => 'Note (optional) — saved with Approve or Reject', 'approve' => 'Approve', 'reject' => 'Reject', 'withdraw' => 'Withdraw my edit',
+        'approved' => 'Edit approved — the entry now shows the new values.', 'next' => 'Your approval is saved — the edit now waits for the next approver.',
+        'rejected' => 'Edit rejected — the entry keeps its previous values.', 'withdrawn' => 'Your edit was withdrawn — the entry is unchanged.',
+        'recent' => 'Recent decisions', 'status' => ['APPROVED' => 'Approved', 'REJECTED' => 'Rejected', 'CANCELLED' => 'Withdrawn'],
+        'decided' => ':status by :name on :at', 'not_your_turn' => 'Waiting for another approver.',
+    ],
+
+    'imp' => [
+        'button' => 'Import Excel', 'busy' => 'Importing…', 'hint' => 'Norban\'s book or this page\'s export: a new Company Name + Invoice No. is added, an existing one is an edit.',
+        'done' => 'Import finished: :created new, :updated updated, :sent sent for approval, :unchanged unchanged.',
+        'skipped' => ':n row(s) skipped', 'unknown' => 'Headings not read: :list', 'failed' => 'The import failed',
+    ],
+
+    'approval' => [
+        'title' => 'Export Statement edit: :invoice (:company) — :n field(s)',
+        'sent' => ':n edit(s) sent for approval — the entries keep their values until approved.',
+        'withdrawn_same' => 'The editor put the entry\'s own values back.',
+        'replaced' => 'Replaced by a newer edit of the same editor.',
+        'deleted' => 'The entry was deleted.',
+        'withdrawn' => 'Withdrawn by the editor.',
+    ],
+
+    'import' => [
+        'line' => 'Row :line: :error',
+        'no_edit' => 'this invoice already exists and you may not edit entries.',
+        'no_create' => 'you may not add entries.',
+    ],
+
+    'v' => [
+        'number' => ':column needs a number.',
+        'date' => ':column needs a date.',
+        'option' => ':column: pick a value from the list.',
+        'image' => ':column needs an uploaded picture.',
+        'read_only' => 'You cannot change :column.',
+        'row_gone' => 'This entry was deleted meanwhile.',
+        'missing' => 'Row :row (:serial): fill :columns.',
+        'system_column' => 'A starting column cannot be deleted; hide it instead.',
+        'column_in_use' => 'These formulas read this column: :columns',
+        'invoice_twice' => 'Invoice No. :invoice of :company is entered twice.',
+        'invoice_exists' => 'Invoice No. :invoice of :company already exists.',
+        'pending_other' => 'Invoice :invoice is waiting for approval of an edit by :name; it can be edited again once that is approved or rejected.',
+        'unassigned' => 'Nobody can approve edits yet: set who signs :steps in Approval Center → Approval Workflow (Export Statement Edit).',
+        'not_your_turn' => 'This edit is not waiting for you.',
+        'not_yours' => 'Only the editor can withdraw this edit.',
+    ],
+
+    'cs' => [
+        'source' => ['factories' => 'Companies (factories)', 'buyers' => 'Buyers', 'banks' => 'Banks', 'es' => 'Export Statement list: :name'],
+        'list' => ['ship_mode' => 'Ship Mode', 'due_payment' => 'Due Payment', 'incoterms' => 'Incoterms'],
+    ],
+];

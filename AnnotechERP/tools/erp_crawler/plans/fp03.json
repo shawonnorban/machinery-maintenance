@@ -1,0 +1,5 @@
+[
+ {"goto": "/m/dyeing-finishing/df-process-wise-delivery"},
+ {"hrefs": "p1_links", "of": "main a"},
+ {"html": "p1_btns", "of": "main button:has-text('Pdf'), main button:has-text('S/C'), main button:has-text('BT'), main button:has-text('Excel')"}
+]

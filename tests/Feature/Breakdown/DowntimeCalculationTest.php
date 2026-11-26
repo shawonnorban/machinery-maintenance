@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Breakdown;
 
+use App\Modules\HrPayroll\Support\FactoryCalendarSetup;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Breakdown\Actions\ReportBreakdown;
 use App\Modules\Breakdown\Actions\TransitionBreakdown;
@@ -13,8 +14,6 @@ use App\Modules\Breakdown\Models\DowntimeRecord;
 use App\Modules\Breakdown\Models\FailureCode;
 use App\Modules\Breakdown\Models\RootCause;
 use App\Modules\Breakdown\Services\DowntimeCalculator;
-use App\Modules\Calendar\Models\FactoryCalendar;
-use App\Modules\Calendar\Models\Shift;
 use App\Modules\Settings\Actions\SetSetting;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
@@ -70,21 +69,8 @@ class DowntimeCalculationTest extends TestCase
     /** One 08:00-22:00 shift, Saturday to Thursday, Friday off. */
     private function shiftCalendar(): void
     {
-        FactoryCalendar::create([
-            'factory_id' => $this->dhaka->id,
-            'operating_mode' => 'SHIFT_BASED',
-            'weekly_off_days' => [5],
-            'effective_from' => '2026-01-01',
-        ]);
-
-        Shift::create([
-            'factory_id' => $this->dhaka->id,
-            'name' => 'Day', 'code' => 'DAY',
-            'start_time' => '08:00:00', 'end_time' => '22:00:00',
-            'days_of_week' => [1, 2, 3, 4, 6, 7],
-            'effective_from' => '2026-01-01',
-            'status' => 'ACTIVE',
-        ]);
+        FactoryCalendarSetup::factory($this->delta->id, $this->dhaka->id, 'SHIFT_BASED');
+        FactoryCalendarSetup::shift($this->delta->id, 'DAY', 'Day', '08:00', '22:00');
 
         app(SetSetting::class)->handle(
             'metrics.downtime_uses_shift_calendar', true, factoryId: $this->dhaka->id,

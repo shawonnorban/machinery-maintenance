@@ -8,6 +8,7 @@ use App\Modules\Approval\Contracts\Approvable;
 use App\Modules\Approval\Models\ApprovalAction;
 use App\Modules\Approval\Models\ApprovalRequest;
 use App\Modules\Approval\Models\ApprovalRule;
+use App\Modules\Approval\Models\ApprovalRuleUser;
 use App\Modules\Approval\Support\ApprovalEntities;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserRole;
@@ -42,14 +43,14 @@ class DecideApproval
         $this->assertActionable($request, $approver);
 
         return DB::transaction(function () use ($request, $approver, $comment): ApprovalRequest {
-            $this->record($request, $approver, 'APPROVED', $comment);
-
             $isFinalStep = $request->current_step >= $request->total_steps;
+            $this->record($request, $approver, 'APPROVED', $comment, $isFinalStep ? 'APPROVED' : 'PENDING');
 
             if (! $isFinalStep) {
                 // On to whoever is next. The record stays pending, because it
                 // is not approved until the last signature.
                 $request->forceFill(['current_step' => $request->current_step + 1])->save();
+                $this->tellNextLevel($request->fresh());
 
                 return $request->fresh();
             }
@@ -84,7 +85,7 @@ class DecideApproval
         $this->assertActionable($request, $approver);
 
         return DB::transaction(function () use ($request, $approver, $comment): ApprovalRequest {
-            $this->record($request, $approver, 'REJECTED', $comment);
+            $this->record($request, $approver, 'REJECTED', $comment, 'REJECTED');
 
             $request->forceFill([
                 'status' => 'REJECTED',
@@ -92,6 +93,34 @@ class DecideApproval
             ])->save();
 
             $this->applyToEntity($request->fresh(), 'REJECTED');
+
+            return $request->fresh();
+        });
+    }
+
+    /**
+     * Back to the requester for correction (Approval Center, AnnotechERP 04).
+     * This round ends; submitting again starts a new one from level 1. Only a
+     * request written in the Approval Center can be returned: a module's
+     * document has no "returned" state of its own yet.
+     */
+    public function returnForRevision(ApprovalRequest $request, User $approver, string $comment): ApprovalRequest
+    {
+        if (blank($comment)) {
+            throw ValidationException::withMessages(['comment' => __('approval.rejection_needs_reason')]);
+        }
+        if ($request->entity_type !== 'MANUAL_REQUEST') {
+            throw ValidationException::withMessages(['status' => __('approval.center.cannot_return')]);
+        }
+
+        $this->assertActionable($request, $approver);
+
+        return DB::transaction(function () use ($request, $approver, $comment): ApprovalRequest {
+            $this->record($request, $approver, 'RETURNED', $comment, 'RETURNED');
+
+            $request->forceFill(['status' => 'RETURNED', 'completed_at' => CarbonImmutable::now()])->save();
+
+            $this->applyToEntity($request->fresh(), 'RETURNED');
 
             return $request->fresh();
         });
@@ -112,6 +141,9 @@ class DecideApproval
                 'step' => $request->current_step,
                 'action' => 'CANCELLED',
                 'comment' => $comment,
+                'previous_status' => 'PENDING',
+                'new_status' => 'CANCELLED',
+                'level' => $request->current_step,
                 'acted_at' => CarbonImmutable::now(),
             ]);
 
@@ -224,6 +256,15 @@ class DecideApproval
 
     private function satisfies(ApprovalRule $rule, User $approver, string $companyId): bool
     {
+        // A step with named people (Action Assignment, AnnotechERP 02/03) is
+        // theirs alone, whatever its role says.
+        if ($rule->exists) {
+            $named = ApprovalRuleUser::query()->where('rule_id', $rule->id)->pluck('user_id');
+            if ($named->isNotEmpty()) {
+                return $named->contains($approver->id);
+            }
+        }
+
         if ($rule->user_id !== null) {
             return $rule->user_id === $approver->id;
         }
@@ -250,7 +291,7 @@ class DecideApproval
         return false;
     }
 
-    private function record(ApprovalRequest $request, User $approver, string $action, ?string $comment): void
+    private function record(ApprovalRequest $request, User $approver, string $action, ?string $comment, ?string $newStatus = null): void
     {
         ApprovalAction::create([
             'approval_request_id' => $request->id,
@@ -258,8 +299,32 @@ class DecideApproval
             'step' => $request->current_step,
             'action' => $action,
             'comment' => $comment,
+            'previous_status' => $request->status,
+            'new_status' => $newStatus,
+            'level' => $request->current_step,
             'acted_at' => CarbonImmutable::now(),
         ]);
+    }
+
+    /**
+     * The next level hears about it, as the first did. Only for documents that
+     * can describe themselves; a work order keeps its own notices.
+     */
+    private function tellNextLevel(ApprovalRequest $request): void
+    {
+        $entity = ApprovalEntities::find($request->entity_type, $request->entity_id);
+        if (! $entity instanceof Approvable) {
+            return;
+        }
+        $context = $request->context_json ?? [];
+        $this->notifier->approvalRequested(
+            $entity->approvalSummary(),
+            $request->entity_type,
+            $entity->id,
+            app(RequestApproval::class)->approversFor($request->currentRule(), $request->company_id),
+            (string) ($context['cost'] ?? '0'),
+            $context['currency'] ?? 'BDT',
+        );
     }
 
     /**
@@ -288,7 +353,7 @@ class DecideApproval
 
         $entity->onApprovalDecided($verdict);
 
-        if (in_array($verdict, ['APPROVED', 'REJECTED'], true)) {
+        if (in_array($verdict, ['APPROVED', 'REJECTED', 'RETURNED'], true)) {
             $this->notifier->approvalDecided(
                 $entity->approvalSummary(),
                 $request->entity_type,

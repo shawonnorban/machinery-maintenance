@@ -1,0 +1,169 @@
+[
+ {
+  "goto": "/dye-house/check-roll-inspection?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "ins_list",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main button:has-text('B-26110011')",
+  "after": 6000
+ },
+ {
+  "fill": "roll",
+  "sel": "main label:has(> span:text-matches(\"^Roll No\\\\*?$\")) input >> nth=0",
+  "text": "R-01"
+ },
+ {
+  "texts": "ins_verdict_pass",
+  "of": "main p.font-medium"
+ },
+ {
+  "click": "main button:has-text('Save inspection')",
+  "after": 12000
+ },
+ {
+  "fill": "roll",
+  "sel": "main label:has(> span:text-matches(\"^Roll No\\\\*?$\")) input >> nth=0",
+  "text": "R-02"
+ },
+ {
+  "click": "main label:has-text('Shade Not Ok') [role=checkbox] >> nth=0",
+  "after": 300
+ },
+ {
+  "click": "main label:has-text('Crease Mark') [role=checkbox]",
+  "after": 300
+ },
+ {
+  "click": "main button:has-text('Save inspection')",
+  "after": 8000
+ },
+ {
+  "texts": "ins_need_dept",
+  "of": "[data-slot=toast-title]"
+ },
+ {
+  "pick": "dept",
+  "sel": "main label:has(> span:text-matches(\"^Responsible Department\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Dyeing Department"
+ },
+ {
+  "fill": "rem",
+  "sel": "main label:has(> span:text-matches(\"^Remarks\\\\*?$\")) textarea >> nth=0",
+  "text": "Body two shades dark"
+ },
+ {
+  "shot": "qc-ins-held"
+ },
+ {
+  "click": "main button:has-text('Save inspection')",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/check-roll-inspection"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "ins_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/rib-collar-shade-approval?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pick": "Batch No",
+  "exact": true,
+  "option": "B-26110011"
+ },
+ {
+  "fill": "SL#",
+  "exact": true,
+  "text": "1"
+ },
+ {
+  "fill": "Rcv Date",
+  "exact": true,
+  "text": "2026-11-06"
+ },
+ {
+  "fill": "G. Qty",
+  "exact": true,
+  "text": "100"
+ },
+ {
+  "fill": "G. Roll",
+  "exact": true,
+  "text": "5"
+ },
+ {
+  "fill": "Fin Qty",
+  "exact": true,
+  "text": "94.5"
+ },
+ {
+  "fill": "Fin Roll",
+  "exact": true,
+  "text": "5"
+ },
+ {
+  "pick": "QC Status",
+  "exact": true,
+  "option": "Passed"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/rib-collar-shade-approval"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "shade_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "qc-shade"
+ },
+ {
+  "goto": "/dye-house/complete-batch-program"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "comp_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "qc-completion"
+ },
+ {
+  "click": "main tbody tr:has-text('IR-DC-2026110001') >> button:has-text('Complete')",
+  "after": 1500
+ },
+ {
+  "texts": "comp_dialog",
+  "of": "[role=alertdialog] h2, [role=alertdialog] p"
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Complete')",
+  "after": 10000
+ },
+ {
+  "texts": "comp_refused",
+  "of": "[data-slot=toast-title]"
+ }
+]

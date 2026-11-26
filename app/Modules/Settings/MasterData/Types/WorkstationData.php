@@ -9,6 +9,10 @@ use App\Modules\Settings\MasterData\Field;
 use App\Modules\Settings\MasterData\MasterDataType;
 use App\Modules\Tenancy\Models\Workstation;
 
+/**
+ * Company Management's Workstation tab (AnnotechERP 01/03). A workstation
+ * sits on a line ("Line is required.").
+ */
 class WorkstationData extends MasterDataType
 {
     public function key(): string
@@ -40,9 +44,15 @@ class WorkstationData extends MasterDataType
     {
         return [
             Field::reference('production_line_id', 'production-lines'),
+            Field::code(auto: true),
             Field::text('name'),
-            Field::code(),
+            Field::status(),
         ];
+    }
+
+    public function autoCodePrefix(): ?string
+    {
+        return 'WS';
     }
 
     public function usedBy(): array

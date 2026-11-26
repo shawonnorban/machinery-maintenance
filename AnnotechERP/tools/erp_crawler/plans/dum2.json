@@ -1,0 +1,7 @@
+[
+ { "goto": "/m/merchandising/accessories-pr-dummy-ord" },
+ { "click": "button:has-text('Order BOM')", "wait": 2500 },
+ { "click": "main button:has-text('TFC-2026-000001')", "wait": 3000 },
+ { "dump": "bom", "root": "main" },
+ { "fullshot": "dum-bom-picked" }
+]

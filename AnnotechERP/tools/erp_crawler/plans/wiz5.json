@@ -1,0 +1,66 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('View'), main table tbody tr:has-text('637PK') a:has-text('View')",
+  "wait": 3500
+ },
+ {
+  "click": "[role=dialog] button:has-text('Review'), [role=dialog] li:has-text('Review'), [role=dialog] a:has-text('Review')",
+  "wait": 2500
+ },
+ {
+  "click": "[role=dialog] button:has-text('Send for Approval')",
+  "wait": 2000
+ },
+ {
+  "type": "[role=dialog] textarea >> nth=-1",
+  "text": "Probe: please approve"
+ },
+ {
+  "click": "[role=dialog] >> nth=-1 >> button:has-text('Send for Approval')",
+  "wait": 3500
+ },
+ {
+  "texts": "hist",
+  "of": "[role=dialog]"
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "cards",
+  "of": "main"
+ },
+ {
+  "click": "main button:has-text('Open Inbox'), main a:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "texts": "inbox_rows",
+  "of": "main table tbody tr"
+ },
+ {
+  "texts": "inbox_btns",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "click": "main table tbody tr:first-child button >> nth=-1",
+  "wait": 3500
+ },
+ {
+  "dump": "approver",
+  "root": "body"
+ },
+ {
+  "texts": "approver_t",
+  "of": "[role=dialog]"
+ }
+]

@@ -1,0 +1,13 @@
+[{"goto": "/finance-ledger/bank-reconciliation"}, {"wait": 25000},
+ {"click": "main button[role=tab]:has-text('Bank Reconcilations')", "after": 2000},
+ {"click": "main aside button:has-text('0111-7654321')", "after": 2000},
+ {"click": "main [aria-label='Cleared JV-2026-000002']", "after": 800},
+ {"click": "main button:has-text('Save reconciliation')", "after": 15000},
+ {"shot": "br-board"},
+ {"goto": "/finance-ledger/voucher-post-unpost"}, {"wait": 25000},
+ {"click": "main button[role=tab]:has-text('Post / Unpost')", "after": 2000},
+ {"click": "main aside button:has-text('Delta Apparels')", "after": 2000},
+ {"dialog": "accept"},
+ {"click": "main button[aria-label='Unpost JV-2026-000002']", "after": 2000},
+ {"click": "[role=dialog] button:has-text('Unpost')", "after": 10000},
+ {"shot": "unpost-refused"}]

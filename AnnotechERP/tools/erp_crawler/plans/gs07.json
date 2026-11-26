@@ -1,0 +1,18 @@
+[
+ { "goto": "/m/general-store/gs-audit-log" }, { "wait": 5000 },
+ { "texts": "audit", "of": "main h2, main h3, main label, main th, main td, main p, main button" },
+ { "fullshot": "gs07-audit" },
+ { "goto": "/m/general-store/gs-settings" }, { "wait": 5000 },
+ { "texts": "settings", "of": "main h2, main h3, main label, main th, main td, main p, main button, main span" },
+ { "fullshot": "gs07-settings" },
+ { "goto": "/m/general-store/gs-adjustment" }, { "wait": 5000 },
+ { "choose": "main select >> nth=1", "label": "Physical Count Correction" },
+ { "click": "main button[aria-haspopup=listbox] >> nth=1", "wait": 1500 },
+ { "click": "[role=option]:has-text('A4 Size Paper')", "wait": 1500 },
+ { "fillsel": "main input[type=number] >> nth=0", "text": "-1" },
+ { "fillsel": "main textarea >> nth=0", "text": "Probe — sign check" },
+ { "fullshot": "gs07-adjust-negative-before" },
+ { "click": "main button:has-text('Save')", "wait": 3000 },
+ { "fullshot": "gs07-adjust-negative" },
+ { "texts": "adj_rows", "of": "main tbody tr" }
+]

@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
-import { KeyRound, Mail, ShieldCheck } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, KeyRound, Mail, Search, ShieldCheck, Users } from "lucide-react";
+import { FormSection, FormActions } from "@/components/ui/form-section";
+import { Panel, PTable } from "@/components/platform/ui";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -27,7 +28,7 @@ const LOCALE_OPTIONS = [
  */
 function CompanyPanel({ company, members, updateDetailsAction, updateEmailAction, resetPasswordAction }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <DetailsForm company={company} action={updateDetailsAction} />
       <MembersCard members={members} updateEmailAction={updateEmailAction} resetPasswordAction={resetPasswordAction} />
     </div>
@@ -50,17 +51,10 @@ function DetailsForm({ company, action }) {
   }, [state]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Company details</CardTitle>
-      </CardHeader>
-      <CardBody>
-        {state?.status === "error" && !state.errors ? (
-          <Alert variant="danger" className="mb-4">
-            {state.message}
-          </Alert>
-        ) : null}
-        <form action={dispatch} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <form action={dispatch} className="flex flex-col gap-3">
+      {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
+      <FormSection legend="Company Details">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           <FormField label="Company name" required error={state?.errors?.name?.[0]}>
             {(p) => <Input {...p} name="name" defaultValue={company.name} maxLength={255} required />}
           </FormField>
@@ -88,47 +82,88 @@ function DetailsForm({ company, action }) {
           <FormField label="Locale">
             {() => <Select name="default_locale" defaultValue={company.default_locale} options={LOCALE_OPTIONS} />}
           </FormField>
-          <div className="flex items-end sm:col-span-2">
-            <Button type="submit" loading={pending}>
-              Save changes
-            </Button>
-          </div>
-        </form>
-      </CardBody>
-    </Card>
+        </div>
+      </FormSection>
+      <FormActions>
+        <Button type="submit" loading={pending}>
+          Save changes
+        </Button>
+      </FormActions>
+    </form>
   );
 }
 
+const PAGE = 15;
+
+/** Every member of the company, searchable and a page at a time (a big customer has hundreds). */
 function MembersCard({ members, updateEmailAction, resetPasswordAction }) {
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const needle = search.trim().toLowerCase();
+  const filtered = needle ? members.filter((m) => m.name.toLowerCase().includes(needle) || (m.email ?? "").toLowerCase().includes(needle)) : members;
+  const last = Math.max(1, Math.ceil(filtered.length / PAGE));
+  const current = Math.min(page, last);
+  const rows = filtered.slice((current - 1) * PAGE, current * PAGE);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Members ({members.length})</CardTitle>
-      </CardHeader>
-      <CardBody className="flex flex-col divide-y divide-border p-0">
-        {members.map((member) => (
-          <div key={member.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
-            <div className="flex items-center gap-3">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-muted text-xs font-semibold text-foreground-muted">
-                {member.name.charAt(0).toUpperCase()}
+    <Panel
+      title="Members"
+      subtitle={`${filtered.length} of ${members.length} users · change a sign-in email or reset a password, with a written reason`}
+      icon={Users}
+      action={
+        <span className="relative">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-subtle" />
+          <Input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Name or email…"
+            className="w-64 pl-9"
+          />
+        </span>
+      }
+    >
+      <PTable
+        dense
+        rows={rows}
+        rowKey={(m) => m.id}
+        empty="No member matches this search."
+        columns={[
+          {
+            key: "name",
+            label: "Name",
+            render: (m) => (
+              <span className="flex items-center gap-2.5">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-surface-muted text-xs font-semibold text-foreground-muted">{m.name.charAt(0).toUpperCase()}</span>
+                <b className="font-semibold">{m.name}</b>
+                {m.is_owner ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-brand-subtle px-2 py-0.5 text-[11px] font-semibold text-brand-hover">
+                    <ShieldCheck className="size-3" /> Owner
+                  </span>
+                ) : null}
               </span>
-              <div>
-                <p className="text-sm font-medium text-foreground">
-                  {member.name}
-                  {member.is_owner ? (
-                    <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-brand-subtle px-2 py-0.5 text-[11px] font-semibold text-brand-hover">
-                      <ShieldCheck className="size-3" /> Owner
-                    </span>
-                  ) : null}
-                </p>
-                <p className="text-xs text-foreground-muted">{member.email}</p>
-              </div>
-            </div>
-            <MemberActions member={member} updateEmailAction={updateEmailAction} resetPasswordAction={resetPasswordAction} />
-          </div>
-        ))}
-      </CardBody>
-    </Card>
+            ),
+          },
+          { key: "email", label: "Sign-in email", render: (m) => <span className="text-foreground-muted">{m.email}</span> },
+          { key: "act", label: "", align: "right", render: (m) => <MemberActions member={m} updateEmailAction={updateEmailAction} resetPasswordAction={resetPasswordAction} /> },
+        ]}
+      />
+      {last > 1 ? (
+        <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-2.5 text-sm">
+          <Button size="sm" variant="outline" disabled={current <= 1} onClick={() => setPage(current - 1)} aria-label="Previous page">
+            <ChevronLeft />
+          </Button>
+          <span className="tabular-nums text-foreground-muted">
+            Page {current} of {last}
+          </span>
+          <Button size="sm" variant="outline" disabled={current >= last} onClick={() => setPage(current + 1)} aria-label="Next page">
+            <ChevronRight />
+          </Button>
+        </div>
+      ) : null}
+    </Panel>
   );
 }
 
@@ -168,12 +203,12 @@ function MemberActions({ member, updateEmailAction, resetPasswordAction }) {
 
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex justify-end gap-1.5">
         <Button size="sm" variant="outline" onClick={() => setEmailOpen(true)}>
-          <Mail /> Change email
+          <Mail /> Email
         </Button>
         <Button size="sm" variant="outline" onClick={() => setPasswordOpen(true)}>
-          <KeyRound /> Reset password
+          <KeyRound /> Password
         </Button>
       </div>
 

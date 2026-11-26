@@ -13,6 +13,7 @@ use App\Modules\Api\Support\TokenHandle;
 use App\Modules\Audit\Services\AuditRecorder;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Services\PermissionResolver;
+use App\Modules\QualityTally\Support\QtPhones;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Http\Api\ApiException;
@@ -61,6 +62,11 @@ class AuthenticateApiToken
             : $this->personCaller($token);
 
         $this->assertCompanyUsable($caller->companyId);
+
+        if ($token->pinSessionId() !== null) {
+            // A QC's PIN opens the tally and nothing else of their account.
+            QtPhones::assertPinSession($token, $request->route()?->getName());
+        }
 
         $requested = $request->header('X-Company-Id');
 

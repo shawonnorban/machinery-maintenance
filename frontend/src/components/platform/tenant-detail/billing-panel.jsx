@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import { Plus, FileCheck, Wallet, Ban } from "lucide-react";
+import { Plus, FileCheck, Wallet, Ban, FileText, Receipt } from "lucide-react";
+import { Panel, PTable, Facts, fmtDate } from "@/components/platform/ui";
 import { Card, CardHeader, CardTitle, CardBody, CardFooter } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
@@ -41,7 +42,7 @@ function BillingPanel({ company, contracts, invoices, contractAction, entitlemen
   const currentContract = contracts[0] ?? null;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <ContractCard company={company} currentContract={currentContract} contracts={contracts} contractAction={contractAction} entitlementsAction={entitlementsAction} />
       <InvoicesCard company={company} currentContract={currentContract} invoices={invoices} invoiceActions={invoiceActions} />
     </div>
@@ -52,55 +53,56 @@ function ContractCard({ company, currentContract, contracts, contractAction, ent
   const [formOpen, setFormOpen] = useState(!currentContract);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Contract</CardTitle>
-      </CardHeader>
-      <CardBody className="flex flex-col gap-4">
-        {currentContract ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Field label="Status"><StatusBadge status={currentContract.status} /></Field>
-            <Field label="Amount">{formatCurrency(currentContract.amount, currentContract.currency)} / {currentContract.billing_cycle.toLowerCase()}</Field>
-            <Field label="Started">{currentContract.start_date}</Field>
-            <Field label="Ends">{currentContract.end_date ?? "—"}</Field>
-            <Field label="Factories">{currentContract.included_factories ?? "Unlimited"}</Field>
-            <Field label="Assets">{currentContract.included_assets ?? "Unlimited"}</Field>
-            <Field label="Users">{currentContract.included_users ?? "Unlimited"}</Field>
-            <Field label="Overage policy">{currentContract.overage_policy.replace("_", " ")}</Field>
-          </div>
-        ) : (
-          <p className="text-sm text-foreground-muted">No contract yet.</p>
-        )}
-
-        {currentContract && !formOpen ? (
-          <div className="flex gap-2">
+    <Panel
+      title="Contract"
+      subtitle={currentContract ? `${currentContract.contract_number} · every term set for this customer` : "No contract yet — the terms below make the first one"}
+      icon={FileText}
+      action={
+        currentContract && !formOpen ? (
+          <>
             <EntitlementsForm contract={currentContract} action={entitlementsAction} />
             <Button size="sm" variant="outline" onClick={() => setFormOpen(true)}>
-              New contract
+              <Plus /> New contract
             </Button>
+          </>
+        ) : null
+      }
+      bodyClassName="flex flex-col gap-4 p-5"
+    >
+      {currentContract ? (
+        <Facts
+          items={[
+            ["Status", <StatusBadge key="s" status={currentContract.status} />],
+            ["Amount", `${formatCurrency(currentContract.amount, currentContract.currency)} / ${currentContract.billing_cycle.toLowerCase()}`],
+            ["Started", fmtDate(currentContract.start_date)],
+            ["Ends", currentContract.end_date ? fmtDate(currentContract.end_date) : "Open-ended"],
+            ["Factories", currentContract.included_factories ?? "Unlimited"],
+            ["Assets", currentContract.included_assets ?? "Unlimited"],
+            ["Users", currentContract.included_users ?? "Unlimited"],
+            ["Overage policy", currentContract.overage_policy.replaceAll("_", " ")],
+          ]}
+        />
+      ) : null}
+      {formOpen ? <ContractForm company={company} action={contractAction} onCancel={currentContract ? () => setFormOpen(false) : null} /> : null}
+      {contracts.length > 1 ? (
+        <div>
+          <p className="mb-2 text-[13px] font-semibold text-foreground">Contract history ({contracts.length})</p>
+          <div className="overflow-hidden rounded-md border border-border">
+            <PTable
+              dense
+              rows={contracts}
+              rowKey={(c) => c.id}
+              columns={[
+                { key: "contract_number", label: "Contract No", render: (c) => <span className="font-mono">{c.contract_number}</span> },
+                { key: "status", label: "Status", render: (c) => <StatusBadge status={c.status} /> },
+                { key: "amount", label: "Amount", align: "right", render: (c) => formatCurrency(c.amount, c.currency) },
+                { key: "period", label: "Period", render: (c) => `${fmtDate(c.start_date)} → ${c.end_date ? fmtDate(c.end_date) : "open"}` },
+              ]}
+            />
           </div>
-        ) : null}
-
-        {formOpen ? <ContractForm company={company} action={contractAction} onCancel={currentContract ? () => setFormOpen(false) : null} /> : null}
-
-        {contracts.length > 1 ? (
-          <details className="mt-2">
-            <summary className="cursor-pointer text-xs font-medium text-foreground-muted">
-              Contract history ({contracts.length})
-            </summary>
-            <div className="mt-2 flex flex-col divide-y divide-border">
-              {contracts.map((c) => (
-                <div key={c.id} className="flex items-center justify-between gap-3 py-2 text-xs">
-                  <span className="font-mono">{c.contract_number}</span>
-                  <StatusBadge status={c.status} />
-                  <span className="text-foreground-muted">{c.start_date} – {c.end_date ?? "open"}</span>
-                </div>
-              ))}
-            </div>
-          </details>
-        ) : null}
-      </CardBody>
-    </Card>
+        </div>
+      ) : null}
+    </Panel>
   );
 }
 
@@ -232,30 +234,37 @@ function InvoicesCard({ company, currentContract, invoices, invoiceActions }) {
   const [draftOpen, setDraftOpen] = useState(false);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Invoices</CardTitle>
-      </CardHeader>
-      <CardBody className="flex flex-col gap-3">
-        {invoices.length === 0 ? (
-          <p className="text-sm text-foreground-muted">No invoices yet.</p>
-        ) : (
-          <div className="flex flex-col divide-y divide-border">
-            {invoices.map((invoice) => (
-              <InvoiceRow key={invoice.id} invoice={invoice} invoiceActions={invoiceActions} />
-            ))}
-          </div>
-        )}
-      </CardBody>
-      <CardFooter>
-        <Button size="sm" variant="outline" onClick={() => setDraftOpen(true)} disabled={!currentContract}>
+    <Panel
+      title="Invoices"
+      subtitle={`${invoices.length} invoice${invoices.length === 1 ? "" : "s"}${currentContract ? "" : " · a contract comes first"}`}
+      icon={Receipt}
+      action={
+        <Button size="sm" onClick={() => setDraftOpen(true)} disabled={!currentContract}>
           <Plus /> Draft invoice
         </Button>
-        {!currentContract ? <span className="ml-2 text-xs text-foreground-subtle">Needs a contract first</span> : null}
-      </CardFooter>
-
+      }
+    >
+      <PTable
+        rows={invoices}
+        rowKey={(inv) => inv.id}
+        empty="No invoices yet."
+        columns={[
+          { key: "invoice_number", label: "Invoice No", render: (inv) => <b className="font-mono">{inv.invoice_number}</b> },
+          { key: "issue_date", label: "Issued", render: (inv) => fmtDate(inv.issue_date) },
+          { key: "due_date", label: "Due", render: (inv) => fmtDate(inv.due_date) },
+          { key: "total", label: "Total", align: "right", render: (inv) => formatCurrency(inv.total, inv.currency) },
+          {
+            key: "balance_due",
+            label: "Balance",
+            align: "right",
+            render: (inv) => (inv.status === "VOID" || Number(inv.balance_due) === 0 ? <span className="text-foreground-muted">—</span> : <b className="text-danger">{formatCurrency(inv.balance_due, inv.currency)}</b>),
+          },
+          { key: "status", label: "Status", render: (inv) => <StatusBadge status={inv.is_overdue ? "OVERDUE" : inv.status} /> },
+          { key: "act", label: "", align: "right", render: (inv) => <InvoiceActions invoice={inv} invoiceActions={invoiceActions} /> },
+        ]}
+      />
       <DraftInvoiceModal open={draftOpen} onOpenChange={setDraftOpen} action={invoiceActions.draft} />
-    </Card>
+    </Panel>
   );
 }
 
@@ -302,7 +311,7 @@ function PeriodEndField() {
   );
 }
 
-function InvoiceRow({ invoice, invoiceActions }) {
+function InvoiceActions({ invoice, invoiceActions }) {
   const [pending, startTransition] = useTransition();
   const [payOpen, setPayOpen] = useState(false);
   const [voidOpen, setVoidOpen] = useState(false);
@@ -316,35 +325,22 @@ function InvoiceRow({ invoice, invoiceActions }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 py-3">
-      <div>
-        <p className="text-sm font-medium text-foreground">{invoice.invoice_number}</p>
-        <p className="text-xs text-foreground-muted">
-          {invoice.issue_date} · due {invoice.due_date} · {formatCurrency(invoice.total, invoice.currency)}
-          {invoice.balance_due !== "0.0000" && invoice.status !== "VOID" ? (
-            <> · balance {formatCurrency(invoice.balance_due, invoice.currency)}</>
-          ) : null}
-        </p>
-      </div>
-      <div className="flex items-center gap-2">
-        <StatusBadge status={invoice.is_overdue ? "OVERDUE" : invoice.status} />
-        {invoice.status === "DRAFT" ? (
-          <Button size="sm" variant="outline" loading={pending} onClick={issue}>
-            <FileCheck /> Issue
-          </Button>
-        ) : null}
-        {["ISSUED", "PARTIALLY_PAID", "OVERDUE"].includes(invoice.status) ? (
-          <Button size="sm" variant="outline" onClick={() => setPayOpen(true)}>
-            <Wallet /> Record payment
-          </Button>
-        ) : null}
-        {invoice.status !== "VOID" && invoice.status !== "PAID" ? (
-          <Button size="sm" variant="outline" onClick={() => setVoidOpen(true)}>
-            <Ban /> Void
-          </Button>
-        ) : null}
-      </div>
-
+    <div className="flex items-center justify-end gap-1.5">
+      {invoice.status === "DRAFT" ? (
+        <Button size="sm" variant="outline" loading={pending} onClick={issue}>
+          <FileCheck /> Issue
+        </Button>
+      ) : null}
+      {["ISSUED", "PARTIALLY_PAID", "OVERDUE"].includes(invoice.status) ? (
+        <Button size="sm" variant="outline" onClick={() => setPayOpen(true)}>
+          <Wallet /> Payment
+        </Button>
+      ) : null}
+      {invoice.status !== "VOID" && invoice.status !== "PAID" ? (
+        <Button size="sm" variant="outline" onClick={() => setVoidOpen(true)} aria-label="Void" title="Void">
+          <Ban />
+        </Button>
+      ) : null}
       <PayInvoiceModal open={payOpen} onOpenChange={setPayOpen} invoice={invoice} action={invoiceActions.pay} />
       <VoidInvoiceModal open={voidOpen} onOpenChange={setVoidOpen} invoice={invoice} action={invoiceActions.void} />
     </div>
@@ -428,15 +424,6 @@ function VoidInvoiceModal({ open, onOpenChange, invoice, action }) {
         {(p) => <Textarea {...p} value={reason} onChange={(e) => setReason(e.target.value)} rows={2} minLength={5} maxLength={500} required />}
       </FormField>
     </Modal>
-  );
-}
-
-function Field({ label, children }) {
-  return (
-    <div>
-      <p className="text-xs font-medium text-foreground-muted">{label}</p>
-      <p className="text-sm text-foreground">{children}</p>
-    </div>
   );
 }
 

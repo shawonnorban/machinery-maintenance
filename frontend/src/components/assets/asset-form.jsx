@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { startTransition, useActionState, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -112,17 +114,18 @@ function AssetForm({ asset = null, options, customFieldSchema = [], customFieldV
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <FormSection>
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("asset_code")} required helperText={isEdit ? t("asset_code_readonly_hint") : undefined} error={state?.errors?.asset_code?.[0]}>
           {(fieldProps) => (
             <Input {...fieldProps} value={assetCode} onChange={(e) => setAssetCode(e.target.value)} disabled={isEdit} required maxLength={64} />
           )}
         </FormField>
 
-        <FormField label={t("name")} required className="sm:col-span-2" error={state?.errors?.name?.[0]}>
+        <FormField label={t("name")} required className="lg:col-span-2" error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} required maxLength={255} />}
         </FormField>
 
@@ -223,13 +226,13 @@ function AssetForm({ asset = null, options, customFieldSchema = [], customFieldV
         {(fieldProps) => <Textarea {...fieldProps} value={description} onChange={(e) => setDescription(e.target.value)} rows={2} maxLength={5000} />}
       </FormField>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("purchase_date")}>{() => <DatePicker value={purchaseDate} onChange={setPurchaseDate} />}</FormField>
         <FormField label={t("installation_date")}>{() => <DatePicker value={installationDate} onChange={setInstallationDate} />}</FormField>
         <FormField label={t("commissioning_date")}>{() => <DatePicker value={commissioningDate} onChange={setCommissioningDate} />}</FormField>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("acquisition_cost")} error={state?.errors?.acquisition_cost?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="number" step="0.0001" min="0" value={acquisitionCost} onChange={(e) => setAcquisitionCost(e.target.value)} />}
         </FormField>
@@ -241,7 +244,7 @@ function AssetForm({ asset = null, options, customFieldSchema = [], customFieldV
         </FormField>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("warranty_start")}>{() => <DatePicker value={warrantyStart} onChange={setWarrantyStart} />}</FormField>
         <FormField label={t("warranty_end")} error={state?.errors?.warranty_end?.[0]}>
           {() => <DatePicker value={warrantyEnd} onChange={setWarrantyEnd} />}
@@ -256,15 +259,16 @@ function AssetForm({ asset = null, options, customFieldSchema = [], customFieldV
           errors={state?.errors}
         />
       ) : null}
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? t("save_changes") : t("create_asset")}
+          <Save /> {isEdit ? t("save_changes") : t("create_asset")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

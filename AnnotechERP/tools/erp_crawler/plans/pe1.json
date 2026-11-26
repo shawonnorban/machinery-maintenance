@@ -1,0 +1,111 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "links",
+  "of": "main a"
+ },
+ {
+  "dump": "records",
+  "root": "main"
+ },
+ {
+  "click": "main a:has-text('New embellishment rate'), main [role=tab]:has-text('New embellishment rate')",
+  "wait": 2500
+ },
+ {
+  "dump": "new",
+  "root": "main"
+ },
+ {
+  "choose": "main form select >> nth=0",
+  "label": "Print"
+ },
+ {
+  "options": "order_opts",
+  "of": "main form select >> nth=1"
+ },
+ {
+  "options": "buyer_opts",
+  "of": "main form select >> nth=2"
+ },
+ {
+  "choose": "main form select >> nth=1",
+  "label": "LPP-2026-000008 \u00b7 529 (529)"
+ },
+ {
+  "texts": "after_order",
+  "of": "main form"
+ },
+ {
+  "type": "main form textarea",
+  "text": "Probe: front chest rubber print 2 colour"
+ },
+ {
+  "type": "main form input[type=number] >> nth=0",
+  "text": "0.35"
+ },
+ {
+  "texts": "filled",
+  "of": "main form"
+ },
+ {
+  "click": "main button:has-text('Save embellishment rate')",
+  "wait": 3000
+ },
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "rows",
+  "of": "main table tbody tr"
+ },
+ {
+  "texts": "rowbtns",
+  "of": "main table tbody tr:first-child button, main table tbody tr:first-child a"
+ },
+ {
+  "click": "main a:has-text('Pendings'), main [role=tab]:has-text('Pendings')",
+  "wait": 2500
+ },
+ {
+  "texts": "pend_t",
+  "of": "main"
+ },
+ {
+  "click": "main button:has-text('LPP'), main a:has-text('LPP')",
+  "wait": 2500
+ },
+ {
+  "texts": "pend_lpp",
+  "of": "main"
+ },
+ {
+  "dump": "pend_d",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Edit')",
+  "wait": 2500
+ },
+ {
+  "url": "edit_url"
+ },
+ {
+  "texts": "edit_t",
+  "of": "main"
+ }
+]

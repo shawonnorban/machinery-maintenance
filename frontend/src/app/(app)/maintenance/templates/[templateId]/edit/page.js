@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { TemplateForm } from "@/components/maintenance/template-form";
 import { getT } from "@/lib/i18n-server";
 import { updateTemplate } from "./actions";
@@ -17,21 +16,12 @@ export default async function EditMaintenanceTemplatePage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[
-          { label: t("maintenance") },
-          { label: t("templates_page_title"), href: "/maintenance/templates" },
-          { label: template.name, href: `/maintenance/templates/${templateId}` },
-          { label: tc("edit") },
-        ]}
+      <ScreenHeader
+        parentUrl="/maintenance/templates" trail={[{ label: template.name, href: `/maintenance/templates/${templateId}` }]}
         title={template.name}
       />
 
-      <Card>
-        <CardBody>
-          <TemplateForm template={template} options={options} action={updateTemplate.bind(null, templateId)} />
-        </CardBody>
-      </Card>
+      <TemplateForm template={template} options={options} action={updateTemplate.bind(null, templateId)} />
     </>
   );
 }

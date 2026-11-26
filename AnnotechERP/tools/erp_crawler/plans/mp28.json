@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/material-procurement/available-requirements" },
+ { "wait": 4000 },
+ { "click": "main tr:has-text('PR-2026-00005') button:has-text('Quote') >> visible=true >> nth=0", "wait": 2500 },
+ { "type": "[role=dialog] input[type=number] >> nth=0", "text": "20" },
+ { "type": "[role=dialog] input[type=number] >> nth=1", "text": "6.40" },
+ { "type": "[role=dialog] input[type=number] >> nth=2", "text": "7" },
+ { "type": "[role=dialog] input[type=date]", "text": "2026-11-28" },
+ { "click": "[role=dialog] button:has-text('Submit quotation')", "wait": 4000 },
+ { "texts": "after", "of": "li[data-sonner-toast] *, main p" }
+]

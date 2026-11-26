@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 const PRIORITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", LOW: "neutral" };
 
@@ -24,7 +25,7 @@ function MyWorkTable({ workOrders, meta }) {
           header: t("work_order"),
           render: (row) => (
             <div>
-              <Link href={`/work-orders/${row.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/work-orders/${refOf(row, "work_order_number")}`} className="font-medium text-brand hover:underline">
                 {row.work_order_number}
               </Link>
               <div className="text-xs text-foreground-muted">{row.title}</div>
@@ -54,8 +55,9 @@ function MyWorkTable({ workOrders, meta }) {
       rowKey={(row) => row.id}
       emptyTitle={t("no_my_work")}
       emptyDescription={t("no_my_work_hint")}
-      rowActions={(row) => [{ label: tc("view"), onSelect: () => router.push(`/work-orders/${row.id}`) }]}
+      rowActions={(row) => [{ icon: "view", label: tc("view"), onSelect: () => router.push(`/work-orders/${refOf(row, "work_order_number")}`) }]}
       pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+      perPageSelect
       onPageChange={(nextPage) => router.push(`/work-orders/my-work?page=${nextPage}`)}
     />
   );

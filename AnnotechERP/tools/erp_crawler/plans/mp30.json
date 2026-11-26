@@ -1,0 +1,10 @@
+[
+ { "url": "landing" },
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "texts": "mine", "of": "main h2, main p, main td, main button, main span" },
+ { "click": "main table tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "open", "of": "main h3, main p, main button, main label, main span" },
+ { "dump": "open_dump", "root": "main" },
+ { "fullshot": "mp30-merch-open" }
+]

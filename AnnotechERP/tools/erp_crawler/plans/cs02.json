@@ -1,0 +1,107 @@
+[
+ {
+  "goto": "/m/dyeing/chemical-cs"
+ },
+ {
+  "click": "main button:has-text('Add New')",
+  "wait": 3000
+ },
+ {
+  "url": "a0_url"
+ },
+ {
+  "fullshot": "a0-new"
+ },
+ {
+  "dump": "a0_new",
+  "root": "[role=dialog], main"
+ },
+ {
+  "texts": "a0_new_p",
+  "of": "[role=dialog] p, [role=dialog] h2, [role=dialog] h3, main p, main h2, main h3"
+ },
+ {
+  "goto": "/m/dyeing/requisition-for-loan-issue"
+ },
+ {
+  "click": "main button:has-text('Add New')",
+  "wait": 3000
+ },
+ {
+  "url": "a1_url"
+ },
+ {
+  "fullshot": "a1-new"
+ },
+ {
+  "dump": "a1_new",
+  "root": "[role=dialog], main"
+ },
+ {
+  "texts": "a1_new_p",
+  "of": "[role=dialog] p, [role=dialog] h2, [role=dialog] h3, main p, main h2, main h3"
+ },
+ {
+  "goto": "/m/dyeing/loan-return-by-party"
+ },
+ {
+  "click": "main button:has-text('Add New')",
+  "wait": 3000
+ },
+ {
+  "url": "a2_url"
+ },
+ {
+  "fullshot": "a2-new"
+ },
+ {
+  "dump": "a2_new",
+  "root": "[role=dialog], main"
+ },
+ {
+  "texts": "a2_new_p",
+  "of": "[role=dialog] p, [role=dialog] h2, [role=dialog] h3, main p, main h2, main h3"
+ },
+ {
+  "goto": "/m/dyeing/dc-loan-receive"
+ },
+ {
+  "click": "main button:has-text('Add New')",
+  "wait": 3000
+ },
+ {
+  "url": "a3_url"
+ },
+ {
+  "fullshot": "a3-new"
+ },
+ {
+  "dump": "a3_new",
+  "root": "[role=dialog], main"
+ },
+ {
+  "texts": "a3_new_p",
+  "of": "[role=dialog] p, [role=dialog] h2, [role=dialog] h3, main p, main h2, main h3"
+ },
+ {
+  "goto": "/m/dyeing/requisition-for-loan-return"
+ },
+ {
+  "click": "main button:has-text('Add New')",
+  "wait": 3000
+ },
+ {
+  "url": "a4_url"
+ },
+ {
+  "fullshot": "a4-new"
+ },
+ {
+  "dump": "a4_new",
+  "root": "[role=dialog], main"
+ },
+ {
+  "texts": "a4_new_p",
+  "of": "[role=dialog] p, [role=dialog] h2, [role=dialog] h3, main p, main h2, main h3"
+ }
+]

@@ -1,0 +1,13 @@
+[
+ {"goto": "/maintenance/plans/PM-00001"}, {"wait": 15000}, {"shot": "g01-plan-detail"},
+ {"goto": "/maintenance/templates"}, {"wait": 12000},
+ {"click": "table a >> nth=0", "after": 15000}, {"shot": "g02-template-detail"},
+ {"goto": "/metering/MTR-00001"}, {"wait": 12000}, {"shot": "g03-meter-detail"},
+ {"goto": "/vendors/warranties"}, {"wait": 12000}, {"shot": "g04-warranties-list"},
+ {"click": "a:has-text('WTY-')", "after": 15000}, {"shot": "g05-warranty-detail"},
+ {"goto": "/technicians/create"}, {"wait": 15000}, {"shot": "g06-tech-create-empty"},
+ {"pick": "Employee (HR)", "option": "EMP-000005"}, {"wait": 1500}, {"shot": "g07-tech-create-picked"},
+ {"fill": "Specialisation", "text": "Sewing machine mechanic"},
+ {"click": "button:has-text('Save')", "after": 20000}, {"shot": "g08-tech-saved"},
+ {"goto": "/technicians"}, {"wait": 15000}, {"shot": "g09-technicians-list"}
+]

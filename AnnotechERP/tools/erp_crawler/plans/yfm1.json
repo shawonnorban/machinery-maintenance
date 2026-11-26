@@ -1,0 +1,26 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Yarn/Fabric Mapping')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "yfm",
+  "root": "[data-panel]"
+ },
+ {
+  "texts": "yfm_text",
+  "of": "[data-panel]"
+ }
+]

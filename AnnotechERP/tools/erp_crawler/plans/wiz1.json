@@ -1,0 +1,135 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('View'), main table tbody tr:has-text('637PK') a:has-text('View')",
+  "wait": 3500
+ },
+ {
+  "url": "view_url"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Style Profile'), [role=dialog] li:has-text('Style Profile'), [role=dialog] a:has-text('Style Profile')",
+  "wait": 2500
+ },
+ {
+  "texts": "t0",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d0",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Garment Items'), [role=dialog] li:has-text('Garment Items'), [role=dialog] a:has-text('Garment Items')",
+  "wait": 2500
+ },
+ {
+  "texts": "t1",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d1",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Fabric Studio'), [role=dialog] li:has-text('Fabric Studio'), [role=dialog] a:has-text('Fabric Studio')",
+  "wait": 2500
+ },
+ {
+  "texts": "t2",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d2",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Colour Studio'), [role=dialog] li:has-text('Colour Studio'), [role=dialog] a:has-text('Colour Studio')",
+  "wait": 2500
+ },
+ {
+  "texts": "t3",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d3",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Process & Services'), [role=dialog] li:has-text('Process & Services'), [role=dialog] a:has-text('Process & Services')",
+  "wait": 2500
+ },
+ {
+  "texts": "t4",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d4",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Material BOM'), [role=dialog] li:has-text('Material BOM'), [role=dialog] a:has-text('Material BOM')",
+  "wait": 2500
+ },
+ {
+  "texts": "t5",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d5",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Fabric Mapping'), [role=dialog] li:has-text('Fabric Mapping'), [role=dialog] a:has-text('Fabric Mapping')",
+  "wait": 2500
+ },
+ {
+  "texts": "t6",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d6",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Packing Instructions'), [role=dialog] li:has-text('Packing Instructions'), [role=dialog] a:has-text('Packing Instructions')",
+  "wait": 2500
+ },
+ {
+  "texts": "t7",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d7",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Attachments'), [role=dialog] li:has-text('Attachments'), [role=dialog] a:has-text('Attachments')",
+  "wait": 2500
+ },
+ {
+  "texts": "t8",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d8",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Review'), [role=dialog] li:has-text('Review'), [role=dialog] a:has-text('Review')",
+  "wait": 2500
+ },
+ {
+  "texts": "t9",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d9",
+  "root": "[role=dialog]"
+ }
+]

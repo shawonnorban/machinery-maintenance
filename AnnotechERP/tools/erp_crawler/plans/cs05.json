@@ -1,0 +1,105 @@
+[
+ {
+  "goto": "/m/ie/oh-cost-allocation"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Monthly Cost')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "index": 1
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "choose": "main select >> nth=1",
+  "label": "2026"
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "peek": "main div:has(> label:has-text('Month')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option]:has-text('October')",
+  "wait": 800
+ },
+ {
+  "click": "main button:has-text('Show')",
+  "wait": 4000
+ },
+ {
+  "html": "row2",
+  "of": "main table tbody tr >> nth=1"
+ },
+ {
+  "type": "main table tbody tr >> nth=1 >> input >> nth=2",
+  "text": "20000"
+ },
+ {
+  "type": "main table tbody tr >> nth=1 >> input >> nth=3",
+  "text": "130000"
+ },
+ {
+  "type": "main table tbody tr >> nth=2 >> input >> nth=0",
+  "text": "52000"
+ },
+ {
+  "type": "main table tbody tr >> nth=2 >> input >> nth=3",
+  "text": "52000"
+ },
+ {
+  "click": "main button:has-text('Save Sheet')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "oh-sheet-saved"
+ },
+ {
+  "dump": "oh_sheet_saved",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/oh-cost-allocation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "oh_records",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/daily-line-costing-operation"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Overall Profit')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[type=date]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 4000
+ },
+ {
+  "dump": "dl_profit",
+  "root": "main"
+ },
+ {
+  "scroll": 3000
+ },
+ {
+  "fullshot": "dl-profit"
+ }
+]

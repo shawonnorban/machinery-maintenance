@@ -59,7 +59,7 @@ class PartsConsumptionReport extends Report
     {
         $rows = InventoryTransaction::query()
             ->join('spare_parts', 'inventory_transactions.spare_part_id', '=', 'spare_parts.id')
-            ->leftJoin('spare_part_categories', 'spare_parts.category_id', '=', 'spare_part_categories.id')
+            ->leftJoin('item_categories as spare_part_categories', 'spare_parts.category_id', '=', 'spare_part_categories.id')
             ->whereBetween('inventory_transactions.transaction_at', [$query->from, $query->to])
             ->whereIn('inventory_transactions.transaction_type', ['ISSUE', 'CONSUME'])
             ->groupBy('spare_parts.part_number', 'spare_parts.name', 'spare_parts.unit', 'spare_part_categories.name')

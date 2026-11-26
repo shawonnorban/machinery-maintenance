@@ -6,6 +6,7 @@ use App\Modules\Platform\Http\Controllers\Api\PlatformAuthApiController;
 use App\Modules\Platform\Http\Controllers\Api\PlatformContractApiController;
 use App\Modules\Platform\Http\Controllers\Api\PlatformDomainApiController;
 use App\Modules\Platform\Http\Controllers\Api\PlatformFinanceApiController;
+use App\Modules\Platform\Http\Controllers\Api\PlatformModuleApiController;
 use App\Modules\Platform\Http\Controllers\Api\PlatformInvoiceApiController;
 use App\Modules\Platform\Http\Controllers\Api\PlatformNotificationApiController;
 use App\Modules\Platform\Http\Controllers\Api\PlatformSupportGrantApiController;
@@ -78,6 +79,14 @@ Route::middleware(['platform.auth', 'throttle:api'])->prefix('platform')->name('
         ->name('tenants.contracts.store');
     Route::patch('/tenants/{company}/entitlements', [PlatformContractApiController::class, 'updateEntitlements'])
         ->name('tenants.entitlements.update');
+
+    // The modules a customer has been given (every module but the core ones).
+    Route::get('/tenants/{company}/modules', [PlatformModuleApiController::class, 'index'])
+        ->name('tenants.modules.index');
+    Route::put('/tenants/{company}/modules', [PlatformModuleApiController::class, 'update'])
+        ->name('tenants.modules.update-many');
+    Route::put('/tenants/{company}/modules/{code}', [PlatformModuleApiController::class, 'update'])
+        ->where('code', '[A-Z_]{2,40}')->name('tenants.modules.update');
 
     Route::get('/tenants/{company}/invoices', [PlatformInvoiceApiController::class, 'index'])
         ->name('tenants.invoices.index');

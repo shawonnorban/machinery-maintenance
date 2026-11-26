@@ -1,0 +1,87 @@
+[
+{
+"goto": "/m/dyeing/lab-dip-recipe"
+},
+{
+"click": "main button[role=tab]:has-text('Add New')",
+"wait": 2500
+},
+{
+"choose": "main select[name=buyerId]",
+"label": "LPP (LPP)"
+},
+{
+"peek": "main button:has-text('-- Select Style --')",
+"wait": 1500
+},
+{
+"popup": "styles"
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)='770MR · LPP'])[1]",
+"wait": 1200
+},
+{
+"peek": "main button:has-text('-- Select Colour --')",
+"wait": 1500
+},
+{
+"popup": "colours"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 1200
+},
+{
+"peek": "main button:has-text('-- Select Fabric Type --')",
+"wait": 1500
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 1200
+},
+{
+"choose": "main select >> nth=1",
+"label": "Reactive"
+},
+{
+"fillsel": "main input >> nth=0",
+"text": "LD-2026-0901"
+},
+{
+"fillsel": "main input[type=number] >> nth=0",
+"text": "1"
+},
+{
+"fillsel": "main input >> nth=-1",
+"text": "100% Cotton"
+},
+{
+"fullshot": "ld-filled"
+},
+{
+"click": "main button:has-text('Add New'):not([role=tab])",
+"wait": 5000
+},
+{
+"fullshot": "ld-saved"
+},
+{
+"texts": "after_save",
+"of": "main"
+},
+{
+"goto": "/m/dyeing/lab-dip-recipe"
+},
+{
+"texts": "ld_rows",
+"of": "main tbody tr"
+},
+{
+"html": "ld_row_btns",
+"of": "main tbody tr button, main tbody tr a"
+},
+{
+"fullshot": "ld-list2"
+}
+]

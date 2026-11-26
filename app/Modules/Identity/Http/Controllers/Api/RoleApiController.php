@@ -61,6 +61,12 @@ class RoleApiController extends ApiController
             'code' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9_]+$/'],
             'name' => ['required', 'string', 'max:255'],
             'scope' => ['nullable', Rule::in(['COMPANY', 'FACTORY'])],
+            // Brickland's Role Definition columns (AnnotechERP 02/01).
+            'name_bn' => ['nullable', 'string', 'max:255'],
+            'short_name' => ['nullable', 'string', 'max:32'],
+            'rank' => ['nullable', 'integer', 'min:0', 'max:100000'],
+            'is_admin' => ['sometimes', 'boolean'],
+            'active' => ['sometimes', 'boolean'],
             'permissions' => ['sometimes', 'array'],
             'permissions.*' => ['string'],
             // Clone an existing role's permission set (a seeded one, or this
@@ -91,6 +97,12 @@ class RoleApiController extends ApiController
             'code' => ['sometimes', 'string', 'max:64', 'regex:/^[A-Za-z0-9_]+$/'],
             'name' => ['sometimes', 'string', 'max:255'],
             'scope' => ['sometimes', Rule::in(['COMPANY', 'FACTORY'])],
+            // Brickland's Role Definition columns (AnnotechERP 02/01).
+            'name_bn' => ['nullable', 'string', 'max:255'],
+            'short_name' => ['nullable', 'string', 'max:32'],
+            'rank' => ['nullable', 'integer', 'min:0', 'max:100000'],
+            'is_admin' => ['sometimes', 'boolean'],
+            'active' => ['sometimes', 'boolean'],
             'permissions' => ['sometimes', 'array'],
             'permissions.*' => ['string'],
         ]);
@@ -119,6 +131,11 @@ class RoleApiController extends ApiController
             'code' => $role->name,
             'name' => $role->description,
             'scope' => $role->scope,
+            'name_bn' => $role->name_bn,
+            'short_name' => $role->short_name,
+            'rank' => $role->rank,
+            'is_admin' => (bool) $role->is_admin,
+            'active' => (bool) ($role->active ?? true),
             'is_system' => $role->is_system,
             'company_id' => $role->company_id,
             // Free off `index()`'s own `with('permissions:id,name')` — the

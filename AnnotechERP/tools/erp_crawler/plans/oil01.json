@@ -1,0 +1,242 @@
+[
+ {
+  "goto": "/m/knitting/requisition-for-knitting-mc-oil"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "requisition-for-knitting-mc-oil|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "requisition-for-knitting-mc-oil|p0",
+  "of": "main p"
+ },
+ {
+  "dump": "requisition-for-knitting-mc-oil|t0",
+  "root": "main"
+ },
+ {
+  "fullshot": "requisition-for-knitting-mc-oil-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "requisition-for-knitting-mc-oil|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "requisition-for-knitting-mc-oil-1"
+ },
+ {
+  "goto": "/m/knitting/mc-oil-opening-blance"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-oil-opening-blance|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-oil-opening-blance|p0",
+  "of": "main p"
+ },
+ {
+  "dump": "mc-oil-opening-blance|t0",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-opening-blance-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "mc-oil-opening-blance|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-opening-blance-1"
+ },
+ {
+  "goto": "/m/knitting/daily-macine-wise-oil-consumption"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "daily-macine-wise-oil-consumption|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "daily-macine-wise-oil-consumption|p0",
+  "of": "main p"
+ },
+ {
+  "dump": "daily-macine-wise-oil-consumption|t0",
+  "root": "main"
+ },
+ {
+  "fullshot": "daily-macine-wise-oil-consumption-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "daily-macine-wise-oil-consumption|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "daily-macine-wise-oil-consumption-1"
+ },
+ {
+  "goto": "/m/knitting/mc-oil-loan-opening"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-oil-loan-opening|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-oil-loan-opening|p0",
+  "of": "main p"
+ },
+ {
+  "dump": "mc-oil-loan-opening|t0",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-loan-opening-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "mc-oil-loan-opening|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-loan-opening-1"
+ },
+ {
+  "goto": "/m/knitting/mc-oil-receive"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-oil-receive|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-oil-receive|p0",
+  "of": "main p"
+ },
+ {
+  "dump": "mc-oil-receive|t0",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-receive-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "mc-oil-receive|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-receive-1"
+ },
+ {
+  "goto": "/m/knitting/mc-oil-receive-return-list"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "mc-oil-receive-return-list|tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "mc-oil-receive-return-list|p0",
+  "of": "main p"
+ },
+ {
+  "dump": "mc-oil-receive-return-list|t0",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-receive-return-list-0"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('Load')",
+  "wait": 2500
+ },
+ {
+  "dump": "mc-oil-receive-return-list|t1",
+  "root": "main"
+ },
+ {
+  "fullshot": "mc-oil-receive-return-list-1"
+ }
+]

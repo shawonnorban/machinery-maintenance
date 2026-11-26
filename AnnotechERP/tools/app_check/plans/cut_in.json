@@ -1,0 +1,95 @@
+[
+ {
+  "goto": "/cutting-floor/new-cutting"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='PO No']",
+  "text": "PO-1001"
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Color']",
+  "text": "White"
+ },
+ {
+  "fill": "x",
+  "sel": "input[list='cut-gsm-options']",
+  "text": "180"
+ },
+ {
+  "fill": "x",
+  "sel": "input[list='cut-dia-width-options']",
+  "text": "72"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Parts Name']",
+  "text": "Front Panel"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Batch Number']",
+  "text": "B-301"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Marker Length (m)']",
+  "text": "4.5"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Plies']",
+  "text": "40"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Size']:visible",
+  "text": "S"
+ },
+ {
+  "click": "role=button[name='Add size']",
+  "after": 400
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Size']:visible",
+  "text": "M"
+ },
+ {
+  "click": "role=button[name='Add size']",
+  "after": 400
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Marker ratio, size S']",
+  "text": "2"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Marker ratio, size M']",
+  "text": "3"
+ },
+ {
+  "wait": 600
+ },
+ {
+  "shot": "in-filled"
+ },
+ {
+  "click": "role=button[name=/Save Cutting Input/]",
+  "after": 20000
+ },
+ {
+  "shot": "in-saved"
+ }
+]

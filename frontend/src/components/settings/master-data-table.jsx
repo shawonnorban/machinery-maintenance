@@ -23,6 +23,10 @@ function displayValue(field, row, referenceOptions, t) {
     return value ? t("yes") : t("no");
   }
 
+  if (field.type === "ENUM") {
+    return field.option_labels?.[value] ?? String(value);
+  }
+
   if (field.type === "REFERENCE" || field.type === "BELONGS_TO") {
     const match = (referenceOptions[field.name] ?? []).find((option) => option.id === value);
     return match?.label ?? value;

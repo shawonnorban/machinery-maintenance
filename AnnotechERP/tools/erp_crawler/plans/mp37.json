@@ -1,0 +1,8 @@
+[
+ { "goto": "/m/material-procurement/procurement-dashboard" },
+ { "wait": 6000 },
+ { "dump": "dash_dump", "root": "main" },
+ { "texts": "dash_texts", "of": "main h1, main h2, main h3, main h4, main p, main th, main td, main button, main a, main span, main li" },
+ { "html": "dash_links", "of": "main a" },
+ { "fullshot": "mp37-dashboard" }
+]

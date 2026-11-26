@@ -1,0 +1,79 @@
+[
+ {
+  "goto": "/m/fabric-planning/fabric-planning-reports"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "click": "main button[role=tab]:has-text('Preview')",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Batch Plan Register')",
+  "wait": 3000
+ },
+ {
+  "texts": "r0",
+  "of": "main table"
+ },
+ {
+  "click": "main button:has-text('Batches Without a Machine')",
+  "wait": 3000
+ },
+ {
+  "texts": "r1",
+  "of": "main table"
+ },
+ {
+  "click": "main button:has-text('Machine Load vs Capacity')",
+  "wait": 3000
+ },
+ {
+  "texts": "r2",
+  "of": "main table"
+ },
+ {
+  "click": "main button:has-text('Machines Over Capacity')",
+  "wait": 3000
+ },
+ {
+  "texts": "r3",
+  "of": "main table"
+ },
+ {
+  "click": "main button:has-text('Schedule Board Listing')",
+  "wait": 3000
+ },
+ {
+  "texts": "r4",
+  "of": "main table"
+ },
+ {
+  "click": "main button:has-text('Dye Machine Routing Register')",
+  "wait": 3000
+ },
+ {
+  "texts": "r5",
+  "of": "main table"
+ },
+ {
+  "click": "main button:has-text('Factory Holiday Register')",
+  "wait": 3000
+ },
+ {
+  "texts": "r6",
+  "of": "main table"
+ },
+ {
+  "click": "main button:has-text('Standard Batch Hour Register')",
+  "wait": 3000
+ },
+ {
+  "texts": "r7",
+  "of": "main table"
+ },
+ {
+  "fullshot": "rp-last"
+ }
+]

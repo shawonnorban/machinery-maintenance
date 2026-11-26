@@ -22,6 +22,8 @@ async function changePassword(previousState, formData) {
         password_confirmation: formData.get("password_confirmation"),
       }),
     });
+    // The layout's forced-change redirect reads /auth/me; let it see the change.
+    revalidatePath("/", "layout");
     return { status: "success" };
   } catch (error) {
     return fail(error);

@@ -13,5 +13,5 @@ class Workstation extends BaseModel
 
     protected $table = 'workstations';
 
-    protected $fillable = ['company_id', 'production_line_id', 'name', 'code'];
+    protected $fillable = ['company_id', 'production_line_id', 'name', 'code', 'status'];
 }

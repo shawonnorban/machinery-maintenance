@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { refOf } from "@/lib/ref-path";
 
 async function createPlan(previousState, formData) {
   let planId;
@@ -10,7 +11,7 @@ async function createPlan(previousState, formData) {
   try {
     const body = Object.fromEntries(formData.entries());
     const created = await apiFetch("/maintenance-plans", { method: "POST", body: JSON.stringify(body) });
-    planId = created.id;
+    planId = refOf(created, "plan_number");
   } catch (error) {
     if (error instanceof ApiError) {
       return { status: "error", message: error.message, errors: error.errors };

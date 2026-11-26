@@ -110,6 +110,7 @@ class WarrantyApiController extends ApiController
     {
         return [
             'id' => $warranty->id,
+            'warranty_number' => $warranty->warranty_number,
             'asset' => $warranty->asset === null ? null : [
                 'id' => $warranty->asset->id,
                 'asset_code' => $warranty->asset->asset_code,

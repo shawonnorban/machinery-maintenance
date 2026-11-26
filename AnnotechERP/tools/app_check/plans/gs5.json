@@ -1,0 +1,8 @@
+[
+ { "goto": "/general-store/gs-issue" },
+ { "download": "a:has-text('Excel')", "save": "issue.xlsx", "as": "issue_xlsx" },
+ { "goto": "/general-store/gs-current-stock" },
+ { "download": "a:has-text('Excel')", "save": "stock.xlsx", "as": "stock_xlsx" },
+ { "goto": "/general-store/gs-ledger?item=GS-STA-001" },
+ { "download": "a:has-text('Excel')", "save": "ledger.xlsx", "as": "ledger_xlsx" }
+]

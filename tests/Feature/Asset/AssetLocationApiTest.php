@@ -46,7 +46,7 @@ class AssetLocationApiTest extends TestCase
         $this->dhaka = TenantFixture::factory($this->delta, 'Dhaka Unit 1', 'DHK');
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->manager = TenantFixture::user($this->delta, 'FACTORY_MANAGER', 'fm@delta.test');
+        $this->manager = TenantFixture::user($this->delta, 'FACTORY_ADMIN', 'fa@delta.test'); // master data is admin-only
         $this->technician = TenantFixture::user($this->delta, 'TECHNICIAN', 'tech@delta.test');
     }
 

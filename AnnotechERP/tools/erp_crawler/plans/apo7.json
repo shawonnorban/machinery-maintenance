@@ -1,0 +1,7 @@
+[
+ { "goto": "/m/merchandising/accessories-pr" },
+ { "click": "button:has-text('Requisition Entry')", "wait": 2500 },
+ { "click": "button:has-text('TFC-2026-000005')", "wait": 3000 },
+ { "dump": "pr_entry", "root": "main" },
+ { "fullshot": "pr-entry-filled" }
+]

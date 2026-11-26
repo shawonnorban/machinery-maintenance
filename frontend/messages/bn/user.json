@@ -98,5 +98,48 @@
     "role_assigned_toast": "রোল নির্ধারিত হয়েছে",
     "invite": "আমন্ত্রণ",
     "profile": "প্রোফাইল",
-    "edit_user_named": ":name সম্পাদনা"
+    "edit_user_named": ":name সম্পাদনা",
+    "memorable_word_mismatch": "মেমোরেবল ওয়ার্ড মেলেনি। পাসওয়ার্ড রিসেটের আগে অ্যাকাউন্টধারীর কাছ থেকে জেনে নিন।",
+    "account_section": "অ্যাকাউন্ট",
+    "username": "ইউজার আইডি",
+    "username_hint": "ইমেইলের পাশাপাশি লগইনের আরেকটা নাম, যেমন r.islam।",
+    "user_type": "ইউজারের ধরন",
+    "user_types": {
+        "INTERNAL": "অভ্যন্তরীণ",
+        "EXTERNAL": "বাহ্যিক",
+        "GUEST": "অতিথি"
+    },
+    "employee_code": "কর্মী কোড",
+    "account_status": "অ্যাকাউন্টের অবস্থা",
+    "account_statuses": {
+        "ACTIVE": "সক্রিয়",
+        "READ_ONLY": "শুধু দেখা",
+        "PASSWORD_EXPIRING": "পাসওয়ার্ডের মেয়াদ শেষ হচ্ছে",
+        "DORMANT": "নিষ্ক্রিয়",
+        "LOCKED": "লক করা",
+        "SEPARATED": "চাকরি ছেড়েছেন"
+    },
+    "account_expires_at": "অ্যাকাউন্টের মেয়াদ শেষ",
+    "account_expires_hint": "মেয়াদ না থাকলে খালি রাখুন।",
+    "two_factor_method": "টু-ফ্যাক্টর পদ্ধতি",
+    "two_factor_hint": "এখন শুধু রাখা হচ্ছে; লগইনে চালু হবে পরের ধাপে।",
+    "two_factor_methods": {
+        "DISABLED": "বন্ধ",
+        "AUTHENTICATOR": "অথেনটিকেটর",
+        "SMS_OTP": "SMS OTP",
+        "EMAIL_OTP": "ইমেইল OTP"
+    },
+    "password": "পাসওয়ার্ড",
+    "password_confirmation": "পাসওয়ার্ড নিশ্চিত করুন",
+    "password_blank_hint": "খালি রাখলে একটা পাসওয়ার্ড তৈরি হয়ে একবার দেখানো হবে।",
+    "password_chosen_hint": "অ্যাকাউন্টে আপনার দেওয়া পাসওয়ার্ডই থাকবে।",
+    "memorable_word": "মেমোরেবল ওয়ার্ড",
+    "memorable_word_confirmation": "মেমোরেবল ওয়ার্ড নিশ্চিত করুন",
+    "memorable_word_hint": "অ্যাডমিন পাসওয়ার্ড রিসেট করার আগে এটা চাওয়া হবে।",
+    "memorable_word_keep_hint": "একটা দেওয়া আছে। আগেরটা রাখতে খালি রাখুন।",
+    "memorable_word_reset_hint": "অ্যাকাউন্টধারীর কাছ থেকে তাঁর মেমোরেবল ওয়ার্ড জেনে নিন।",
+    "must_change_password": "পরের লগইনে পাসওয়ার্ড বদলাতে হবে",
+    "cannot_change_password": "ইউজার পাসওয়ার্ড বদলাতে পারবেন না",
+    "password_never_expires": "পাসওয়ার্ডের মেয়াদ কখনো শেষ হবে না",
+    "justification": "কারণ"
 }

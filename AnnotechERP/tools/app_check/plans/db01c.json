@@ -1,0 +1,21 @@
+[
+ {"goto": "/dye-house/dyeing-batch-plan?tab=board&plan=PLN-26110001"},
+ {"wait": 12000},
+ {"click": "main button:has-text('B-26110002')", "after": 800},
+ {"click": "main button[aria-label='DM-01 03 Nov, 00:00']", "after": 1500},
+ {"fill": "Hours", "exact": true, "text": "6"},
+ {"click": "[role=dialog] button:has-text('Place')", "after": 12000},
+ {"texts": "toasts", "of": "[data-slot=toast-title], [data-slot=toast], [role=alert]"},
+ {"shot": "db-overlap"},
+ {"click": "[role=dialog] button:has-text('Cancel')", "after": 1000},
+ {"click": "main button[aria-label='DM-02 03 Nov, 08:00']", "after": 1500},
+ {"fill": "Hours", "exact": true, "text": "6"},
+ {"click": "[role=dialog] button:has-text('Place')", "after": 15000},
+ {"shot": "db-board-laid"},
+ {"click": "main button[title^='B-26110002']", "after": 1500},
+ {"texts": "bar_modal", "of": "[role=dialog] p, [role=dialog] h2"},
+ {"press": "Escape"},
+ {"goto": "/dye-house/dyeing-batch-plan?tab=records"},
+ {"wait": 8000},
+ {"texts": "plan_rows", "of": "main tbody tr"}
+]

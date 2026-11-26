@@ -81,6 +81,7 @@ class ReportJobApiController extends ApiController
             'factory_id' => ['nullable', 'string', 'size:26'],
             'asset_id' => ['nullable', 'string', 'size:26'],
             'status' => ['nullable', 'string'],
+            'section' => ['nullable', 'string', 'max:20'],
         ]);
 
         if (! $this->registry->has($data['report'])) {
@@ -157,6 +158,8 @@ class ReportJobApiController extends ApiController
             assetId: $request->input('asset_id') ?: null,
             extra: array_filter([
                 'status' => $request->input('status'),
+                // Quality Tally's reports narrow by section (Cutting / Sewing / Quality).
+                'section' => $request->input('section'),
             ], fn ($value) => $value !== null && $value !== ''),
         );
     }

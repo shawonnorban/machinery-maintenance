@@ -1,0 +1,10 @@
+[
+ {"goto": "/m/dyeing/dyeing-batch-plan"},
+ {"html": "prog", "of": "main :is(button,a):has-text('Program')"},
+ {"html": "tabs", "of": "main [role=tab]"},
+ {"click": "main :is(button,a,[role=tab]):has-text('Program') >> nth=-1", "wait": 3000},
+ {"url": "after_url"},
+ {"fullshot": "program"},
+ {"dump": "program", "root": "main"},
+ {"texts": "program_p", "of": "main p, main h2, main h3"}
+]

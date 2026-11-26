@@ -8,6 +8,8 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
+import { ActionIcon } from "@/components/ui/action-icon";
 
 /** Mirrors `plans/show.blade.php`'s own header actions. */
 function PlanHeaderActions({ plan, actions }) {
@@ -41,14 +43,14 @@ function PlanHeaderActions({ plan, actions }) {
 
   return (
     <div className="flex gap-2">
-      <Link href={`/maintenance/plans/${plan.id}/edit`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-        {tc("edit")}
+      <Link href={`/maintenance/plans/${refOf(plan, "plan_number")}/edit`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+        <ActionIcon name="edit" /> {tc("edit")}
       </Link>
       <Button size="sm" variant={plan.active ? "outline" : "primary"} loading={pending} onClick={runToggle}>
-        {plan.active ? t("deactivate") : t("activate")}
+        <ActionIcon name={plan.active ? "deactivate" : "activate"} /> {plan.active ? t("deactivate") : t("activate")}
       </Button>
       <Button size="sm" variant="danger" onClick={() => setDeleting(true)}>
-        {tc("delete")}
+        <ActionIcon name="delete" /> {tc("delete")}
       </Button>
 
       <ConfirmDialog

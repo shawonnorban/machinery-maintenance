@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/material-procurement/quotation-history" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('QT-2026-00004') >> visible=true >> nth=0", "wait": 2000 },
+ { "texts": "hist_open", "of": "main h3, main h4, main p, main th, main td, main span, main dt, main dd, main button" },
+ { "fullshot": "mp16-hist-open" },
+ { "click": "main button:has-text('Revise price') >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "revise_ui", "of": "[role=dialog] h2, [role=dialog] h3, [role=dialog] p, [role=dialog] label, [role=dialog] button, [role=dialog] span, [role=dialog] dt, [role=dialog] dd" },
+ { "dump": "revise_dump", "root": "[role=dialog]" },
+ { "type": "[role=dialog] input[type=number] >> nth=1", "text": "2.70" },
+ { "click": "[role=dialog] button[type=submit], [role=dialog] button:has-text('Submit'), [role=dialog] button:has-text('Save')", "wait": 4000 },
+ { "texts": "after_revise", "of": "main p, main span, main td, main th, li[data-sonner-toast] *" },
+ { "fullshot": "mp16-after-revise" }
+]

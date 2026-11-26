@@ -1,0 +1,104 @@
+[
+ {
+  "goto": "/m/ie/oh-cost-allocation"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Section Cost Heads')",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Garments Section')",
+  "wait": 2500
+ },
+ {
+  "html": "sec00",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Cutting Section')",
+  "wait": 2500
+ },
+ {
+  "html": "sec01",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Knitting Section')",
+  "wait": 2500
+ },
+ {
+  "html": "sec02",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Dyeing Section')",
+  "wait": 2500
+ },
+ {
+  "html": "sec03",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Dyeing Finishing Section')",
+  "wait": 2500
+ },
+ {
+  "html": "sec04",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Printing Section')",
+  "wait": 2500
+ },
+ {
+  "html": "sec05",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Production Overhead')",
+  "wait": 2500
+ },
+ {
+  "html": "sec06",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Administrative Expenses')",
+  "wait": 2500
+ },
+ {
+  "html": "sec07",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Commercial Overhead')",
+  "wait": 2500
+ },
+ {
+  "html": "sec08",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Financial Overhead')",
+  "wait": 2500
+ },
+ {
+  "html": "sec09",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Head Office Expenses')",
+  "wait": 2500
+ },
+ {
+  "html": "sec10",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button:has-text('Add')",
+  "wait": 1500
+ },
+ {
+  "fullshot": "sec-add"
+ }
+]

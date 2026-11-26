@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Ban, PlayCircle } from "lucide-react";
+import { Archive, Ban, PlayCircle } from "lucide-react";
+import { PanelHead } from "@/components/platform/ui";
 import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
@@ -33,9 +34,7 @@ function SuspendCard({ company, suspendAction, reactivateAction }) {
   if (company.status === "SUSPENDED") {
     return (
       <Card className="border-danger/30">
-        <CardHeader>
-          <CardTitle>Suspended</CardTitle>
-        </CardHeader>
+        <PanelHead title="Suspended" subtitle="This customer is suspended: its users cannot sign in" icon={Ban} tone="danger" />
         <CardBody className="flex flex-col gap-3">
           <p className="text-sm text-foreground-muted">{company.suspension_reason}</p>
           <div>
@@ -69,9 +68,7 @@ function SuspendCard({ company, suspendAction, reactivateAction }) {
 
   return (
     <Card className="border-danger/30">
-      <CardHeader>
-        <CardTitle>Suspend</CardTitle>
-      </CardHeader>
+      <PanelHead title="Suspend" subtitle="Stops every user of this customer from signing in; the data is kept" icon={Ban} tone="danger" />
       <CardBody className="flex flex-col gap-3">
         <p className="text-xs text-foreground-muted">
           Stops the company using the product without touching a row of its data — a billing state, not a deletion.
@@ -129,9 +126,7 @@ function CloseCard({ company, closeAction }) {
 
   return (
     <Card className="border-danger/30">
-      <CardHeader>
-        <CardTitle>Close account</CardTitle>
-      </CardHeader>
+      <PanelHead title="Close account" subtitle="Closes the account; it can be restored from Customers, Closed accounts" icon={Archive} tone="danger" />
       <CardBody className="flex flex-col gap-3">
         <p className="text-xs text-foreground-muted">
           Ends the account without destroying anything — the customer leaves the list, nobody in it can sign in, and

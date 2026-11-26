@@ -1,10 +1,11 @@
 import { Clock, AlertTriangle, CalendarClock } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { SchedulesTable } from "@/components/maintenance/schedules-table";
 import { getT } from "@/lib/i18n-server";
 import { completeSchedule, skipSchedule, rescheduleSchedule } from "./actions";
+import { applyPerPage } from "@/lib/per-page";
 
 /** Mirrors `ScheduleController::index` — concrete due/overdue/completed occurrences of a maintenance plan. */
 export default async function MaintenanceSchedulePage({ searchParams }) {
@@ -13,6 +14,7 @@ export default async function MaintenanceSchedulePage({ searchParams }) {
   const status = params.status ?? "";
 
   const query = new URLSearchParams({ page: String(page) });
+  await applyPerPage(query, "/maintenance/schedule");
   if (status) query.set("status", status);
 
   const [schedules, counts, t] = await Promise.all([
@@ -26,8 +28,8 @@ export default async function MaintenanceSchedulePage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("maintenance") }, { label: t("schedules") }]}
+      <ScreenHeader
+        url="/maintenance/schedule"
         title={t("schedule_page_title")}
         description={t("schedule_page_description")}
       />

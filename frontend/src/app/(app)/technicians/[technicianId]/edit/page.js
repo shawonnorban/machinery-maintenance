@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { TechnicianForm } from "@/components/technicians/technician-form";
 import { TechnicianSkills } from "@/components/technicians/technician-skills";
 import { getT } from "@/lib/i18n-server";
@@ -17,24 +16,21 @@ export default async function EditTechnicianPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("technicians"), href: "/technicians" }, { label: technician.name }]}
+      <ScreenHeader
+        parentUrl="/technicians"
         title={technician.name}
       />
 
       <div className="flex flex-col gap-6">
-        <Card>
-          <CardBody>
-            <TechnicianForm
+        <TechnicianForm
               technician={technician}
               factories={options.factories}
               departments={options.departments}
               productionLines={options.production_lines}
               users={options.users}
+            employees={options.employees}
               action={updateTechnician.bind(null, technicianId)}
             />
-          </CardBody>
-        </Card>
 
         <TechnicianSkills
           technicianId={technicianId}

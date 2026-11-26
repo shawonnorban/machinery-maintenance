@@ -1,0 +1,22 @@
+[
+ {"goto": "/system-settings/general-preferences"}, {"wait": 15000}, {"shot": "s01-sidebar-settings"},
+ {"goto": "/settings/master-data"}, {"wait": 12000}, {"shot": "s02-master-data-no-org"},
+ {"goto": "/settings/master-data/buildings"}, {"wait": 12000}, {"shot": "s03-buildings-redirect"},
+ {"goto": "/settings/company"}, {"wait": 15000}, {"shot": "s04-company-to-system-parameter"},
+ {"click": "a:has-text('Gazipur'), a:has-text('GAZ') >> nth=0", "after": 15000}, {"shot": "s05-factory-level"},
+ {"goto": "/company-management/company-profile"}, {"wait": 15000}, {"shot": "s06-company-profile-logo"},
+ {"goto": "/access-control/user-account"}, {"wait": 15000}, {"shot": "s07-user-account"},
+ {"goto": "/system-settings/api-keys-webhooks?tab=new-key"}, {"wait": 15000},
+ {"fill": "Name", "text": "ERP test key"},
+ {"click": "form [role=checkbox] >> nth=0", "after": 1000},
+ {"click": "button:has-text('Create')", "after": 20000}, {"shot": "s08-key-created"},
+ {"goto": "/system-settings/api-keys-webhooks"}, {"wait": 15000}, {"shot": "s09-keys-list"},
+ {"click": "a:has-text('Open') >> nth=0", "after": 15000}, {"shot": "s10-key-detail"},
+ {"goto": "/system-settings/api-keys-webhooks?tab=new-webhook"}, {"wait": 15000},
+ {"fill": "URL", "text": "https://example.com/hooks/annotech"},
+ {"click": "form [role=checkbox] >> nth=0", "after": 1000},
+ {"click": "button:has-text('Create')", "after": 20000}, {"shot": "s11-webhook-created"},
+ {"goto": "/system-settings/api-keys-webhooks?tab=webhooks"}, {"wait": 15000},
+ {"click": "a:has-text('Open') >> nth=0", "after": 15000}, {"shot": "s12-webhook-detail"},
+ {"click": "button:has-text('Pause')", "after": 15000}, {"shot": "s13-webhook-paused"}
+]

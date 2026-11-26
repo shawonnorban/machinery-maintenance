@@ -1,0 +1,21 @@
+[
+ {"goto": "/m/dyeing/dosing-template"},
+ {"fullshot": "tpl"},
+ {"click": "main button:has-text('CONVENTIONAL FOR REACTIVE')", "wait": 3000},
+ {"fullshot": "tpl-conv"},
+ {"dump": "tpl_conv", "root": "main"},
+ {"texts": "tpl_conv_th", "of": "main thead th"},
+ {"texts": "tpl_conv_tr", "of": "main tbody tr"},
+ {"click": "main button:has-text('Lab-dip Template')", "wait": 3000},
+ {"texts": "tpl_lab_tr", "of": "main tbody tr"},
+ {"fullshot": "tpl-lab"},
+ {"goto": "/m/dyeing/lab-dip-recipe"},
+ {"fullshot": "ld-list"},
+ {"click": "main button[role=tab]:has-text('Add New')", "wait": 3000},
+ {"fullshot": "ld-new"},
+ {"dump": "ld_new", "root": "main"},
+ {"texts": "ld_new_th", "of": "main thead th"},
+ {"texts": "ld_new_p", "of": "main p"},
+ {"goto": "/m/dyeing/lab-dip-recipe-view"},
+ {"fullshot": "ld-view"}
+]

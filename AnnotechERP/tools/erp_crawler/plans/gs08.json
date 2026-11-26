@@ -1,0 +1,18 @@
+[
+ { "goto": "/m/general-store/gs-req-new" }, { "wait": 5000 },
+ { "texts": "new_page", "of": "main h2, main h3, main label, main th, main td, main button, main p" },
+ { "fullshot": "gs08-new" },
+ { "click": "main tbody tr >> nth=0 >> button >> nth=0", "wait": 2500 },
+ { "texts": "new_row_view", "of": "[role=dialog]" },
+ { "fullshot": "gs08-new-view" },
+ { "escape": true },
+ { "goto": "/m/general-store/gs-req-pending" }, { "wait": 5000 },
+ { "texts": "pending_page", "of": "main h2, main h3, main label, main th, main td, main button, main p" },
+ { "fullshot": "gs08-pending" },
+ { "goto": "/m/general-store/gs-req-approved" }, { "wait": 5000 },
+ { "texts": "approved_page", "of": "main h2, main h3, main label, main th, main td, main button, main p" },
+ { "fullshot": "gs08-approved" },
+ { "goto": "/m/general-store/gs-req-issued" }, { "wait": 5000 },
+ { "texts": "issued_page", "of": "main h2, main h3, main label, main th, main td, main button, main p" },
+ { "fullshot": "gs08-issued" }
+]

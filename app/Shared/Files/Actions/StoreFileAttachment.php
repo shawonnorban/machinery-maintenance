@@ -24,6 +24,9 @@ class StoreFileAttachment
     public const ALLOWED_MIME_TYPES = [
         'image/jpeg', 'image/png', 'image/webp', 'image/heic',
         'application/pdf',
+        // Excel workbooks: an operation bulletin, a costing sheet, a packing list. Macro-enabled books stay out.
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
     ];
 
     public const MAX_BYTES = 10 * 1024 * 1024;
@@ -38,6 +41,11 @@ class StoreFileAttachment
         string $attachableType,
         string $attachableId,
         ?string $userId = null,
+        // A caller that reads more than evidence (the AI import intake reads
+        // e-mails, Word and CSV) widens the types and the size for its own
+        // uploads only; everywhere else the rules above stand.
+        array $extraTypes = [],
+        ?int $maxBytes = null,
     ): FileAttachment {
         if (! $file->isValid()) {
             throw ValidationException::withMessages([
@@ -45,12 +53,13 @@ class StoreFileAttachment
             ]);
         }
 
-        if ($file->getSize() > self::MAX_BYTES) {
+        $limit = $maxBytes ?? self::MAX_BYTES;
+        if ($file->getSize() > $limit) {
             // 413 over the wire (API 19.1), same as the enum already promises
             // for FILE_TOO_LARGE. The web flow ignores this status and reads
             // the message as usual.
             throw ValidationException::withMessages([
-                'file' => __('file.too_large', ['limit' => '10 MB']),
+                'file' => __('file.too_large', ['limit' => intdiv($limit, 1024 * 1024).' MB']),
             ])->status(413);
         }
 
@@ -58,7 +67,7 @@ class StoreFileAttachment
         // the browser said. Only the first is evidence.
         $mime = $file->getMimeType() ?? 'application/octet-stream';
 
-        if (! in_array($mime, self::ALLOWED_MIME_TYPES, true)) {
+        if (! in_array($mime, [...self::ALLOWED_MIME_TYPES, ...$extraTypes], true)) {
             throw ValidationException::withMessages([
                 'file' => __('file.type_not_allowed', ['type' => $mime]),
             ])->status(415);

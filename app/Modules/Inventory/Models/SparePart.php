@@ -7,6 +7,7 @@ namespace App\Modules\Inventory\Models;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Shared\Casts\MoneyCast;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,6 +23,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SparePart extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'part_number';
 
     /**
      * The original fixed list. The API and the Next.js form validate `unit`

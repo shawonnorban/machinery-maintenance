@@ -1,0 +1,17 @@
+[
+ {"goto": "/trade-export/import-lc-pi"},
+ {"wait": 18000},
+ {"click": "main button:has-text('Add New')", "after": 2500},
+ {"pick": "Supplier", "exact": true, "option": "KOYO TRIMS"},
+ {"wait": 8000},
+ {"click": "main button:has-text('PO-ACC-2026100001')", "after": 8000},
+ {"fill": "PI No", "exact": true, "text": "KOYO-PI-2201"},
+ {"fill": "PI Amount", "exact": true, "text": "13878"},
+ {"shot": "before-save"},
+ {"click": "main button:has-text('Save')", "after": 5000},
+ {"shot": "after-save-5"},
+ {"texts": "toast", "of": "[data-sonner-toast], [role=status], [role=alert], [data-slot=toast]"},
+ {"wait": 12000},
+ {"shot": "after-save-17"},
+ {"texts": "toast2", "of": "[data-sonner-toast], [role=status], [role=alert], [data-slot=toast]"}
+]

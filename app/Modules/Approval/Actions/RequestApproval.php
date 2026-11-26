@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Approval\Actions;
 
 use App\Modules\Approval\Contracts\Approvable;
+use App\Modules\Approval\Models\ApprovalAction;
 use App\Modules\Approval\Models\ApprovalRequest;
 use App\Modules\Approval\Models\ApprovalRule;
+use App\Modules\Approval\Models\ApprovalRuleUser;
+use App\Modules\Approval\Models\ApprovalTicket;
 use App\Modules\Approval\Models\ApprovalWorkflow;
 use App\Modules\Approval\Support\ApprovalEntities;
 use App\Modules\Asset\Models\Asset;
@@ -106,8 +109,9 @@ class RequestApproval
             return null;
         }
 
+        // Working steps (level 0) and switched-off steps ask nobody to sign.
         $applicable = $workflow->rules
-            ->filter(fn ($rule) => $rule->appliesTo($context))
+            ->filter(fn ($rule) => $rule->active && $rule->level >= 1 && $rule->appliesTo($context))
             ->values();
 
         if ($applicable->isEmpty()) {
@@ -145,9 +149,64 @@ class RequestApproval
                 $summary,
                 $entityType,
                 $entity->id,
-                $this->approversForFirstStep($applicable->first(), $entity->company_id),
+                $this->approversFor($applicable->first(), $entity->company_id),
                 $context['cost'],
                 $context['currency'] ?? 'BDT',
+            );
+
+            return $request;
+        });
+    }
+
+    /**
+     * A request written by hand (Approval Center, AnnotechERP 04/01): Request
+     * To is level 1, the type's chain adds the levels whose amount band the
+     * request falls in. Submitted again after a return, it is a new round.
+     */
+    public function forTicket(ApprovalTicket $ticket, ?string $userId, bool $again = false): ApprovalRequest
+    {
+        $type = $ticket->type()->firstOrFail();
+        $context = $ticket->approvalContext();
+
+        return DB::transaction(function () use ($ticket, $type, $context, $userId, $again): ApprovalRequest {
+            $request = new ApprovalRequest([
+                'workflow_id' => $type->workflow_id,
+                'entity_type' => 'MANUAL_REQUEST',
+                'entity_id' => $ticket->id,
+                'status' => 'PENDING',
+                'current_step' => 1,
+                'total_steps' => 1,
+                'requested_by' => $userId,
+                'requested_at' => CarbonImmutable::now(),
+                'context_json' => $context,
+                'request_type_id' => $type->id,
+                'priority' => $ticket->priority,
+                'due_at' => $ticket->due_date?->endOfDay(),
+                'request_to_user_id' => $ticket->request_to_user_id,
+            ]);
+            $request->total_steps = $request->applicableRules()->count();
+            $request->save();
+
+            ApprovalAction::create([
+                'approval_request_id' => $request->id,
+                'approver_id' => $userId,
+                'step' => 0,
+                'action' => $again ? 'RESUBMITTED' : 'SUBMITTED',
+                'previous_status' => $again ? 'RETURNED' : 'DRAFT',
+                'new_status' => 'PENDING',
+                'level' => 0,
+                'acted_at' => CarbonImmutable::now(),
+            ]);
+
+            $ticket->forceFill(['approval_status' => 'PENDING', 'approval_request_id' => $request->id])->save();
+
+            $this->notifier->approvalRequested(
+                $ticket->approvalSummary(),
+                'MANUAL_REQUEST',
+                $ticket->id,
+                $this->approversFor($request->applicableRules()->first(), $ticket->company_id),
+                $context['cost'],
+                $context['currency'],
             );
 
             return $request;
@@ -190,10 +249,18 @@ class RequestApproval
      *
      * @return Collection<int, User>
      */
-    private function approversForFirstStep(?ApprovalRule $rule, string $companyId): Collection
+    public function approversFor(?ApprovalRule $rule, string $companyId): Collection
     {
         if ($rule === null) {
             return collect();
+        }
+
+        // A step with named people (Action Assignment) is theirs alone.
+        if ($rule->exists) {
+            $named = ApprovalRuleUser::query()->where('rule_id', $rule->id)->pluck('user_id');
+            if ($named->isNotEmpty()) {
+                return User::whereIn('id', $named)->where('status', 'ACTIVE')->get();
+            }
         }
 
         if ($rule->user_id !== null) {

@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { TransferRequestForm } from "@/components/inventory/transfer-request-form";
 import { getT } from "@/lib/i18n-server";
 import { requestTransfer } from "./actions";
@@ -14,8 +14,8 @@ export default async function CreateTransferPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("transfers"), href: "/inventory/transfers" }, { label: tc("new") }]}
+      <ScreenHeader
+        parentUrl="/inventory/transfers"
         title={t("request_a_transfer")}
       />
 

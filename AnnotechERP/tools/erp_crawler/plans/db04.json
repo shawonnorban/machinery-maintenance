@@ -1,0 +1,314 @@
+[
+ {
+  "goto": "/m/dyeing/grey-fabric-requisition-bulk"
+ },
+ {
+  "texts": "indent_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "indent-new"
+ },
+ {
+  "dump": "indent_new",
+  "root": "main"
+ },
+ {
+  "texts": "indent_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "indent_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/grey-fabric-requisition-issue-list-bulk"
+ },
+ {
+  "texts": "issue_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "issue-new"
+ },
+ {
+  "dump": "issue_new",
+  "root": "main"
+ },
+ {
+  "texts": "issue_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "issue_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/sc-pre-treatment-program-heat-set-etc"
+ },
+ {
+  "texts": "scprog_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "scprog-new"
+ },
+ {
+  "dump": "scprog_new",
+  "root": "main"
+ },
+ {
+  "texts": "scprog_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "scprog_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/sc-pre-treatment-challan"
+ },
+ {
+  "texts": "scchal_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "scchal-new"
+ },
+ {
+  "dump": "scchal_new",
+  "root": "main"
+ },
+ {
+  "texts": "scchal_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "scchal_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/sc-pre-treatment-program-receive"
+ },
+ {
+  "texts": "screc_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "screc-new"
+ },
+ {
+  "dump": "screc_new",
+  "root": "main"
+ },
+ {
+  "texts": "screc_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "screc_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/sc-pre-treatment-bill"
+ },
+ {
+  "texts": "scbill_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "scbill-new"
+ },
+ {
+  "dump": "scbill_new",
+  "root": "main"
+ },
+ {
+  "texts": "scbill_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "scbill_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/dyeing-batch-src-f-fab"
+ },
+ {
+  "texts": "ffab_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "ffab-new"
+ },
+ {
+  "dump": "ffab_new",
+  "root": "main"
+ },
+ {
+  "texts": "ffab_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "ffab_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/order-wise-grey-fabric-trans-from-batch-store"
+ },
+ {
+  "texts": "otr_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "otr-new"
+ },
+ {
+  "dump": "otr_new",
+  "root": "main"
+ },
+ {
+  "texts": "otr_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "otr_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/dyeing-color-transfer-replace"
+ },
+ {
+  "texts": "colour_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "colour-new"
+ },
+ {
+  "dump": "colour_new",
+  "root": "main"
+ },
+ {
+  "texts": "colour_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "colour_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/batch-transfer-to-left-over"
+ },
+ {
+  "texts": "leftover_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "leftover-new"
+ },
+ {
+  "dump": "leftover_new",
+  "root": "main"
+ },
+ {
+  "texts": "leftover_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "leftover_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/gray-2-leftover-transfer-batch-end"
+ },
+ {
+  "texts": "g2l_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "g2l-new"
+ },
+ {
+  "dump": "g2l_new",
+  "root": "main"
+ },
+ {
+  "texts": "g2l_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "g2l_new_th",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/dyeing/manual-batch-for-dyeing"
+ },
+ {
+  "texts": "manual_rec_p",
+  "of": "main p, main h2, main h3"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Add New'), main button[role=tab]:has-text('New'), main button[role=tab]:has-text('Create')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "manual-new"
+ },
+ {
+  "dump": "manual_new",
+  "root": "main"
+ },
+ {
+  "texts": "manual_new_p",
+  "of": "main p, main h2, main h3, main h4"
+ },
+ {
+  "texts": "manual_new_th",
+  "of": "main thead th"
+ }
+]

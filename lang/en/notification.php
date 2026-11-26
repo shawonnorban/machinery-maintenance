@@ -54,6 +54,7 @@ return [
     'severity_critical' => 'Critical',
     'received' => 'Received',
     'event_label' => 'Event',
+    'locked_by_company' => 'Set by the company',
     'escalated' => 'Escalated',
     'escalation_level' => 'Escalation level',
     'escalated_from' => 'Escalated because nobody acknowledged it',
@@ -91,10 +92,95 @@ return [
     'event_support_access' => 'Support accessed your data',
     'event_ticket_replied' => 'Reply on your ticket',
     'event_ticket_resolved' => 'Ticket marked resolved',
+    'event_floor_requisition_submitted' => 'Floor requisition submitted',
+    'event_floor_requisition_issued' => 'Floor requisition issued',
+    'event_floor_requisition_shortage' => 'Floor requisition short',
+    'event_earmark_stock_arrived' => 'Earmarked stock arrived',
+    'event_returnable_overdue' => 'Returnable item overdue',
+    'event_earmark_waiting' => 'Shortage still waiting',
+    'event_fabric_inspection_failed' => 'Fabric inspection failed',
+    'event_lot_expiring' => 'Lot near expiry',
+    'event_stock_count_stale' => 'Stock count left open',
+    'event_shipment_arriving' => 'Shipment arriving',
+    'event_shipment_delayed' => 'Shipment delayed',
+    'event_lc_expiring' => 'Letter of credit about to expire',
+    'event_global_broadcast' => 'Company announcement',
+    'event_approval_overdue' => 'Approval request overdue',
 
     // --- the messages themselves, rendered at creation in the recipient's
     //     locale and then stored (SRS 48) ---
+    'event_os_orders_changed' => 'Order Summary: orders changed',
+    'event_os_pending_work' => 'Order Summary: daily pending work',
+    'event_ds_samples_changed' => 'Dev Sample: samples changed',
+    'event_ds_deadline_due' => 'Dev Sample: submission deadlines',
+    'event_pb_requisitions_changed' => 'Pre-Budget: requisitions changed',
+    'event_pb_budget_changed' => 'Pre-Budget: budget changed',
+    'event_pb_stock_needed' => 'Pre-Budget: Stock Yarn Use needed',
+    'event_pb_pending_work' => 'Pre-Budget: daily pending work',
+    'event_es_statements_changed' => 'Export Statement: statements changed',
+    'event_es_pending_work' => 'Export Statement: daily pending work',
+    'sheet' => [
+        'kind' => [
+            'CREATE' => 'added',
+            'EDIT' => 'updated',
+            'DELETE' => 'deleted',
+            'COMPLETE' => 'completed',
+            'ADD_STYLE' => 'added styles to',
+            'REMOVE_STYLE' => 'removed styles from',
+            'COSTING' => 'saved the costing of',
+            'COSTING_DONE' => 'finished the Knit/Dying Costing of',
+            'STOCK' => 'saved the stock yarn use of',
+            'STOCK_DONE' => 'finished the Stock Yarn Use of',
+            'BOM_CREATE' => 'made an accessories BOM for',
+            'BOM_UPDATE' => 'updated an accessories BOM of',
+            'BOM_DELETE' => 'deleted an accessories BOM of',
+            'WITHDRAW' => 'withdrew',
+            'REVISE' => 'revised',
+            'CANCEL' => 'cancelled (its order changed)',
+        ],
+    ],
     'event' => [
+        // Order Summary, Dev Sample Status and Pre-Budget (user, 2026-11-21).
+        'OS_ORDERS_CHANGED' => [
+            'title' => 'Order Summary: :by :action :n order(s)',
+            'body' => ':buyers — :orders · :cells cell(s)',
+        ],
+        'OS_PENDING_WORK' => [
+            'title' => 'Order Summary: orders need attention',
+            'body' => ':overdue past RFI/SD, :week due within 7 days, :booking with booking pending (LDD/ETD within 14 days) — :buyers',
+        ],
+        'DS_SAMPLES_CHANGED' => [
+            'title' => 'Dev Sample: :by :action :n sample(s)',
+            'body' => ':samples · :cells cell(s)',
+        ],
+        'DS_DEADLINE_DUE' => [
+            'title' => 'Dev Sample: submission deadlines due',
+            'body' => ':overdue past the deadline, :soon due within 2 days — :samples',
+        ],
+        'PB_REQUISITIONS_CHANGED' => [
+            'title' => 'Pre-Budget: :by :action :n requisition(s)',
+            'body' => ':buyers — :styles · :cells cell(s)',
+        ],
+        'PB_BUDGET_CHANGED' => [
+            'title' => 'Pre-Budget: :by :action :budget',
+            'body' => ':budget · :buyer',
+        ],
+        'PB_STOCK_NEEDED' => [
+            'title' => 'Stock Yarn Use needed: :budget',
+            'body' => ':by :action :budget (:buyer). Fill its Stock Yarn Use.',
+        ],
+        'PB_PENDING_WORK' => [
+            'title' => 'Pre-Budget: budget work pending',
+            'body' => ':costing costing, :stock stock yarn use, :accessories accessories budget to do — :budgets',
+        ],
+        'ES_STATEMENTS_CHANGED' => [
+            'title' => 'Export Statement: :by :action :n invoice(s)',
+            'body' => ':invoices · net :value · :cells cell(s)',
+        ],
+        'ES_PENDING_WORK' => [
+            'title' => 'Export Statement: documents and claims due',
+            'body' => ':docs_overdue past the 10-day docs limit, :docs_soon due within 2 days, :claim_soon cash incentive claim(s) closing within 30 days — :invoices',
+        ],
         'MAINTENANCE_DUE' => [
             'title' => 'Maintenance due: :asset',
             'body' => ':plan is due on :due_at.',
@@ -134,6 +220,10 @@ return [
         'APPROVAL_DECIDED' => [
             'title' => 'Approval :decision: :number',
             'body' => ':title was :decision.',
+        ],
+        'APPROVAL_OVERDUE' => [
+            'title' => 'Overdue approval: :number',
+            'body' => ':title is past its due date, still waiting on :waiting_on.',
         ],
         'LOW_STOCK' => [
             'title' => 'Low stock: :part',
@@ -206,6 +296,58 @@ return [
         'TICKET_REPLIED' => [
             'title' => 'Reply on your ticket: :subject',
             'body' => ':name from support has replied.',
+        ],
+        'GLOBAL_BROADCAST' => [
+            'title' => ':title',
+            'body' => ':message',
+        ],
+        'MP_QUOTATION_NEGOTIATION' => [
+            'title' => 'Price Revision Requested',
+            'body' => ':qt for :item (:pr): :message',
+        ],
+        'MP_QUOTATION_REJECTED' => [
+            'title' => 'Quotation Rejected',
+            'body' => ':qt for :item (:pr) was rejected: :reason',
+        ],
+        'MP_QUOTATION_APPROVED' => [
+            'title' => 'Quotation Approved',
+            'body' => ':qt for :item (:pr) is approved at :price.',
+        ],
+        'MP_QUOTATION_RECEIVED' => [
+            'title' => 'New Supplier Quotation Received',
+            'body' => ':supplier quoted :item on :pr (:qt).',
+        ],
+        'MP_QUOTATION_REVISED' => [
+            'title' => 'Supplier Submitted a Revised Quotation',
+            'body' => ':supplier sent revision :revision for :item on :pr (:qt).',
+        ],
+        'HR_OT_REQUESTED' => [
+            'title' => 'OT Request Awaiting Your Approval',
+            'body' => ':no — :line on :date, :window for :n employee(s).',
+        ],
+        'HR_OT_DECIDED' => [
+            'title' => 'OT Request :status',
+            'body' => ':no — :line on :date was :status by :by.',
+        ],
+        'MP_MATERIAL_RECEIVED' => [
+            'title' => 'Material Received',
+            'body' => ':item on :pr: :received of :required :uom received.',
+        ],
+        'MP_MATERIAL_ASSIGNED' => [
+            'title' => 'Approved Material Assigned to You',
+            'body' => ':item from :supplier (:pr, :qt) is yours to follow up.',
+        ],
+        'MP_REQUIREMENT_AVAILABLE' => [
+            'title' => 'New Material Requirement Available',
+            'body' => ':pr: :lines material line(s) are open for quotation.',
+        ],
+        'SAMPLE_ASSIGNED' => [
+            'title' => 'Sample :sample assigned to you',
+            'body' => 'Requisition :requisition is approved and its sample :sample is yours to develop.',
+        ],
+        'SAMPLE_FEEDBACK_ACTION' => [
+            'title' => 'Buyer feedback :feedback needs your action',
+            'body' => 'Feedback on sample :sample is assigned to you, due :due.',
         ],
         'TICKET_RESOLVED' => [
             'title' => 'Ticket marked resolved: :subject',

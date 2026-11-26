@@ -1,0 +1,19 @@
+[
+ {"goto": "/m/dyeing-finishing/sc-delivery-challan-gatepass"},
+ {"fullshot": "c-list"},
+ {"click": "main button:has-text('Add New')", "wait": 3000},
+ {"fullshot": "c-entry"},
+ {"dump": "c_entry", "root": "main"},
+ {"texts": "c_entry_p", "of": "main p, main h2, main h3, main legend, main thead th, main span.text-xs"},
+ {"options": "c_supplier", "of": "main select >> nth=0"},
+ {"goto": "/m/dyeing-finishing/sc-receive-finished"},
+ {"click": "main button:has-text('Add New')", "wait": 3000},
+ {"fullshot": "r-entry"},
+ {"dump": "r_entry", "root": "main"},
+ {"texts": "r_entry_p", "of": "main p, main h2, main h3, main legend, main thead th"},
+ {"goto": "/m/dyeing-finishing/sc-process-bill-entry"},
+ {"click": "main button:has-text('Add New')", "wait": 3000},
+ {"fullshot": "b-entry"},
+ {"dump": "b_entry", "root": "main"},
+ {"texts": "b_entry_p", "of": "main p, main h2, main h3, main legend, main thead th"}
+]

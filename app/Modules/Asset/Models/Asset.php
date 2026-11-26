@@ -7,6 +7,7 @@ namespace App\Modules\Asset\Models;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Casts\MoneyCast;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,7 +20,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Asset extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
     use SoftDeletes;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'asset_code';
 
     protected static function booted(): void
     {
@@ -86,6 +91,7 @@ class Asset extends BaseModel
         'currency', 'warranty_start', 'warranty_end', 'supplier_id',
         'default_meter_type_id', 'current_factory_id', 'asset_location_id',
         'is_imported', 'imported_batch_id', 'notes', 'created_by', 'updated_by',
+        'capacity', 'capacity_uom',
     ];
 
     protected function casts(): array

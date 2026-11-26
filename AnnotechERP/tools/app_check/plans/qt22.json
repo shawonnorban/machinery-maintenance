@@ -1,0 +1,8 @@
+[
+ {"goto": "/quality-tally/cutting-tally"},
+ {"wait": 16000},
+ {"choose": "main label:has-text('Line') select", "option": "C1", "after": 5000},
+ {"click": "main button:has-text('BND-20261116-0004')", "after": 7000},
+ {"click": "main button.bg-success", "after": 5000},
+ {"shot": "qt108-cutqc"}
+]

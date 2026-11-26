@@ -1,0 +1,23 @@
+[
+ {"goto": "/m/ie/learning-curve", "shot": "lc_records"},
+ {"peek": "table tbody tr button:has-text('Edit')", "shot": "lc_edit", "escape": true},
+ {"click": "Planning Learning Curve", "shot": "lc_curve"},
+ {"click": "Single Jersey", "exact": true, "shot": "lc_curve_sj"},
+ {"click": "New learning curve point", "shot": "lc_new"},
+
+ {"goto": "/m/ie/resource-profiling", "shot": "rp_records"},
+ {"click": "Product Criticality-Line", "shot": "rp_crit"},
+ {"click": "Basic (0-12)", "shot": "rp_crit_basic"},
+ {"click": "New line profile", "shot": "rp_new"},
+
+ {"goto": "/m/ie/responsible-dept-person-mapping", "shot": "ro_records"},
+ {"click": "Responsible Dept-Person Mapping", "shot": "ro_map"},
+ {"click": "Industrial Engineering", "exact": true, "shot": "ro_map_ie"},
+
+ {"goto": "/m/ie/item-and-process-group", "shot": "ip_records"},
+ {"peek": "table tbody tr button:has-text('Edit')", "shot": "ip_edit", "escape": true},
+ {"click": "New item part mapping", "shot": "ip_new"},
+
+ {"goto": "/m/ie/ie-floor-wise-target-setting-options", "shot": "ft_records"},
+ {"goto": "/m/ie/finishing-floor-access-setting-options", "shot": "ff_records"}
+]

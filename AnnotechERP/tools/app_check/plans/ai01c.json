@@ -1,0 +1,12 @@
+[
+ {"goto": "/system-settings/ai-services?tab=records"},
+ {"wait": 20000},
+ {"click": "main tbody tr:has-text('claude') button:has-text('Test connection')", "after": 30000},
+ {"shot": "s5-clean-message"},
+ {"goto": "/ai-file-import/omni-file-intelligence"},
+ {"wait": 20000},
+ {"click": "main tbody tr:has-text('designation-print') button:has-text('Read with AI')", "after": 30000},
+ {"goto": "/ai-file-import/omni-file-intelligence"},
+ {"wait": 15000},
+ {"shot": "i7-clean-note"}
+]

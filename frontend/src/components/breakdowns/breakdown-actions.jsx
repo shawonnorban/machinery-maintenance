@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { ActionIcon } from "@/components/ui/action-icon";
 
 /**
  * The exact permission each button's own API endpoint checks
@@ -76,7 +77,7 @@ function BreakdownActions({
   return (
     <div className="flex flex-wrap items-center gap-2">
       {status === "REPORTED" && can("acknowledge") ? (
-        <SimpleTransition label={t("acknowledge")} action={actions.acknowledge} breakdownId={breakdownId} />
+        <SimpleTransition icon="acknowledge" label={t("acknowledge")} action={actions.acknowledge} breakdownId={breakdownId} />
       ) : null}
 
       {["ACKNOWLEDGED", "ASSIGNED"].includes(status) && can("assign") ? (
@@ -87,7 +88,7 @@ function BreakdownActions({
           (the walk to the machine) is a different question from repair time,
           so it's offered separately from — and before — starting the repair. */}
       {isOpen && !arrivalRecorded && status !== "REPORTED" && can("arrive") ? (
-        <SimpleTransition label={t("record_arrival")} variant="outline" action={actions.arrive} breakdownId={breakdownId} />
+        <SimpleTransition icon="arrive" label={t("record_arrival")} variant="outline" action={actions.arrive} breakdownId={breakdownId} />
       ) : null}
 
       {/* Starting from ACKNOWLEDGED/ASSIGNED now happens by starting the
@@ -104,7 +105,7 @@ function BreakdownActions({
           that turned out not to be has no work-order-side action to route
           through (its own work order never left IN_PROGRESS). */}
       {status === "REPAIRED" && can("startRepair") ? (
-        <SimpleTransition label={t("reopen_repair")} action={actions.startRepair} breakdownId={breakdownId} />
+        <SimpleTransition icon="reopenRepair" label={t("reopen_repair")} action={actions.startRepair} breakdownId={breakdownId} />
       ) : null}
 
       {status === "IN_REPAIR" ? (
@@ -117,11 +118,11 @@ function BreakdownActions({
       ) : null}
 
       {status === "ON_HOLD" && can("resume") ? (
-        <SimpleTransition label={t("resume")} action={actions.resume} breakdownId={breakdownId} />
+        <SimpleTransition icon="resume" label={t("resume")} action={actions.resume} breakdownId={breakdownId} />
       ) : null}
 
       {status === "REPAIRED" && can("resumeProduction") ? (
-        <SimpleTransition label={t("resume_production")} variant="success" action={actions.resumeProduction} breakdownId={breakdownId} />
+        <SimpleTransition icon="resumeProduction" label={t("resume_production")} variant="success" action={actions.resumeProduction} breakdownId={breakdownId} />
       ) : null}
 
       {["REPAIRED", "PRODUCTION_RESUMED"].includes(status) ? (
@@ -132,7 +133,7 @@ function BreakdownActions({
       ) : null}
 
       {status === "VERIFIED" && can("submitForApproval") ? (
-        <SimpleTransition label={t("submit_for_approval")} variant="success" action={actions.submitForApproval} breakdownId={breakdownId} />
+        <SimpleTransition icon="submitForApproval" label={t("submit_for_approval")} variant="success" action={actions.submitForApproval} breakdownId={breakdownId} />
       ) : null}
 
       {status === "PENDING_APPROVAL" ? (
@@ -162,7 +163,7 @@ function BreakdownActions({
   );
 }
 
-function SimpleTransition({ label, breakdownId, action, variant = "primary" }) {
+function SimpleTransition({ label, icon, breakdownId, action, variant = "primary" }) {
   const t = useT("breakdown");
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -185,7 +186,7 @@ function SimpleTransition({ label, breakdownId, action, variant = "primary" }) {
   return (
     <>
       <Button size="sm" variant={variant} onClick={() => setOpen(true)}>
-        {label}
+        <ActionIcon name={icon} /> {label}
       </Button>
       <ConfirmDialog open={open} onOpenChange={setOpen} title={`${label}?`} confirmLabel={label} destructive={false} loading={pending} onConfirm={confirm} />
     </>
@@ -216,7 +217,7 @@ function StartWorkOrderButton({ breakdownId, workOrderId, action }) {
   return (
     <>
       <Button size="sm" onClick={() => setOpen(true)}>
-        {t("start_work_order")}
+        <ActionIcon name="startWorkOrder" /> {t("start_work_order")}
       </Button>
       <ConfirmDialog
         open={open}
@@ -256,7 +257,7 @@ function RaiseWorkOrderButton({ breakdownId, action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        {t("raise_work_order")}
+        <ActionIcon name="raiseWorkOrder" /> {t("raise_work_order")}
       </Button>
       <ConfirmDialog
         open={open}
@@ -306,7 +307,7 @@ function AssignModal({ technicians, action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        {t("assign")}
+        <ActionIcon name="assign" /> {t("assign")}
       </Button>
       <Modal open={open} onOpenChange={setOpen} title={t("assign")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -368,7 +369,7 @@ function HoldModal({ holdReasons, action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        {t("hold")}
+        <ActionIcon name="hold" /> {t("hold")}
       </Button>
       <Modal open={open} onOpenChange={setOpen} title={t("hold")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -445,7 +446,7 @@ function CompleteRepairModal({ failureCodes, rootCauses, action }) {
   return (
     <>
       <Button size="sm" variant="success" onClick={() => setOpen(true)}>
-        {t("complete_repair")}
+        <ActionIcon name="completeRepair" /> {t("complete_repair")}
       </Button>
       <Modal open={open} onOpenChange={setOpen} title={t("complete_repair")} className="max-w-2xl">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -531,7 +532,7 @@ function VerifyModal({ action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        {t("verify")}
+        <ActionIcon name="verify" /> {t("verify")}
       </Button>
       <Modal open={open} onOpenChange={setOpen} title={t("verify")} description={t("verify_description")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -584,7 +585,7 @@ function CloseModal({ action }) {
   return (
     <>
       <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
-        {t("close")}
+        <ActionIcon name="close" /> {t("close")}
       </Button>
       <Modal open={open} onOpenChange={setOpen} title={t("close")} description={t("close_description")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -637,7 +638,7 @@ function RejectModal({ action }) {
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        {t("reject")}
+        <ActionIcon name="reject" /> {t("reject")}
       </Button>
       <Modal open={open} onOpenChange={setOpen} title={t("reject")} description={t("reject_description")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -689,7 +690,7 @@ function CancelModal({ action }) {
   return (
     <>
       <Button size="sm" variant="outline" className="sm:ml-auto" onClick={() => setOpen(true)}>
-        {t("cancel")}
+        <ActionIcon name="cancel" /> {t("cancel")}
       </Button>
       <Modal open={open} onOpenChange={setOpen} title={t("cancel_breakdown")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

@@ -120,7 +120,8 @@ async function postCost(assetId, previousState, formData) {
       }),
     });
 
-    revalidatePath(`/assets/${assetId}`);
+    // Bound with the asset's id (the body needs it), not the page's readable reference: refresh every asset page.
+    revalidatePath("/assets/[assetId]", "page");
 
     return { status: "success" };
   } catch (error) {

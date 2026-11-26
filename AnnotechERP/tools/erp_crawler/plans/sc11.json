@@ -1,0 +1,39 @@
+[
+{
+"goto": "/m/knitting/receive-sc-program-from-party"
+},
+{
+"click": "main [role=tab]:has-text('Sub-contract Program List')",
+"wait": 3000
+},
+{
+"html": "filters",
+"of": "main select"
+},
+{
+"peek": "main button:has-text('Status'), main label:has-text('Status') + * button",
+"wait": 1000
+},
+{
+"popup": "status_pop"
+},
+{
+"escape": true
+},
+{
+"click": "main table tbody tr >> nth=0 >> button:has-text('Start Production')",
+"wait": 2000
+},
+{
+"texts": "dlg",
+"of": "[role=dialog]"
+},
+{
+"click": "[role=dialog] button:has-text('Start')",
+"wait": 5000
+},
+{
+"texts": "rows",
+"of": "main table tbody tr"
+}
+]

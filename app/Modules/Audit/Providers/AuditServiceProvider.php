@@ -175,6 +175,10 @@ class AuditServiceProvider extends ServiceProvider
         // existing value on it means, without a single record it's
         // attached to being touched.
         CustomFieldDefinition::class,
+
+        // Dev Sample Status (AnnotechERP 31): a sample's statuses and quoted
+        // prices are edited one cell at a time from the list; the trail says who.
+        \App\Modules\DevSample\Models\DevSample::class,
     ];
 
     public function boot(): void

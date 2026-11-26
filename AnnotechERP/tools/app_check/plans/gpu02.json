@@ -1,0 +1,18 @@
+[
+ {"goto": "/gate-pass/gp-approval"},
+ {"click": "td >> text=GP-2026-000002", "after": 8000},
+ {"shot": "approval-open"},
+ {"click": "role=button[name='Approve']", "after": 2000},
+ {"shot": "approve-dialog"},
+ {"fill": "x", "sel": "role=dialog >> textarea", "text": "OK to go for wash"},
+ {"click": "role=dialog >> role=button[name='Approve']", "after": 15000},
+ {"shot": "approved"},
+ {"click": "role=link[name='Gate OUT']", "after": 10000},
+ {"shot": "out-loaded"},
+ {"fill": "Gate Remarks", "text": "Checked at gate"},
+ {"click": "role=button[name='CONFIRM OUT']", "after": 2000},
+ {"shot": "out-dialog"},
+ {"click": "role=dialog >> role=button[name='Confirm OUT']", "after": 15000},
+ {"shot": "out-done"},
+ {"texts": "tables", "of": "section h2"}
+]

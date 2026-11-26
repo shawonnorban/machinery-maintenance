@@ -1,12 +1,10 @@
-import Link from "next/link";
-import { Plus, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { StatCard } from "@/components/ui/stat-card";
-import { cn } from "@/lib/utils";
 import { ServiceContractsTable } from "@/components/vendor/service-contracts-table";
 import { getT } from "@/lib/i18n-server";
+import { applyPerPage } from "@/lib/per-page";
 
 /** Mirrors `ServiceContractApiController::index` — commercial info, gated on `vendor.vendor.view_any` rather than the wider asset-view permission warranties use. */
 export default async function ServiceContractsPage({ searchParams }) {
@@ -15,6 +13,7 @@ export default async function ServiceContractsPage({ searchParams }) {
   const expiring = params.expiring === "1";
 
   const query = new URLSearchParams({ page: String(page) });
+  await applyPerPage(query, "/vendors/service-contracts");
   if (expiring) query.set("expiring", "1");
 
   const [contracts, expiringCount, t] = await Promise.all([
@@ -28,21 +27,17 @@ export default async function ServiceContractsPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("vendors") }, { label: t("contracts") }]}
+      <ScreenHeader
+        url="/vendors/service-contracts"
         title={t("contracts")}
-        actions={
-          <Link href="/vendors/service-contracts/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> {t("new_contract")}
-          </Link>
-        }
+        description={t("contracts_description")}
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("expiring_soon")} value={expiringCount} icon={<AlertTriangle />} tone={expiringCount > 0 ? "warning" : "success"} />
       </div>
 
-      <ServiceContractsTable contracts={contracts.data} meta={contracts.meta} page={page} expiring={expiring} />
+      <ServiceContractsTable addHref="/vendors/service-contracts/create" contracts={contracts.data} meta={contracts.meta} page={page} expiring={expiring} />
     </>
   );
 }

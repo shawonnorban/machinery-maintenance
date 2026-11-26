@@ -1,0 +1,9 @@
+[
+ {"goto": "/trade-export/export-lc-sales-contract-entry?no=LC-0098812"},
+ {"wait": 20000},
+ {"pick": "Take Action", "exact": true, "option": "Complete LC"},
+ {"click": "main button:has-text('Save')", "after": 15000},
+ {"click": "main button:has-text('Back To List')", "after": 8000},
+ {"texts": "lc_rows", "of": "main tbody tr"},
+ {"shot": "lc-list"}
+]

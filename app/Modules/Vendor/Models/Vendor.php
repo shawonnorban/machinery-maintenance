@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Vendor\Models;
 
-use App\Modules\Finance\Models\Bank;
+use App\Modules\TradeExport\Models\TxBank;
 use App\Modules\Finance\Models\PaymentType;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,7 +24,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Vendor extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
     use SoftDeletes;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'code';
 
     /**
      * What the vendor is to this factory. A parts supplier and a service
@@ -66,7 +71,7 @@ class Vendor extends BaseModel
 
     public function bank(): BelongsTo
     {
-        return $this->belongsTo(Bank::class);
+        return $this->belongsTo(TxBank::class, 'bank_id');
     }
 
     public function defaultPaymentType(): BelongsTo

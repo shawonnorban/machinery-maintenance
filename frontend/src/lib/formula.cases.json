@@ -1,0 +1,101 @@
+{
+  "_": "Cases the browser (lib/formula.js) and the server (App\\Shared\\Formula) must agree on. Run by src/lib/formula.test.js and tests/Feature/OrderSummary/FormulaTest.php.",
+  "today": "2026-11-18",
+  "eval": [
+    { "name": "multiply", "formula": "{qty_ticket} * {pac}", "values": { "qty_ticket": 2840, "pac": 2 }, "expect": 5680 },
+    { "name": "precedence", "formula": "1 + 2 * 3 - 4 / 2", "values": {}, "expect": 5 },
+    { "name": "brackets and unary minus", "formula": "-(2 + 3) * 2", "values": {}, "expect": -10 },
+    { "name": "numeric text reads as a number", "formula": "{a} + {b}", "values": { "a": "1,200.5", "b": "0.5" }, "expect": 1201 },
+    { "name": "blank in, blank out", "formula": "{a} * {b}", "values": { "a": 3 }, "expect": null },
+    { "name": "empty text is blank", "formula": "{a} + 1", "values": { "a": "" }, "expect": null },
+    { "name": "division by zero is blank", "formula": "{a} / {b}", "values": { "a": 5, "b": 0 }, "expect": null },
+    { "name": "non-number text in sums is blank", "formula": "{a} + 1", "values": { "a": "abc" }, "expect": null },
+    { "name": "SUM skips blanks", "formula": "SUM({a}, {b}, {c})", "values": { "a": 30, "c": 15 }, "expect": 45 },
+    { "name": "SUM of all blanks is blank", "formula": "SUM({a}, {b})", "values": {}, "expect": null },
+    { "name": "MIN and MAX", "formula": "MAX({a}, {b}) - MIN({a}, {b})", "values": { "a": 7, "b": 2 }, "expect": 5 },
+    { "name": "N reads blank as zero", "formula": "{a} * (1 + (N({loss}) + {cut}) / 100)", "values": { "a": 100, "cut": 3 }, "expect": 103 },
+    { "name": "ROUND half away from zero", "formula": "ROUND(2.5) + ROUND(-2.5) + ROUND(1.005, 2)", "values": {}, "expect": 1.01 },
+    { "name": "ROUND to places", "formula": "ROUND({a} * {b}, 2)", "values": { "a": 1.69, "b": 2840 }, "expect": 4799.6 },
+    { "name": "ABS", "formula": "ABS({a})", "values": { "a": -4 }, "expect": 4 },
+    { "name": "ADD_DAYS back", "formula": "ADD_DAYS({ldd}, -10)", "values": { "ldd": "2026-11-26" }, "expect": "2026-11-16" },
+    { "name": "ADD_DAYS across a month and leap day", "formula": "ADD_DAYS({d}, {n})", "values": { "d": "2028-02-20", "n": 10 }, "expect": "2028-03-01" },
+    { "name": "ADD_DAYS with a negative column", "formula": "ADD_DAYS({rfi}, -{total})", "values": { "rfi": "2026-12-14", "total": 100 }, "expect": "2026-09-05" },
+    { "name": "ADD_DAYS blank date", "formula": "ADD_DAYS({d}, 3)", "values": {}, "expect": null },
+    { "name": "DAYS later minus earlier", "formula": "DAYS({rfi}, TODAY())", "values": { "rfi": "2026-11-16" }, "expect": -2 },
+    { "name": "DAYS forward", "formula": "DAYS({a}, {b})", "values": { "a": "2026-12-14", "b": "2026-11-18" }, "expect": 26 },
+    { "name": "DAYS with a bad date is blank", "formula": "DAYS({a}, {b})", "values": { "a": "2026-02-30", "b": "2026-11-18" }, "expect": null },
+    { "name": "TODAY", "formula": "TODAY()", "values": {}, "expect": "2026-11-18" },
+    { "name": "IF true branch", "formula": "IF({fob} = 0, 0, {trims} / {fob} * 100)", "values": { "fob": 200, "trims": 10 }, "expect": 5 },
+    { "name": "IF blank condition is false", "formula": "IF({x}, \"yes\", \"no\")", "values": {}, "expect": "no" },
+    { "name": "comparison of text ignores case", "formula": "IF({s} = \"confirmed po\", 1, 2)", "values": { "s": "Confirmed PO" }, "expect": 1 },
+    { "name": "less than with numbers", "formula": "{d} < 0", "values": { "d": -3 }, "expect": true },
+    { "name": "less than with blank is blank", "formula": "{d} < 0", "values": {}, "expect": null },
+    { "name": "not equal", "formula": "{a} <> {b}", "values": { "a": 1, "b": 1 }, "expect": false },
+    { "name": "blank equals blank", "formula": "{a} = {b}", "values": {}, "expect": true },
+    { "name": "AND OR NOT", "formula": "AND({a} > 1, OR({b}, NOT({c})))", "values": { "a": 2, "c": 0 }, "expect": true },
+    { "name": "ISBLANK", "formula": "ISBLANK({a})", "values": { "a": "" }, "expect": true },
+    { "name": "JOIN skips blanks", "formula": "JOIN(\", \", {type}, {gsm}, {comp}, {finish})", "values": { "type": "Single Jersey", "gsm": "160 GSM", "finish": "Peach" }, "expect": "Single Jersey, 160 GSM, Peach" },
+    { "name": "JOIN a number", "formula": "JOIN(\" \", {n}, \"pcs\")", "values": { "n": 12.5 }, "expect": "12.5 pcs" },
+    { "name": "ampersand joins text", "formula": "{a} & \"-\" & {b}", "values": { "a": "NCL", "b": 25 }, "expect": "NCL-25" },
+    { "name": "names are case-insensitive functions", "formula": "round(sum({a}, 0.4))", "values": { "a": 1 }, "expect": 1 },
+    { "name": "brackets inside text stay text", "formula": "\"[not a column]\"", "values": {}, "expect": "[not a column]" }
+  ],
+  "errors": [
+    { "name": "unknown function", "formula": "FOO(1)", "kind": "unknown_function" },
+    { "name": "unknown column", "formula": "{nope} + 1", "kind": "unknown_column" },
+    { "name": "wrong argument count", "formula": "IF(1, 2)", "kind": "arg_count" },
+    { "name": "missing bracket", "formula": "(1 + 2", "kind": "expected" },
+    { "name": "trailing operator", "formula": "1 +", "kind": "unexpected_end" },
+    { "name": "two values side by side", "formula": "1 2", "kind": "unexpected" },
+    { "name": "unclosed name", "formula": "[Quantity + 1", "kind": "unclosed_name" },
+    { "name": "unclosed text", "formula": "\"abc", "kind": "unclosed_text" },
+    { "name": "bad character", "formula": "1 # 2", "kind": "bad_character" }
+  ],
+  "known": ["qty_ticket", "pac", "a", "b", "c", "d", "n", "s", "x", "ldd", "rfi", "total", "fob", "trims", "loss", "cut", "type", "gsm", "comp", "finish"],
+  "sets": [
+    {
+      "name": "chain in dependency order, day-dependent left out when stored",
+      "columns": {
+        "quantity_ticket": { "type": "number", "decimals": 0 },
+        "pac": { "type": "number", "decimals": 0 },
+        "quantity_pcs": { "type": "number", "decimals": 0, "formula": "{quantity_ticket} * {pac}" },
+        "fob": { "type": "money", "decimals": 2 },
+        "fob_value": { "type": "money", "decimals": 2, "formula": "{fob} * {quantity_pcs}" },
+        "po_wise_ldd_etd": { "type": "date" },
+        "po_wise_rfi_sd": { "type": "date", "formula": "ADD_DAYS({po_wise_ldd_etd}, -10)" },
+        "days_left_in_hand": { "type": "days", "decimals": 0, "formula": "DAYS({po_wise_rfi_sd}, TODAY())" },
+        "late_flag": { "type": "text", "formula": "IF({days_left_in_hand} < 0, \"LATE\", \"OK\")" }
+      },
+      "values": { "quantity_ticket": 2840, "pac": 1, "fob": 1.69, "po_wise_ldd_etd": "2026-11-26", "days_left_in_hand": 99, "late_flag": "x" },
+      "stored": { "quantity_ticket": 2840, "pac": 1, "quantity_pcs": 2840, "fob": 1.69, "fob_value": 4799.6, "po_wise_ldd_etd": "2026-11-26", "po_wise_rfi_sd": "2026-11-16" },
+      "read": { "quantity_ticket": 2840, "pac": 1, "quantity_pcs": 2840, "fob": 1.69, "fob_value": 4799.6, "po_wise_ldd_etd": "2026-11-26", "po_wise_rfi_sd": "2026-11-16", "days_left_in_hand": -2, "late_flag": "LATE" },
+      "volatile": ["days_left_in_hand", "late_flag"]
+    },
+    {
+      "name": "a number is kept whole for the next formula, like Excel (places only show)",
+      "columns": {
+        "fob": { "type": "money", "decimals": 2 },
+        "final": { "type": "percent", "decimals": 2 },
+        "ship_t": { "type": "number", "decimals": 0 },
+        "ship_value": { "type": "money", "decimals": 2, "formula": "{ship_t} * {fob}" },
+        "disc_fob": { "type": "money", "decimals": 2, "formula": "{fob} * (1 - {final} / 100)" },
+        "disc_ship": { "type": "money", "decimals": 2, "formula": "ROUND({ship_t} * {disc_fob}, 0)" },
+        "total": { "type": "money", "decimals": 2, "formula": "{ship_value} - {disc_ship}" },
+        "noise": { "type": "number", "decimals": 2, "formula": "0.1 + 0.2" }
+      },
+      "values": { "fob": 4.25, "final": 1.5, "ship_t": 1180 },
+      "stored": { "fob": 4.25, "final": 1.5, "ship_t": 1180, "ship_value": 5015, "disc_fob": 4.18625, "disc_ship": 4940, "total": 75, "noise": 0.3 },
+      "read": { "fob": 4.25, "final": 1.5, "ship_t": 1180, "ship_value": 5015, "disc_fob": 4.18625, "disc_ship": 4940, "total": 75, "noise": 0.3 },
+      "volatile": []
+    },
+    {
+      "name": "a loop is refused",
+      "columns": {
+        "a": { "type": "number", "formula": "{b} + 1" },
+        "b": { "type": "number", "formula": "{c} * 2" },
+        "c": { "type": "number", "formula": "{a}" }
+      },
+      "error": "loop"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+[
+ {
+  "goto": "/m/merchandising/fab-process-rate"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main a:has-text('New process rate'), main [role=tab]:has-text('New process rate')",
+  "wait": 2500
+ },
+ {
+  "choose": "main form select >> nth=0",
+  "label": "Dyeing"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "options": "colour_dyeing",
+  "of": "main form select >> nth=3"
+ },
+ {
+  "choose": "main form select >> nth=0",
+  "label": "Yarn Dyeing"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "options": "colour_yd",
+  "of": "main form select >> nth=3"
+ },
+ {
+  "choose": "main form select >> nth=0",
+  "label": "Aop"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "options": "colour_aop",
+  "of": "main form select >> nth=3"
+ },
+ {
+  "texts": "form_aop",
+  "of": "main form"
+ }
+]

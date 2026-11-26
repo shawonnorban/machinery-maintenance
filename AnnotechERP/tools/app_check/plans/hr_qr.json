@@ -1,0 +1,5 @@
+[
+ {"goto": "/hr-payroll/employee-quick-registration?edit=EMP-000007"},
+ {"see": "EMP-000007"},
+ {"shot": "qr"}
+]

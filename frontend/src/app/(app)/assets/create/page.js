@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { AssetForm } from "@/components/assets/asset-form";
 import { getT } from "@/lib/i18n-server";
 import { createAsset } from "./actions";
@@ -17,13 +16,9 @@ export default async function CreateAssetPage() {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: tc("new") }]} title={t("new_asset")} />
+      <ScreenHeader parentUrl="/assets" title={t("new_asset")} />
 
-      <Card>
-        <CardBody>
-          <AssetForm options={options} customFieldSchema={customFields.schema} action={createAsset} />
-        </CardBody>
-      </Card>
+      <AssetForm options={options} customFieldSchema={customFields.schema} action={createAsset} />
     </>
   );
 }

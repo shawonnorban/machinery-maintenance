@@ -11,6 +11,7 @@ import { DocumentActions } from "@/components/procurement/document-actions";
 import { Field, HistoryRow } from "@/components/procurement/requisition-detail";
 import { formatNumber } from "@/lib/format";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /** The body of a purchase order's detail page (Procurement spec §7): lines, revisions, receipts, actions. */
 function OrderDetail({ order, actions }) {
@@ -172,7 +173,7 @@ function OrderDetail({ order, actions }) {
               <StatusBadge status={o.approval_status} label={t(`approval_statuses.${o.approval_status}`)} />
               {approval ? <span className="ml-1 text-xs text-foreground-muted">{approval.current_step}/{approval.total_steps}</span> : null}
             </Field>
-            <Field label={t("vendor")}>{o.vendor ? <Link href={`/vendors/${o.vendor.id}`} className="text-brand hover:underline">{o.vendor.name}</Link> : "—"}</Field>
+            <Field label={t("vendor")}>{o.vendor ? <Link href={`/vendors/${refOf(o.vendor, "code")}`} className="text-brand hover:underline">{o.vendor.name}</Link> : "—"}</Field>
             <Field label={t("factory")}>{o.factory?.name ?? "—"}</Field>
             <Field label={t("date")}><FormattedDateTime value={o.po_date} mode="date" /></Field>
             <Field label={t("purchase_type")}>{t(`purchase_types.${o.purchase_type}`)}</Field>

@@ -42,11 +42,12 @@ class Company extends BaseModel
         'email', 'phone', 'country', 'address', 'logo_path',
         'base_currency', 'timezone', 'default_locale', 'status',
         'suspension_reason', 'suspended_at', 'suspended_by',
+        'website', 'trade_license_no', 'tin', 'bin', 'registration_no', 'registration_date',
     ];
 
     protected function casts(): array
     {
-        return ['suspended_at' => 'datetime'];
+        return ['suspended_at' => 'datetime', 'registration_date' => 'date:Y-m-d'];
     }
 
     /**

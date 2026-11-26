@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { ChangePasswordForm } from "@/components/account/change-password-form";
 import { SessionsTable } from "@/components/account/sessions-table";
 import { TokensTable } from "@/components/account/tokens-table";
+import { Alert } from "@/components/ui/alert";
 import { getT } from "@/lib/i18n-server";
 import { changePassword, revokeSession, revokeToken } from "./actions";
 
@@ -28,6 +29,7 @@ export default async function AccountPage() {
       <PageHeader breadcrumb={[{ label: t("your_account") }]} title={t("your_account")} description={me.user?.email} />
 
       <div className="flex flex-col gap-6">
+        {me.user?.must_change_password ? <Alert variant="warning">{t("must_change_password_notice")}</Alert> : null}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <ChangePasswordForm action={changePassword} />
         </div>

@@ -1,0 +1,26 @@
+[
+ {"goto": "/dye-house/dosing-template?tab=detail"},
+ {"wait": 10000},
+ {"click": "main button:has-text('Next'), main button[aria-label='›']", "after": 1500},
+ {"click": "main button:has-text('LAB-DIP REACTIVE MEDIUM')", "after": 5000},
+ {"pick": "Process Name", "sel": "main tbody tr >> nth=1 >> [aria-label='Process Name']", "option": "Colour Dosing"},
+ {"pick": "Dye Method", "sel": "main tbody tr >> nth=0 >> [aria-label='Dye Method']", "option": "Reactive"},
+ {"pick": "Dye Method", "sel": "main tbody tr >> nth=1 >> [aria-label='Dye Method']", "option": "Reactive"},
+ {"fill": "Step No", "sel": "main label:has-text('Step No') input", "text": "3"},
+ {"pick": "Dye Method", "sel": "main label:has-text('Dye Method') [data-slot=select-trigger]", "option": "Reactive"},
+ {"pick": "Dye Process", "exact": true, "option": "After-Treatment · Soaping"},
+ {"pick": "Dyes/Chemical Agent", "exact": true, "option": "ACETIC ACID"},
+ {"fill": "Dose", "exact": true, "text": "1"},
+ {"pick": "Unit", "exact": true, "option": "KG"},
+ {"click": "main button:text-is('Add')", "after": 1500},
+ {"click": "main button:has-text('Save changes')", "after": 15000},
+ {"texts": "agents", "of": "main tbody tr"},
+ {"shot": "ld-tpl-fixed"},
+
+ {"goto": "/dye-house/dosing-template?tab=detail"},
+ {"wait": 10000},
+ {"click": "main button:has-text('CONVENTIONAL FOR REACTIVE')", "after": 5000},
+ {"pick": "Dye Method", "sel": "main tbody tr >> nth=0 >> [aria-label='Dye Method']", "option": "Reactive"},
+ {"click": "main button:has-text('Save changes')", "after": 15000},
+ {"texts": "conv_agents", "of": "main tbody tr"}
+]

@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/merchandising/purchase-fabric-mrr" },
+ { "wait": 5000 },
+ { "texts": "list", "of": "main th, main td, main button" },
+ { "click": "main tr:has-text('MRR-IMF-2026100001') >> visible=true >> nth=0", "wait": 3000 },
+ { "click": "main button:has-text('Open') >> visible=true >> nth=0", "wait": 3000 },
+ { "url": "open_url" },
+ { "dump": "mrr_dump", "root": "main" },
+ { "texts": "mrr_texts", "of": "main h2, main h3, main p, main th, main td, main label, main button" },
+ { "fullshot": "mp35-mrr" }
+]

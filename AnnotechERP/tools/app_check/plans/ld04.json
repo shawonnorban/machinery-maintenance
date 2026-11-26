@@ -1,0 +1,19 @@
+[
+ {"goto": "/dye-house/dosing-template?tab=detail"},
+ {"wait": 10000},
+ {"click": "main button[aria-label='›']", "after": 1500},
+ {"click": "main button:has-text('LAB-DIP REACTIVE MEDIUM')", "after": 6000},
+ {"pick": "Process Name", "sel": "main tbody tr >> nth=1 >> [aria-label='Process Name']", "option": "Colour Dosing"},
+ {"pick": "Process Name", "sel": "main tbody tr >> nth=2 >> [aria-label='Process Name']", "option": "Soaping"},
+ {"fill": "Step No", "sel": "main label:has-text('Step No') input", "text": "4"},
+ {"pick": "Dye Method", "sel": "main label:has-text('Dye Method') [data-slot=select-trigger]", "option": "Reactive"},
+ {"pick": "Dye Process", "exact": true, "option": "Finishing · Softening"},
+ {"pick": "Dyes/Chemical Agent", "exact": true, "option": "ACETIC ACID"},
+ {"fill": "Dose", "exact": true, "text": "0.6"},
+ {"pick": "Unit", "exact": true, "option": "LTR"},
+ {"texts": "entry_before_add", "of": "main label:has-text('Dye Phase') [data-slot=select-trigger], main label:has-text('Dye Process') [data-slot=select-trigger]"},
+ {"click": "main button:text-is('Add')", "after": 1500},
+ {"click": "main button:has-text('Save changes')", "after": 15000},
+ {"texts": "agents", "of": "main tbody tr"},
+ {"shot": "ld-tpl-fixed"}
+]

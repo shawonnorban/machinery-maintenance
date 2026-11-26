@@ -1,0 +1,19 @@
+[
+ {"goto": "/m/knitting/knit-plan-requisition-for-yarn-test"},
+ {"click": "main [role=tab]:has-text('Knit Plan & Requisition for Yarn Test') >> nth=1", "wait": 2500},
+ {"html": "item_before", "of": "main :is(input,select,textarea) >> nth=11"},
+ {"choose": "main :is(input,select,textarea) >> nth=3", "index": 1, "wait": 1500},
+ {"html": "item_company", "of": "main :is(input,select,textarea) >> nth=11"},
+ {"choose": "main :is(input,select,textarea) >> nth=5", "label": "Yarn Store (ST-YRN)"},
+ {"wait": 2500},
+ {"html": "item_store", "of": "main :is(input,select,textarea) >> nth=11"},
+ {"options": "items_store", "of": "main :is(input,select,textarea) >> nth=11"},
+ {"peek": "main button:has-text('-- Supplier --') >> nth=0", "wait": 1200},
+ {"click": "[role=option]:has-text('Arafah') >> nth=0", "wait": 2000},
+ {"html": "item_supplier", "of": "main :is(input,select,textarea) >> nth=11"},
+ {"options": "items_supplier", "of": "main :is(input,select,textarea) >> nth=11"},
+ {"choose": "main :is(input,select,textarea) >> nth=5", "label": "Knitting Floor (ST-KNT)"},
+ {"wait": 2500},
+ {"options": "items_knt", "of": "main :is(input,select,textarea) >> nth=11"},
+ {"texts": "yarn_section", "of": "main fieldset >> nth=3"}
+]

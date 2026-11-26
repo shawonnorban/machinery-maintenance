@@ -1,0 +1,20 @@
+[
+ {"goto": "/m/knitting/collar-cuff-production"},
+ {"click": "main [role=tab] >> nth=2", "wait": 2500},
+ {"choose": "main select[name=companyId]", "index": 1},
+ {"peek": "main button:has-text('--Order# --')", "wait": 1500},
+ {"click": "[role=option]:has-text('LPP-2026-000008')", "wait": 2500},
+ {"texts": "after_order", "of": "main label + *, main button"},
+ {"choose": "main select[name=item]", "label": "Cuff"},
+ {"fillsel": "main input[name=description]", "text": "2x1 rib cuff probe"},
+ {"fillsel": "main input[name=reqInHouseQty]", "text": "200"},
+ {"click": "main button:has-text('Save flat knit requirement')", "wait": 4000},
+ {"goto": "/m/knitting/yarn-req-collar-cuff-solid"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"texts": "ys_left", "of": "main table >> nth=0 >> tbody tr"},
+ {"click": "main button:has-text('Load Plan')", "wait": 2500},
+ {"texts": "ys_head_after", "of": "main input, main select"},
+ {"texts": "ys_lines", "of": "main table >> nth=1 >> thead, main table >> nth=1 >> tbody tr"},
+ {"html": "ys_line_html", "of": "main table >> nth=1 >> tbody tr >> nth=0 >> td"},
+ {"fullshot": "ys-loaded"}
+]

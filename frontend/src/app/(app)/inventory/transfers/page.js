@@ -1,11 +1,8 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { TransfersTable } from "@/components/inventory/transfers-table";
 import { getT } from "@/lib/i18n-server";
+import { applyPerPage } from "@/lib/per-page";
 
 /** Mirrors `InventoryTransferApiController::index` — either end of the move: the sending factory sees it leave, the receiving one sees it coming. */
 export default async function InventoryTransfersPage({ searchParams }) {
@@ -14,6 +11,7 @@ export default async function InventoryTransfersPage({ searchParams }) {
   const status = params.status ?? "";
 
   const query = new URLSearchParams({ page: String(page) });
+  await applyPerPage(query, "/inventory/transfers");
   if (status) query.set("status", status);
 
   const [transfers, t] = await Promise.all([
@@ -23,18 +21,13 @@ export default async function InventoryTransfersPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("transfers") }]}
+      <ScreenHeader
+        url="/inventory/transfers"
         title={t("transfers")}
         description={t("transfers_intro")}
-        actions={
-          <Link href="/inventory/transfers/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> {t("new_transfer")}
-          </Link>
-        }
       />
 
-      <TransfersTable transfers={transfers.data} meta={transfers.meta} page={page} status={status} />
+      <TransfersTable addHref="/inventory/transfers/create" transfers={transfers.data} meta={transfers.meta} page={page} status={status} />
     </>
   );
 }

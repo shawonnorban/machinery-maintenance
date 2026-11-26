@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/general-store/gs-receive" }, { "wait": 5000 },
+ { "html": "selects", "of": "main select" },
+ { "html": "combos", "of": "main [role=combobox], main button[aria-haspopup]" },
+ { "html": "line", "of": "main div:has(> div:text-is('Line 1'))" },
+ { "click": "main button:has-text('Select…') >> nth=1", "wait": 1500 },
+ { "popup": "item_popup" },
+ { "html": "popup_html", "of": "[role=listbox], [role=dialog], .absolute.z-50" }
+]

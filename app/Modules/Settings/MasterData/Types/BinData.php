@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Settings\MasterData\Types;
 
+use App\Modules\GeneralStore\Models\GsStore;
 use App\Modules\Inventory\Models\Bin;
 use App\Modules\Inventory\Models\InventoryBalance;
 use App\Modules\Inventory\Models\InventoryTransaction;
@@ -58,7 +59,8 @@ class BinData extends MasterDataType
     public function fields(): array
     {
         return [
-            Field::reference('store_id', 'stores'),
+            // Stores are General Store's screen on the shared `stores` table, not a master-data type.
+            Field::belongsTo('store_id', GsStore::class),
             Field::text('name'),
             Field::code(32),
             Field::boolean('active'),

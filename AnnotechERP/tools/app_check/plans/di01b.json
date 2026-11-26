@@ -1,0 +1,10 @@
+[
+ {"goto": "/system-settings/attendance-devices"},
+ {"wait": 25000},
+ {"click": "main button[role=tab]:has-text('Register Device')", "after": 1500},
+ {"click": "main button:has-text('Save Device')", "after": 10000},
+ {"texts": "validation", "of": "main .text-danger"},
+ {"click": "main button[role=tab]:has-text('Device Register')", "after": 1500},
+ {"click": "main tbody tr:has-text('GATE-01') [aria-label='Actions for GATE-01']", "after": 1500},
+ {"shot": "dev-menu"}
+]

@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/hr-payroll/employee-quick-registration" }, { "wait": 8000 },
+ { "type": "main input[placeholder='14000']", "text": "14000" },
+ { "type": "main input[placeholder='18000']", "text": "18000" },
+ { "wait": 1500 },
+ { "texts": "qr_split", "of": "main table th, main table td, main dt, main dd, main li, main p, main span" },
+ { "dump": "qr_split_dump", "root": "main" },
+ { "click": "main button:has-text('View Structure')", "wait": 2000 },
+ { "texts": "qr_structure", "of": "[role=dialog] *" },
+ { "dump": "qr_structure_dump", "root": "[role=dialog]" },
+ { "escape": true },
+ { "click": "main button:has-text('Save') >> nth=0", "wait": 2500 },
+ { "texts": "qr_errors", "of": "main p.text-xs, main p, [role=alert], [data-sonner-toast], li[data-type]" },
+ { "dump": "qr_errors_dump", "root": "main" }
+]

@@ -1,0 +1,10 @@
+[
+ {"goto": "/knit-production/yarn-opening"},
+ {"pick": "Store", "exact": true, "option": "DHK-YRN"},
+ {"pick": "Month", "exact": true, "option": "2026-10"},
+ {"click": "main button:has-text('Search')", "after": 8000},
+ {"pick": "Standing", "exact": true, "option": "Running"},
+ {"fill": "Lot #", "exact": true, "text": "GR"},
+ {"shot": "c-grid-filter"},
+ {"texts": "rows", "of": "main tbody tr"}
+]

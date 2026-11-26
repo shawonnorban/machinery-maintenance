@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -8,6 +8,8 @@ import { RenewContractForm } from "@/components/vendor/renew-contract-form";
 import { CancelContractForm } from "@/components/vendor/cancel-contract-form";
 import { getT } from "@/lib/i18n-server";
 import { renewContract, cancelContract } from "./actions";
+import { refOf } from "@/lib/ref-path";
+import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 
 /** Mirrors `contracts/show.blade.php` (`ServiceContractApiController::show`). */
 export default async function ServiceContractDetailPage({ params }) {
@@ -25,12 +27,8 @@ export default async function ServiceContractDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[
-          { label: t("vendors") },
-          { label: t("contracts"), href: "/vendors/service-contracts" },
-          { label: contract.contract_number },
-        ]}
+      <ScreenHeader
+        parentUrl="/vendors/service-contracts"
         title={contract.contract_number}
         description={t(`contract_type_${contract.contract_type?.toLowerCase()}`)}
       />
@@ -45,7 +43,7 @@ export default async function ServiceContractDetailPage({ params }) {
             <dl className="grid grid-cols-2 gap-y-2 text-sm">
               <dt className="text-foreground-muted">{t("vendor")}</dt>
               <dd className="text-foreground">
-                <Link href={`/vendors/${contract.vendor?.id}/edit`} className="text-brand hover:underline">
+                <Link href={`/vendors/${refOf(contract.vendor, "code")}/edit`} className="text-brand hover:underline">
                   {contract.vendor?.name}
                 </Link>
               </dd>
@@ -54,9 +52,9 @@ export default async function ServiceContractDetailPage({ params }) {
               <dt className="text-foreground-muted">{t("scope")}</dt>
               <dd className="text-foreground">{scopeLabel}</dd>
               <dt className="text-foreground-muted">{t("start_date")}</dt>
-              <dd className="text-foreground">{contract.start_date}</dd>
+              <dd className="text-foreground"><FormattedDateTime value={contract.start_date} mode="date" /></dd>
               <dt className="text-foreground-muted">{t("end_date")}</dt>
-              <dd className="text-foreground">{contract.end_date}</dd>
+              <dd className="text-foreground"><FormattedDateTime value={contract.end_date} mode="date" /></dd>
               <dt className="text-foreground-muted">{t("renewal_date")}</dt>
               <dd className="text-foreground">{contract.renewal_date ?? "—"}</dd>
               <dt className="text-foreground-muted">{t("value")}</dt>

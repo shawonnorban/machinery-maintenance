@@ -1,0 +1,12 @@
+[
+ {"goto": "/knit-production/sc-out-house-bill"},
+ {"wait": 5000},
+ {"texts": "ob_list", "of": "main tbody tr"},
+ {"goto": "/knit-production/sc-out-house-bill?tab=entry&ref=SOB-2026110001"},
+ {"wait": 6000},
+ {"texts": "ob_foot", "of": "main tfoot tr"},
+ {"goto": "/knit-production/debit-memo-sc-out-house"},
+ {"wait": 4000},
+ {"texts": "dm_list", "of": "main tbody tr"},
+ {"printpdf": "main button[aria-label^='Print DMO']", "as": "scb-dm-print2"}
+]

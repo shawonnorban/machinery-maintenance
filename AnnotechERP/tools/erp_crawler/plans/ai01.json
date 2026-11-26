@@ -1,0 +1,137 @@
+[
+ {
+  "goto": "/m/ai-file-import/omni-file-intelligence"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "i0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus), main button:has(svg.lucide-upload)"
+ },
+ {
+  "shot": "i1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "i2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/ai-file-import/recognition-engine"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "s0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus), main button:has(svg.lucide-upload)"
+ },
+ {
+  "shot": "s1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "s2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/ai-file-import/field-extraction"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "x0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus), main button:has(svg.lucide-upload)"
+ },
+ {
+  "shot": "x1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "x2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/ai-file-import/validation-engine"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "v0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus), main button:has(svg.lucide-upload)"
+ },
+ {
+  "shot": "v1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "v2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/ai-file-import/approval-workflow"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "w0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus), main button:has(svg.lucide-upload)"
+ },
+ {
+  "shot": "w1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "w2-edit"
+ },
+ {
+  "escape": true
+ }
+]

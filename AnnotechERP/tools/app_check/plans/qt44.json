@@ -1,0 +1,17 @@
+[
+ {"goto": "/quality-tally/cutting-tally"},
+ {"wait": 20000},
+ {"choose": "main label:has-text('Line') select", "option": "C1", "after": 9000},
+ {"click": "main button:has-text('M-102')", "after": 9000},
+ {"click": "main button.min-h-16:has-text('Sleeve')", "after": 600},
+ {"click": "main button.bg-success", "after": 900},
+ {"click": "main button.bg-success", "after": 9000},
+ {"shot": "qt150-sleeve"},
+ {"click": "main button.bg-success", "after": 2500},
+ {"shot": "qt151-sleeve-full"},
+ {"click": "main button:has-text('M-101')", "after": 9000},
+ {"click": "main button.min-h-16:has-text('Sleeve')", "after": 600},
+ {"click": "main button.bg-success", "after": 900},
+ {"click": "main button.bg-success", "after": 12000},
+ {"shot": "qt152-m101"}
+]

@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main button[role=tab]:has-text('IE Reports')", "wait": 2000},
+ {"click": "xpath=(//main//label[normalize-space(.)='Date Wise NPT Report'])[1]", "wait": 800},
+ {"html": "sels", "of": "main fieldset select"},
+ {"click": "xpath=(//main//label[normalize-space(.)='Machine Variance-Layout vs Costing'])[1]", "wait": 800},
+ {"html": "sels2", "of": "main fieldset select"},
+ {"click": "xpath=(//main//label[normalize-space(.)='Monthly Achievement Summary'])[1]", "wait": 800},
+ {"html": "chk", "of": "main fieldset input[type=checkbox]"},
+ {"click": "xpath=(//main//label[normalize-space(.)='Day Wise Pre-Post Balancing Efficiency'])[1]", "wait": 800},
+ {"html": "day", "of": "main fieldset input"}
+]

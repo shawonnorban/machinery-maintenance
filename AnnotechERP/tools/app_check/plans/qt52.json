@@ -1,0 +1,20 @@
+[
+ {"goto": "/hr-payroll/shift-master"},
+ {"wait": 20000},
+ {"shot": "qt190-shift"},
+ {"goto": "/capacity-planning/shift-master"},
+ {"wait": 15000},
+ {"shot": "qt191-plan"},
+ {"goto": "/hr-payroll/daily-attendance"},
+ {"wait": 15000},
+ {"shot": "qt192-att"},
+ {"goto": "/quality-tally/jobs"},
+ {"wait": 9000},
+ {"shot": "qt193-jobs"},
+ {"goto": "/quality-tally/cutting-history"},
+ {"wait": 9000},
+ {"shot": "qt194-hist"},
+ {"goto": "/quality-tally/cutting-dashboard"},
+ {"wait": 9000},
+ {"shot": "qt195-dash"}
+]

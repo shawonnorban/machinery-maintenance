@@ -20,7 +20,13 @@ class Factory extends BaseModel
     protected $fillable = [
         'company_id', 'business_unit_id', 'name', 'code',
         'address', 'timezone', 'status',
+        'contact', 'established_date', 'area_sqft', 'remarks',
     ];
+
+    protected function casts(): array
+    {
+        return ['established_date' => 'date:Y-m-d', 'area_sqft' => 'decimal:2'];
+    }
 
     public function businessUnit(): BelongsTo
     {

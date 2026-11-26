@@ -1,0 +1,35 @@
+[
+ {
+  "goto": "/m/hr-payroll/festival-calendar",
+  "shot": "fe_main",
+  "rows": 20
+ },
+ {
+  "click": "Holidays",
+  "shot": "fe_holidays",
+  "rows": 20
+ },
+ {
+  "goto": "/m/hr-payroll/company-pay-period",
+  "shot": "pp_main",
+  "rows": 20
+ },
+ {
+  "click": "Payroll Settings",
+  "exact": true,
+  "shot": "pp_settings",
+  "rows": 40
+ },
+ {
+  "click": "Pay Period Actions",
+  "shot": "pp_actions"
+ },
+ {
+  "click": "New Fiscal Year",
+  "shot": "pp_fy"
+ },
+ {
+  "click": "New pay period",
+  "shot": "pp_new"
+ }
+]

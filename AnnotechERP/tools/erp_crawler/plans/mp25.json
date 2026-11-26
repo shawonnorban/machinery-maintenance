@@ -1,0 +1,8 @@
+[
+ { "goto": "/m/security/user-registration" },
+ { "wait": 5000 },
+ { "type": "main input[type=search], main input[placeholder*='Search']", "text": "Merchandising Desk" },
+ { "wait": 2000 },
+ { "texts": "users", "of": "main th, main td" },
+ { "fullshot": "mp25-users" }
+]

@@ -1,0 +1,22 @@
+[
+ { "goto": "/m/merchandising/accessories-booking-trims" },
+ { "wait": 3000 },
+ { "click": "button:has-text('Bookings')", "wait": 2500 },
+ { "click": "main li button >> nth=0", "wait": 3000 },
+ { "click": "button:has-text('Book accessories')", "wait": 2500 },
+ { "dump": "book_form", "root": "body" },
+ { "texts": "book_texts", "of": "[role=dialog] *, main h2, main h3, main p, main label" },
+ { "fullshot": "atb-bookform" },
+ { "click": "button:has-text('Add'), button:has-text('Add line'), button:has-text('Add trim')", "wait": 1500 },
+ { "dump": "book_line", "root": "body" },
+ { "fullshot": "atb-bookline" },
+ { "click": "button:has-text('Save')", "wait": 2500 },
+ { "texts": "save_msgs", "of": "[role=alert], [role=dialog] p, main p" },
+ { "goto": "/m/merchandising/accessories-booking-view" },
+ { "wait": 3000 },
+ { "texts": "lk_rows", "of": "main table tbody tr" },
+ { "click": "button:has-text('Booked Trims')", "wait": 2500 },
+ { "click": "main li button >> nth=1", "wait": 3000 },
+ { "texts": "lk_trims", "of": "main h2, main h3, main p, main th, main td" },
+ { "fullshot": "lk-trims" }
+]

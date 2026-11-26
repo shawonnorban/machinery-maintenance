@@ -1,0 +1,14 @@
+[
+ {"goto": "/finance-ledger/accounting-reports"},
+ {"wait": 25000},
+ {"click": "main button[role=tab]:has-text('New report run')", "after": 1500},
+ {"pick": "Report", "sel": "main [aria-label='Report']:visible", "option": "Ledger Summary"},
+ {"fill": "Bill No", "exact": true, "text": "X"},
+ {"shot": "fr-new"},
+ {"click": "main button:has-text('Save report run')", "after": 15000},
+ {"texts": "ledger", "of": "main section table tbody tr, main section table tfoot tr"},
+ {"shot": "fr-new-saved"},
+ {"click": "main button[role=tab]:has-text('Run History')", "after": 1500},
+ {"texts": "history", "of": "main tbody tr"},
+ {"shot": "fr-history"}
+]

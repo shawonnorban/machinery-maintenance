@@ -313,9 +313,8 @@ class MaintenanceNotifier
     public function holdersOf(string $roleCode, ?string $factoryId = null): Collection
     {
         // Spatie's `name` is the machine code now (COMPANY_OWNER, ...).
-        $role = Role::whereNull('company_id')
-            ->where('name', $roleCode)
-            ->first();
+        // The company's own copy of the role, else the seeded one.
+        $role = \App\Modules\Identity\Support\RoleProvisioner::resolve($roleCode, app(TenantContext::class)->companyId());
 
         if ($role === null) {
             return collect();

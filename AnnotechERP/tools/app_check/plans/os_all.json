@@ -1,0 +1,7 @@
+[
+ {"goto": "/order-summary/list?per_page=all"},
+ {"see": "orders"},
+ {"eval": "JSON.stringify({drawn: document.querySelectorAll('tbody tr[data-row]').length, trs: document.querySelectorAll('tbody tr').length, nodes: document.getElementsByTagName('*').length})"},
+ {"eval": "(async () => { const g = document.querySelector('[aria-label=\"View All\"], div.max-h-\\[75vh\\]') || [...document.querySelectorAll('div')].find(d => getComputedStyle(d).overflow === 'auto' && d.querySelector('table')); const t0 = performance.now(); for (let i = 1; i <= 10; i++) { g.scrollTop = i * 4000; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); } return JSON.stringify({ ms: Math.round(performance.now() - t0), top: g.scrollTop, firstVisible: document.querySelector('tbody tr[data-row] td:nth-child(2)')?.innerText?.slice(0,20), drawn: document.querySelectorAll('tbody tr[data-row]').length }); })()"},
+ {"shot": "os_all"}
+]

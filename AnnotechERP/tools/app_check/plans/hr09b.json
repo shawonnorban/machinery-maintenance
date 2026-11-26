@@ -1,0 +1,12 @@
+[
+ {"goto": "/hr-payroll/generate-letter"},
+ {"wait": 20000},
+ {"fill": "Employee Number", "sel": "main [aria-label='Employee Number']", "text": "1053"},
+ {"click": "main button:has-text('Search')", "after": 12000},
+ {"printpdf": "main button:has-text('Print A4')", "as": "appointment-print", "until": 60000},
+ {"wait": 3000},
+ {"shot": "g5-issued-ref"},
+ {"goto": "/hr-payroll/letter-history"},
+ {"wait": 20000},
+ {"printpdf": "main [aria-label='Print HR/NOC/2026/002']", "as": "noc-print", "until": 60000}
+]

@@ -1,0 +1,21 @@
+[
+ {"goto": "/gate-pass/gp-create"},
+ {"click": "text=Main Gate Pass (Employee)"},
+ {"pick": "Purpose / Reason", "option": "Other"},
+ {"fill": "Destination (if not in the list)", "text": "Sonali Bank, Gazipur branch"},
+ {"fill": "Employee Card No.", "text": "99999"},
+ {"click": "role=button[name='Search']", "after": 6000},
+ {"see": "No employee with card no. 99999 was found.", "as": "card_missing"},
+ {"fill": "Employee Card No.", "text": "50001001"},
+ {"click": "role=button[name='Search']", "after": 6000},
+ {"shot": "main-employee"},
+ {"click": "role=button[name='Save as Draft']", "after": 15000},
+ {"texts": "after_draft", "of": "tbody tr"},
+ {"click": "td >> text=GP-2026-000003", "after": 8000},
+ {"shot": "draft-open"},
+ {"click": "role=link[name='Edit']", "after": 10000},
+ {"shot": "draft-edit"},
+ {"fill": "Remarks", "text": "Bank deposit — back by 3 pm", "exact": true},
+ {"click": "role=button[name='Submit for Approval']", "after": 15000},
+ {"texts": "after_submit", "of": "tbody tr"}
+]

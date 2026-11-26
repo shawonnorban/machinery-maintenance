@@ -1,0 +1,308 @@
+[
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- New inspection sheet --'), main select:has(option:has-text('New inspection sheet'))",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('QCI-2026100002')",
+"wait": 2500
+},
+{
+"click": "main table button[aria-label*='Remove'] >> nth=0",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Slub')",
+"wait": 1000
+},
+{
+"type": "main input[type=number]:not([name]) >> nth=0",
+"text": "4"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Save inspection sheet')",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rows_4",
+"of": "main table tbody tr >> nth=0"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- New inspection sheet --'), main select:has(option:has-text('New inspection sheet'))",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('QCI-2026100002')",
+"wait": 2500
+},
+{
+"click": "main table button[aria-label*='Remove'] >> nth=0",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Slub')",
+"wait": 1000
+},
+{
+"type": "main input[type=number]:not([name]) >> nth=0",
+"text": "5"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Save inspection sheet')",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rows_5",
+"of": "main table tbody tr >> nth=0"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- New inspection sheet --'), main select:has(option:has-text('New inspection sheet'))",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('QCI-2026100002')",
+"wait": 2500
+},
+{
+"click": "main table button[aria-label*='Remove'] >> nth=0",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Slub')",
+"wait": 1000
+},
+{
+"type": "main input[type=number]:not([name]) >> nth=0",
+"text": "9"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Save inspection sheet')",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rows_9",
+"of": "main table tbody tr >> nth=0"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- New inspection sheet --'), main select:has(option:has-text('New inspection sheet'))",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('QCI-2026100002')",
+"wait": 2500
+},
+{
+"click": "main table button[aria-label*='Remove'] >> nth=0",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Slub')",
+"wait": 1000
+},
+{
+"type": "main input[type=number]:not([name]) >> nth=0",
+"text": "13"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Save inspection sheet')",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rows_13",
+"of": "main table tbody tr >> nth=0"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- New inspection sheet --'), main select:has(option:has-text('New inspection sheet'))",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('QCI-2026100002')",
+"wait": 2500
+},
+{
+"click": "main table button[aria-label*='Remove'] >> nth=0",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Slub')",
+"wait": 1000
+},
+{
+"type": "main input[type=number]:not([name]) >> nth=0",
+"text": "17"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Save inspection sheet')",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rows_17",
+"of": "main table tbody tr >> nth=0"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- New inspection sheet --'), main select:has(option:has-text('New inspection sheet'))",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('QCI-2026100002')",
+"wait": 2500
+},
+{
+"click": "main table button[aria-label*='Remove'] >> nth=0",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Slub')",
+"wait": 1000
+},
+{
+"type": "main input[type=number]:not([name]) >> nth=0",
+"text": "22"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1200
+},
+{
+"click": "main button:has-text('Save inspection sheet')",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "rows_22",
+"of": "main table tbody tr >> nth=0"
+}
+]

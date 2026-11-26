@@ -1,0 +1,117 @@
+[
+ {
+  "goto": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "hrefs": "links",
+  "of": "main a"
+ },
+ {
+  "goto": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main a:has-text('Style & Order Dashboard'), main button:has-text('Style & Order Dashboard')",
+  "wait": 3500
+ },
+ {
+  "url": "url_0"
+ },
+ {
+  "texts": "h_0",
+  "of": "h1"
+ },
+ {
+  "dump": "step_0",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main a:has-text('Development Style Catalogue'), main button:has-text('Development Style Catalogue')",
+  "wait": 3500
+ },
+ {
+  "url": "url_1"
+ },
+ {
+  "texts": "h_1",
+  "of": "h1"
+ },
+ {
+  "dump": "step_1",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main a:has-text('Style Registration Entry'), main button:has-text('Style Registration Entry')",
+  "wait": 3500
+ },
+ {
+  "url": "url_2"
+ },
+ {
+  "texts": "h_2",
+  "of": "h1"
+ },
+ {
+  "dump": "step_2",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main a:has-text('Order Confirmation'), main button:has-text('Order Confirmation')",
+  "wait": 3500
+ },
+ {
+  "url": "url_3"
+ },
+ {
+  "texts": "h_3",
+  "of": "h1"
+ },
+ {
+  "dump": "step_3",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main a:has-text('Order Register'), main button:has-text('Order Register')",
+  "wait": 3500
+ },
+ {
+  "url": "url_4"
+ },
+ {
+  "texts": "h_4",
+  "of": "h1"
+ },
+ {
+  "dump": "step_4",
+  "root": "main"
+ }
+]

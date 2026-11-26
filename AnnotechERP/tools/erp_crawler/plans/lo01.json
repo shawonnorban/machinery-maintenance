@@ -1,0 +1,121 @@
+[
+ {
+  "goto": "/m/knitting/needle-req-for-loan-issue"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "needle-req-for-loan-issue#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "needle-req-for-loan-issue#t1",
+  "root": "main"
+ },
+ {
+  "options": "needle-req-for-loan-issue#cats",
+  "of": "main table select >> nth=0"
+ },
+ {
+  "goto": "/m/knitting/needle-loan-return-by-party"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "needle-loan-return-by-party#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "needle-loan-return-by-party#t1",
+  "root": "main"
+ },
+ {
+  "options": "needle-loan-return-by-party#cats",
+  "of": "main table select >> nth=0"
+ },
+ {
+  "goto": "/m/knitting/oil-req-for-loan-issue"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "oil-req-for-loan-issue#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "oil-req-for-loan-issue#t1",
+  "root": "main"
+ },
+ {
+  "options": "oil-req-for-loan-issue#cats",
+  "of": "main table select >> nth=0"
+ },
+ {
+  "goto": "/m/knitting/oil-loan-return-by-party"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "oil-loan-return-by-party#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "oil-loan-return-by-party#t1",
+  "root": "main"
+ },
+ {
+  "options": "oil-loan-return-by-party#cats",
+  "of": "main table select >> nth=0"
+ },
+ {
+  "goto": "/m/knitting/mc-oil-receive"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "oilrcv#t1",
+  "root": "main"
+ }
+]

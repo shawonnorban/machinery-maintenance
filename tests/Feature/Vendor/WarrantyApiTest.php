@@ -179,6 +179,26 @@ class WarrantyApiTest extends TestCase
             ->assertJsonValidationErrors('warranty_id');
     }
 
+    public function test_a_warranty_is_numbered_and_found_by_that_number(): void
+    {
+        $created = $this->withToken($this->tokenFor($this->manager))
+            ->postJson('/api/v1/warranties', [
+                'asset_id' => $this->asset->id,
+                'warranty_type' => 'MANUFACTURER',
+                'start_date' => '2026-01-01',
+                'end_date' => '2027-01-01',
+            ])
+            ->assertCreated();
+
+        $number = (string) $created->json('data.warranty_number');
+        $this->assertMatchesRegularExpression('/^WTY-\d{5}$/', $number);
+
+        $this->withToken($this->tokenFor($this->technician))
+            ->getJson("/api/v1/warranties/{$number}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $created->json('data.id'));
+    }
+
     private function tokenFor(User $user): string
     {
         $companyId = $user->memberships()->latest()->value('company_id');

@@ -1,0 +1,12 @@
+[
+ {"goto": "/knit-production/yd-program-list"},
+ {"wait": 2500},
+ {"printpdf": "main button[aria-label^='Print YDP']", "as": "yd-program-print"},
+ {"goto": "/knit-production/process-loss-adjustment-yd?tab=entry&ref=YDL-2026110001"},
+ {"wait": 2500},
+ {"printpdf": "main button:has-text('Print')", "as": "yd-memo-print2"},
+ {"goto": "/knit-production/yd-reprocess-sc-knitting-to-yd-factory"},
+ {"wait": 2500},
+ {"texts": "sc_list", "of": "main tbody tr"},
+ {"shot": "yd-rp-sc-list"}
+]

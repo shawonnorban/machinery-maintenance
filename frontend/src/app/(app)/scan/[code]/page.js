@@ -2,7 +2,7 @@ import Link from "next/link";
 import { QrCode, AlertTriangle, Wrench, Gauge, ArrowLeftRight, Eye } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,7 @@ export default async function ScanAssetPage({ params }) {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: t("scan") }]} title={t("scanned_asset")} />
+      <ScreenHeader parentUrl="/assets" title={t("scanned_asset")} />
 
       <div className="mx-auto flex max-w-md flex-col gap-5">
         <Card className="border-l-4 border-l-brand">

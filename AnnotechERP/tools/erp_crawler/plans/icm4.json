@@ -1,0 +1,55 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Yarn/Fabric Mapping')",
+  "wait": 2000
+ },
+ {
+  "peek": "button:text-is('New Entry')",
+  "wait": 2000
+ },
+ {
+  "dump": "d_yfm_new",
+  "root": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "button:text-is('Fabrication')",
+  "wait": 2000
+ },
+ {
+  "peek": "button:text-is('New Composition')",
+  "wait": 2000
+ },
+ {
+  "dump": "d_new_comp",
+  "root": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "button:text-is('Colour Mapping')",
+  "wait": 2000
+ },
+ {
+  "peek": "button:text-is('Labdip Program')",
+  "wait": 2000
+ },
+ {
+  "dump": "d_labdip",
+  "root": "main"
+ }
+]

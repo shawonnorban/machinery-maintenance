@@ -1,53 +1,57 @@
 import Link from "next/link";
+import { LifeBuoy } from "lucide-react";
 import { platformApiFetch } from "@/lib/platform-api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { RelativeTime } from "@/components/ui/relative-time";
+import { PlatformHeader, Panel, PTable, fmtStamp } from "@/components/platform/ui";
 import { CloseGrantButton } from "@/components/platform/close-grant-button";
 import { closeSupportGrant } from "../tenants/[companyId]/actions";
 
-/** Every open support grant, across every customer (mirrors `desk/support.blade.php`). */
+/** Every open support grant, across every customer. */
 export default async function PlatformSupportPage() {
   const [grants, me] = await Promise.all([platformApiFetch("/support-grants?active=true"), platformApiFetch("/auth/me")]);
 
   return (
     <>
-      <PageHeader
+      <PlatformHeader
         breadcrumb={[{ label: "Support access" }]}
         title="Support access"
         description="Every audited, time-boxed grant into a customer's data that is open right now."
+        icon={<LifeBuoy />}
+        tone="info"
       />
-
-      <Card>
-        <CardBody className="flex flex-col divide-y divide-border p-0">
-          {grants.length === 0 ? (
-            <p className="p-5 text-sm text-foreground-muted">No support access is open anywhere right now.</p>
-          ) : (
-            grants.map((grant) => (
-              <div key={grant.id} className="flex flex-wrap items-center justify-between gap-3 p-5">
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    <Link href={`/platform/tenants/${grant.company.id}`} className="text-brand hover:underline">
-                      {grant.company.name}
-                    </Link>{" "}
-                    <Badge variant="warning">Active</Badge>
-                  </p>
-                  <p className="text-xs text-foreground-muted">
-                    {grant.holder.name} · {grant.reason}
-                  </p>
-                  <p className="text-xs text-foreground-subtle">
-                    Expires <RelativeTime value={grant.expires_at} />
-                  </p>
-                </div>
-                {grant.holder.id === me.id ? (
-                  <CloseGrantButton grantId={grant.id} action={closeSupportGrant.bind(null, grant.company.id)} />
-                ) : null}
-              </div>
-            ))
-          )}
-        </CardBody>
-      </Card>
+      <Panel title="Open grants" subtitle={`${grants.length} open — a grant closes by itself when it expires`} icon={LifeBuoy}>
+        <PTable
+          rows={grants}
+          rowKey={(g) => g.id}
+          empty="No support access is open anywhere right now."
+          columns={[
+            {
+              key: "company",
+              label: "Customer",
+              render: (g) => (
+                <Link href={`/platform/tenants/${g.company.id}?tab=support`} className="font-semibold text-brand hover:underline">
+                  {g.company.name}
+                </Link>
+              ),
+            },
+            { key: "holder", label: "Held by", render: (g) => g.holder.name },
+            { key: "reason", label: "Reason", render: (g) => <span className="text-foreground-muted">{g.reason}</span> },
+            {
+              key: "expires",
+              label: "Expires",
+              render: (g) => (
+                <span className="text-[13px]">
+                  {fmtStamp(g.expires_at)}
+                  <span className="block text-xs text-foreground-muted">
+                    <RelativeTime value={g.expires_at} />
+                  </span>
+                </span>
+              ),
+            },
+            { key: "act", label: "", align: "right", render: (g) => (g.holder.id === me.id ? <CloseGrantButton grantId={g.id} action={closeSupportGrant.bind(null, g.company.id)} /> : null) },
+          ]}
+        />
+      </Panel>
     </>
   );
 }

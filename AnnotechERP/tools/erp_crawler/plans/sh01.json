@@ -1,0 +1,17 @@
+[
+ {"goto": "/m/garments/shipment-dashboard"},
+ {"fullshot": "dash"},
+ {"texts": "dash_p", "of": "main p, main h2, main h3, main label, main button, main thead th, main tbody tr, main span.text-xs"},
+ {"goto": "/m/garments/shipment-entry"},
+ {"fullshot": "entry"},
+ {"texts": "entry_p", "of": "main p, main h2, main h3, main label, main button, main thead th, main tbody tr, main span.text-xs"},
+ {"goto": "/m/garments/shipment-mark-shipped"},
+ {"fullshot": "mark"},
+ {"texts": "mark_p", "of": "main p, main h2, main h3, main label, main button, main thead th, main tbody tr, main span.text-xs"},
+ {"goto": "/m/garments/shipment-history"},
+ {"fullshot": "hist"},
+ {"texts": "hist_p", "of": "main p, main h2, main h3, main label, main button, main thead th, main tbody tr"},
+ {"goto": "/m/garments/shipment-reports"},
+ {"fullshot": "rep"},
+ {"options": "rep_sel", "of": "main select >> nth=0"}
+]

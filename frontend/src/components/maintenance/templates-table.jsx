@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `TemplateController::index` — every checklist this company can see, its own and the platform's shared ones. */
 function TemplatesTable({ templates, meta }) {
@@ -20,7 +21,7 @@ function TemplatesTable({ templates, meta }) {
           header: t("template"),
           render: (row) => (
             <div>
-              <Link href={`/maintenance/templates/${row.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/maintenance/templates/${refOf(row, "code")}`} className="font-medium text-brand hover:underline">
                 {row.name}
               </Link>
               <div className="text-xs text-foreground-muted">{row.code}</div>
@@ -40,8 +41,9 @@ function TemplatesTable({ templates, meta }) {
       rowKey={(row) => row.id}
       emptyTitle={t("no_templates")}
       emptyDescription={t("no_checklists_hint")}
-      rowActions={(row) => [{ label: tc("view"), onSelect: () => router.push(`/maintenance/templates/${row.id}`) }]}
+      rowActions={(row) => [{ icon: "view", label: tc("view"), onSelect: () => router.push(`/maintenance/templates/${refOf(row, "code")}`) }]}
       pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+      perPageSelect
       onPageChange={(nextPage) => router.push(`/maintenance/templates?page=${nextPage}`)}
     />
   );

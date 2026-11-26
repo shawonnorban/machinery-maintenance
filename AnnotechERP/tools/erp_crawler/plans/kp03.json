@@ -1,0 +1,109 @@
+[
+{
+"goto": "/m/knitting/fabric-production-order-bulk"
+},
+{
+"click": "main [role=tab]:has-text('Save Production Order')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- Select Order --')",
+"wait": 1500
+},
+{
+"popup": "orders"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 2500
+},
+{
+"texts": "after_order_btn",
+"of": "main button"
+},
+{
+"peek": "main button:has-text('-- Select Company --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Brickland')",
+"wait": 1200
+},
+{
+"peek": "main button:has-text('-- Select Category --')",
+"wait": 1200
+},
+{
+"popup": "cats"
+},
+{
+"escape": true
+},
+{
+"fullshot": "pf-order"
+},
+{
+"click": "main button:has-text('Continue')",
+"wait": 2000
+},
+{
+"texts": "fab_p",
+"of": "main p"
+},
+{
+"texts": "fab_lbl",
+"of": "main label"
+},
+{
+"texts": "fab_btn",
+"of": "main button"
+},
+{
+"html": "fab_inputs",
+"of": "main input"
+},
+{
+"peek": "main button:has-text('-- Select Fabric --')",
+"wait": 1500
+},
+{
+"popup": "fabrics"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 1500
+},
+{
+"peek": "main button:has-text('-- Select Colour --')",
+"wait": 1500
+},
+{
+"popup": "colours"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 1500
+},
+{
+"fullshot": "pf-fabric"
+},
+{
+"click": "main button:has-text('Continue')",
+"wait": 2000
+},
+{
+"texts": "qty_p",
+"of": "main p"
+},
+{
+"texts": "qty_lbl",
+"of": "main label"
+},
+{
+"html": "qty_inputs",
+"of": "main input, main select"
+},
+{
+"fullshot": "pf-qty"
+}
+]

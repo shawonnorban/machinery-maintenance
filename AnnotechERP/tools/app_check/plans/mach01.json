@@ -1,0 +1,233 @@
+[
+ {
+  "goto": "/"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n00-dashboard"
+ },
+ {
+  "goto": "/assets"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n01-assets"
+ },
+ {
+  "goto": "/assets/transfers"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n02-transfers"
+ },
+ {
+  "goto": "/assets/labels"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n03-labels"
+ },
+ {
+  "goto": "/metering"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n04-meters"
+ },
+ {
+  "goto": "/maintenance/plans"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n05-plans"
+ },
+ {
+  "goto": "/maintenance/templates"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n06-templates"
+ },
+ {
+  "goto": "/maintenance/schedule"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n07-schedule"
+ },
+ {
+  "goto": "/breakdowns"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n08-breakdowns"
+ },
+ {
+  "goto": "/work-orders"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n09-work-orders"
+ },
+ {
+  "goto": "/work-orders/my-work"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n10-my-work"
+ },
+ {
+  "goto": "/inventory/parts"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n11-parts"
+ },
+ {
+  "goto": "/inventory/stock"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n12-stock"
+ },
+ {
+  "goto": "/inventory/issue"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n13-issue"
+ },
+ {
+  "goto": "/inventory/requests"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n14-requests"
+ },
+ {
+  "goto": "/inventory/transfers"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n15-inv-transfers"
+ },
+ {
+  "goto": "/inventory/low-stock"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n16-low-stock"
+ },
+ {
+  "goto": "/technicians"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n17-technicians"
+ },
+ {
+  "goto": "/teams"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n18-teams"
+ },
+ {
+  "goto": "/vendors"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n19-vendors"
+ },
+ {
+  "goto": "/vendors/warranties"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n20-warranties"
+ },
+ {
+  "goto": "/reports"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n21-reports"
+ },
+ {
+  "goto": "/vendors/service-contracts"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n22-contracts"
+ },
+ {
+  "goto": "/maintenance/plans?search=zzzz"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "n30-plans-search-empty"
+ },
+ {
+  "goto": "/assets"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "click": "table a[href^='/assets/']"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "n31-asset-detail"
+ }
+]

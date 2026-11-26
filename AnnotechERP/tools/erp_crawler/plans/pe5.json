@@ -1,0 +1,50 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Pendings'), main [role=tab]:has-text('Pendings')",
+  "wait": 2500
+ },
+ {
+  "click": "role=button[name='LPP LPP 1']",
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Confirm')",
+  "wait": 3000
+ },
+ {
+  "texts": "after_confirm",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "rows",
+  "of": "main table tbody tr"
+ },
+ {
+  "texts": "btn_conf",
+  "of": "main table tbody tr:has-text('Confirmed') button"
+ },
+ {
+  "click": "main table tbody tr:has-text('Confirmed') button:has-text('Edit')",
+  "wait": 2500
+ },
+ {
+  "texts": "edit_after",
+  "of": "main"
+ },
+ {
+  "texts": "toast",
+  "of": "[data-sonner-toast], [role=status], [role=alert]"
+ }
+]

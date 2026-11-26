@@ -1,0 +1,5 @@
+[
+ {"goto": "/buyer-gateway/order-visibility"},
+ {"wait": 15000},
+ {"texts": "card", "of": "main h2, main h3"}
+]

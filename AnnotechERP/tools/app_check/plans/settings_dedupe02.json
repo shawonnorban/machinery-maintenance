@@ -1,0 +1,6 @@
+[
+ {"goto": "/access-control/user-account"}, {"wait": 15000},
+ {"fill": "search", "sel": "input[placeholder^='Search']", "text": "linechief"}, {"wait": 1500},
+ {"click": "table button:has-text('Edit'), table button[aria-label*='Edit'] >> nth=0", "after": 4000}, {"shot": "u01-linechief-edit"},
+ {"see": "Production line", "as": "line_field_present"}
+]

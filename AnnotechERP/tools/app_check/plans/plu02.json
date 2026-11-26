@@ -1,0 +1,20 @@
+[
+ {"goto": "/capacity-planning/master-plan?plan=MP-2026120001&v=1"},
+ {"click": "role=tab >> text=Versions & Revisions", "after": 1500},
+ {"click": "role=button[name='Request Revision']", "after": 1000},
+ {"fill": "Reason for the change", "text": "Buyer moved ex-factory by two days (UI check)"},
+ {"click": "role=button[name='Send request']", "after": 10000},
+ {"shot": "rev-requested"},
+ {"goto": "/capacity-planning/revision-request"},
+ {"texts": "rev_rows", "of": "tbody tr"},
+ {"click": "tbody tr >> role=button[name='Approve']", "after": 1500},
+ {"click": "role=dialog >> role=button[name='Approve']", "after": 10000},
+ {"texts": "rev_rows_after", "of": "tbody tr"},
+ {"shot": "rev-approved"},
+ {"goto": "/capacity-planning/master-plan-list"},
+ {"texts": "mpl_rows", "of": "tbody tr"},
+ {"shot": "mpl"},
+ {"goto": "/capacity-planning/projections"},
+ {"click": "aside button:has-text('December')", "after": 5000},
+ {"texts": "proj_rows", "of": "tbody tr"}
+]

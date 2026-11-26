@@ -1,0 +1,13 @@
+[
+ { "goto": "/m/sample/sample-360-view" },
+ { "wait": 4000 },
+ { "click": "main tbody tr >> nth=0 >> button >> nth=0", "wait": 4000 },
+ { "texts": "detail", "of": "main h2, main h3, main h4, main p, main button, main th, main td, main li, main dt, main dd, main label, main span" },
+ { "fullshot": "proto22-detail" },
+ { "goto": "/m/sample/sample-360-view" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Sample Documents') >> nth=0", "wait": 3000 },
+ { "peek": "main label:has-text('Document Type') >> xpath=following::*[self::select or self::button][1]", "wait": 1200 },
+ { "popup": "doc_types" },
+ { "texts": "doc_opts", "of": "main select option" }
+]

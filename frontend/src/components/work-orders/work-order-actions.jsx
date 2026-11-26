@@ -12,6 +12,7 @@ import { useToastManager } from "@/components/ui/toast";
 import { HOLD_REASONS } from "@/lib/work-order-transitions";
 import { saveDraft, flush } from "@/lib/offline/queue";
 import { useT } from "@/lib/i18n";
+import { ActionIcon } from "@/components/ui/action-icon";
 
 /**
  * The URL segment each transition posts to (`WorkOrderApiController`'s own
@@ -138,7 +139,7 @@ function WorkOrderActions({ status, workOrderId, actions }) {
           variant={step.destructive ? "danger" : "outline"}
           onClick={() => (step.needsReason ? setReasonStep(step) : setConfirming(step))}
         >
-          {step.label}
+          <ActionIcon name={step.key} /> {step.label}
         </Button>
       ))}
 

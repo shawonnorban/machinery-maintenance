@@ -1,0 +1,18 @@
+[
+ { "goto": "/general-store/gs-return" },
+ { "pick": "a", "sel": "[aria-label='Original Issue No.']", "option": "IS-2026-000001" },
+ { "wait": 15000 },
+ { "fill": "q", "sel": "[aria-label='Return Qty 1']", "text": "25" },
+ { "fill": "r", "sel": "[aria-label='Returned By']", "text": "Rahim" },
+ { "shot": "gs4-return-over" },
+ { "fill": "q", "sel": "[aria-label='Return Qty 1']", "text": "2" },
+ { "click": "button:has-text('Save')", "after": 15000 },
+ { "shot": "gs4-return-saved" },
+ { "goto": "/general-store/gs-current-stock" },
+ { "shot": "gs4-current-stock" },
+ { "click": "main tbody a:has-text('A4 Paper 80 GSM')", "after": 8000 },
+ { "url": "ledger_url" },
+ { "shot": "gs4-ledger" },
+ { "goto": "/general-store/gs-dashboard" },
+ { "shot": "gs4-dashboard" }
+]

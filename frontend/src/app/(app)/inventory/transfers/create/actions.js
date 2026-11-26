@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `TransferController::store`. The receiving factory is never checked against what this caller can reach — sending stock to a plant you don't administer is the ordinary case. */
 async function requestTransfer(previousState, formData) {
@@ -28,7 +29,7 @@ async function requestTransfer(previousState, formData) {
   }
 
   revalidatePath("/inventory/transfers");
-  redirect(`/inventory/transfers/${transfer.id}`);
+  redirect(`/inventory/transfers/${refOf(transfer, "transfer_number")}`);
 }
 
 export { requestTransfer };

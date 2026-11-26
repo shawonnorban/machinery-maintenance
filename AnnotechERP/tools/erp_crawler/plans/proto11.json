@@ -1,0 +1,22 @@
+[
+ { "goto": "/m/sample/sample-requisition" },
+ { "wait": 3500 },
+ { "click": "button:has-text('Sample Fabric Requisition') >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Add Material')", "wait": 1500 },
+ { "texts": "mat_head", "of": "main table th" },
+ { "texts": "mat_opts", "of": "main table tbody tr >> nth=0 >> select" },
+ { "texts": "mat_cells", "of": "main table tbody tr >> nth=0 >> td" },
+ { "goto": "/m/sample/bundle-card-create" },
+ { "wait": 3500 },
+ { "click": "button:has-text('Bundle Card Creation')", "wait": 2500 },
+ { "choose": "main select[name=buyerId], main label:has-text('Buyer') >> xpath=following::select[1]", "index": 1 },
+ { "wait": 2500 },
+ { "texts": "bc_after_buyer", "of": "main label, main select" },
+ { "click": "button:has-text('Cutting List')", "wait": 2500 },
+ { "texts": "cut_tables", "of": "main li, main button, main p" },
+ { "goto": "/m/company-management/company-line" },
+ { "wait": 4000 },
+ { "texts": "lines_head", "of": "main th" },
+ { "texts": "lines_rows", "of": "main tbody tr" },
+ { "fullshot": "proto11-lines" }
+]

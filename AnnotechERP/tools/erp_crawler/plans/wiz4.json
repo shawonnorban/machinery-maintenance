@@ -1,0 +1,28 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('View'), main table tbody tr:has-text('637PK') a:has-text('View')",
+  "wait": 3500
+ },
+ {
+  "click": "[role=dialog] button:has-text('Review'), [role=dialog] li:has-text('Review'), [role=dialog] a:has-text('Review')",
+  "wait": 2500
+ },
+ {
+  "click": "[role=dialog] button:has-text('Send for Approval')",
+  "wait": 2500
+ },
+ {
+  "dump": "after_click",
+  "root": "body"
+ },
+ {
+  "texts": "alerts",
+  "of": "[role=alertdialog], [role=dialog] [role=alert], [data-sonner-toast], [role=status], li[data-type]"
+ }
+]

@@ -1,0 +1,21 @@
+[
+ {"goto": "/m/dyeing-lab/certificate-list"},
+ {"click": "main a:has-text('Add New'), main button:has-text('Add New')", "wait": 3000},
+ {"url": "cert_add_url"},
+ {"fullshot": "cert-add"},
+ {"dump": "cert_add", "root": "main"},
+ {"goto": "/m/dyeing-lab/chemical-trial-lab"},
+ {"click": "main a:has-text('New Trial'), main button:has-text('New Trial')", "wait": 3000},
+ {"url": "trial_add_url"},
+ {"fullshot": "trial-add"},
+ {"dump": "trial_add", "root": "main"},
+ {"goto": "/m/dyeing-lab/certificate-register"},
+ {"click": "main button[role=tab]:has-text('New register entry')", "wait": 2500},
+ {"fullshot": "reg-add"},
+ {"dump": "reg_add", "root": "main"},
+ {"peek": "main button:has-text('Select…') >> nth=0", "wait": 1200},
+ {"popup": "reg_cert_opts"},
+ {"escape": true},
+ {"click": "main button:has-text('Save register entry')", "wait": 2000},
+ {"texts": "reg_errs", "of": "main p, main [role=alert]"}
+]

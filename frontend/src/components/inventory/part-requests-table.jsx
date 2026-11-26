@@ -6,6 +6,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { formatQuantity } from "@/lib/format";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 const PRIORITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", LOW: "neutral" };
 
@@ -23,7 +24,7 @@ function PartRequestsTable({ lines }) {
           header: t("part"),
           render: (line) => (
             <div>
-              <Link href={`/inventory/parts/${line.spare_part?.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/inventory/parts/${refOf(line.spare_part, "part_number")}`} className="font-medium text-brand hover:underline">
                 {line.spare_part?.part_number}
               </Link>
               <div className="text-xs text-foreground-muted">{line.spare_part?.name}</div>
@@ -55,7 +56,7 @@ function PartRequestsTable({ lines }) {
           header: t("work_order"),
           render: (line) => (
             <div>
-              <Link href={`/work-orders/${line.work_order?.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/work-orders/${refOf(line.work_order, "work_order_number")}`} className="font-medium text-brand hover:underline">
                 {line.work_order?.work_order_number}
               </Link>
               <div className="text-xs text-foreground-muted">{line.work_order?.title}</div>
@@ -86,7 +87,7 @@ function PartRequestsTable({ lines }) {
       rowKey={(line) => line.id}
       emptyTitle={t("no_part_requests")}
       emptyDescription={t("no_part_requests_hint")}
-      rowActions={(line) => [{ label: t("go_and_issue"), onSelect: () => router.push(`/work-orders/${line.work_order?.id}`) }]}
+      rowActions={(line) => [{ label: t("go_and_issue"), onSelect: () => router.push(`/work-orders/${refOf(line.work_order, "work_order_number")}`) }]}
     />
   );
 }

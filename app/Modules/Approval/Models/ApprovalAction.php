@@ -19,7 +19,7 @@ class ApprovalAction extends BaseModel
 {
     use BelongsToTenant;
 
-    public const ACTIONS = ['APPROVED', 'REJECTED', 'DELEGATED', 'CANCELLED', 'EXPIRED'];
+    public const ACTIONS = ['APPROVED', 'REJECTED', 'DELEGATED', 'CANCELLED', 'EXPIRED', 'SUBMITTED', 'RETURNED', 'RESUBMITTED'];
 
     protected $table = 'approval_actions';
 
@@ -28,11 +28,13 @@ class ApprovalAction extends BaseModel
     protected $fillable = [
         'company_id', 'approval_request_id', 'approver_id', 'step',
         'action', 'comment', 'acted_at',
+        // Approval History's "Previous → New" and "Level" (AnnotechERP 04/02).
+        'previous_status', 'new_status', 'level',
     ];
 
     protected function casts(): array
     {
-        return ['acted_at' => 'datetime', 'step' => 'integer'];
+        return ['acted_at' => 'datetime', 'step' => 'integer', 'level' => 'integer'];
     }
 
     public function request(): BelongsTo

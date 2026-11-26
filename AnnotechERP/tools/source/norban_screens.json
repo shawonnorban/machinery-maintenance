@@ -1,0 +1,32 @@
+[
+ {"module": "norban-dev-sample", "group": "Dev Sample Status", "name": "View All Dev Sample", "menu_name": "View All Dev Sample", "path": "/dev-sample-status", "probe": "ds_index"},
+ {"module": "norban-dev-sample", "group": "Dev Sample Status", "name": "Add Dev Sample", "menu_name": "Add Dev Sample", "path": "/dev-sample-status/create", "probe": "ds_create"},
+ {"module": "norban-dev-sample", "group": "Dev Sample Status", "name": "Pivot Report", "menu_name": "Pivot Report", "path": "/dev-sample-status/report", "probe": "ds_report"},
+
+ {"module": "norban-order-summary", "group": "Order Summary", "name": "View All", "menu_name": "View All", "path": "/order-summary-v1", "probe": "os_index"},
+ {"module": "norban-order-summary", "group": "Order Summary", "name": "Create New", "menu_name": "Create New", "path": "/order-summary/create-v1", "probe": "os_create"},
+ {"module": "norban-order-summary", "group": "Order Summary", "name": "Report Dashboard", "menu_name": "Report Dashboard", "path": "/order-summary/reports", "probe": "os_reports"},
+ {"module": "norban-order-summary", "group": "Order Summary", "name": "LDD Pending Summary", "menu_name": "LDD Pending Summary", "path": "/order-summary/reports/ldd-summary", "probe": "os_ldd"},
+ {"module": "norban-order-summary", "group": "Order Summary", "name": "RFI Pending Summary", "menu_name": "RFI Pending Summary", "path": "/order-summary/reports/rfi-summary", "probe": "os_rfi"},
+ {"module": "norban-order-summary", "group": "Order Summary", "name": "Buyer Month Wise", "menu_name": "Buyer Month Wise", "path": "/order-summary/reports/buyer-month-wise", "probe": "os_buyer_month"},
+ {"module": "norban-order-summary", "group": "Order Summary", "name": "Audit Log", "menu_name": "Audit Log", "path": "/order-summary/audit-log", "probe": "os_audit"},
+
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "View All Requisition", "menu_name": "View All Requisition", "path": "/apps/requisitions/knit-woven", "probe": "kw_index"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Add New Requisition", "menu_name": "Add New Requisition", "path": "/apps/requisitions/knit-woven/create", "probe": "kw_create"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Draft Requisition", "menu_name": "Draft Requisition", "path": "/apps/requisitions/knit-woven/drafts", "probe": "kw_drafts"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Create Budget", "menu_name": "Create Budget", "path": "/apps/requisitions/knit-woven/pivot", "probe": "kw_pivot"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Budget Status", "menu_name": "Budget Status", "path": "/apps/requisitions/knit-woven/budget-status", "probe": "kw_budget_status"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Stock Yarn Use", "menu_name": "Stock Yarn Use", "path": "/apps/requisitions/knit-woven/store-stock", "probe": "kw_store_stock"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Knit/Dying Costing", "menu_name": "Knit/Dying Costing", "path": "/apps/requisitions/knit-woven/costing", "probe": "kw_costing"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Budget Finalized", "menu_name": "Budget Finalized", "path": "/apps/requisitions/knit-woven/pivot/finalized", "probe": "kw_finalized"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Stock Yarn Declaration", "menu_name": "Stock Yarn Declaration", "path": "/apps/requisitions/knit-woven/stock-declaration", "probe": "kw_stock_decl"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Budget Report", "menu_name": "Budget Report", "path": "/apps/requisitions/knit-woven/report", "probe": "kw_report"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Yarn Report", "menu_name": "Yarn Report", "path": "/apps/requisitions/knit-woven/yarn-report", "probe": "kw_yarn_report"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Short Purchase", "menu_name": "Short Purchase", "path": "/apps/requisitions/knit-woven/short-purchase", "probe": "kw_short"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Excess Purchase", "menu_name": "Excess Purchase", "path": "/apps/requisitions/knit-woven/excess-purchase", "probe": "kw_excess"},
+ {"module": "norban-knit-woven", "group": "Knit Woven", "name": "Audit Log", "menu_name": "Audit Log", "path": "/apps/requisitions/knit-woven/audit-log", "probe": "kw_audit"},
+
+ {"module": "norban-accessories", "group": "Accessories Pre-Budget", "name": "Accessories Budget Pending", "menu_name": "Accessories Budget Pending", "path": "/accessories-inventory/accessories-budget-pending", "probe": "ac_pending"},
+ {"module": "norban-accessories", "group": "Accessories Pre-Budget", "name": "BOM List", "menu_name": "BOM List", "path": "/accessories-inventory/bom", "probe": "ac_bom"},
+ {"module": "norban-accessories", "group": "Accessories Pre-Budget", "name": "Accessories Report", "menu_name": "Accessories Report", "path": "/accessories-inventory/report", "probe": "ac_report"}
+]

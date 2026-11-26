@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /**
  * Column `render` functions can't cross the Server→Client boundary, so this
@@ -31,7 +32,7 @@ function ApprovalsTable({ approvals, meta, page, status }) {
           render: (approval) =>
             approval.work_order ? (
               <div>
-                <Link href={`/work-orders/${approval.work_order.id}`} className="font-medium text-brand hover:underline">
+                <Link href={`/work-orders/${refOf(approval.work_order, "work_order_number")}`} className="font-medium text-brand hover:underline">
                   {approval.work_order.work_order_number}
                 </Link>
                 <div className="text-xs text-foreground-muted">

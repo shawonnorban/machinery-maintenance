@@ -1,0 +1,80 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('View')",
+  "wait": 3500
+ },
+ {
+  "click": "[role=dialog] button:has-text('Review')",
+  "wait": 2500
+ },
+ {
+  "click": "[role=dialog] button:has-text('Send for Approval')",
+  "wait": 3000
+ },
+ {
+  "texts": "after_send",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "after_send_d",
+  "root": "[role=dialog]"
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "cards",
+  "of": "main"
+ },
+ {
+  "click": "main button:has-text('Open Inbox'), main a:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "texts": "inbox_t",
+  "of": "main"
+ },
+ {
+  "dump": "inbox_d",
+  "root": "main"
+ },
+ {
+  "click": "main table tbody tr:first-child button, main table tbody tr:first-child a",
+  "wait": 3000
+ },
+ {
+  "texts": "inbox_open_t",
+  "of": "body"
+ },
+ {
+  "dump": "inbox_open_d",
+  "root": "[role=dialog]"
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Open Sent'), main a:has-text('Open Sent')",
+  "wait": 2500
+ },
+ {
+  "texts": "sent_t",
+  "of": "main"
+ },
+ {
+  "dump": "sent_d",
+  "root": "main"
+ }
+]

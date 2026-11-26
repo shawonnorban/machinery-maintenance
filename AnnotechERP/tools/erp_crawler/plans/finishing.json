@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/dyeing-finishing/dyeing-finishing-process-type", "shot": "pt_main", "rows": 20},
+ {"click": "Fabric Process Group List", "shot": "pt_groups"},
+ {"click": "Dyeing Finishing", "exact": true, "shot": "pt_groups_df", "rows": 20},
+ {"click": "New process type", "shot": "pt_new"},
+ {"goto": "/m/dyeing-finishing/dyeing-finishing-machine-profile", "shot": "mc_main"},
+ {"click": "New machine", "shot": "mc_new"},
+ {"goto": "/m/dyeing-finishing/machine-and-process-mapping", "shot": "mp_main"},
+ {"click": "New mapping", "shot": "mp_new"},
+ {"goto": "/m/dyeing-finishing/df-mc-wise-production-target-setup", "shot": "tg_main"},
+ {"click": "New target", "shot": "tg_new"}
+]

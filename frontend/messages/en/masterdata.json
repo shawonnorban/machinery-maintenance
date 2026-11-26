@@ -73,7 +73,9 @@
         "fabric-defects": "Fabric defect catalogue",
         "banks": "Banks",
         "payment-types": "Payment types",
-        "gl-accounts": "GL accounts"
+        "gl-accounts": "GL accounts",
+        "grades": "Grades",
+        "designations": "Designations"
     },
     "descriptions": {
         "buildings": "The buildings on a factory site.",
@@ -105,7 +107,9 @@
         "fabric-defects": "What a roll inspector can flag — Knit and Woven kept as separate lists.",
         "banks": "Banks a supplier or the company holds an account with.",
         "payment-types": "How money changes hands: cash, bank transfer, cheque, LC.",
-        "gl-accounts": "The chart of accounts stock and purchase postings map to. Structure now, real codes when finance signs off."
+        "gl-accounts": "The chart of accounts stock and purchase postings map to. Structure now, real codes when finance signs off.",
+        "grades": "Pay and seniority grades, ranked by their order.",
+        "designations": "Job titles, with their department, employee category and grade."
     },
     "fields": {
         "name": "Name",
@@ -144,7 +148,23 @@
         "duty_rate": "Duty rate (%)",
         "vat_rate": "VAT rate (%)",
         "account_category": "Account category",
-        "parent_account_id": "Parent account"
+        "parent_account_id": "Parent account",
+        "number_of_floors": "Number of Floors",
+        "status": "Status",
+        "remarks": "Remarks",
+        "capacity": "Floor Capacity",
+        "department_type": "Department Type",
+        "line_type": "Line Type",
+        "manpower": "Manpower",
+        "capacity_per_day": "Capacity / Day",
+        "target_per_day": "Target / Day",
+        "floors_registered": "Floors Registered",
+        "sections_count": "Sections",
+        "machines": "Machines",
+        "machines_down": "Under Maintenance",
+        "sort_order": "Order",
+        "employee_category": "Employee Category",
+        "grade_id": "Grade"
     },
     "values": {
         "critical": "Critical",
@@ -173,6 +193,20 @@
         "liability": "Liability",
         "income": "Income",
         "expense": "Expense",
-        "equity": "Equity"
+        "equity": "Equity",
+        "inactive": "Inactive",
+        "production": "Production",
+        "non_production": "Non-Production",
+        "sewing": "Sewing",
+        "cutting": "Cutting",
+        "finishing": "Finishing",
+        "quality": "Quality",
+        "sample": "Sample",
+        "special": "Special",
+        "worker": "Worker",
+        "staff": "Staff",
+        "officer": "Officer",
+        "management": "Management",
+        "active": "Active"
     }
 }

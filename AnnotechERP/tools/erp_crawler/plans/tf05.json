@@ -1,0 +1,225 @@
+[
+ {
+  "goto": "/m/ie/gmt-target-setting"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "xpath=(//li[normalize-space(.)='1'] | //*[@role='option'][normalize-space(.)='1'])[1]",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select",
+  "index": 1
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=0",
+  "text": "PROBE-ORD-01"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=1",
+  "text": "529"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=2",
+  "text": "T-Shirt"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=3",
+  "text": "8.5"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=4",
+  "text": "2026-10-20"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=5",
+  "text": "2026-10-22"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=6",
+  "text": "2026-10-30"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=7",
+  "text": "5000"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=8",
+  "text": "970"
+ },
+ {
+  "fullshot": "pe-filled"
+ },
+ {
+  "click": "main button:text-is('Save')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "pe-saved"
+ },
+ {
+  "dump": "gt_pe",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Plans')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "xpath=(//li[normalize-space(.)='1'] | //*[@role='option'][normalize-space(.)='1'])[1]",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-pp"
+ },
+ {
+  "dump": "gt_pp",
+  "root": "main"
+ },
+ {
+  "html": "pp_row",
+  "of": "main table tbody tr"
+ },
+ {
+  "click": "main button[role=tab]:has-text('NPT Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=nptDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "xpath=(//li[normalize-space(.)='1'] | //*[@role='option'][normalize-space(.)='1'])[1]",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "options": "npt_reasons",
+  "of": "main table tbody tr >> nth=0 >> select >> nth=0"
+ },
+ {
+  "options": "npt_depts",
+  "of": "main table tbody tr >> nth=0 >> select >> nth=1"
+ },
+ {
+  "options": "npt_slots",
+  "of": "main table tbody tr >> nth=0 >> select >> nth=2"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=0",
+  "text": "PROBE-ORD-01"
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=0",
+  "label": "Machine Breakdown"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=1",
+  "text": "Overlock down"
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=1",
+  "label": "Maintenance"
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=2",
+  "label": "3"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=2",
+  "text": "4"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=3",
+  "text": "30"
+ },
+ {
+  "click": "main button:text-is('Save')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "npt-saved"
+ },
+ {
+  "dump": "gt_npt",
+  "root": "main"
+ },
+ {
+  "texts": "npt_notes",
+  "of": "main p"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Sewing Target Setting')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=targetDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "sts-after"
+ },
+ {
+  "html": "sts_row1",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "texts": "sts_notes",
+  "of": "main p"
+ }
+]

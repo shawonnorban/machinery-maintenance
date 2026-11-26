@@ -1,0 +1,13 @@
+[
+ { "goto": "/m/gate-pass/gp-in" }, { "wait": 5000 },
+ { "fillsel": "main input >> nth=0", "text": "GP-2026-000001" },
+ { "click": "main button:has-text('Search')", "wait": 3000 },
+ { "html": "row_inputs", "of": "main tr:has-text('(PRB-ITM)') input, main tr:has-text('(PRB-ITM)') button" },
+ { "fillsel": "main tr:has-text('(PRB-ITM)') input >> nth=0", "text": "2" },
+ { "wait": 800 },
+ { "texts": "in_summary", "of": "main p" },
+ { "click": "main label:has-text('Final return')", "wait": 800 },
+ { "html": "short_reason", "of": "main textarea, main input[placeholder*='eason'], main select" },
+ { "texts": "in_final", "of": "main p, main label" },
+ { "fullshot": "gp08-in-filled" }
+]

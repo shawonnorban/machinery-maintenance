@@ -1,0 +1,48 @@
+[
+ {
+  "goto": "/m/merchandising/budget-vs-post-prod-costing"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "links",
+  "of": "main a"
+ },
+ {
+  "texts": "rec",
+  "of": "main"
+ },
+ {
+  "click": "main [role=tab]:has-text('Yarn+Trims/Accs-Expense'), main a:has-text('Yarn+Trims/Accs-Expense')",
+  "wait": 2500
+ },
+ {
+  "texts": "t0",
+  "of": "main"
+ },
+ {
+  "click": "main [role=tab]:has-text('Fabric Process-Expense'), main a:has-text('Fabric Process-Expense')",
+  "wait": 2500
+ },
+ {
+  "texts": "t1",
+  "of": "main"
+ },
+ {
+  "click": "main [role=tab]:has-text('CMT+Print+Embr.+Wash-Expense'), main a:has-text('CMT+Print+Embr.+Wash-Expense')",
+  "wait": 2500
+ },
+ {
+  "texts": "t2",
+  "of": "main"
+ },
+ {
+  "click": "main [role=tab]:has-text('Export List-Expense'), main a:has-text('Export List-Expense')",
+  "wait": 2500
+ },
+ {
+  "texts": "t3",
+  "of": "main"
+ }
+]

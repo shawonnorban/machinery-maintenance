@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/merchandising/accessories-pr" },
+ { "texts": "pr_head", "of": "table thead th" },
+ { "texts": "pr_rows", "of": "table tbody tr" },
+ { "click": "table tbody tr:first-child button:has-text('Edit'), table tbody tr:first-child a:has-text('Edit')", "wait": 3000 },
+ { "fullshot": "pr-edit" },
+ { "texts": "pr_buttons", "of": "main button" },
+ { "texts": "pr_lines", "of": "table tbody tr" }
+]

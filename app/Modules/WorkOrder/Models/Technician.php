@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\WorkOrder\Models;
 
+use App\Modules\HrPayroll\Models\HrEmployee;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Department;
 use App\Modules\Tenancy\Models\Factory;
 use App\Modules\Tenancy\Models\ProductionLine;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,9 +28,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Technician extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'employee_id';
 
     protected $fillable = [
-        'company_id', 'factory_id', 'user_id', 'department_id', 'production_line_id',
+        'company_id', 'factory_id', 'user_id', 'hr_employee_id', 'department_id', 'production_line_id',
         'employee_id', 'name', 'phone', 'email', 'specialization',
         'joining_date', 'max_concurrent_work_orders', 'status',
     ];
@@ -47,6 +53,16 @@ class Technician extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * The HR & Payroll employee this technician is (picked from the employee
+     * list; name, code, mobile and joining date are copied from there on
+     * every save). Null only for a roster row entered before the link.
+     */
+    public function hrEmployee(): BelongsTo
+    {
+        return $this->belongsTo(HrEmployee::class);
     }
 
     /** The technician row behind whoever is logged in right now, or null if they aren't one. */

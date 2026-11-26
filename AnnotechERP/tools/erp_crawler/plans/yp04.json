@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/knitting/yarn-purchase-requisition"},
+ {"click": "main button[role=tab]:has-text('Yarn Purchase Requisition')", "wait": 2500},
+ {"type": "main input[name=prDate]", "text": "2026-10-25"},
+ {"choose": "main select[name=companyId]", "index": 1},
+ {"choose": "main select[name=storeId]", "label": "Yarn Store (ST-YRN)"},
+ {"peek": "main div:has(> label:text-is('Category')) button", "wait": 1200},
+ {"click": "xpath=(//*[@role='option'][normalize-space(.)='Yarn'])[1]", "wait": 1500},
+ {"click": "main button:has-text('Add Yarn')", "wait": 1500},
+ {"options": "items", "of": "main table tbody tr >> nth=0 >> select[aria-label='Yarn Item']"},
+ {"options": "brands", "of": "main table tbody tr >> nth=0 >> select[aria-label=Brand]"}
+]

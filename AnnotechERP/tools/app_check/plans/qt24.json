@@ -1,0 +1,9 @@
+[
+ {"goto": "/quality-tally/sewing-tally"},
+ {"wait": 16000},
+ {"choose": "main label:has-text('Line') select", "option": "LINE01", "after": 4000},
+ {"shot": "qt112-sewqc-jobs"},
+ {"choose": "main label:has-text('Job') select", "option": "26DAL00103", "after": 6000},
+ {"click": "main button.bg-success", "after": 3000},
+ {"shot": "qt113-sewqc"}
+]

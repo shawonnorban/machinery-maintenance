@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { refOf } from "@/lib/ref-path";
 
 function payload(formData) {
   return {
@@ -36,7 +37,7 @@ async function createSparePart(previousState, formData) {
   }
 
   revalidatePath("/inventory/parts");
-  redirect(`/inventory/parts/${part.id}`);
+  redirect(`/inventory/parts/${refOf(part, "part_number")}`);
 }
 
 export { createSparePart };

@@ -1,0 +1,9 @@
+[
+ {"goto": "/m/garments/packing-folding"},
+ {"fullshot": "fold"},
+ {"texts": "fold_p", "of": "main p, main h2, main h3, main label, main button, main span.text-xs"},
+ {"goto": "/m/garments/packing-carton"},
+ {"fullshot": "carton"},
+ {"goto": "/m/garments/packing-reports"},
+ {"texts": "rep_og", "of": "main optgroup"}
+]

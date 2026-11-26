@@ -237,6 +237,7 @@ class MeterApiController extends ApiController
     {
         return [
             'id' => $meter->id,
+            'meter_number' => $meter->meter_number,
             'asset_id' => $meter->asset_id,
             'type' => [
                 'id' => $meter->meter_type_id,

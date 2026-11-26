@@ -1,0 +1,15 @@
+[
+ {"goto": "/m/ie/gmt-wash-requisition"},
+ {"click": "main button[role=tab]:has-text('Wash Requisition List')", "wait": 2500},
+ {"html": "filters", "of": "main select"},
+ {"choose": "main select:has(option:text-is('Still open'))", "label": "Complete"},
+ {"click": "main button:has-text('Search')", "wait": 4000},
+ {"texts": "row_c", "of": "main table tbody tr"},
+ {"html": "row_ch", "of": "main table tbody tr >> nth=0 >> td"},
+ {"fullshot": "gw-complete"},
+ {"texts": "p", "of": "main p"},
+ {"click": "main button[role=tab]:has-text('Records')", "wait": 3000},
+ {"click": "main table tbody tr >> nth=0 >> button:has-text('Edit')", "wait": 3000},
+ {"fullshot": "gw-edit"},
+ {"dump": "gw_edit", "root": "main"}
+]

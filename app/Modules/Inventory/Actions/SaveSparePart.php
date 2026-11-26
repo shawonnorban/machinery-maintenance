@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Actions;
 
+use App\Modules\Inventory\Support\SparePartCategories;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Inventory\Models\SparePart;
 use App\Modules\Inventory\Models\SparePartCategory;
@@ -127,6 +128,7 @@ class SaveSparePart
             return;
         }
 
+        SparePartCategories::ensure($this->context->companyId());
         $exists = SparePartCategory::availableTo($this->context->companyId())
             ->whereKey($categoryId)
             ->exists();

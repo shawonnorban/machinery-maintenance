@@ -159,6 +159,23 @@ class ReportExportTest extends TestCase
         $this->assertEqualsWithDelta(285000.0, $cost, 0.001);
     }
 
+    public function test_a_pdf_export_is_offered_and_written(): void
+    {
+        $manager = TenantFixture::user($this->delta, 'MAINTENANCE_MANAGER', 'mm4@delta.test');
+        TenantFixture::actingAsTenant($this->delta);
+
+        // PDF is offered only because a writer can now produce it (App\Shared\Pdf\TablePdf).
+        $this->assertContains('PDF', app(ReportRunner::class)->formats());
+
+        $job = app(RequestReport::class)->handle(
+            $this->registry->find('asset_register'), $this->reportQuery(), 'PDF', $manager,
+        );
+
+        $this->assertSame('COMPLETED', $job->status);
+        $this->assertStringEndsWith('.pdf', $job->file->path);
+        $this->assertStringStartsWith('%PDF-', (string) Storage::disk('local')->get($job->file->path));
+    }
+
     public function test_a_large_report_is_queued_rather_than_run_in_the_request(): void
     {
         $report = $this->registry->find('asset_register');

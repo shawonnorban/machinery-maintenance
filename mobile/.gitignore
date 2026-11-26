@@ -1,0 +1,20 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+expo-env.d.ts
+
+# native projects are generated (npx expo prebuild)
+/android
+/ios
+
+# the release key and its passwords are never in the repository
+*.jks
+*.keystore
+signing.properties
+
+# this computer's own server address
+.env
+.env.local

@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToastManager } from "@/components/ui/toast";
 import { formatQuantity, formatCurrency } from "@/lib/format";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /**
  * Mirrors `inventory::work-orders._parts.blade.php` — issued, fitted and
@@ -113,7 +114,7 @@ function PartLineRow({ line, isTerminal, showCosts, currency, binOptions, action
   return (
     <tr className={`border-t border-border ${hasOutstanding ? "bg-warning-subtle" : ""}`}>
       <td className="px-4 py-3">
-        <Link href={`/inventory/parts/${line.spare_part?.id}`} className="text-brand hover:underline">
+        <Link href={`/inventory/parts/${refOf(line.spare_part, "part_number")}`} className="text-brand hover:underline">
           {line.spare_part?.part_number}
         </Link>
         <div className="text-xs text-foreground-muted">{line.spare_part?.name}</div>

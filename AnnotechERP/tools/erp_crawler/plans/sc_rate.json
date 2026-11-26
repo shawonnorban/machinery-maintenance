@@ -1,0 +1,6 @@
+[
+ {"goto": "/m/knitting/sc-party-rate"},
+ {"clickSel": "main [role=tab]:has-text('Rate Entry'), main button:has-text('Rate Entry')", "last": true},
+ {"clickSel": "main table button:text-is('Knitting')"},
+ {"scroll": 0.45, "shot": "sc_knit_mid", "rows": 6}
+]

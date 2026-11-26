@@ -1,0 +1,85 @@
+[
+ {
+  "goto": "/m/merchandising/accessories-po"
+ },
+ {
+  "click": "button:has-text('Purchase Order Entry')",
+  "wait": 2500
+ },
+ {
+  "peek": "div:has(> label:has-text('Supplier/Spinner')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option]:has-text('KOYO TRIMS')",
+  "wait": 800
+ },
+ {
+  "fillsel": "input[name=poDate]",
+  "text": "2026-10-17"
+ },
+ {
+  "choose": "select[name=requisitionId]",
+  "label": "PRQ-ACC-2026100001"
+ },
+ {
+  "peek": "div:has(> label:has-text('Delivery To')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option]:has-text('Trims Store')",
+  "wait": 800
+ },
+ {
+  "choose": "select[name=paymentTerm]",
+  "label": "At Sight"
+ },
+ {
+  "choose": "select[name=modeOfShipment]",
+  "label": "By Road"
+ },
+ {
+  "fillsel": "input[name=deliveryDate]",
+  "text": "2026-11-10"
+ },
+ {
+  "click": "button:has-text('Add to PO')",
+  "wait": 1200
+ },
+ {
+  "choose": "table select",
+  "index": 3
+ },
+ {
+  "fillsel": "table input[aria-label='Order Qty']",
+  "text": "500"
+ },
+ {
+  "fillsel": "table input[aria-label='Unit Price']",
+  "text": "0.85"
+ },
+ {
+  "fillsel": "table input[aria-label='UOM']",
+  "text": "Pcs"
+ },
+ {
+  "html": "save_btn_before",
+  "of": "button:has-text('Save purchase order')"
+ },
+ {
+  "click": "button:has-text('Save purchase order')",
+  "wait": 15000
+ },
+ {
+  "texts": "alerts",
+  "of": "[role=alert], [role=status]"
+ },
+ {
+  "html": "save_btn_after",
+  "of": "button:has-text('Save purchase order')"
+ },
+ {
+  "texts": "err_text",
+  "of": "main p, main span"
+ }
+]

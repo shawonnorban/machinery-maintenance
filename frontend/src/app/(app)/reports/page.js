@@ -1,9 +1,19 @@
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getT } from "@/lib/i18n-server";
+
+/*
+ * This catalogue is Machinery Maintenance's (the one module kept from the old
+ * project). The old store, procurement, requisition and compliance reports
+ * belong to retired modules; the ERP's own reports arrive with Brickland's
+ * Insight Studio and each module's Reports.
+ */
+const MACHINERY_GROUPS = new Set(["asset", "breakdown", "maintenance", "cost", "people", "vendor"]);
+const MACHINERY_STOCK = new Set(["parts_consumption", "inventory_valuation"]);
+const isMachinery = (report) => MACHINERY_GROUPS.has(report.group) || MACHINERY_STOCK.has(report.key);
 
 /**
  * Mirrors `ReportController::index` — one generic catalogue over SRS 32's
@@ -23,7 +33,7 @@ export default async function ReportsPage() {
   }
 
   const groups = new Map();
-  for (const report of reports) {
+  for (const report of reports.filter(isMachinery)) {
     const key = report.group ?? "other";
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(report);
@@ -31,8 +41,8 @@ export default async function ReportsPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("reports") }]}
+      <ScreenHeader
+        url="/reports"
         title={t("reports")}
         description={t("page_description")}
       />

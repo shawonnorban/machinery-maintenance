@@ -1,0 +1,10 @@
+[
+ { "goto": "/m/merchandising/style-development" },
+ { "wait": 4000 },
+ { "click": "main table tbody tr button:has-text('Sheet') >> nth=0", "wait": 3500 },
+ { "click": "button:has-text('Item/Combo/Model(Fresh)')", "wait": 3000 },
+ { "click": "button:text-is('Item/Combo/Model Registration')", "wait": 3000 },
+ { "dump": "reg", "root": "main" },
+ { "texts": "labels", "of": "main label, main legend" },
+ { "fullshot": "garment-items" }
+]

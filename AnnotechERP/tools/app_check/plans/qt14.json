@@ -1,0 +1,22 @@
+[
+ {"goto": "/quality-tally/tally"},
+ {"wait": 12000},
+ {"choose": "main label:has-text('Line') select", "option": "C1", "after": 5000},
+ {"click": "main button:has-text('BND-20261116-0004')", "after": 8000},
+ {"click": "main button.bg-success", "after": 80},
+ {"click": "main button.bg-success", "after": 80},
+ {"click": "main button.bg-success", "after": 6000},
+ {"shot": "qt90-burst"},
+ {"click": "main button:has-text('M-101')", "after": 8000},
+ {"click": "main button.bg-success", "after": 1200},
+ {"shot": "qt91-full"},
+ {"choose": "main label:has-text('Line') select", "option": "LINE01", "after": 2500},
+ {"choose": "main label:has-text('Job') select", "option": "26DAL00103", "after": 7000},
+ {"click": "main button.bg-success", "after": 1500},
+ {"shot": "qt92-sew-full"},
+ {"goto": "/quality-tally/cut-panel-inspection"},
+ {"wait": 8000},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Open')", "after": 18000},
+ {"shot": "qt93-cpi"},
+ {"printpdf": "main button:has-text('Print')", "as": "qt94-cpi-print", "until": 20000}
+]

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Vendor\Http\Controllers\Api;
 
-use App\Modules\Finance\Models\Bank;
 use App\Modules\Finance\Models\PaymentType;
+use App\Modules\TradeExport\Models\TxBank;
 use App\Modules\Vendor\Models\Vendor;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiResponse;
@@ -58,7 +58,8 @@ class VendorApiController extends ApiController
         $companyId = $this->context->companyId();
 
         return ApiResponse::ok([
-            'banks' => Bank::availableTo($companyId)->where('active', true)->orderBy('name')->get(['id', 'name', 'code'])->all(),
+            // The one bank list (Finance → Manage Bank, Trade Export → Bank List).
+            'banks' => TxBank::query()->where('active', true)->orderBy('name')->get(['id', 'name', 'code'])->all(),
             'payment_types' => PaymentType::availableTo($companyId)->where('active', true)->orderBy('name')->get(['id', 'name', 'code'])->all(),
             'supply_categories' => Vendor::SUPPLY_CATEGORIES,
             'approval_statuses' => Vendor::APPROVAL_STATUSES,
@@ -133,8 +134,7 @@ class VendorApiController extends ApiController
             'tax_reference' => ['nullable', 'string', 'max:64'],
             'bin' => ['nullable', 'string', 'max:32'],
             'trade_license_no' => ['nullable', 'string', 'max:64'],
-            // Visible to this company: its own banks plus the platform's.
-            'bank_id' => ['nullable', 'string', 'size:26', Rule::exists('banks', 'id')->where(fn ($q) => $q->whereNull('company_id')->orWhere('company_id', $companyId))],
+            'bank_id' => ['nullable', 'string', 'size:26', Rule::exists('tx_banks', 'id')->where('company_id', $companyId)],
             'bank_branch' => ['nullable', 'string', 'max:255'],
             'bank_account_no' => ['nullable', 'string', 'max:64'],
             'bank_swift' => ['nullable', 'string', 'max:16'],

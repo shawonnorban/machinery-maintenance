@@ -13,8 +13,10 @@ import { NextResponse } from "next/server";
 // logic), and the offline fallback page's entire purpose is to render
 // when nothing else can be reached — including a stale or expired
 // session while offline, which is exactly when this redirect would
-// otherwise fire.
-const PUBLIC_PATHS = ["/login", "/sw.js", "/offline.html"];
+// otherwise fire. Chat's push worker and its notification icons likewise:
+// a push arrives with every tab closed, and a worker script behind a
+// redirect is refused outright.
+const PUBLIC_PATHS = ["/login", "/sw.js", "/offline.html", "/chat-push-sw.js", "/chat-icon-192.png", "/chat-badge-96.png", "/chat-wallpaper.svg"];
 const COOKIE_NAME = "annotech_session";
 const PLATFORM_COOKIE_NAME = "annotech_platform_session";
 
@@ -38,6 +40,8 @@ export function proxy(request) {
   const isPublic =
     PUBLIC_PATHS.some((path) => pathname === path) ||
     pathname.startsWith("/api/auth") ||
+    // A Production Tracking TV opens its display link with no sign-in (AnnotechERP 30/04).
+    pathname.startsWith("/tv/") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico";
 

@@ -1,0 +1,16 @@
+[
+ {"goto": "/dye-house/batch-production"}, {"wait": 9000},
+ {"goto": "/dye-house/machine-wash-production"}, {"wait": 9000},
+ {"goto": "/dye-house/direct-fabric-booking"}, {"wait": 9000},
+ {"goto": "/dye-house/general-fabric-booking"}, {"wait": 9000},
+ {"goto": "/dye-house/dyeing-program-for-trims"}, {"wait": 9000},
+ {"goto": "/dye-house/check-roll-parameter"}, {"wait": 9000},
+ {"goto": "/dye-house/daily-batch-production-for-bulk-manual"}, {"wait": 9000},
+ {"goto": "/dye-house/dyeing-and-finishing-close"}, {"wait": 10000},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Close')", "after": 1500},
+ {"texts": "dfc_dialog", "of": "[role=alertdialog] h2"},
+ {"click": "[role=alertdialog] button:has-text('Keep')", "after": 800},
+ {"goto": "/dye-house/direct-fabric-booking?tab=entry&doc=DFB-2026110001"}, {"wait": 10000},
+ {"shot": "pb-dfb-reopened"},
+ {"texts": "dfb_lines", "of": "main tbody tr"}
+]

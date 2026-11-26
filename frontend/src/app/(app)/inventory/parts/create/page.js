@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { SparePartForm } from "@/components/inventory/spare-part-form";
 import { getT } from "@/lib/i18n-server";
 import { createSparePart } from "./actions";
@@ -13,8 +13,8 @@ export default async function CreateSparePartPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("spare_parts"), href: "/inventory/parts" }, { label: tc("new") }]}
+      <ScreenHeader
+        parentUrl="/inventory/parts"
         title={t("new_part")}
       />
 

@@ -6,7 +6,7 @@ namespace App\Modules\Breakdown\Services;
 
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\DowntimeRecord;
-use App\Modules\Calendar\Services\WorkingTimeService;
+use App\Modules\HrPayroll\Services\WorkingTimeService;
 use App\Modules\Settings\Services\SettingsResolver;
 use App\Modules\Tenancy\Models\Factory;
 use Carbon\CarbonImmutable;

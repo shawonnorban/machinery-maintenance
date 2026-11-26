@@ -30,13 +30,15 @@ function FormattedDateTime({ value, mode = "datetime", options, fallback = "—"
         return;
       }
 
-      const date = new Date(value);
+      // A bare "2026-10-06" is a calendar day, not UTC midnight: read it as local so no timezone shows the day before.
+      const day = typeof value === "string" ? value.match(/^(\d{4})-(\d{2})-(\d{2})$/) : null;
+      const date = day ? new Date(Number(day[1]), Number(day[2]) - 1, Number(day[3])) : new Date(value);
       setText(
         mode === "date"
           ? date.toLocaleDateString(undefined, options)
           : mode === "time"
-            ? date.toLocaleTimeString(undefined, options)
-            : date.toLocaleString(undefined, options),
+            ? date.toLocaleTimeString(undefined, { hour12: true, ...options })
+            : date.toLocaleString(undefined, { hour12: true, ...options }),
       );
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

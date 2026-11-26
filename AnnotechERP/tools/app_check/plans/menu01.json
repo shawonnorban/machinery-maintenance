@@ -1,0 +1,13 @@
+[
+ {"goto": "/trade-export/commercial-reports"},
+ {"wait": 25000},
+ {"click": "aside button:has(span:text-is('Export'))", "after": 1500},
+ {"click": "aside button:has(span:text-is('Master Data'))", "after": 1500},
+ {"click": "aside button:has(span:text-is('Import'))", "after": 1500},
+ {"click": "aside button:has(span:text-is('CM Payment Receive'))", "after": 1500},
+ {"texts": "ordinal", "of": "main h1 + span, main header span"},
+ {"shot": "trade-menu"},
+ {"goto": "/merchandise-desk/style-order-dashboard"},
+ {"wait": 25000},
+ {"shot": "merch-menu"}
+]

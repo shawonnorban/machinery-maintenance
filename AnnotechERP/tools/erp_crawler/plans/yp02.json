@@ -1,0 +1,10 @@
+[
+ {"goto": "/m/knitting/yarn-purchase-requisition"},
+ {"click": "main button[role=tab]:has-text('Yarn Purchase Requisition')", "wait": 2500},
+ {"click": "main button:has-text('Add Yarn')", "wait": 1500},
+ {"options": "colours", "of": "main table tbody tr >> nth=0 >> select[aria-label=Color]"},
+ {"options": "uoms", "of": "main table tbody tr >> nth=0 >> select[aria-label=UOM]"},
+ {"html": "row", "of": "main table tbody tr >> nth=0 >> td"},
+ {"click": "main button:has-text('Save requisition')", "wait": 3000},
+ {"texts": "errs", "of": "main p"}
+]

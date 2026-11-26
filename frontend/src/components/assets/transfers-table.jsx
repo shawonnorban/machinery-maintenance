@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `AssetTransferController::index` — the pending queue: what is waiting on somebody, company-wide. */
 function TransfersTable({ transfers, meta, actions }) {
@@ -55,11 +56,11 @@ function TransfersTable({ transfers, meta, actions }) {
             header: t("transfer"),
             render: (row) => (
               <div>
-                <Link href={`/assets/transfers/${row.id}`} className="font-medium text-brand hover:underline">
+                <Link href={`/assets/transfers/${refOf(row, "transfer_number")}`} className="font-medium text-brand hover:underline">
                   {row.transfer_number}
                 </Link>
                 <div className="text-xs text-foreground-muted">
-                  <Link href={`/assets/${row.asset?.id}`} className="text-brand hover:underline">
+                  <Link href={`/assets/${refOf(row.asset, "asset_code")}`} className="text-brand hover:underline">
                     {row.asset?.asset_code}
                   </Link>
                   {" — "}
@@ -96,13 +97,14 @@ function TransfersTable({ transfers, meta, actions }) {
         emptyDescription={t("no_pending_transfers_hint")}
         rowActions={(row) =>
           [
-            { label: tc("view"), onSelect: () => router.push(`/assets/transfers/${row.id}`) },
+            { icon: "view", label: tc("view"), onSelect: () => router.push(`/assets/transfers/${refOf(row, "transfer_number")}`) },
             row.status === "REQUESTED" ? { label: t("approve"), onSelect: () => runApprove(row) } : null,
             ["REQUESTED", "APPROVED", "IN_TRANSIT"].includes(row.status) ? { label: t("receive"), onSelect: () => runReceive(row) } : null,
             row.status === "REQUESTED" ? { label: t("reject"), destructive: true, onSelect: () => setRejecting(row) } : null,
           ].filter(Boolean)
         }
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => router.push(`/assets/transfers?page=${nextPage}`)}
       />
 

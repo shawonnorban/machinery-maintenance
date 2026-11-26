@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/merchandising/fabric-return-challan-to-supplier" },
+ { "dump": "records", "root": "main" },
+ { "click": "button:has-text('Fabric Return Challan to Supplier')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "fullshot": "frt-entry" },
+ { "peek": "button:has-text('-- Select Supplier/Cutomer --')", "wait": 1500 },
+ { "popup": "supplier_opts" },
+ { "escape": true },
+ { "click": "button:has-text('Add returned line')", "wait": 1200 },
+ { "dump": "entry_line", "root": "main" },
+ { "fullshot": "frt-line" },
+ { "click": "button:has-text('Save return challan')", "wait": 2500 },
+ { "texts": "msgs", "of": "main p, [role=alert]" }
+]

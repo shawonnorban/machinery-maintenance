@@ -1,0 +1,238 @@
+[
+ {
+  "goto": "/m/knitting/mc-oil-receive"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d1",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_m1",
+  "of": "main [role=alert]"
+ },
+ {
+  "texts": "rc_s1",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d2",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_m2",
+  "of": "main [role=alert]"
+ },
+ {
+  "texts": "rc_s2",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d3",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_m3",
+  "of": "main [role=alert]"
+ },
+ {
+  "texts": "rc_s3",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d4",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_m4",
+  "of": "main [role=alert]"
+ },
+ {
+  "texts": "rc_s4",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d5",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_m5",
+  "of": "main [role=alert]"
+ },
+ {
+  "texts": "rc_s5",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d6",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_m6",
+  "of": "main [role=alert]"
+ },
+ {
+  "texts": "rc_s6",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "goto": "/m/knitting/requisition-for-knitting-mc-oil"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "click": "main button[aria-label^='14-Verify']",
+  "wait": 1500
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "ind_s1",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> button:has-text('View')",
+  "wait": 3000
+ },
+ {
+  "dump": "ind_view",
+  "root": "main"
+ },
+ {
+  "fillsel": "main table tbody tr >> nth=0 >> input[type=number] >> nth=1",
+  "text": "5"
+ },
+ {
+  "click": "main button:has-text('Save requisition')",
+  "wait": 4000
+ },
+ {
+  "texts": "ind_m2",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main [role=tab] >> nth=0",
+  "wait": 2000
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "texts": "ind_s2",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "goto": "/m/knitting/mc-oil-receive-return-list"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rt_d1",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rt_s1",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rt_d2",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rt_s2",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "goto": "/m/knitting/mc-oil-receive"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "texts": "rc_after_return",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "netclick": "main table tbody tr >> nth=0 >> button:has-text('Print')",
+  "wait": 5000,
+  "as": "rc_print"
+ },
+ {
+  "fullshot": "rc_print"
+ }
+]

@@ -1,0 +1,10 @@
+[
+ {"goto": "/work-study/gmt-item-specification-entry?tab=planner"},
+ {"wait": 3000},
+ {"click": "button:has-text('Add process group')", "after": 800},
+ {"texts": "after_add", "of": "main table"},
+ {"upload": "input[type=file]", "file": "out/fu04/fp-machine-load-20261025-113833.xlsx"},
+ {"wait": 8000},
+ {"html": "ob", "of": "input[aria-label='OB File Upload']"},
+ {"texts": "toast", "of": "[data-slot=toast-title], li[role=status], [role=status]"}
+]

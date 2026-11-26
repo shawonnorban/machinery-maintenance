@@ -1,10 +1,11 @@
 import { DollarSign, Truck, Boxes } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { StockBalancesTable } from "@/components/inventory/stock-balances-table";
 import { StockFilters } from "@/components/inventory/stock-filters";
 import { getT } from "@/lib/i18n-server";
+import { applyPerPage } from "@/lib/per-page";
 
 /**
  * Mirrors `StockController::index` — what's on the shelf right now, bin by
@@ -18,6 +19,7 @@ export default async function InventoryStockPage({ searchParams }) {
   const binId = params.bin_id ?? "";
 
   const query = new URLSearchParams({ page: String(page) });
+  await applyPerPage(query, "/inventory/stock");
   if (search) query.set("search", search);
   if (binId) query.set("bin_id", binId);
 
@@ -31,8 +33,8 @@ export default async function InventoryStockPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("spare_parts"), href: "/inventory/parts" }, { label: t("stock") }]}
+      <ScreenHeader
+        url="/inventory/stock"
         title={t("stock")}
         description={t("stock_page_description")}
       />
@@ -53,9 +55,7 @@ export default async function InventoryStockPage({ searchParams }) {
         <StatCard label={t("balance_lines")} value={totals.lines} icon={<Boxes />} tone="success" />
       </div>
 
-      <div className="mb-4">
-        <StockFilters bins={bins} search={search} binId={binId} />
-      </div>
+      <StockFilters bins={bins} search={search} binId={binId} />
 
       <StockBalancesTable balances={balances.data} meta={balances.meta} search={search} binId={binId} />
     </>

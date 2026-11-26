@@ -1,0 +1,18 @@
+[
+ {"goto": "/quality-tally/cutting-input"},
+ {"wait": 25000},
+ {"choose": "main form select", "option": "C1"},
+ {"fill": "Scan bundle card", "text": "BND-20261106-0001"},
+ {"press": "Enter", "after": 60},
+ {"press": "Z", "after": 60},{"press": "Z", "after": 60},{"press": "9", "after": 60},
+ {"press": "Enter"},
+ {"wait": 20000},
+ {"shot": "qt173-first"},
+ {"press": "8", "after": 60},{"press": "8", "after": 60},
+ {"press": "Enter"},
+ {"wait": 8000},
+ {"shot": "qt174-refused-cleared"},
+ {"press": "Escape"},
+ {"wait": 8000},
+ {"shot": "qt175-queued"}
+]

@@ -1,0 +1,5 @@
+[
+ {"goto": "/colour-lab/dyeing-lab-reports?report=trials-awaiting"},
+ {"wait": 12000},
+ {"texts": "awaiting_rows", "of": "main tbody tr"}
+]

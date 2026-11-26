@@ -1,0 +1,28 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:has-text('Confirmed') button >> nth=0",
+  "wait": 2500
+ },
+ {
+  "type": "main form input[type=number] >> nth=0",
+  "text": "0.95"
+ },
+ {
+  "click": "main button:has-text('Update')",
+  "wait": 3000
+ },
+ {
+  "texts": "msg",
+  "of": "main [role=alert], main .text-danger, [data-sonner-toast], [role=status]"
+ },
+ {
+  "texts": "after",
+  "of": "main"
+ }
+]

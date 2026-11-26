@@ -14,6 +14,7 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { DateTimeField } from "@/components/ui/date-time-field";
 import { formatCurrency } from "@/lib/format";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 // Written by the system from the work order underneath — posting one by
 // hand would charge the machine twice, so the form never offers them.
@@ -124,7 +125,7 @@ function CostsTab({ assetId, lifecycle, entries, categories, postAction, reverse
                               {entry.description ?? "—"}
                               {entry.work_order ? (
                                 <div>
-                                  <Link href={`/work-orders/${entry.work_order.id}`} className="text-brand hover:underline">
+                                  <Link href={`/work-orders/${refOf(entry.work_order, "work_order_number")}`} className="text-brand hover:underline">
                                     {entry.work_order.work_order_number}
                                   </Link>
                                 </div>

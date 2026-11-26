@@ -17,7 +17,7 @@ import { useT } from "@/lib/i18n";
  * shows it instead of redirecting straight past it (same reasoning as
  * `UserForm`'s one-time generated password).
  */
-function WebhookForm({ endpoint = null, eventOptions, action }) {
+function WebhookForm({ endpoint = null, eventOptions, action, doneHref = "/system-settings/api-keys-webhooks?tab=webhooks" }) {
   const t = useT("webhook");
   const tc = useT("common");
   const isEdit = endpoint !== null;
@@ -50,7 +50,7 @@ function WebhookForm({ endpoint = null, eventOptions, action }) {
         </Alert>
         <div className="rounded-sm border border-border bg-surface-muted px-4 py-3 font-mono text-sm break-all">{state.secret}</div>
         <div>
-          <Link href={`/settings/webhooks/${state.endpointId}`} className="text-sm font-medium text-brand hover:underline">
+          <Link href={doneHref} className="text-sm font-medium text-brand hover:underline">
             {t("go_to_endpoint")} →
           </Link>
         </div>

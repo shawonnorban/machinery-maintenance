@@ -1,0 +1,302 @@
+[
+ {
+  "goto": "/m/ie/item-spec-wise-cm"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New CM rate')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=specId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=buyerId]",
+  "index": 1
+ },
+ {
+  "type": "main div:has(> label:has-text('Booking Month')) input",
+  "text": "2026-08"
+ },
+ {
+  "type": "main div:has(> label:has-text('Order Qty')) input",
+  "text": "1200"
+ },
+ {
+  "type": "main div:has(> label:has-text('CM/Dz')) input",
+  "text": "14.5"
+ },
+ {
+  "type": "main div:has(> label:has-text('Budget Exp')) input",
+  "text": "6"
+ },
+ {
+  "type": "main div:has(> label:has-text('Lead Time')) input",
+  "text": "75"
+ },
+ {
+  "type": "main div:has(> label:has-text('Confirm Date')) input",
+  "text": "2026-08-05"
+ },
+ {
+  "type": "main div:has(> label:has-text('Ship Date')) input",
+  "text": "2026-10-20"
+ },
+ {
+  "click": "main button:has-text('Save CM rate')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "cm-saved"
+ },
+ {
+  "goto": "/m/ie/item-spec-wise-cm"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fullshot": "cm-records"
+ },
+ {
+  "dump": "cm_records",
+  "root": "main"
+ },
+ {
+  "click": "main table button:has-text('Edit')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "cm-edit"
+ },
+ {
+  "dump": "cm_edit",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/oh-cost-allocation"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New cost head')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=year]",
+  "label": "2026"
+ },
+ {
+  "peek": "main div:has(> label:has-text('Month')) button",
+  "wait": 1200
+ },
+ {
+  "popup": "month_opts"
+ },
+ {
+  "click": "[role=option]:has-text('Oct')",
+  "wait": 800
+ },
+ {
+  "peek": "main div:has(> label:has-text('Cost Head')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option]:has-text('Wages And Allowance')",
+  "wait": 800
+ },
+ {
+  "type": "main div:has(> label:has-text('Monthly Expense')) input",
+  "text": "250000"
+ },
+ {
+  "type": "main div:has(> label:has-text('WrkDay')) input",
+  "text": "26"
+ },
+ {
+  "click": "main button:has-text('Save cost head')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "oh-saved"
+ },
+ {
+  "goto": "/m/ie/oh-cost-allocation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fullshot": "oh-records"
+ },
+ {
+  "dump": "oh_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Monthly Cost')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "index": 1
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "choose": "main select >> nth=1",
+  "label": "2026"
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "html": "sheet_ctrls",
+  "of": "main select"
+ },
+ {
+  "peek": "main div:has(> label:has-text('Month')) button",
+  "wait": 1200
+ },
+ {
+  "popup": "sheet_month_opts"
+ },
+ {
+  "click": "[role=option]:has-text('Oct')",
+  "wait": 800
+ },
+ {
+  "click": "main button:has-text('Show')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "oh-sheet"
+ },
+ {
+  "dump": "oh_sheet",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/daily-line-costing-operation"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Line Wise')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[type=date]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 4000
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select",
+  "index": 1
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=0",
+  "text": "PROBE-ORD-01"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=1",
+  "text": "T-Shirt"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=2",
+  "text": "30"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=3",
+  "text": "6"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=4",
+  "text": "10"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=5",
+  "text": "1000"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=6",
+  "text": "800"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=7",
+  "text": "100"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=8",
+  "text": "50"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=9",
+  "text": "20"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=10",
+  "text": "0"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=11",
+  "text": "60"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=12",
+  "text": "40"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=13",
+  "text": "20"
+ },
+ {
+  "type": "main table tbody tr >> nth=0 >> input >> nth=14",
+  "text": "0"
+ },
+ {
+  "fullshot": "dl-line-filled"
+ },
+ {
+  "click": "main button:has-text('Save')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "dl-line-saved"
+ },
+ {
+  "dump": "dl_line_saved",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Overall Profit')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[type=date]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "dl-profit"
+ },
+ {
+  "dump": "dl_profit",
+  "root": "main"
+ }
+]

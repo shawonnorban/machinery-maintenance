@@ -1,0 +1,106 @@
+[
+ {
+  "goto": "/m/gate-pass/gp-create"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "create",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-create"
+ },
+ {
+  "goto": "/m/gate-pass/gp-approval"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "approval",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-approval"
+ },
+ {
+  "goto": "/m/gate-pass/gp-out"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "out",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-out"
+ },
+ {
+  "goto": "/m/gate-pass/gp-in"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "in",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-in"
+ },
+ {
+  "goto": "/m/gate-pass/gp-reconciliation"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "reconciliation",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-reconciliation"
+ },
+ {
+  "goto": "/m/gate-pass/gp-list"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "list",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-list"
+ },
+ {
+  "goto": "/m/gate-pass/gp-dashboard"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "dashboard",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-dashboard"
+ },
+ {
+  "goto": "/m/gate-pass/gp-reports"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "reports",
+  "of": "main h2, main h3, main label, main th, main td, main button, main p"
+ },
+ {
+  "fullshot": "gp01-reports"
+ }
+]

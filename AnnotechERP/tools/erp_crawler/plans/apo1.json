@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/merchandising/accessories-po" },
+ { "fullshot": "apo-records" },
+ { "texts": "records_head", "of": "table thead th" },
+ { "click": "button:has-text('Purchase Order Entry'), a:has-text('Purchase Order Entry')", "wait": 2500 },
+ { "fullshot": "apo-entry" },
+ { "dump": "entry", "root": "main" },
+ { "click": "button:has-text('Requisition List'), a:has-text('Requisition List')", "wait": 2500 },
+ { "fullshot": "apo-reqlist" },
+ { "dump": "reqlist", "root": "main" }
+]

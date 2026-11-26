@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/hr-payroll/employee-profile" }, { "wait": 15000 },
+ { "clickSel": "main tbody tr:has-text('Active') button:has-text('Edit')" }, { "wait": 6000 },
+ { "shot": "ep_edit_personal" },
+ { "clickSel": "main button:has-text('Job Detail')" }, { "wait": 1500 }, { "shot": "ep_edit_job" },
+ { "clickSel": "main button:has-text('Contact Detail')" }, { "wait": 1500 }, { "shot": "ep_edit_contact" },
+ { "clickSel": "main button:has-text('Document')" }, { "wait": 1500 }, { "shot": "ep_edit_document" },
+ { "clickSel": "main button:has-text('Allowance/Deduction')" }, { "wait": 3000 }, { "shot": "ep_edit_allowance" },
+ { "clickSel": "main button:has-text('Optional')" }, { "wait": 1500 }, { "shot": "ep_edit_optional" },
+ { "clickSel": "main button:has-text('Back Ground Check')" }, { "wait": 3000 }, { "shot": "ep_edit_background" }
+]

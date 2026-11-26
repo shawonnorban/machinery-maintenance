@@ -1,0 +1,7 @@
+[
+ {"goto": "/m/hr-payroll/company-pay-period", "clickSel": "[role=tab]:has-text('Payroll Settings'), button:has-text('Payroll Settings')", "last": true, "shot": "pp_settings", "rows": 40},
+ {"goto": "/m/hr-payroll/festival-calendar", "clickSel": "[role=tab]:has-text('Holidays'), button:has-text('Holidays')", "last": true, "shot": "fe_holidays", "rows": 20},
+ {"goto": "/m/hr-payroll/salary-policy-and-rules", "select": "select", "value": "100", "shot": "wg_all", "rows": 30},
+ {"goto": "/m/hr-payroll/leave-type", "click": "New leave type", "shot": "lt_new"},
+ {"goto": "/m/hr-payroll/ot-rule", "click": "New OT rule", "shot": "ot_new"}
+]

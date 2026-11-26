@@ -1,0 +1,11 @@
+[
+ {"goto": "/hr-payroll/id-card-print"},
+ {"wait": 25000},
+ {"click": "main tbody tr:has-text('Rokeya') button:has-text('Edit')", "after": 1500},
+ {"pick": "Print Option EMP-000005", "sel": "[role=dialog] [aria-label='Print Option EMP-000005']", "option": "Mtex English"},
+ {"click": "[role=dialog] [aria-label='Single employee in a page? EMP-000005']", "after": 500},
+ {"click": "[role=dialog] button:has-text('Save')", "after": 10000},
+ {"texts": "queue", "of": "main tbody tr"},
+ {"shot": "id-queue"},
+ {"printpdf": "main button:text-is('Print Queue')", "as": "id-card-queue"}
+]

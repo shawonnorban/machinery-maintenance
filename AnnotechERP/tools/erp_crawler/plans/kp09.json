@@ -1,0 +1,44 @@
+[
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"click": "main [role=tab]:has-text('Roll Weight Entry')",
+"wait": 2500
+},
+{
+"texts": "rw_rows",
+"of": "main table tbody tr"
+},
+{
+"html": "rw_sel",
+"of": "main select"
+},
+{
+"click": "main table tbody tr >> nth=0",
+"wait": 2500
+},
+{
+"texts": "rw_after",
+"of": "main p"
+},
+{
+"html": "rw_inputs",
+"of": "main input, main select"
+},
+{
+"click": "main button:has-text('Add Roll')",
+"wait": 1500
+},
+{
+"click": "main button:has-text('Add Roll')",
+"wait": 1500
+},
+{
+"html": "rw_lines",
+"of": "main table input, main table select"
+},
+{
+"fullshot": "rw-lines"
+}
+]

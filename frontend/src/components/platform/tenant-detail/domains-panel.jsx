@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { Globe, Trash2 } from "lucide-react";
+import { PanelHead } from "@/components/platform/ui";
 import { Card, CardHeader, CardTitle, CardBody, CardFooter } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
@@ -26,9 +27,7 @@ function DomainsPanel({ domains, actions }) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Domains</CardTitle>
-      </CardHeader>
+      <PanelHead title="Domains" subtitle="Where this customer reaches its system: a subdomain at once, its own domain after the DNS check" icon={Globe} />
       <CardBody className="flex flex-col gap-3 p-0">
         {domains.length === 0 ? (
           <p className="p-5 text-sm text-foreground-muted">No domains yet.</p>

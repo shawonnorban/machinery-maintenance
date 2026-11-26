@@ -20,3 +20,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+/AnnotechERP/tools/erp_crawler/out
+/.annotech-erp-audit.env
+/AnnotechERP/tools/app_check/out

@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/merchandising/procurement-cost-head" },
+ { "dump": "records", "root": "main" },
+ { "fullshot": "pch-records" },
+ { "click": "button:has-text('New cost head')", "wait": 2500 },
+ { "dump": "new", "root": "main" },
+ { "fullshot": "pch-new" },
+ { "goto": "/m/merchandising/procurement-cost-head" },
+ { "click": "table tbody tr:nth-child(2) button:has-text('Edit')", "wait": 3000 },
+ { "dump": "edit", "root": "main" },
+ { "fullshot": "pch-edit" }
+]

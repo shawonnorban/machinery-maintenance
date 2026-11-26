@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/hr-payroll/employee-separation" }, { "wait": 8000 }, { "shot": "s1_list", "rows": 4 },
+ { "fill": "main input[placeholder='Code, name, card or NID']", "value": "50000554" },
+ { "clickSel": "main button[aria-label='Search employees']" }, { "wait": 4000 },
+ { "peek": "main ul li button" }, { "wait": 1500 }, { "shot": "s2_form" },
+ { "goto": "/m/hr-payroll/lefty-management" }, { "wait": 8000 }, { "shot": "l1_list", "rows": 4 },
+ { "fill": "main input[placeholder='EMP-0001 or 10432']", "value": "50000554" },
+ { "clickSel": "main form button[type=submit]" }, { "wait": 4000 }, { "shot": "l2_search" },
+ { "peek": "main ul li button" }, { "wait": 1500 }, { "shot": "l3_form" },
+ { "peek": "main table tbody tr td button" }, { "wait": 1500 }, { "shot": "l4_detail" }, { "escape": true },
+ { "goto": "/m/hr-payroll/final-settlement" }, { "wait": 8000 }, { "shot": "f1_records", "rows": 4 },
+ { "peek": "main button:has-text('New settlement')" }, { "wait": 1500 }, { "shot": "f2_new" },
+ { "goto": "/print/final-settlement/3" }, { "wait": 6000 }, { "shot": "f3_print" }
+]

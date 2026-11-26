@@ -1,0 +1,12 @@
+[
+ {"goto": "/pre-budget-master/master-data?tab=parts"},
+ {"see": "Parts"},
+ {"texts": "[role=tab]"},
+ {"shot": "parts"},
+ {"goto": "/pre-budget-master/master-data?tab=yarn-compositions"},
+ {"see": "Yarn Compositions"},
+ {"shot": "ycomp"},
+ {"goto": "/pre-budget/add-requisition"},
+ {"see": "Add Requisition"},
+ {"shot": "add_req"}
+]

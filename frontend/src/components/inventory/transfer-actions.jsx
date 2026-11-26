@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { ActionIcon } from "@/components/ui/action-icon";
 
 /**
  * The action panel for a transfer's current step — approve/reject belong to
@@ -54,10 +55,10 @@ function TransferActions({ transfer, destinationBins, actions }) {
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
               <Button variant="success" loading={pending} onClick={() => run(actions.approve(), t("transfer_approved"))}>
-                {t("approve")}
+                <ActionIcon name="approve" /> {t("approve")}
               </Button>
               <Button variant="outline" onClick={() => setRejecting(true)}>
-                {t("reject")}
+                <ActionIcon name="reject" /> {t("reject")}
               </Button>
             </div>
             {rejecting ? (
@@ -79,7 +80,7 @@ function TransferActions({ transfer, destinationBins, actions }) {
 
         {transfer.can_dispatch ? (
           <Button loading={pending} onClick={() => run(actions.dispatch(), t("transfer_dispatched"))}>
-            {t("dispatch_full_quantities")}
+            <ActionIcon name="dispatch" /> {t("dispatch_full_quantities")}
           </Button>
         ) : null}
 
@@ -103,7 +104,7 @@ function TransferActions({ transfer, destinationBins, actions }) {
                 disabled={transfer.items.some((item) => !receiveBins[item.id])}
                 onClick={() => run(actions.receive(receiveBins), t("transfer_received"))}
               >
-                {t("receive")}
+                <ActionIcon name="receive" /> {t("receive")}
               </Button>
             </div>
           </div>

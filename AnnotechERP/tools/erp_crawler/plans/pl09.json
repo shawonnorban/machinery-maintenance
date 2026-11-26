@@ -1,0 +1,17 @@
+[
+ { "goto": "/m/planning/master-plan?plan=4" }, { "wait": 6000 },
+ { "click": "main [role=tab]:has-text('Versions')", "wait": 2000 },
+ { "click": "main button:has-text('Request Revision')", "wait": 2000 },
+ { "fullshot": "f-rev" }, { "texts": "rev_dialog", "of": "[role=dialog], main [role=tabpanel]" },
+ { "html": "rev_ctl", "of": "[role=dialog] textarea, [role=dialog] input, [role=dialog] select, main [role=tabpanel] textarea" },
+ { "fillsel": "[role=dialog] textarea, main [role=tabpanel] textarea", "text": "Annotech probe: buyer moved ex-factory" },
+ { "click": "[role=dialog] button:has-text('Submit'), [role=dialog] button:has-text('Request'), main [role=tabpanel] button:has-text('Submit')", "wait": 4000 },
+ { "texts": "rev_after", "of": "main [role=tabpanel]" },
+ { "goto": "/m/planning/revision-request" }, { "wait": 4000 },
+ { "texts": "rev_list", "of": "main table" }, { "texts": "rev_btns", "of": "main tbody button" },
+ { "click": "main tbody button >> nth=0", "wait": 2500 },
+ { "fullshot": "f-decide" }, { "texts": "decide", "of": "[role=dialog]" },
+ { "escape": true },
+ { "goto": "/m/planning/daily-plan" }, { "wait": 4000 },
+ { "html": "daily_ctl", "of": "main input, main select, main button[aria-haspopup]" }
+]

@@ -1,0 +1,19 @@
+[
+ {"goto": "/m/merchandising/style-development"},
+ {"peek": "main table tbody tr:first-child button:has-text('Sheet')", "wait": 2500, "shot": "s_sheet", "rows": 12},
+ {"scroll": true, "shot": "s_sheet_bottom", "rows": 12},
+ {"escape": true},
+ {"goto": "/m/merchandising/style-development"},
+ {"clickSel": "main [role=tab]:has-text('New development style')"},
+ {"pick": "main select >> nth=1", "label": "LPP (LPP)", "wait": 2000, "shot": "s_new_lpp", "rows": 6},
+ {"clickSel": "main input[placeholder='Search...']", "wait": 1000, "shot": "s_sizerange_open", "rows": 6},
+ {"fill": "main input[placeholder='Search...']", "value": "S", "wait": 1500, "shot": "s_sizerange_typed", "rows": 6},
+ {"escape": true},
+ {"peek": "main button:has-text('Style Gallery')", "wait": 1500, "shot": "s_gallery", "rows": 6},
+ {"escape": true},
+ {"goto": "/m/merchandising/style-development"},
+ {"clickSel": "main [role=tab]:has-text('Size Range')"},
+ {"clickSel": "main button:has-text('MOOD SHIRT')"},
+ {"peek": "main button:has-text('Add size range')", "wait": 1500, "shot": "s_add_range", "rows": 6},
+ {"escape": true}
+]

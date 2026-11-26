@@ -1,0 +1,66 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('New embellishment rate'), main [role=tab]:has-text('New embellishment rate')",
+  "wait": 2500
+ },
+ {
+  "choose": "main form select >> nth=0",
+  "label": "Embroidery"
+ },
+ {
+  "options": "style_opts",
+  "of": "main form select >> nth=1"
+ },
+ {
+  "choose": "main form select >> nth=3",
+  "label": "LPP (LPP)"
+ },
+ {
+  "options": "supplier_opts",
+  "of": "main form select >> nth=4"
+ },
+ {
+  "type": "main form textarea",
+  "text": "Probe: left chest logo embroidery 8k stitches"
+ },
+ {
+  "type": "main form input[type=number] >> nth=0",
+  "text": "0.80"
+ },
+ {
+  "click": "main button:has-text('Save embellishment rate')",
+  "wait": 3000
+ },
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "records",
+  "root": "main"
+ },
+ {
+  "click": "main a:has-text('Pendings'), main [role=tab]:has-text('Pendings')",
+  "wait": 2500
+ },
+ {
+  "click": "main li:has-text('LPP'), main button:has-text('LPP (')",
+  "wait": 2500
+ },
+ {
+  "texts": "pend_lpp",
+  "of": "main"
+ },
+ {
+  "dump": "pend_d",
+  "root": "main"
+ }
+]

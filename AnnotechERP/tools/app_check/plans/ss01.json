@@ -1,0 +1,23 @@
+[
+ {"goto": "/sales-shipment/sd-settings"},
+ {"wait": 15000},
+ {"shot": "current-defaults"},
+ {"texts": "row_before", "of": "main tbody tr"},
+ {"click": "main tbody tr button:has-text('Edit')", "after": 1500},
+ {"shot": "edit-form"},
+ {"fill": "Shipment Invoice prefix", "exact": true, "text": "SHP"},
+ {"click": "main button:has-text('Update settings')", "after": 15000},
+ {"texts": "dup_error", "of": "main .text-danger"},
+ {"shot": "edit-dup-error"},
+ {"fill": "Shipment Invoice prefix", "exact": true, "text": "INV"},
+ {"fill": "Due alert window", "exact": true, "text": "10"},
+ {"click": "main label:has-text('Ship only what has been delivered') button", "after": 500},
+ {"click": "main button:has-text('Update settings')", "after": 15000},
+ {"texts": "row_after", "of": "main tbody tr"},
+ {"shot": "current-saved"},
+ {"click": "main [role=tab]:has-text('Edit settings')", "after": 1000},
+ {"fill": "Sequence width", "exact": true, "text": "8"},
+ {"texts": "width_hint", "of": "main label:has-text('Sequence width') span.text-xs"},
+ {"click": "main button:has-text('Cancel')", "after": 1000},
+ {"texts": "row_after_cancel", "of": "main tbody tr"}
+]

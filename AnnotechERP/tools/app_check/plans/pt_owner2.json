@@ -1,0 +1,345 @@
+[
+ {
+  "goto": "/production-tracking/daily-plan"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-002') >> role=button[name='Edit']",
+  "after": 2000
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number] >> nth=0",
+  "text": "6"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "shot": "edit-002"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save as Draft']",
+  "after": 20000
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-002') >> role=button[name='Submit']",
+  "after": 20000
+ },
+ {
+  "shot": "plans-resubmitted"
+ },
+ {
+  "goto": "/production-tracking/production-data"
+ },
+ {
+  "click": "role=button[name='Add Sewing']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select",
+  "option": "LINE01 \u2014"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=1",
+  "text": "LPP Spolka Akcyjna"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=2",
+  "text": "SS27-TEE01"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=3",
+  "text": "PO-SS27-01"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=4",
+  "text": "Crew-neck tee"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=5",
+  "text": "12000"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=6",
+  "text": "760"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=7",
+  "text": "642"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=8",
+  "text": "9"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=9",
+  "text": "21"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=10",
+  "text": "5.8"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=11",
+  "text": "34"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=12",
+  "text": "272"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=13",
+  "text": "8"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save']",
+  "after": 20000
+ },
+ {
+  "click": "role=button[name='Add Sewing']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select",
+  "option": "LINE02 \u2014"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=1",
+  "text": "LPP Spolka Akcyjna"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=2",
+  "text": "FLOW STYLE-01"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=3",
+  "text": "PO-1001"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=4",
+  "text": "Polo"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=5",
+  "text": "8000"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=6",
+  "text": "750"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=7",
+  "text": "515"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=8",
+  "text": "14"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=9",
+  "text": "30"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=10",
+  "text": "7.2"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=11",
+  "text": "30"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=12",
+  "text": "180"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=13",
+  "text": "6"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save']",
+  "after": 20000
+ },
+ {
+  "click": "role=button[name='Add Cutting']",
+  "after": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=1",
+  "text": "LPP Spolka Akcyjna"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=2",
+  "text": "SS27-TEE01"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=3",
+  "text": "PO-SS27-01"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=4",
+  "text": "Crew-neck tee"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=5",
+  "text": "12000"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=6",
+  "text": "1500"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=7",
+  "text": "1320"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=8",
+  "text": "44"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=9",
+  "text": "30"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=10",
+  "text": "6"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save']",
+  "after": 20000
+ },
+ {
+  "click": "role=button[name='Add Finishing']",
+  "after": 1500
+ },
+ {
+  "choose": "[role=dialog] select",
+  "option": "Finishing Line1 \u2014"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=1",
+  "text": "LPP Spolka Akcyjna"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=2",
+  "text": "SS27-TEE01"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=3",
+  "text": "PO-SS27-01"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=4",
+  "text": "Crew-neck tee"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=5",
+  "text": "12000"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=6",
+  "text": "900"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=7",
+  "text": "610"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=8",
+  "text": "7"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=9",
+  "text": "12"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save']",
+  "after": 20000
+ },
+ {
+  "shot": "entries"
+ },
+ {
+  "goto": "/production-tracking/tv-dashboard"
+ },
+ {
+  "click": "role=button[name='New TV screen']",
+  "after": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=0",
+  "text": "Sewing Floor 1 \u2014 TV A"
+ },
+ {
+  "click": "[role=dialog] >> text=Select all",
+  "after": 500
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number]",
+  "text": "30"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save screen']",
+  "after": 20000
+ },
+ {
+  "click": "role=button[name='Issue link']",
+  "after": 20000
+ },
+ {
+  "texts": "tvurl",
+  "of": "[role=dialog] .font-mono"
+ },
+ {
+  "shot": "tv-link"
+ }
+]

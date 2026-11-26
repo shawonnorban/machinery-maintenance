@@ -8,7 +8,13 @@ use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Settings\MasterData\Field;
 use App\Modules\Settings\MasterData\MasterDataType;
 use App\Modules\Tenancy\Models\Floor;
+use App\Modules\Tenancy\Models\ProductionLine;
+use App\Modules\Tenancy\Models\Section;
 
+/**
+ * Company Management's Floor tab (AnnotechERP 01/02). A floor needs its
+ * building ("Building is required."); capacity is the headcount it holds.
+ */
 class FloorData extends MasterDataType
 {
     public function key(): string
@@ -40,15 +46,24 @@ class FloorData extends MasterDataType
     {
         return [
             Field::reference('building_id', 'buildings'),
+            Field::code(auto: true),
             Field::text('name'),
-            Field::code(),
+            Field::number('capacity', required: false),
+            Field::status(),
         ];
+    }
+
+    public function autoCodePrefix(): ?string
+    {
+        return 'FLR';
     }
 
     public function usedBy(): array
     {
         return [
             AssetLocation::class => 'floor_id',
+            Section::class => 'floor_id',
+            ProductionLine::class => 'floor_id',
         ];
     }
 }

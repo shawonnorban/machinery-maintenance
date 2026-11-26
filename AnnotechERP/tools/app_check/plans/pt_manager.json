@@ -1,0 +1,60 @@
+[
+ {
+  "goto": "/production-tracking/daily-plan"
+ },
+ {
+  "shot": "mgr-pending"
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-001') >> role=button[name='Approve']",
+  "after": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input[type=number]",
+  "text": "760"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] textarea",
+  "text": "Approved at 760 \u2014 one operator short on Line 01."
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Approve']",
+  "after": 12000
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-002') >> role=button[name='Reject']",
+  "after": 1500
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Reject']",
+  "after": 6000
+ },
+ {
+  "see": "Give",
+  "as": "reason_required_shown"
+ },
+ {
+  "shot": "mgr-reject-noreason"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] textarea",
+  "text": "Line 02 changes over to FLOW STYLE-01 after lunch \u2014 plan 6 hours."
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Reject']",
+  "after": 12000
+ },
+ {
+  "shot": "mgr-decided"
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-001') >> role=button[name='History']",
+  "after": 6000
+ },
+ {
+  "shot": "mgr-history"
+ }
+]

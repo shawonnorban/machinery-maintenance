@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/material-procurement/available-requirements" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Quote') >> visible=true >> nth=0", "wait": 2500 },
+ { "options": "currencies", "of": "[role=dialog] select" },
+ { "type": "[role=dialog] input[type=number] >> nth=1", "text": "2.85" },
+ { "type": "[role=dialog] input[type=number] >> nth=2", "text": "14" },
+ { "type": "[role=dialog] input[type=date]", "text": "2026-11-15" },
+ { "type": "[role=dialog] textarea", "text": "Annotech probe quotation" },
+ { "click": "[role=dialog] button:has-text('Submit quotation')", "wait": 4000 },
+ { "texts": "after_quote", "of": "main p, main span, main td, main button, li[data-sonner-toast] *" },
+ { "fullshot": "mp15-after-quote" },
+ { "goto": "/m/material-procurement/quotation-history" },
+ { "wait": 4000 },
+ { "texts": "history", "of": "main h2, main h3, main p, main th, main td, main button, main span" },
+ { "fullshot": "mp15-history" },
+ { "goto": "/m/material-procurement/supplier-dashboard" },
+ { "wait": 4000 },
+ { "texts": "sdash", "of": "main h2, main h3, main p, main span, main td" }
+]

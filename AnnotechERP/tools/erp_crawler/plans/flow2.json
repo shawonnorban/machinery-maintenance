@@ -1,0 +1,51 @@
+[
+ {
+  "goto": "/m/merchandising/style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "url": "sg_url"
+ },
+ {
+  "texts": "sg_h",
+  "of": "h1"
+ },
+ {
+  "hrefs": "side",
+  "of": "aside a, nav a"
+ },
+ {
+  "dump": "sg",
+  "root": "main"
+ },
+ {
+  "texts": "sg_text",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "dev_links",
+  "of": "main a"
+ },
+ {
+  "texts": "dev_text",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "reg_links",
+  "of": "main a"
+ }
+]

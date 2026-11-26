@@ -1,0 +1,211 @@
+[
+{
+"goto": "/m/knitting/fabric-production-order-bulk"
+},
+{
+"click": "main [role=tab]:has-text('Save Production Order')",
+"wait": 2500
+},
+{
+"texts": "pos_p",
+"of": "main p"
+},
+{
+"texts": "pos_btn",
+"of": "main button"
+},
+{
+"html": "pos_sel",
+"of": "main select"
+},
+{
+"texts": "pos_lbl",
+"of": "main label"
+},
+{
+"texts": "pos_h",
+"of": "main table thead"
+},
+{
+"fullshot": "pos"
+},
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"click": "main [role=tab]:has-text('Roll Weight Entry')",
+"wait": 2500
+},
+{
+"texts": "mrw_p",
+"of": "main p"
+},
+{
+"texts": "mrw_btn",
+"of": "main button"
+},
+{
+"texts": "mrw_lbl",
+"of": "main label"
+},
+{
+"texts": "mrw_h",
+"of": "main table thead"
+},
+{
+"fullshot": "mrw"
+},
+{
+"click": "main button:has-text('Add Roll')",
+"wait": 1500
+},
+{
+"texts": "mrw_lbl2",
+"of": "main label"
+},
+{
+"texts": "mrw_h2",
+"of": "main table thead"
+},
+{
+"texts": "mrw_toast",
+"of": "[data-sonner-toast]"
+},
+{
+"fullshot": "mrw2"
+},
+{
+"goto": "/m/knitting/roll-production-operator"
+},
+{
+"click": "main [role=tab]:has-text('Tab Settings')",
+"wait": 2500
+},
+{
+"texts": "ors_p",
+"of": "main p"
+},
+{
+"texts": "ors_btn",
+"of": "main button"
+},
+{
+"texts": "ors_lbl",
+"of": "main label"
+},
+{
+"fullshot": "ors"
+},
+{
+"goto": "/m/knitting/machine-loading-plan"
+},
+{
+"click": "main [role=tab]:has-text('Machine Loading Plan')",
+"wait": 3000
+},
+{
+"texts": "mlp2_p",
+"of": "main p"
+},
+{
+"texts": "mlp2_btn",
+"of": "main button"
+},
+{
+"texts": "mlp2_lbl",
+"of": "main label"
+},
+{
+"texts": "mlp2_h",
+"of": "main table thead"
+},
+{
+"fullshot": "mlp2"
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"texts": "gri_lbl0",
+"of": "main label"
+},
+{
+"texts": "gri_h0",
+"of": "main table thead"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"texts": "gri2_p",
+"of": "main p"
+},
+{
+"texts": "gri2_lbl",
+"of": "main label"
+},
+{
+"html": "gri2_sel",
+"of": "main select"
+},
+{
+"texts": "gri2_h",
+"of": "main table thead"
+},
+{
+"fullshot": "gri2"
+},
+{
+"goto": "/m/knitting/daily-fabric-production"
+},
+{
+"texts": "dfo_lbl",
+"of": "main label"
+},
+{
+"texts": "dfo_h",
+"of": "main table thead"
+},
+{
+"goto": "/m/knitting/grey-fabric-racking-board"
+},
+{
+"texts": "gfr_lbl",
+"of": "main label"
+},
+{
+"texts": "gfr_h",
+"of": "main table thead"
+},
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"texts": "mr_lbl",
+"of": "main label"
+},
+{
+"texts": "mr_h",
+"of": "main table thead"
+},
+{
+"goto": "/m/knitting/fabric-production-order-bulk"
+},
+{
+"texts": "po_lbl",
+"of": "main label"
+},
+{
+"click": "main button:has-text('Show')",
+"wait": 2500
+},
+{
+"texts": "po_h",
+"of": "main table thead"
+},
+{
+"texts": "po_p_show",
+"of": "main p"
+}
+]

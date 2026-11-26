@@ -47,6 +47,11 @@ class IdentityServiceProvider extends ServiceProvider
                     return false;
                 }
 
+                // A module the platform has not given this company (LicensedModules).
+                if (! \App\Modules\Platform\Support\LicensedModules::permits($context->companyId(), $code)) {
+                    return false;
+                }
+
                 return app(PermissionResolver::class)->has(
                     $user,
                     $context->companyId(),

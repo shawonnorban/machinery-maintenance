@@ -1,0 +1,23 @@
+[
+ {"goto": "/gate-pass/gp-create"},
+ {"shot": "create-empty"},
+ {"see": "Still needed", "as": "still_needed"},
+ {"pick": "Purpose / Reason", "option": "Washing"},
+ {"pick": "Destination Factory / Location", "option": "Smart Wash"},
+ {"fill": "Expected Return Date", "text": "2026-10-30"},
+ {"click": "text=Non-Employee"},
+ {"fill": "Person Name", "text": "Rafiq Ahmed"},
+ {"fill": "Mobile", "text": "01711223344", "exact": true},
+ {"fill": "Vehicle No.", "text": "DHA-METRO-TA-11-5501"},
+ {"pick": "Item 1", "option": "Polo Shirt (finished)"},
+ {"fill": "Quantity 1", "text": "5"},
+ {"click": "role=button[name='Add Item']"},
+ {"pick": "Item 2", "option": "Grey Fabric"},
+ {"fill": "Quantity 2", "text": "2"},
+ {"fill": "Remarks", "text": "For enzyme wash — UI check", "exact": true},
+ {"shot": "create-filled"},
+ {"texts": "needed", "of": "text=/Still needed/"},
+ {"click": "role=button[name='Submit for Approval']", "after": 15000},
+ {"shot": "after-submit"},
+ {"texts": "rows", "of": "tbody tr"}
+]

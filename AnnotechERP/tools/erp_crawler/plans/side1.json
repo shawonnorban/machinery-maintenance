@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/merchandising/trims-closing" },
+ { "wait": 3000 },
+ { "click": "aside button:has-text('OPERATION'), nav button:has-text('OPERATION')", "wait": 1500 },
+ { "texts": "side", "of": "aside a, aside button" },
+ { "html": "side_html", "of": "aside" },
+ { "fullshot": "side-op" },
+ { "click": "aside button:has-text('Style & Order'), nav button:has-text('Style & Order')", "wait": 1500 },
+ { "fullshot": "side-op2" },
+ { "texts": "side2", "of": "aside a, aside button" }
+]

@@ -1,0 +1,11 @@
+[
+ {"goto": "/m/ie/ie-reports"},
+ {"html": "params", "of": "main select, main input:not([type=radio])"},
+ {"click": "main label:has-text('Date Wise NPT Report')", "wait": 800},
+ {"fillsel": "main input[type=date]", "text": "2026-10-25"},
+ {"popclick": "main button:has-text('Preview')", "as": "npt"},
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main label:has-text('Efficiency Report')", "wait": 800},
+ {"fillsel": "main input[type=date]", "text": "2026-10-25"},
+ {"popclick": "main button:has-text('Preview')", "as": "eff"}
+]

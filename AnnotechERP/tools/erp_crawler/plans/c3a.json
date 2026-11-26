@@ -1,0 +1,30 @@
+[
+ {
+  "goto": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "dash",
+  "root": "main"
+ },
+ {
+  "texts": "dash_text",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-dashboard"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "board",
+  "root": "main"
+ },
+ {
+  "texts": "board_text",
+  "of": "main"
+ }
+]

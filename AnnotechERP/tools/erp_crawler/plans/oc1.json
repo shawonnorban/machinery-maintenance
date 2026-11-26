@@ -1,0 +1,40 @@
+[
+ {
+  "goto": "/m/merchandising/style-order-confirmation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "screen",
+  "root": "main"
+ },
+ {
+  "texts": "screen_text",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Order Confirmation')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "desk_oc",
+  "root": "[data-panel]"
+ },
+ {
+  "texts": "desk_text",
+  "of": "[data-panel]"
+ }
+]

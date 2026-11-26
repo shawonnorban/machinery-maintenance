@@ -1,0 +1,93 @@
+[
+{
+"goto": "/m/knitting/fabric-production-order-bulk"
+},
+{
+"click": "main [role=tab]:has-text('Knit Programmes')",
+"wait": 3000
+},
+{
+"click": "main :text('770MR \u00b7 S/J 30/1 Combed') >> nth=0",
+"wait": 3000
+},
+{
+"click": "main button:has-text('Release Programme')",
+"wait": 2000
+},
+{
+"type": "[role=dialog] input[type=date]",
+"text": "2026-10-29"
+},
+{
+"type": "[role=dialog] input[type=number]",
+"text": "400"
+},
+{
+"peek": "[role=dialog] button:has-text('-- Any floor --')",
+"wait": 1200
+},
+{
+"popup": "floors"
+},
+{
+"escape": true
+},
+{
+"type": "[role=dialog] textarea",
+"text": "Probe programme"
+},
+{
+"click": "[role=dialog] button:has-text('Release Programme')",
+"wait": 5000
+},
+{
+"texts": "kp_p",
+"of": "main p"
+},
+{
+"texts": "kp_h",
+"of": "main table thead"
+},
+{
+"texts": "kp_rows",
+"of": "main table tbody tr"
+},
+{
+"texts": "kp_btn",
+"of": "main button"
+},
+{
+"fullshot": "kp-saved"
+},
+{
+"click": "main [role=tab]:has-text('Knitcard')",
+"wait": 3000
+},
+{
+"click": "main :text('770MR \u00b7 S/J 30/1 Combed') >> nth=0",
+"wait": 3000
+},
+{
+"click": "main button:has-text('Cut Knit Card')",
+"wait": 2500
+},
+{
+"texts": "kc_dlg_p",
+"of": "[role=dialog] p"
+},
+{
+"texts": "kc_dlg_lbl",
+"of": "[role=dialog] label"
+},
+{
+"texts": "kc_dlg_btn",
+"of": "[role=dialog] button"
+},
+{
+"html": "kc_dlg_inputs",
+"of": "[role=dialog] input, [role=dialog] select, [role=dialog] textarea"
+},
+{
+"fullshot": "kc-dlg"
+}
+]

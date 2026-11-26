@@ -1,0 +1,11 @@
+[
+ {"goto": "/knit-production/yarn-return-to-store?tab=entry&ref=YIRT-2026100002"},
+ {"wait": 4000},
+ {"click": "role=button[name='Remove this line 2']", "after": 600},
+ {"click": "main button:has-text('Save return challan')", "after": 15000},
+ {"texts": "err", "of": "[role=alert]"},
+ {"shot": "rt-form"},
+ {"goto": "/knit-production/yarn-return-to-store"},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Issue')", "after": 15000},
+ {"texts": "rt_rows", "of": "main tbody tr"}
+]

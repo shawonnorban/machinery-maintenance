@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Pencil, Plus } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { buttonVariants } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { cn } from "@/lib/utils";
@@ -35,8 +35,9 @@ export default async function VendorDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("vendors"), href: "/vendors" }, { label: vendor.name }]}
+      <ScreenHeader
+        parentUrl="/vendors"
+        crumb={vendor.name}
         title={
           <span className="flex flex-wrap items-center gap-2">
             {vendor.name}

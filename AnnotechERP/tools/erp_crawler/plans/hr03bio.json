@@ -1,0 +1,8 @@
+[
+ { "goto": "/m/hr-payroll/biometric-fingerprint" }, { "wait": 12000 }, { "shot": "bio_registration" },
+ { "clickSel": "main button:has-text('Employee Mapping')" }, { "wait": 4000 }, { "shot": "bio_mapping" },
+ { "goto": "/m/hr-payroll/id-card-print" }, { "wait": 10000 }, { "shot": "id_records" },
+ { "clickSel": "main button:has-text('Add to print queue')" }, { "wait": 3000 }, { "shot": "id_new" },
+ { "goto": "/print/id-card/3" }, { "wait": 6000 }, { "shot": "id_print_card" },
+ { "goto": "/print/id-card/queue" }, { "wait": 6000 }, { "shot": "id_print_queue" }
+]

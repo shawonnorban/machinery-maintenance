@@ -1,0 +1,68 @@
+[
+ {
+  "goto": "/m/merchandising/cad-consumption-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "hrefs": "links",
+  "of": "main a"
+ },
+ {
+  "dump": "records",
+  "root": "main"
+ },
+ {
+  "click": "main a:has-text('Consumption'), main [role=tab]:has-text('Consumption')",
+  "wait": 2500
+ },
+ {
+  "texts": "cons_list",
+  "of": "main"
+ },
+ {
+  "click": "role=button[name=/8797098/]",
+  "wait": 3000
+ },
+ {
+  "texts": "cons_open",
+  "of": "main"
+ },
+ {
+  "dump": "cons_d",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/cad-consumption-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('New CAD record'), main [role=tab]:has-text('New CAD record')",
+  "wait": 2500
+ },
+ {
+  "dump": "new",
+  "root": "main"
+ },
+ {
+  "options": "buyer_ac",
+  "of": "main form select >> nth=0"
+ },
+ {
+  "goto": "/m/merchandising/cad-consumption-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Edit')",
+  "wait": 2500
+ },
+ {
+  "texts": "edit_t",
+  "of": "main"
+ }
+]

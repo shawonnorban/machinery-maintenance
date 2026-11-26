@@ -2,14 +2,14 @@
 
 import { startTransition, useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { Trash2, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 let nextRowId = 1;
@@ -60,11 +60,8 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("route")}</CardTitle>
-        </CardHeader>
-        <CardBody className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <FormSection legend={t("route")}>
+        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
           <FormField label={t("from_factory")} required error={state?.errors?.from_factory_id?.[0]}>
             {(fieldProps) => (
               <Select {...fieldProps} value={fromFactoryId} onValueChange={setFromFactoryId} options={factoryOptions} placeholder={t("select_a_factory")} />
@@ -75,19 +72,15 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
               <Select {...fieldProps} value={toFactoryId} onValueChange={setToFactoryId} options={factoryOptions} placeholder={t("select_a_factory")} />
             )}
           </FormField>
-          <div className="sm:col-span-2">
+          <div className="lg:col-span-2">
             <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
               {(fieldProps) => <Textarea {...fieldProps} value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={2000} />}
             </FormField>
           </div>
-        </CardBody>
-      </Card>
+        </div>
+      </FormSection>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("items")}</CardTitle>
-        </CardHeader>
-        <CardBody className="flex flex-col gap-3">
+      <FormSection legend={t("items")} horizontal={false}>
           {items.map((item, index) => (
             <div key={item.rowId} className="grid grid-cols-1 gap-2 border-b border-border pb-3 sm:grid-cols-12 sm:items-end sm:border-0 sm:pb-0">
               <div className="sm:col-span-6">
@@ -145,17 +138,16 @@ function TransferRequestForm({ factories, bins, spareParts, action }) {
               <Plus /> {t("add_item")}
             </Button>
           </div>
-        </CardBody>
-      </Card>
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {t("request_transfer")}
+          <Save /> {t("request_transfer")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

@@ -139,6 +139,36 @@ class SparePartStockApiTest extends TestCase
         $this->assertSame('19.0000', $stock->json('data.total_on_hand'));
     }
 
+    public function test_the_issue_and_return_log_lists_both_directions_and_the_catalogue_shows_on_hand(): void
+    {
+        $this->asStorekeeper()->postJson("/api/v1/spare-parts/{$this->part->id}/issue", [
+            'bin_id' => $this->bin->id,
+            'quantity' => 2,
+            'notes' => 'Gloves to the dye house',
+        ])->assertCreated();
+        $this->asStorekeeper()->postJson("/api/v1/spare-parts/{$this->part->id}/return", [
+            'bin_id' => $this->bin->id,
+            'quantity' => 1,
+            'notes' => 'One pair unused',
+        ])->assertCreated();
+
+        $log = $this->asStorekeeper()->getJson('/api/v1/inventory-transactions/issue-return')->assertOk();
+        // The receipt that opened the bin is not an issue or a return.
+        $this->assertSame(['RETURN', 'ISSUE'], array_column($log->json('data'), 'transaction_type'));
+        $this->assertSame($this->part->part_number, $log->json('data.1.part.part_number'));
+        $this->assertSame('Gloves to the dye house', $log->json('data.1.notes'));
+        $this->assertSame($this->storekeeper->name, $log->json('data.1.performed_by'));
+        $this->assertSame(2, $log->json('meta.total'));
+
+        $issues = $this->asStorekeeper()->getJson('/api/v1/inventory-transactions/issue-return?type=ISSUE')->assertOk();
+        $this->assertSame(['ISSUE'], array_column($issues->json('data'), 'transaction_type'));
+
+        $catalogue = $this->asStorekeeper()->getJson('/api/v1/spare-parts')->assertOk();
+        $row = collect($catalogue->json('data'))->firstWhere('id', $this->part->id);
+        // 20 received, 2 issued, 1 returned.
+        $this->assertEquals(19, (float) $row['on_hand']);
+    }
+
     public function test_issuing_stock_requires_a_reason(): void
     {
         $this->asStorekeeper()->postJson("/api/v1/spare-parts/{$this->part->id}/issue", [

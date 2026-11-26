@@ -1,0 +1,22 @@
+[
+ {"goto": "/m/dyeing-finishing/shade-gsm-width-check"},
+ {"texts": "s_p", "of": "main p, main h2, main h3, main thead th"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"fullshot": "s-new"},
+ {"dump": "s_new", "root": "main"},
+ {"texts": "s_new_p", "of": "main p, main h2, main h3, main legend, main thead th, main span.text-xs"},
+ {"goto": "/m/dyeing-finishing/fabric-inspection-4-point"},
+ {"fullshot": "f-list"},
+ {"texts": "f_p", "of": "main p, main h2, main h3, main thead th"},
+ {"hrefs": "f_links", "of": "main a"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"fullshot": "f-entry"},
+ {"dump": "f_entry", "root": "main"},
+ {"texts": "f_entry_p", "of": "main p, main h2, main h3, main legend, main thead th, main span.text-xs"},
+ {"goto": "/m/dyeing-finishing/fabric-inspection-4-point"},
+ {"popclick": "main button:has-text('Hold List'), main a:has-text('Hold List')", "as": "f_hold", "wait": 6000},
+ {"goto": "/m/dyeing-finishing/finishing-qc-entry"},
+ {"texts": "q_p", "of": "main p, main h1, main h2, main h3, main li"},
+ {"goto": "/m/dyeing-finishing/qc-rejection-re-process-advice"},
+ {"texts": "r_p", "of": "main p, main h1, main h2, main h3, main li"}
+]

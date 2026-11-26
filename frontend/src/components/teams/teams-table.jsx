@@ -17,7 +17,6 @@ import { useT } from "@/lib/i18n";
 function TeamsTable({ teams, factories, actions }) {
   const t = useT("team");
   const tc = useT("common");
-  const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
   const [pending, startTransition] = useTransition();
@@ -51,12 +50,6 @@ function TeamsTable({ teams, factories, actions }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-end">
-        <Button size="sm" onClick={() => setCreateOpen(true)}>
-          <Plus /> {t("new_team_title")}
-        </Button>
-      </div>
-
       <DataTable
         columns={[
           {
@@ -83,13 +76,12 @@ function TeamsTable({ teams, factories, actions }) {
         rowKey={(row) => row.id}
         emptyTitle={t("no_teams")}
         rowActions={(row) => [
-          { label: tc("edit"), onSelect: () => setEditing(row) },
-          { label: row.status === "ACTIVE" ? t("deactivate") : t("activate"), onSelect: () => runToggle(row) },
-          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(row) },
+          { icon: "edit", label: tc("edit"), onSelect: () => setEditing(row) },
+          { icon: "toggle", label: row.status === "ACTIVE" ? t("deactivate") : t("activate"), onSelect: () => runToggle(row) },
+          { icon: "delete", label: tc("delete"), destructive: true, onSelect: () => setDeleting(row) },
         ]}
       />
 
-      <TeamFormModal open={createOpen} onOpenChange={setCreateOpen} team={null} factories={factories} action={actions.createTeam} />
       <TeamFormModal
         key={editing?.id ?? "edit"}
         open={Boolean(editing)}
@@ -109,6 +101,21 @@ function TeamsTable({ teams, factories, actions }) {
         onConfirm={runDelete}
       />
     </div>
+  );
+}
+
+/** The page header's New team button, with its own create form (the ERP header carries a screen's buttons). */
+function NewTeamButton({ factories, action }) {
+  const t = useT("team");
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button size="sm" onClick={() => setOpen(true)}>
+        <Plus /> {t("new_team_title")}
+      </Button>
+      <TeamFormModal key={open ? "open" : "closed"} open={open} onOpenChange={setOpen} team={null} factories={factories} action={action} />
+    </>
   );
 }
 
@@ -170,4 +177,4 @@ function TeamFormModal({ open, onOpenChange, team, factories, action }) {
   );
 }
 
-export { TeamsTable };
+export { NewTeamButton, TeamsTable };

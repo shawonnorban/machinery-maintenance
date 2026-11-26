@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/inventory/in-house-grn" }, { "wait": 6000 },
+ { "type": "main input[placeholder='PR-2026-00025']", "text": "PR-2026-00005" },
+ { "click": "main button:has-text('Search') >> visible=true >> nth=0", "wait": 4000 },
+ { "type": "main tbody input >> nth=0", "text": "1" },
+ { "click": "main button:has-text('Confirm In-House') >> visible=true", "wait": 2500 },
+ { "click": "[role=dialog] button:has-text('Confirm In-House'), [role=alertdialog] button:has-text('Confirm In-House')", "wait": 6000 },
+ { "texts": "after", "of": "main h2, main h3, main p, main span, main td, main th, [role=alert], [data-sonner-toast], li[data-sonner-toast]" },
+ { "fullshot": "st07-after-grn" },
+ { "goto": "/m/inventory/stock-ledger" }, { "wait": 5000 },
+ { "texts": "ledger", "of": "main th, main td" },
+ { "goto": "/m/inventory/store-dashboard" }, { "wait": 5000 },
+ { "texts": "dash", "of": "main p, main span, main td" }
+]

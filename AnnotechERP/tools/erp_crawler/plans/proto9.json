@@ -1,0 +1,8 @@
+[
+ { "goto": "/m/sample/sample-approval" },
+ { "wait": 3500 },
+ { "fullshot": "proto9-apprlist" },
+ { "goto": "/m/sample/buyer-feedback" },
+ { "wait": 3500 },
+ { "fullshot": "proto9-fblist" }
+]

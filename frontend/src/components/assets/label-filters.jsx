@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Card, CardBody } from "@/components/ui/card";
 import { useT } from "@/lib/i18n";
 
 const STATUSES = [
@@ -26,35 +27,40 @@ function LabelFilters({ factories, factoryId, status, hasIds }) {
     const params = new URLSearchParams();
     if (nextFactoryId) params.set("factory_id", nextFactoryId);
     if (nextStatus) params.set("status", nextStatus);
+    // Nothing picked means every reachable machine, not "no sheet".
+    if (!nextFactoryId && !nextStatus) params.set("all", "1");
     router.push(`/assets/labels?${params.toString()}`);
   }
 
   return (
-    <div className="mb-4 flex flex-wrap items-end gap-3 print:hidden">
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-foreground">{t("factory")}</label>
-        <div className="w-52">
-          <Select
-            value={nextFactoryId}
-            onValueChange={setNextFactoryId}
-            placeholder={t("all_reachable_factories")}
-            options={factories.map((f) => ({ value: f.id, label: f.name }))}
-          />
+    <Card className="mb-4 print:hidden">
+      <CardBody className="flex flex-wrap items-end gap-3 py-3">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-foreground">{t("factory")}</label>
+          <div className="w-52">
+            <Select
+              value={nextFactoryId}
+              onValueChange={(value) => setNextFactoryId(value ?? "")}
+              placeholder={t("all_reachable_factories")}
+              // The "" choice lets a picked factory go back to all of them.
+              options={[{ value: "", label: t("all_reachable_factories") }, ...factories.map((f) => ({ value: f.id, label: f.name }))]}
+            />
+          </div>
         </div>
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-foreground">{t("status")}</label>
-        <div className="w-52">
-          <Select
-            value={nextStatus}
-            onValueChange={setNextStatus}
-            placeholder={t("any_status")}
-            options={STATUSES.map((s) => ({ value: s, label: t(`status_${s.toLowerCase()}`) }))}
-          />
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-foreground">{t("status")}</label>
+          <div className="w-52">
+            <Select
+              value={nextStatus}
+              onValueChange={(value) => setNextStatus(value ?? "")}
+              placeholder={t("any_status")}
+              options={[{ value: "", label: t("any_status") }, ...STATUSES.map((s) => ({ value: s, label: t(`status_${s.toLowerCase()}`) }))]}
+            />
+          </div>
         </div>
-      </div>
-      <Button onClick={generate}>{t("generate_sheet")}</Button>
-    </div>
+        <Button onClick={generate}>{t("generate_sheet")}</Button>
+      </CardBody>
+    </Card>
   );
 }
 

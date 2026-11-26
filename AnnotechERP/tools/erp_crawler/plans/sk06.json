@@ -1,0 +1,17 @@
+[
+ {"goto": "/m/knitting/direct-fabric-booking"},
+ {"click": "main [role=tab] >> nth=0", "wait": 2500},
+ {"click": "main button:has-text('Search')", "wait": 3000},
+ {"options": "status_opts", "of": "main select >> nth=1"},
+ {"texts": "chips", "of": "main section >> nth=1"},
+ {"click": "main button[aria-label^='Submit booking']", "wait": 1500},
+ {"texts": "submit_dlg", "of": "[role=dialog]"},
+ {"click": "[role=dialog] button >> nth=2", "wait": 5000},
+ {"texts": "rows1", "of": "main tbody tr"},
+ {"html": "acts1", "of": "main tbody tr >> nth=0 >> button"},
+ {"click": "main button[aria-label^='Approve booking']", "wait": 1500},
+ {"texts": "approve_dlg", "of": "[role=dialog]"},
+ {"click": "[role=dialog] button >> nth=2", "wait": 5000},
+ {"texts": "rows2", "of": "main tbody tr"},
+ {"popclick": "main tbody a:has-text('Print')", "wait": 5000, "as": "print"}
+]

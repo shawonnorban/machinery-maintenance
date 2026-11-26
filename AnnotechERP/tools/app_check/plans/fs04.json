@@ -1,0 +1,14 @@
+[
+ {"goto": "/knit-production/grey-fabric-stock-opening?tab=entry&ref=GOB-2026110003"},
+ {"wait": 3500},
+ {"html": "main [role=radiogroup]", "of": "main [role=radiogroup]"},
+ {"click": "main input[value='COLLAR_CUFF']", "after": 400},
+ {"click": "main button:has-text('Save opening line')", "after": 12000},
+ {"texts": "err", "of": "main [role=alert]"},
+ {"goto": "/knit-production/grey-fabric-stock-opening?tab=collar_cuff"},
+ {"wait": 3000},
+ {"click": "main [aria-label='Select GOB-2026110003']", "after": 300},
+ {"click": "main button:has-text('Finalize')", "after": 12000},
+ {"texts": "cc_rows", "of": "main tbody tr"},
+ {"shot": "fs-ob-cc"}
+]

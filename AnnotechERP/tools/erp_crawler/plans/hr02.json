@@ -1,0 +1,6 @@
+[
+ {"goto": "/m/hr-payroll/hr-dashboard"},
+ {"shot": "dash0"},
+ {"goto": "/m/hr-payroll/hr-reports"},
+ {"shot": "rep0"}
+]

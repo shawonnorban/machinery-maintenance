@@ -1,0 +1,208 @@
+[
+ {
+  "goto": "/assembly-floor/packing-carton"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "find",
+  "sel": "main input[id='pk-proc-find']",
+  "text": "PKG-20261107-0001"
+ },
+ {
+  "click": "main form button[aria-label='Scan']",
+  "after": 12000
+ },
+ {
+  "click": "main button:has-text('Start Carton Packing')",
+  "after": 15000
+ },
+ {
+  "fill": "S",
+  "sel": "main input[aria-label='Pieces of size S per carton']",
+  "text": "31"
+ },
+ {
+  "fill": "type",
+  "sel": "main label:has-text('Carton Type') input",
+  "text": "5-ply"
+ },
+ {
+  "fill": "size",
+  "sel": "main label:has-text('Carton Size') input",
+  "text": "60x40x40 cm"
+ },
+ {
+  "fill": "gross",
+  "sel": "main label:has-text('Gross Wt') input",
+  "text": "10.50"
+ },
+ {
+  "fill": "net",
+  "sel": "main label:has-text('Net Wt') input",
+  "text": "9.80"
+ },
+ {
+  "fill": "copies",
+  "sel": "main label:has-text('No. of Cartons') input",
+  "text": "2"
+ },
+ {
+  "click": "main button:has-text('Create Carton(s)')",
+  "after": 15000
+ },
+ {
+  "texts": "ctn_note",
+  "of": "main [role=status]"
+ },
+ {
+  "texts": "ctn_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "carton"
+ },
+ {
+  "click": "main button:has-text('Complete Carton Packing')",
+  "after": 15000
+ },
+ {
+  "texts": "ctn_done",
+  "of": "main p.text-success"
+ },
+ {
+  "goto": "/assembly-floor/packing-carton-marking"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "find",
+  "sel": "main input[id='pk-proc-find']",
+  "text": "PKG-20261107-0001"
+ },
+ {
+  "click": "main form button[aria-label='Scan']",
+  "after": 12000
+ },
+ {
+  "click": "main button:has-text('Start Carton Marking')",
+  "after": 15000
+ },
+ {
+  "fill": "dest",
+  "sel": "main label:has-text('Destination') input",
+  "text": "Hamburg"
+ },
+ {
+  "fill": "country",
+  "sel": "main label:has-text('Country') input",
+  "text": "Germany"
+ },
+ {
+  "click": "main button:has-text('Generate Marking')",
+  "after": 15000
+ },
+ {
+  "texts": "mk_note",
+  "of": "main [role=status]"
+ },
+ {
+  "click": "main button:has-text('Preview')",
+  "after": 3000
+ },
+ {
+  "shot": "marking-preview"
+ },
+ {
+  "press": "Escape"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "printpdf": "main button:has-text('Print / Reprint')",
+  "as": "marking"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "click": "main button:has-text('Complete Carton Marking')",
+  "after": 15000
+ },
+ {
+  "texts": "mk_done",
+  "of": "main p.text-success"
+ },
+ {
+  "goto": "/assembly-floor/packing-carton-sealing"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "find",
+  "sel": "main input[id='pk-proc-find']",
+  "text": "PKG-20261107-0001"
+ },
+ {
+  "click": "main form button[aria-label='Scan']",
+  "after": 12000
+ },
+ {
+  "click": "main button:has-text('Start Carton Sealing')",
+  "after": 15000
+ },
+ {
+  "fill": "bc",
+  "sel": "main label:has-text('Carton Barcode') input",
+  "text": "CTN202611070001"
+ },
+ {
+  "click": "main button:has-text('Verify & Seal')",
+  "after": 15000
+ },
+ {
+  "texts": "seal1",
+  "of": "main [role=status]"
+ },
+ {
+  "fill": "bc",
+  "sel": "main label:has-text('Carton Barcode') input",
+  "text": "CTN202611070001"
+ },
+ {
+  "click": "main button:has-text('Verify & Seal')",
+  "after": 15000
+ },
+ {
+  "texts": "seal_dup",
+  "of": "main [role=alert]"
+ },
+ {
+  "fill": "bc",
+  "sel": "main label:has-text('Carton Barcode') input",
+  "text": "CTN202611070002"
+ },
+ {
+  "click": "main button:has-text('Verify & Seal')",
+  "after": 15000
+ },
+ {
+  "texts": "seal_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "sealing"
+ },
+ {
+  "click": "main button:has-text('Complete Carton Sealing')",
+  "after": 15000
+ },
+ {
+  "texts": "seal_done",
+  "of": "main p.text-success"
+ }
+]

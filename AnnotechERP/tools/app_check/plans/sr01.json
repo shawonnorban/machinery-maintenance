@@ -1,0 +1,58 @@
+[
+ {"goto": "/sales-shipment/sd-report"},
+ {"wait": 18000},
+ {"shot": "sr-open"},
+ {"texts": "sr_first", "of": "main table tbody tr"},
+ {"texts": "sr_foot", "of": "main table tfoot tr"},
+
+ {"fill": "From Date", "exact": true, "text": "2026-11-01"},
+ {"click": "main label:has-text('Sales & Shipment Summary (BDT)') input", "after": 800},
+ {"click": "main button:has-text('Preview')", "after": 12000},
+ {"texts": "summary_rows", "of": "main table tbody tr"},
+ {"texts": "summary_foot", "of": "main table tfoot tr"},
+ {"shot": "sr-summary"},
+
+ {"click": "main label:has-text('Delivery Pending') input", "after": 800},
+ {"click": "main button:has-text('Preview')", "after": 12000},
+ {"texts": "dp_rows", "of": "main table tbody tr"},
+
+ {"click": "main label:has-text('Shipment Status') input", "after": 800},
+ {"click": "main button:has-text('Preview')", "after": 12000},
+ {"texts": "ss_rows", "of": "main table tbody tr"},
+ {"shot": "sr-shipment-status"},
+
+ {"click": "main label:has-text('Challan Statement') input", "after": 800},
+ {"click": "main button:has-text('Preview')", "after": 12000},
+ {"texts": "cs_rows", "of": "main table tbody tr"},
+
+ {"click": "main label:has-text('S/C Balance Summary') input", "after": 800},
+ {"click": "main button:has-text('Preview')", "after": 12000},
+ {"texts": "sc_rows", "of": "main table tbody tr"},
+
+ {"click": "main label:has-text('Sales Order Report') input", "after": 800},
+ {"pick": "Status", "exact": true, "option": "Challan: Draft"},
+ {"click": "main button:has-text('Preview')", "after": 10000},
+ {"texts": "status_error", "of": "main [role=alert]"},
+ {"pick": "Status", "exact": true, "option": "Delivery: Partially Delivered"},
+ {"click": "main button:has-text('Preview')", "after": 10000},
+ {"texts": "sor_rows", "of": "main table tbody tr"},
+ {"shot": "sr-sor"},
+
+ {"goto": "/sales-shipment/order-tracking"},
+ {"wait": 15000},
+ {"shot": "ot-empty"},
+ {"pick": "Sales Order", "exact": true, "option": "SO-20261107-0001"},
+ {"click": "main button:has-text('Load')", "after": 10000},
+ {"texts": "ot_tiles", "of": "main .grid > div"},
+ {"texts": "ot_rows", "of": "main tbody tr"},
+ {"shot": "ot-loaded"},
+
+ {"goto": "/sales-shipment/sd-alerts"},
+ {"wait": 15000},
+ {"texts": "al_rows", "of": "main tbody tr"},
+ {"shot": "al-list"},
+
+ {"goto": "/sales-shipment/order-tracking?so=SO-20261107-0001"},
+ {"wait": 15000},
+ {"texts": "ot_direct", "of": "main h2"}
+]

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -50,8 +50,8 @@ export default async function WorkOrderDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("work_orders"), href: "/work-orders" }, { label: workOrder.work_order_number }]}
+      <ScreenHeader
+        parentUrl="/work-orders"
         title={workOrder.work_order_number}
         description={workOrder.title}
         actions={

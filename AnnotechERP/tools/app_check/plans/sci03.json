@@ -1,0 +1,17 @@
+[
+ {"goto": "/dye-house/dyeing-sc-party-rate-in-house"}, {"wait": 10000},
+ {"click": "main button:has-text('Yarn Twist') >> nth=0", "after": 3000},
+ {"pick": "party", "sel": "main label:has-text('S/C Party') button >> nth=0", "option": "Square Textiles"},
+ {"fill": "date", "sel": "main label:has-text('Quatation Date') input", "text": "2026-11-06"},
+ {"pick": "cur", "sel": "main label:has-text('Currency') button >> nth=0", "option": "BDT"},
+ {"pick": "status", "sel": "main label:has-text('Status') button >> nth=0", "option": "Submitted"},
+ {"fill": "head", "sel": "main input[placeholder='Rate head']", "text": "Dyeing (dark shade)"},
+ {"fill": "rate", "sel": "main label:has-text('Rate') >> nth=-1 >> input", "text": "145"},
+ {"click": "main button:has-text('Add') >> nth=0", "after": 800},
+ {"fill": "doc", "sel": "main input[placeholder^='Signed rate sheet']", "text": "Rate letter to Square, 06-Nov-2026"},
+ {"click": "main button:has-text('Attach')", "after": 600},
+ {"click": "main button:has-text('Save quotation')", "after": 15000},
+ {"texts": "rate_badge", "of": "main span.rounded-full"},
+ {"texts": "toast", "of": "[data-slot=toast-title]"},
+ {"shot": "sci-rate-saved"}
+]

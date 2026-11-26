@@ -1,0 +1,10 @@
+[
+ { "goto": "/m/hr-payroll/daily-attendance" }, { "wait": 10000 }, { "shot": "a1_daily" },
+ { "goto": "/m/hr-payroll/biometric-sync" }, { "wait": 10000 }, { "shot": "a2_sync" },
+ { "goto": "/m/hr-payroll/missing-punch" }, { "wait": 10000 }, { "shot": "a3_missing" },
+ { "goto": "/m/hr-payroll/attendance-correction" }, { "wait": 10000 }, { "shot": "a4_correction" },
+ { "clickSel": "main button:has-text('Request correction')" }, { "wait": 3000 }, { "shot": "a4_new" },
+ { "goto": "/m/hr-payroll/shift-roster" }, { "wait": 10000 }, { "shot": "a5_roster" },
+ { "clickSel": "main button:has-text('Weekly Rotation')" }, { "wait": 2000 }, { "shot": "a5_rotation" },
+ { "clickSel": "main button:has-text('Line-wise')" }, { "wait": 2000 }, { "shot": "a5_line" }
+]

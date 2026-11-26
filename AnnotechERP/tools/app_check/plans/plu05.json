@@ -1,0 +1,10 @@
+[
+ {"goto": "/capacity-planning/daily-plan-list"},
+ {"texts": "dpl_rows", "of": "main tbody tr"},
+ {"shot": "daily-list"},
+ {"goto": "/capacity-planning/daily-plan?date=2026-12-18&order=LPP-2026-000001"},
+ {"texts": "rows_1218", "of": "main section:nth-of-type(2) tbody tr"},
+ {"pick": "Add line", "option": "LINE02"},
+ {"texts": "rows_added", "of": "main section:nth-of-type(2) tbody tr"},
+ {"shot": "daily-added"}
+]

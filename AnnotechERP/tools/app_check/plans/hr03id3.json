@@ -1,0 +1,7 @@
+[
+ {"goto": "/hr-payroll/id-card-print"},
+ {"wait": 25000},
+ {"click": "main button:has-text('Print Queue')", "after": 6000},
+ {"texts": "toasts", "of": "li[data-type], [data-sonner-toast], [role=status]"},
+ {"shot": "after-print-queue"}
+]

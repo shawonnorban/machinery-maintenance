@@ -7,6 +7,7 @@ namespace App\Modules\Approval\Http\Controllers\Api;
 use App\Modules\Approval\Actions\DecideApproval;
 use App\Modules\Approval\Contracts\Approvable;
 use App\Modules\Approval\Models\ApprovalRequest;
+use App\Modules\Approval\Models\ApprovalRule;
 use App\Modules\Approval\Support\ApprovalEntities;
 use App\Modules\Identity\Models\User;
 use App\Modules\WorkOrder\Models\WorkOrder;
@@ -199,7 +200,7 @@ class ApprovalRequestApiController extends ApiController
     }
 
     /**
-     * @param  Collection<int, \App\Modules\Approval\Models\ApprovalRule>|null  $rules
+     * @param  Collection<int, ApprovalRule>|null  $rules
      * @return array<string, mixed>
      */
     private function detail(ApprovalRequest $approval, ?User $viewer = null, ?Collection $rules = null): array

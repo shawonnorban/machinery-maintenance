@@ -1,0 +1,54 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Fabrication')",
+  "wait": 2000
+ },
+ {
+  "type": "input[placeholder='Search\u2026'] >> nth=0",
+  "text": ""
+ },
+ {
+  "popup": "pop_gmt_items"
+ },
+ {
+  "type": "input[placeholder='Search\u2026'] >> nth=1",
+  "text": ""
+ },
+ {
+  "popup": "pop_gmt_parts"
+ },
+ {
+  "type": "input[placeholder='Search\u2026'] >> nth=2",
+  "text": ""
+ },
+ {
+  "popup": "pop_wash"
+ },
+ {
+  "type": "input[placeholder='Search\u2026'] >> nth=3",
+  "text": ""
+ },
+ {
+  "popup": "pop_finish"
+ },
+ {
+  "click": "fieldset:has-text('Knitting/YD Instruction') button:has-text('Add New'), button:has-text('Add New') >> nth=1",
+  "wait": 1500
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "f_knit_new",
+  "root": "[data-panel]"
+ }
+]

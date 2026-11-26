@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { TeamsTable } from "@/components/teams/teams-table";
+import { ScreenHeader } from "@/components/layout/screen-header";
+import { NewTeamButton, TeamsTable } from "@/components/teams/teams-table";
 import { getT } from "@/lib/i18n-server";
 import { createTeam, updateTeam, toggleTeam, deleteTeam } from "./actions";
 
@@ -14,10 +14,11 @@ export default async function TeamsPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("settings_breadcrumb") }, { label: t("teams") }]}
+      <ScreenHeader
+        url="/teams"
         title={t("teams")}
         description={t("page_description")}
+        actions={<NewTeamButton factories={formOptions.factories} action={createTeam} />}
       />
 
       <TeamsTable

@@ -46,4 +46,6 @@ return [
     'revoke' => 'Revoke',
     'token_revoked' => 'That token has been revoked.',
     'never' => 'Never',
+    'must_change_password_notice' => 'Your password has to be changed before you can use anything else. Choose a new one below.',
+    'cannot_change_password' => 'This account is not allowed to change its own password. Ask an administrator.',
 ];

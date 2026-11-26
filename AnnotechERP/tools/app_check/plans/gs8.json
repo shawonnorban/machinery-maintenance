@@ -1,0 +1,102 @@
+[
+ {
+  "goto": "/general-store/gs-rpt-stock"
+ },
+ {
+  "texts": "stock",
+  "of": "main tbody tr, main tfoot tr, main section h2, main section p"
+ },
+ {
+  "shot": "gs8-stock"
+ },
+ {
+  "goto": "/general-store/gs-rpt-receive"
+ },
+ {
+  "texts": "receive",
+  "of": "main tbody tr, main tfoot tr, main section h2, main section p"
+ },
+ {
+  "shot": "gs8-receive"
+ },
+ {
+  "goto": "/general-store/gs-rpt-issue"
+ },
+ {
+  "texts": "issue",
+  "of": "main tbody tr, main tfoot tr, main section h2, main section p"
+ },
+ {
+  "shot": "gs8-issue"
+ },
+ {
+  "goto": "/general-store/gs-rpt-department"
+ },
+ {
+  "texts": "department",
+  "of": "main tbody tr, main tfoot tr, main section h2, main section p"
+ },
+ {
+  "shot": "gs8-department"
+ },
+ {
+  "goto": "/general-store/gs-rpt-category"
+ },
+ {
+  "texts": "category",
+  "of": "main tbody tr, main tfoot tr, main section h2, main section p"
+ },
+ {
+  "shot": "gs8-category"
+ },
+ {
+  "goto": "/general-store/gs-rpt-monthly"
+ },
+ {
+  "texts": "monthly",
+  "of": "main tbody tr, main tfoot tr, main section h2, main section p"
+ },
+ {
+  "shot": "gs8-monthly"
+ },
+ {
+  "goto": "/general-store/gs-rpt-history"
+ },
+ {
+  "texts": "history",
+  "of": "main tbody tr, main tfoot tr, main section h2, main section p"
+ },
+ {
+  "shot": "gs8-history"
+ },
+ {
+  "goto": "/general-store/gs-rpt-issue"
+ },
+ {
+  "pick": "d",
+  "sel": "[aria-label='Department']",
+  "option": "Maintenance"
+ },
+ {
+  "click": "main form button[type=submit]",
+  "after": 6000
+ },
+ {
+  "texts": "issue_maint",
+  "of": "main tbody tr, main tfoot tr"
+ },
+ {
+  "download": "a:has-text('Excel')",
+  "save": "issue.xlsx",
+  "as": "xlsx"
+ },
+ {
+  "goto": "/general-store/gs-rpt-stock"
+ },
+ {
+  "download": "a:has-text('Print / PDF')",
+  "save": "stock.pdf",
+  "as": "pdf",
+  "timeout": 90000
+ }
+]

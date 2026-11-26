@@ -1,0 +1,5 @@
+[
+ {"goto": "/m/knitting/knitting-reports"},
+ {"html": "radio", "of": "main [role=radiogroup], main input[type=radio] >> nth=0"},
+ {"html": "lab", "of": "main label:has-text('Daily M/C and Shift wise Knitting Statement')"}
+]

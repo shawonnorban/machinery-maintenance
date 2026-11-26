@@ -1,0 +1,35 @@
+[
+{
+"goto": "/m/knitting/issue-sc-knitting-program-bulk-solid"
+},
+{
+"hrefs": "links",
+"of": "main table tbody tr >> nth=0 >> a"
+},
+{
+"popclick": "main table tbody tr >> nth=0 >> a >> nth=0",
+"as": "prog",
+"wait": 8000
+},
+{
+"popclick": "main table tbody tr >> nth=0 >> a >> nth=1",
+"as": "chal",
+"wait": 8000
+},
+{
+"click": "main table tbody tr >> nth=0 >> button:has-text('Approve')",
+"wait": 2000
+},
+{
+"texts": "dlg",
+"of": "[role=dialog]"
+},
+{
+"click": "[role=dialog] button:has-text('Approve')",
+"wait": 5000
+},
+{
+"texts": "rows",
+"of": "main table tbody tr"
+}
+]

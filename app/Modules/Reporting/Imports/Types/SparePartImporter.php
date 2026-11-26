@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Reporting\Imports\Types;
 
+use App\Modules\Inventory\Support\SparePartCategories;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Inventory\Actions\SaveSparePart;
 use App\Modules\Inventory\Models\SparePart;
@@ -82,6 +83,7 @@ class SparePartImporter extends Importer
             return PreparedRow::invalid($context->rowNumber, $errors, $row);
         }
 
+        SparePartCategories::ensure($this->tenant->companyId());
         $category = $context->remember("category:{$row['category_code']}", fn () => SparePartCategory::availableTo($this->tenant->companyId())
             ->where('code', $row['category_code'])->first());
 

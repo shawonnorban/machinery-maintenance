@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/material-procurement/available-requirements" },
+ { "wait": 4000 },
+ { "fullshot": "mp14-avail" },
+ { "click": "main button:has-text('Quote') >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "quote_ui", "of": "[role=dialog] h1, [role=dialog] h2, [role=dialog] h3, [role=dialog] p, [role=dialog] label, [role=dialog] button, [role=dialog] span, [role=dialog] dt, [role=dialog] dd, main h3, main label" },
+ { "dump": "quote_dump", "root": "[role=dialog]" },
+ { "fullshot": "mp14-quote" },
+ { "click": "[role=dialog] button[type=submit], [role=dialog] button:has-text('Submit')", "wait": 2000 },
+ { "texts": "quote_empty", "of": "[role=dialog] p, [role=dialog] [role=alert], li[data-sonner-toast] *" }
+]

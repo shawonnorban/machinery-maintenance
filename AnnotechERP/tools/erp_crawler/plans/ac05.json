@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/security/fabric-defect-type-mapping" }, { "wait": 4000 },
+ { "click": "main [role=tab]:has-text('Fabric Defect Type Mapping')", "wait": 2500 },
+ { "choose": "main select:visible", "index": 1 }, { "wait": 3000 },
+ { "fullshot": "def-matrix" }, { "texts": "def_matrix", "of": "main table" },
+ { "html": "def_matrix_ctl", "of": "main thead, main tbody tr:first-child" },
+ { "goto": "/m/security/buyer-wise-item-category-mapping" }, { "wait": 5000 },
+ { "click": "main [role=tab]:has-text('Buyer Wise Item Category Mapping')", "wait": 2500 },
+ { "choose": "main select:visible", "index": 1 }, { "wait": 3000 },
+ { "fullshot": "cat-matrix" }, { "texts": "cat_matrix", "of": "main table" },
+ { "html": "cat_matrix_ctl", "of": "main thead, main tbody tr:first-child" },
+ { "goto": "/m/security/buyer-wise-fabric-trans-permission" }, { "wait": 4000 },
+ { "fullshot": "fab-records" }
+]

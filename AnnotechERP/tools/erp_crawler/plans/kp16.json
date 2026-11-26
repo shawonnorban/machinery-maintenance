@@ -1,0 +1,27 @@
+[
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"options": "sheets",
+"of": "main select:has(option:has-text('New inspection sheet'))"
+},
+{
+"choose": "main select:has(option:has-text('New inspection sheet'))",
+"index": 1
+},
+{
+"wait": 2500
+},
+{
+"html": "lines",
+"of": "main table tbody tr button"
+},
+{
+"fullshot": "loaded"
+}
+]

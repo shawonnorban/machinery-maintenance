@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/general-store/gs-issue" }, { "wait": 5000 },
+ { "click": "main button[aria-haspopup=listbox] >> nth=0", "wait": 1200 },
+ { "popup": "dept_popup" },
+ { "click": "[role=option]:has-text('Maintenance')", "wait": 1000 },
+ { "click": "main button[aria-haspopup=listbox] >> nth=2", "wait": 1500 },
+ { "click": "[role=option]:has-text('A4 Size Paper')", "wait": 1500 },
+ { "fillsel": "main input[type=number] >> nth=0", "text": "500" },
+ { "click": "main button:has-text('Save')", "wait": 2500 },
+ { "fullshot": "gs06-issue-over" },
+ { "goto": "/m/general-store/gs-issue" }, { "wait": 5000 },
+ { "choose": "main select >> nth=1", "index": 3 },
+ { "wait": 2500 },
+ { "fullshot": "gs06-issue-req" },
+ { "goto": "/m/general-store/dashboard" }, { "wait": 5000 },
+ { "hrefs": "dash_links", "of": "main a" },
+ { "texts": "dash_buttons", "of": "main button" },
+ { "goto": "/m/general-store/gs-current-stock" }, { "wait": 5000 },
+ { "texts": "cs_rows", "of": "main tbody tr >> nth=1" },
+ { "html": "cs_bystore", "of": "main tbody tr >> nth=0" }
+]

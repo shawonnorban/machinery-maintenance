@@ -1,0 +1,702 @@
+[
+ {
+  "goto": "/m/merchandising/ai-upcoming-deadlines"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-upcoming-deadlines",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-upcoming-deadlines__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-buyer-wise-status"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-buyer-wise-status",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-buyer-wise-status__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-merchandiser-performance"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-merchandiser-performance",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-merchandiser-performance__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-alerts-recommendations"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-alerts-recommendations",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-alerts-recommendations__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-order-risk-score"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-order-risk-score",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-order-risk-score__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-order-health-score"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-order-health-score",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-order-health-score__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-delay-probability"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-delay-probability",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-delay-probability__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-material-risk"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-material-risk",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-material-risk__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-production-risk"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-production-risk",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-production-risk__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-approval-risk"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-approval-risk",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-approval-risk__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-shipment-risk"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-shipment-risk",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-shipment-risk__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-risk-factor-analysis"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-risk-factor-analysis",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-risk-factor-analysis__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-expected-delay"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-expected-delay",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-expected-delay__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-recommended-action"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-recommended-action",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-recommended-action__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-overall-order-progress"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-overall-order-progress",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-overall-order-progress__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-task-completion"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-task-completion",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-task-completion__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-milestone-tracking"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-milestone-tracking",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-milestone-tracking__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-department-wise-progress"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-department-wise-progress",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-department-wise-progress__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-pending-tasks"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-pending-tasks",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-pending-tasks__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-overdue-tasks"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-overdue-tasks",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-overdue-tasks__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-deadline-monitoring"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-deadline-monitoring",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-deadline-monitoring__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-delay-prediction"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-delay-prediction",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-delay-prediction__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/ai-task-priority-recommendation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "ai-task-priority-recommendation",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "ai-task-priority-recommendation__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/dyeing-process-loss-chart"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "dyeing-process-loss-chart",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "dyeing-process-loss-chart__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/country-origin-master"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "country-origin-master",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "country-origin-master__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-office-master"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-office-master",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-office-master__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-master"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-master",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-master__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-ac-permission"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-ac-permission",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-ac-permission__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-sample-mapping"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-sample-mapping",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-sample-mapping__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-test-institute-mapping"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-test-institute-mapping",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-test-institute-mapping__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/country-setup"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "country-setup",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "country-setup__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-wise-trim-accessories"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-wise-trim-accessories",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-wise-trim-accessories__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-supplier-config"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-supplier-config",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-supplier-config__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/buyer-ac-permission-mkt"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "buyer-ac-permission-mkt",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "buyer-ac-permission-mkt__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/process-loss-qty-config"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "process-loss-qty-config",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "process-loss-qty-config__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/cutting-process-loss-config"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "cutting-process-loss-config",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "cutting-process-loss-config__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/colour-master"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "colour-master",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "colour-master__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/size-master"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "size-master",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "size-master__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/garment-part"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "garment-part",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "garment-part__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/service-type-setup"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "service-type-setup",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "service-type-setup__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/fabric-type-entry"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "fabric-type-entry",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "fabric-type-entry__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/fiber-master"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "fiber-master",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "fiber-master__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/fiber-composition"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "fiber-composition",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "fiber-composition__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/rate-chart-for-inquiry"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "rate-chart-for-inquiry",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "rate-chart-for-inquiry__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/trim-accessories-spec-cfg"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "trim-accessories-spec-cfg",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "trim-accessories-spec-cfg__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/tna-task-permission"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "tna-task-permission",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "tna-task-permission__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/template-for-tna"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "template-for-tna",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "template-for-tna__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/task-action-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "task-action-list",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "task-action-list__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/upload-style-and-order"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "upload-style-and-order",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "upload-style-and-order__rows",
+  "of": "main table tbody tr, main li"
+ },
+ {
+  "goto": "/m/merchandising/gsm-wise-count-conf"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "gsm-wise-count-conf",
+  "of": "main h1, main h2, main h3, main p, main th, main dt, main [role=tab], main button"
+ },
+ {
+  "texts": "gsm-wise-count-conf__rows",
+  "of": "main table tbody tr, main li"
+ }
+]

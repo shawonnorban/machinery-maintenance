@@ -1,0 +1,15 @@
+[
+ {"goto": "/m/merchandising/style-development"},
+ {"peek": "main table tbody tr:first-child td:last-child button:last-child", "wait": 1500, "shot": "t_row_last", "rows": 4},
+ {"escape": true},
+ {"goto": "/m/merchandising/style-development"},
+ {"clickSel": "main table tbody tr:has-text('637PK') button:has-text('Sheet')", "wait": 3000, "shot": "t_sheet_lpp", "rows": 6},
+ {"peek": "button:has-text('Style Gallery')", "wait": 2000, "shot": "t_gallery", "rows": 6},
+ {"escape": true},
+ {"goto": "/m/merchandising/style-development"},
+ {"clickSel": "main table tbody tr:has-text('637PK') button:has-text('Sheet')", "wait": 3000},
+ {"peek": "button:has-text('Item/Combo/Model(Fresh)')", "wait": 2000, "shot": "t_fresh", "rows": 6},
+ {"goto": "/m/merchandising/style-development"},
+ {"clickSel": "main table tbody tr:has-text('637PK') button:has-text('Sheet')", "wait": 3000},
+ {"peek": "button:has-text('Item/Combo/Model(Copy)')", "wait": 2000, "shot": "t_copy", "rows": 6}
+]

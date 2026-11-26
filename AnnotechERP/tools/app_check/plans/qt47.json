@@ -1,0 +1,12 @@
+[
+ {"goto": "/capacity-planning/shift-master"},
+ {"wait": 12000},
+ {"shot": "qt171-planshift"},
+ {"goto": "/finishing-line/qc-entry"},
+ {"wait": 12000},
+ {"shot": "qt172-fin"},
+ {"goto": "/quality-tally/panels"},
+ {"wait": 9000},
+ {"click": "main button[role=tab]:has-text('T-Shirt')", "after": 800},
+ {"shot": "qt161-panels"}
+]

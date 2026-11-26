@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('All (monitor)') >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "monitor", "of": "main h2, main h3, main p, main th, main td, main button, main span" },
+ { "fullshot": "mp23-monitor" },
+ { "click": "main table tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "row_open", "of": "main h3, main h4, main p, main th, main td, main button, main span, main dt, main dd, [role=dialog] *" },
+ { "fullshot": "mp23-row-open" },
+ { "goto": "/m/material-procurement/delivery-tracking" },
+ { "wait": 4000 },
+ { "texts": "tracking", "of": "main h2, main h3, main p, main th, main td, main button, main span, main label, main option" },
+ { "fullshot": "mp23-tracking" }
+]

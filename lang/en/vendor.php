@@ -30,6 +30,7 @@ return [
     'open_orders' => 'Open orders',
     'not_a_supplier' => 'Service provider only — no purchase orders are raised against this vendor.',
     'asset' => 'Asset',
+    'warranty_no' => 'Warranty No',
     'all_warranties' => 'All warranties',
     'nothing_expiring' => 'Nothing expiring soon.',
     'no_warranties_found' => 'No warranties recorded.',
@@ -106,6 +107,8 @@ return [
 
     // --- warranties ---
     'warranties' => 'Warranties',
+    'warranties_description' => 'Which machines are still under cover, by whom, and when it runs out.',
+    'contracts_description' => 'AMC and service agreements: what each covers, its visits, and when it ends.',
     'warranty' => 'Warranty',
     'new_warranty' => 'Record warranty',
     'warranty_recorded' => 'Warranty recorded.',
@@ -127,6 +130,7 @@ return [
     'warranty_status_expired' => 'Expired',
     'warranty_status_void' => 'Void',
     'expiring_soon' => 'Expiring within 60 days',
+    'show' => 'Show',
     'covered_by_warranty' => 'Under warranty from :vendor until :until',
     'covered_by_contract' => 'Covered by :vendor, contract :number, until :until',
     'not_covered' => 'No active cover',

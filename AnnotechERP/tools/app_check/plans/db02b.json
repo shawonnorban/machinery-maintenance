@@ -1,0 +1,15 @@
+[
+ {"goto": "/dye-house/batch-card-split"},
+ {"wait": 10000},
+ {"click": "main button:has-text('B-26110010')", "after": 8000},
+ {"fill": "New Batch plan Qty", "sel": "main label:has-text('New Batch plan Qty') input", "text": "100"},
+ {"fill": "New Batch Card Qty", "exact": true, "text": "100"},
+ {"fill": "New Lot No", "exact": true, "text": "L-1010-B"},
+ {"pick": "New Machine", "exact": true, "option": "DM-04"},
+ {"pick": "Item", "sel": "main label:has-text('Item') [data-slot=select-trigger] >> nth=0", "option": "Manual batch"},
+ {"fill": "New Batch Qty(Kg)", "exact": true, "text": "100"},
+ {"click": "main button:text-is('Add') >> nth=0", "after": 800},
+ {"click": "main button:has-text('Save split')", "after": 15000},
+ {"shot": "db-split-saved"},
+ {"texts": "split_list", "of": "main table >> nth=0 >> tbody tr"}
+]

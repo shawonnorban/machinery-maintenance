@@ -52,10 +52,12 @@ export async function GET(request, { params }) {
     return NextResponse.json({ message: "File not available" }, { status: fileResponse.status || 404 });
   }
 
-  const headers = {
-    "Cache-Control": "private, max-age=0, no-store",
-  };
   const contentType = fileResponse.headers.get("content-type");
+  // A picture's bytes never change under its id (a new upload is a new file): this browser may keep it a week,
+  // so a list or a dialog opened again shows it at once. Other files stay uncached.
+  const headers = {
+    "Cache-Control": contentType?.startsWith("image/") ? "private, max-age=604800, immutable" : "private, max-age=0, no-store",
+  };
   const contentLength = fileResponse.headers.get("content-length");
   const contentDisposition = fileResponse.headers.get("content-disposition");
   if (contentType) headers["Content-Type"] = contentType;

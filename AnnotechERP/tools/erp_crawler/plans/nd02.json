@@ -1,0 +1,329 @@
+[
+ {
+  "goto": "/m/knitting/mc-needle-receive"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=storeId]",
+  "index": 1
+ },
+ {
+  "peek": "main label:has-text('Supplier') + * button",
+  "wait": 1200
+ },
+ {
+  "popup": "sup"
+ },
+ {
+  "click": "[role=option] >> nth=1",
+  "wait": 800
+ },
+ {
+  "fillsel": "main input[name=challanNo]",
+  "text": "PRB-CH-1"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1200
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=0",
+  "label": "Needle & Sinker (IC-NDL)"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "options": "items",
+  "of": "main table tbody tr >> nth=0 >> select >> nth=1"
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=1",
+  "index": 1
+ },
+ {
+  "wait": 600
+ },
+ {
+  "fillsel": "main table tbody tr >> nth=0 >> input[type=number] >> nth=0",
+  "text": "100"
+ },
+ {
+  "fillsel": "main table tbody tr >> nth=0 >> input[type=number] >> nth=1",
+  "text": "98"
+ },
+ {
+  "fillsel": "main table tbody tr >> nth=0 >> input[type=number] >> nth=2",
+  "text": "12"
+ },
+ {
+  "click": "main button:has-text('Save receipt')",
+  "wait": 4000
+ },
+ {
+  "texts": "rcv_msg",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main [role=tab] >> nth=0",
+  "wait": 2000
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "texts": "rcv_list",
+  "of": "main table thead, main table tbody tr"
+ },
+ {
+  "html": "rcv_actions",
+  "of": "main table tbody tr >> nth=0 >> td >> nth=-1"
+ },
+ {
+  "click": "main [role=tab] >> nth=2",
+  "wait": 2000
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=storeId]",
+  "index": 1
+ },
+ {
+  "click": "main button:has-text('Show')",
+  "wait": 3000
+ },
+ {
+  "texts": "cons",
+  "of": "main table thead, main table tbody tr"
+ },
+ {
+  "fullshot": "cons"
+ },
+ {
+  "goto": "/m/knitting/mc-wise-needle-broken"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fillsel": "main input[name=shift]",
+  "text": "A"
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=officeId]",
+  "index": 1
+ },
+ {
+  "click": "main button:has-text('Add Machine')",
+  "wait": 1200
+ },
+ {
+  "options": "machines",
+  "of": "main table tbody tr >> nth=0 >> select >> nth=0"
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=0",
+  "index": 1
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=1",
+  "label": "Needle & Sinker (IC-NDL)"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=2",
+  "index": 1
+ },
+ {
+  "fillsel": "main table tbody tr >> nth=0 >> input[type=number] >> nth=0",
+  "text": "6"
+ },
+ {
+  "click": "main button:has-text('Save breakage record')",
+  "wait": 4000
+ },
+ {
+  "texts": "brk_msg",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main [role=tab] >> nth=0",
+  "wait": 2000
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "texts": "brk_list",
+  "of": "main table thead, main table tbody tr"
+ },
+ {
+  "goto": "/m/knitting/mc-needle-loan-requisition"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=kind]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=storeId]",
+  "index": 1
+ },
+ {
+  "peek": "main label:has-text('Party Name') + * button",
+  "wait": 1200
+ },
+ {
+  "popup": "party"
+ },
+ {
+  "click": "[role=option] >> nth=1",
+  "wait": 800
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1200
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=0",
+  "label": "Needle & Sinker (IC-NDL)"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "options": "items",
+  "of": "main table tbody tr >> nth=0 >> select >> nth=1"
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=1",
+  "index": 1
+ },
+ {
+  "wait": 600
+ },
+ {
+  "fillsel": "main table tbody tr >> nth=0 >> input[type=number] >> nth=0",
+  "text": "20"
+ },
+ {
+  "click": "main button:has-text('Save requisition')",
+  "wait": 4000
+ },
+ {
+  "texts": "loan_msg",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main [role=tab] >> nth=0",
+  "wait": 2000
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "texts": "loan_list",
+  "of": "main table thead, main table tbody tr"
+ },
+ {
+  "goto": "/m/knitting/mc-wise-needle-requisition"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=reason]",
+  "label": "Needle Broken"
+ },
+ {
+  "options": "brk_opts",
+  "of": "main select[name=brokenId]"
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=officeId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=fromStoreId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=toStoreId]",
+  "index": 1
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1200
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=0",
+  "index": 1
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=1",
+  "label": "Needle & Sinker (IC-NDL)"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "choose": "main table tbody tr >> nth=0 >> select >> nth=2",
+  "index": 1
+ },
+ {
+  "fillsel": "main table tbody tr >> nth=0 >> input[type=number] >> nth=0",
+  "text": "6"
+ },
+ {
+  "click": "main button:has-text('Save requisition')",
+  "wait": 4000
+ },
+ {
+  "texts": "mcr_msg",
+  "of": "main [role=alert]"
+ },
+ {
+  "click": "main [role=tab] >> nth=0",
+  "wait": 2000
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "texts": "mcr_list",
+  "of": "main table thead, main table tbody tr"
+ }
+]

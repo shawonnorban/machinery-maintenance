@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Maintenance\Services;
 
-use App\Modules\Calendar\Services\WorkingTimeService;
+use App\Modules\HrPayroll\Services\WorkingTimeService;
 use App\Modules\Tenancy\Models\Factory;
 use Carbon\CarbonImmutable;
 

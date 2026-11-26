@@ -1,0 +1,14 @@
+[
+ {"goto": "/m/buyer-portal/portal-users"}, {"wait": 4000},
+ {"peek": "main button:has-text('New portal user')"}, {"shot": "u1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "u2-edit"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=1"}, {"shot": "u3-delete"}, {"escape": true},
+ {"peek": "main button:has-text('Last seen')"}, {"shot": "u4-sorted"},
+ {"goto": "/m/buyer-portal/access-permissions"}, {"wait": 4000},
+ {"peek": "main button:has-text('New permission set')"}, {"shot": "p1-new"}, {"escape": true},
+ {"goto": "/m/buyer-portal/buyer-onboarding"}, {"wait": 4000},
+ {"peek": "main button:has-text('Start onboarding')"}, {"shot": "o1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "o2-edit"}, {"escape": true},
+ {"goto": "/m/buyer-portal/notification-preferences"}, {"wait": 4000},
+ {"peek": "main button:has-text('New preference')"}, {"shot": "n1-new"}, {"escape": true}
+]

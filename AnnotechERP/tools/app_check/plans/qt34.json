@@ -1,0 +1,10 @@
+[
+ {"goto": "/quality-tally/quality-target"},
+ {"wait": 16000},
+ {"shot": "qt126-qmgr"},
+ {"click": "main tr:has-text('26DAL00103') button:has-text('Give target') >> nth=0", "after": 2500},
+ {"choose": "[role=dialog] label:has-text('Line') select", "option": "Quality Line 2"},
+ {"shot": "qt127-qmgr-form"},
+ {"click": "[role=dialog] button:has-text('Save')", "after": 22000},
+ {"shot": "qt128-qmgr-saved"}
+]

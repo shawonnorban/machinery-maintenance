@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/merchandising/accessories-booking-trims" },
+ { "wait": 3000 },
+ { "dump": "records", "root": "main" },
+ { "texts": "rows", "of": "main table tbody tr" },
+ { "click": "button:has-text('Bookings')", "wait": 2500 },
+ { "dump": "bookings", "root": "main" },
+ { "texts": "bk_texts", "of": "main h2, main h3, main p, main li" },
+ { "fullshot": "atb-bookings" },
+ { "click": "main li button >> nth=0", "wait": 3000 },
+ { "dump": "order_picked", "root": "main" },
+ { "texts": "picked_texts", "of": "main h2, main h3, main p, main th, main td, main button" },
+ { "fullshot": "atb-picked" }
+]

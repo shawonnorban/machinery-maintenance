@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Maintenance\Services;
 
 use App\Modules\Asset\Models\Asset;
-use App\Modules\Calendar\Services\WorkingTimeService;
+use App\Modules\HrPayroll\Services\WorkingTimeService;
 use App\Modules\Maintenance\Models\MaintenancePlan;
 use App\Modules\Maintenance\Models\MaintenancePlanRule;
 use App\Modules\Maintenance\Models\MaintenanceSchedule;

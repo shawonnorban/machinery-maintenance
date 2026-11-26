@@ -1,0 +1,21 @@
+[
+ {"goto": "/m/dyeing-lab/certificate-list/new"},
+ {"click": "main button[aria-label='Add a certification type']", "wait": 2000},
+ {"fullshot": "type-dlg"},
+ {"dump": "type_dlg", "root": "[role=dialog]"},
+ {"escape": true},
+ {"goto": "/m/dyeing-lab/certificate-list/new"},
+ {"click": "main button[aria-label='Add equipment']", "wait": 2000},
+ {"fullshot": "eq-dlg"},
+ {"dump": "eq_dlg", "root": "[role=dialog]"},
+ {"escape": true},
+ {"goto": "/m/dyeing-lab/certificate-list/new"},
+ {"click": "main button[aria-label='Pick the filed document']", "wait": 2000},
+ {"fullshot": "doc-dlg"},
+ {"dump": "doc_dlg", "root": "[role=dialog]"},
+ {"texts": "doc_texts", "of": "[role=dialog]"},
+ {"escape": true},
+ {"goto": "/m/dyeing-lab/certificate-list/new"},
+ {"click": "main button:has-text('Save')", "wait": 2000},
+ {"texts": "cert_errs", "of": "main"}
+]

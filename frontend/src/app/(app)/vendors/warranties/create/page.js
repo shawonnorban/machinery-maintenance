@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { WarrantyForm } from "@/components/vendor/warranty-form";
 import { getT } from "@/lib/i18n-server";
 import { createWarranty } from "./actions";
@@ -16,16 +15,12 @@ export default async function CreateWarrantyPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("vendors") }, { label: t("warranties"), href: "/vendors/warranties" }, { label: t("new_warranty") }]}
+      <ScreenHeader
+        parentUrl="/vendors/warranties"
         title={t("new_warranty")}
       />
 
-      <Card>
-        <CardBody>
-          <WarrantyForm assets={assets} vendors={vendors} assetId={params.asset_id} action={createWarranty} />
-        </CardBody>
-      </Card>
+      <WarrantyForm assets={assets} vendors={vendors} assetId={params.asset_id} action={createWarranty} />
     </>
   );
 }

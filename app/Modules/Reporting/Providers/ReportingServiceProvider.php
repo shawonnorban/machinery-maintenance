@@ -9,6 +9,7 @@ use App\Modules\Reporting\Reports\ReportRegistry;
 use App\Modules\Reporting\Services\ReportPreview;
 use App\Modules\Reporting\Services\ReportRunner;
 use App\Modules\Reporting\Writers\CsvReportWriter;
+use App\Modules\Reporting\Writers\PdfReportWriter;
 use App\Modules\Reporting\Writers\XlsxReportWriter;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,10 +30,10 @@ class ReportingServiceProvider extends ServiceProvider
 
             // Registered here rather than discovered, so the list of formats a
             // screen offers is the list that can actually be produced. PDF
-            // arrives with the Bengali-capable font it needs; offering it
-            // before then would mean a download button that fails.
+            // came with mPDF, which shapes Bangla (App\Shared\Pdf\TablePdf).
             $runner->registerWriter(new CsvReportWriter);
             $runner->registerWriter(new XlsxReportWriter);
+            $runner->registerWriter(new PdfReportWriter);
 
             return $runner;
         });

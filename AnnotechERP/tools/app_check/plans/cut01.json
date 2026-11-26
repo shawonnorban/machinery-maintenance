@@ -1,0 +1,150 @@
+[
+ {
+  "goto": "/cutting-floor/new-cutting"
+ },
+ {
+  "wait": 14000
+ },
+ {
+  "shot": "c-empty"
+ },
+ {
+  "fill": "po",
+  "sel": "main input[aria-label='PO No']",
+  "text": "PO-SS27-01"
+ },
+ {
+  "click": "main h2:has-text('Order Information')",
+  "after": 1500
+ },
+ {
+  "choose": "main select[aria-label='Color']",
+  "option": "Navy Blue"
+ },
+ {
+  "fill": "ft",
+  "sel": "main input[list='cut-fabric-type-options']",
+  "text": "Single Jersey"
+ },
+ {
+  "fill": "gsm",
+  "sel": "main input[list='cut-gsm-options']",
+  "text": "180"
+ },
+ {
+  "fill": "dia",
+  "sel": "main input[list='cut-dia-width-options']",
+  "text": "72"
+ },
+ {
+  "fill": "cn",
+  "sel": "main input[aria-label='Cutting Number']",
+  "text": "1"
+ },
+ {
+  "fill": "size",
+  "sel": "main input[aria-label='Size']",
+  "text": "S"
+ },
+ {
+  "fill": "sf",
+  "sel": "main input[aria-label='Serial From']",
+  "text": "1"
+ },
+ {
+  "fill": "st",
+  "sel": "main input[aria-label='Serial To']",
+  "text": "36"
+ },
+ {
+  "fill": "parts",
+  "sel": "main input[aria-label='Parts Name']",
+  "text": "Back Panel"
+ },
+ {
+  "fill": "batch",
+  "sel": "main input[aria-label='Batch Number']",
+  "text": "B-26110011"
+ },
+ {
+  "shot": "c-draft"
+ },
+ {
+  "click": "main button:has-text('Add to List')",
+  "after": 14000
+ },
+ {
+  "fill": "st2",
+  "sel": "main input[aria-label='Serial To']",
+  "text": "72"
+ },
+ {
+  "click": "main button:has-text('Add to List')",
+  "after": 14000
+ },
+ {
+  "texts": "rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "summary",
+  "of": "main span:has-text('bundle(s)')"
+ },
+ {
+  "shot": "c-added"
+ },
+ {
+  "click": "main tbody tr >> nth=1 >> input[type=checkbox]",
+  "after": 500
+ },
+ {
+  "printpdf": "main button:has-text('Print Selected')",
+  "as": "label"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "goto": "/cutting-floor/cut-dashboard"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "dash",
+  "of": "main p"
+ },
+ {
+  "texts": "latest",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "dash"
+ },
+ {
+  "goto": "/cutting-floor/cutting-list"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "cutlist",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "cutlist"
+ },
+ {
+  "goto": "/cutting-floor/bundle-card-list"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "cards",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "cards"
+ }
+]

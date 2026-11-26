@@ -1,0 +1,18 @@
+[
+ { "goto": "/m/general-store/gs-issue" }, { "wait": 5000 },
+ { "click": "main tbody tr >> nth=0 >> button >> nth=0", "wait": 2500 },
+ { "texts": "issue_view", "of": "[role=dialog] *" },
+ { "fullshot": "gs02-issue-view" },
+ { "escape": true },
+ { "goto": "/m/general-store/gs-adjustment" }, { "wait": 5000 },
+ { "html": "adj_selects", "of": "main select" },
+ { "click": "main label:has-text('Adjustment Type') >> xpath=following::button[1]", "wait": 1200 },
+ { "popup": "adj_types" },
+ { "escape": true },
+ { "goto": "/m/general-store/gs-return" }, { "wait": 5000 },
+ { "click": "main label:has-text('Original Issue') >> xpath=following::button[1]", "wait": 1200 },
+ { "popup": "ret_issues" },
+ { "escape": true },
+ { "goto": "/m/general-store/gs-opening" }, { "wait": 5000 },
+ { "texts": "opening_page", "of": "main h2, main h3, main label, main th, main td, main p" }
+]

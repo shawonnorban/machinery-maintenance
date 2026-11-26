@@ -72,7 +72,8 @@ class SetSetting
             'BOOL' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
             'INT' => filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
             'DECIMAL' => is_numeric($value) ? number_format((float) $value, 4, '.', '') : null,
-            'LIST' => is_array($value) ? array_values($value) : (is_string($value) ? array_filter(explode(',', $value)) : null),
+            // "Prepared By, Checked By" from a form: trimmed, blanks dropped.
+            'LIST' => is_array($value) ? array_values($value) : (is_string($value) ? array_values(array_filter(array_map('trim', explode(',', $value)), 'strlen')) : null),
             default => is_scalar($value) ? (string) $value : null,
         };
 

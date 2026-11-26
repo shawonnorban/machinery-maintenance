@@ -1,0 +1,15 @@
+[
+ {"goto": "/quality-tally/cutting-input"},
+ {"wait": 18000},
+ {"choose": "main form select", "option": "C1"},
+ {"fill": "Bundle No", "text": "M-102"},
+ {"choose": "main label:has-text('Job') select", "option": "26DAL00103"},
+ {"choose": "main label:has-text('Garment type') select", "option": "T-Shirt", "after": 600},
+ {"fill": "Size", "text": "M", "exact": true},
+ {"fill": "Bundle Qty", "text": "2"},
+ {"click": "main button:has-text('Give to QC')", "after": 15000},
+ {"shot": "qt120-cutmgr-input"},
+ {"goto": "/quality-tally/sewing-target"},
+ {"wait": 8000},
+ {"shot": "qt121-cutmgr-refused"}
+]

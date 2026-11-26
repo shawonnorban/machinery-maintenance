@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 
 const OPEN_STATUSES = ["SUBMITTED", "ACKNOWLEDGED", "APPROVED"];
 
@@ -64,7 +65,7 @@ function ClaimRow({ claim, canDecide, decideAction }) {
       <div className="mt-1 flex gap-4 text-xs text-foreground-muted">
         <span>{t("claimed_amount")}: {claim.claimed_amount ?? "—"}</span>
         <span>{t("settled_amount")}: {claim.settled_amount ?? "—"}</span>
-        <span>{claim.claim_date}</span>
+        <span><FormattedDateTime value={claim.claim_date} mode="date" /></span>
       </div>
 
       {canDecide && OPEN_STATUSES.includes(claim.status) ? (

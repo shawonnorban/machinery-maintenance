@@ -1,0 +1,47 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Yarn/Fabric Mapping')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)"
+ },
+ {
+  "choose": "[data-panel] select >> nth=0",
+  "label": "HOODIE"
+ },
+ {
+  "options": "fab_opts",
+  "of": "[data-panel] select >> nth=2"
+ },
+ {
+  "options": "part_opts",
+  "of": "[data-panel] select >> nth=1"
+ },
+ {
+  "click": "[data-panel] button:text-is('Add')",
+  "wait": 1500
+ },
+ {
+  "texts": "after_add_empty",
+  "of": "[data-panel]"
+ },
+ {
+  "click": "[data-panel] button:has-text('Prod Category'), [data-panel] div:has(> button[aria-label='Remove Bulk'])",
+  "wait": 1000
+ },
+ {
+  "popup": "prod_popup"
+ }
+]

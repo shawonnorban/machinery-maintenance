@@ -1,0 +1,50 @@
+[
+ {
+  "goto": "/m/merchandising/budget-sheet"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "choose": "main select >> nth=1",
+  "index": 8
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "after_style",
+  "of": "main"
+ },
+ {
+  "options": "orders_after_style",
+  "of": "main select >> nth=2"
+ },
+ {
+  "choose": "main select >> nth=2",
+  "index": 1
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "dump": "filled",
+  "root": "main"
+ },
+ {
+  "texts": "after_order",
+  "of": "main"
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "wait": 2000
+ },
+ {
+  "texts": "add_dlg",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "add_d",
+  "root": "body"
+ }
+]

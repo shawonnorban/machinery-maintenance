@@ -1,0 +1,9 @@
+[
+ {"goto": "/knit-production/test-for-production?tab=entry&ref=YTS-2026100001"},
+ {"wait": 3000},
+ {"shot": "test-loaded"},
+ {"goto": "/knit-production/approval-without-test"},
+ {"click": "main button:has-text('Search')", "after": 8000},
+ {"texts": "lots", "of": "main tbody tr"},
+ {"shot": "waiver"}
+]

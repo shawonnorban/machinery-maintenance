@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Approval\Support;
 
+use App\Modules\AiImport\Models\IntakeFile;
+use App\Modules\Approval\Models\ApprovalTicket;
 use App\Modules\ItemMaster\Models\StockCount;
+use App\Modules\PreBudget\Models\PbBudget;
+use App\Modules\Merchandise\Models\FabricBooking;
 use App\Modules\Procurement\Models\PurchaseOrder;
 use App\Modules\Procurement\Models\PurchaseRequisition;
 use App\Modules\Procurement\Models\PurchaseReturn;
@@ -35,6 +39,20 @@ final class ApprovalEntities
         // routine way stock value moves with nothing arriving or leaving,
         // and so the easiest place to bury a loss.
         'STOCK_COUNT' => StockCount::class,
+        // A request written by hand in the Approval Center (AnnotechERP 04).
+        'MANUAL_REQUEST' => ApprovalTicket::class,
+        // A bulk fabric booking (AnnotechERP 06/11): approved, it joins the
+        // Approved Fabric Booking List and is no longer changed.
+        'FABRIC_BOOKING' => FabricBooking::class,
+        // A file the AI read in the AI File & PO Import intake (AnnotechERP
+        // 26/01): approved, it is posted; rejected, it fails.
+        'IMPORT_FILE' => IntakeFile::class,
+        // A pre-budget sent by Finalize (AnnotechERP 33/34): Merchandising Head → CFO → MD;
+        // approved, its requisitions lock; rejected, it goes back to the merchandiser.
+        'PRE_BUDGET' => PbBudget::class,
+        // An edit of a saved export statement (AnnotechERP 35): approved, it is written onto the
+        // statement; rejected, the statement keeps what it had.
+        'EXPORT_STATEMENT_EDIT' => \App\Modules\ExportStatement\Models\EsEditRequest::class,
     ];
 
     public static function find(string $entityType, string $entityId): ?Model

@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/gate-pass/gp-in" }, { "wait": 5000 },
+ { "fillsel": "main input >> nth=0", "text": "GP-2026-000001" },
+ { "click": "main button:has-text('Search')", "wait": 3000 },
+ { "fillsel": "main tr:has-text('(PRB-ITM)') input >> nth=0", "text": "2" },
+ { "click": "main label:has-text('Final return')", "wait": 800 },
+ { "options": "short_reasons", "of": "main select" },
+ { "choose": "main select >> nth=0", "index": 1 },
+ { "click": "main button:has-text('CONFIRM IN')", "wait": 2500 },
+ { "texts": "in_dialog", "of": "[role=dialog]" },
+ { "click": "[role=dialog] button:has-text('Confirm')", "wait": 4000 },
+ { "texts": "in_after", "of": "main tbody tr" },
+ { "goto": "/m/gate-pass/gp-reconciliation" }, { "wait": 5000 },
+ { "texts": "recon_rows", "of": "main tbody tr" },
+ { "click": "main tbody tr >> nth=0", "wait": 2500 },
+ { "texts": "recon_btns", "of": "main button" },
+ { "fullshot": "gp09-recon" },
+ { "click": "main button:has-text('Close')", "wait": 2500 },
+ { "texts": "close_dialog", "of": "[role=dialog]" },
+ { "fullshot": "gp09-close-dialog" }
+]

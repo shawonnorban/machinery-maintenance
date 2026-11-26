@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "Annotech ERP",
+    "slug": "annotech-erp",
+    "version": "0.3.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "annotecherp",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.annotech.erp",
+      "versionCode": 3,
+      "adaptiveIcon": {
+        "backgroundColor": "#4f46e5",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-secure-store",
+      "expo-sqlite",
+      "expo-localization",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "The camera reads the bundle card's code.",
+          "recordAudioAndroid": false
+        }
+      ],
+      "./plugins/with-native-build",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 160,
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#0f172a"
+          }
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+[
+ {"goto": "/trade-export/commercial-invoice"}, {"wait": 20000}, {"shot": "x01-commercial-invoice"},
+ {"goto": "/trade-export/bank-list"}, {"wait": 15000}, {"shot": "x02-bank-list"},
+ {"goto": "/trade-export/export-lc-sales-contract-entry"}, {"wait": 15000}, {"shot": "x03-export-lc"}
+]

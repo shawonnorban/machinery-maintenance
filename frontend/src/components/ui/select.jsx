@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Select as BaseSelect } from "@base-ui/react/select";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,10 +25,21 @@ const SEARCH_THRESHOLD = 8;
  * dropdown below the trigger, which respects max-height and collision
  * detection like every other popup in this design system.
  *
- * @param {{ options: { value: string, label: string }[], placeholder?: string, className?: string }} props
+ * With no `placeholder`, the label of an option whose value is "" stands in
+ * for it (a filter's "All …"), else "Select…".
+ *
+ * `size="sm"`: the dense grid look (a 28px box, 11px text) for a select inside
+ * a sheet's table cell — Pre-Budget's accessory lines and suppliers.
+ *
+ * @param {{ options: { value: string, label: string }[], placeholder?: string, className?: string, size?: "md" | "sm" }} props
  */
-function Select({ options, placeholder = "Select…", className, onOpenChange, ...props }) {
+function Select({ options, placeholder, className, size = "md", onOpenChange, "aria-label": ariaLabel, ...props }) {
+  const sm = size === "sm";
+  const searchBox = useRef(null);
   const [query, setQuery] = useState("");
+  // A filter whose "everything" choice is the empty value ("All statuses")
+  // shows that label while nothing is picked, not a bare "Select…".
+  const shown = placeholder ?? options.find((option) => option.value === "")?.label ?? "Select…";
   const searchable = options.length > SEARCH_THRESHOLD;
 
   const visibleOptions = useMemo(() => {
@@ -43,28 +54,43 @@ function Select({ options, placeholder = "Select…", className, onOpenChange, .
       {...props}
       onOpenChange={(open, eventDetails) => {
         if (!open) setQuery("");
+        // The search box takes the typing as the list opens: the list moves focus to its selected item first,
+        // so the box is focused a moment later (autoFocus alone lost to it — typing jumped through the list).
+        else if (searchable) setTimeout(() => searchBox.current?.focus(), 60);
         onOpenChange?.(open, eventDetails);
       }}
     >
       <BaseSelect.Trigger
         data-slot="select-trigger"
+        // The accessible name belongs on the button a person reaches, not on the (unrendered) root.
+        aria-label={ariaLabel}
         className={cn(
-          "flex h-9 w-full min-w-0 items-center justify-between gap-2 rounded-sm border border-border-strong",
-          "bg-surface px-3 text-sm text-foreground outline-none transition-colors duration-150 ease-out",
+          sm
+            ? "flex h-7 w-full min-w-0 items-center justify-between gap-1 rounded border border-border-strong bg-white px-1.5 text-[11px] text-foreground outline-none"
+            : "flex h-9 w-full min-w-0 items-center justify-between gap-2 rounded-sm border border-border-strong bg-surface px-3 text-sm text-foreground outline-none transition-colors duration-150 ease-out",
           "focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/50",
           "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-muted",
           "data-[placeholder]:text-foreground-subtle",
           className,
         )}
       >
-        <BaseSelect.Value placeholder={placeholder} />
+        {/* One line, cut with an ellipsis: the trigger is a fixed height, so a long label (a grid cell's sample) would spill out of it. */}
+        <BaseSelect.Value placeholder={shown} className="min-w-0 truncate text-left" />
         <BaseSelect.Icon>
-          <ChevronDown className="size-4 text-foreground-muted" />
+          <ChevronDown className={cn(sm ? "size-3.5" : "size-4", "shrink-0 text-foreground-muted")} />
         </BaseSelect.Icon>
       </BaseSelect.Trigger>
       <BaseSelect.Portal>
         <BaseSelect.Positioner className="z-50 outline-none" sideOffset={4} alignItemWithTrigger={false}>
           <BaseSelect.Popup
+            // A letter typed while an item has focus goes to the search box, not the list's jump-to-match.
+            onKeyDownCapture={(event) => {
+              if (!searchable || event.target === searchBox.current || event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return;
+              event.preventDefault();
+              event.stopPropagation();
+              setQuery((q) => q + event.key);
+              searchBox.current?.focus();
+            }}
             className={cn(
               "flex max-h-72 min-w-[var(--anchor-width)] flex-col overflow-hidden rounded-sm border border-border",
               "bg-surface shadow-md",
@@ -74,6 +100,7 @@ function Select({ options, placeholder = "Select…", className, onOpenChange, .
               <div className="flex items-center gap-2 border-b border-border px-2.5 py-1.5">
                 <Search className="size-4 shrink-0 text-foreground-muted" />
                 <input
+                  ref={searchBox}
                   autoFocus
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
@@ -102,7 +129,8 @@ function Select({ options, placeholder = "Select…", className, onOpenChange, .
                     key={option.value}
                     value={option.value}
                     className={cn(
-                      "flex cursor-pointer items-center justify-between gap-2 rounded-sm px-3 py-2 text-sm text-foreground",
+                      "flex cursor-pointer items-center justify-between gap-2 rounded-sm text-foreground",
+                      sm ? "px-2 py-1 text-[12px]" : "px-3 py-2 text-sm",
                       "outline-none data-[highlighted]:bg-surface-muted",
                     )}
                   >

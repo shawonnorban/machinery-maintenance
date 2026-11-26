@@ -1,0 +1,18 @@
+[
+ { "goto": "/m/material-procurement/supplier-portal-access" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('New supplier login')", "wait": 1500 },
+ { "click": "[role=dialog] button:has-text('Create login')", "wait": 2000 },
+ { "texts": "empty_msgs", "of": "[role=dialog] p, [role=dialog] [role=alert], [role=dialog] li" },
+ { "peek": "[role=dialog] button:has-text('Select') >> nth=0", "wait": 1200 },
+ { "peek": "[role=option]:has-text('POLY PLAN LTD') >> nth=-1", "wait": 1200 },
+ { "type": "[role=dialog] input[type=text] >> nth=0", "text": "Annotech Probe" },
+ { "type": "[role=dialog] input[type=text] >> nth=1", "text": "$ENV:SUP_USER" },
+ { "type": "[role=dialog] input[type=password]", "text": "short" },
+ { "click": "[role=dialog] button:has-text('Create login')", "wait": 2000 },
+ { "texts": "weak_msgs", "of": "[role=dialog] p, [role=dialog] [role=alert], [role=dialog] li" },
+ { "type": "[role=dialog] input[type=password]", "text": "$ENV:SUP_PASS" },
+ { "click": "[role=dialog] button:has-text('Create login')", "wait": 3000 },
+ { "texts": "after_create", "of": "main p, main td, li[data-sonner-toast] *, [role=dialog] p" },
+ { "fullshot": "mp12-after-create" }
+]

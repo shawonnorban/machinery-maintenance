@@ -1,0 +1,12 @@
+[
+ {"goto": "/knit-production/grey-fabric-transfer-order-to-order?tab=entry"},
+ {"wait": 5000},
+ {"pick": "Trans Type", "exact": true, "option": "Bulk To Bulk"},
+ {"pick": "From Order#", "exact": true, "option": "LPP-2026-000001"},
+ {"wait": 4000},
+ {"pick": "To Order#", "exact": true, "option": "LPP-2026-000002"},
+ {"pick": "Roll", "exact": true, "option": "Rib 1x1"},
+ {"wait": 1000},
+ {"texts": "buttons", "of": "main button"},
+ {"shot": "gt-oo-form"}
+]

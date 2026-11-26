@@ -40,7 +40,20 @@ class ApiServiceProvider extends ServiceProvider
         // The two doors are much tighter, and by IP on purpose: an attacker
         // trying credentials has no token yet, so a token-keyed limit would
         // count nothing.
-        RateLimiter::for('api-auth', fn (Request $request) => Limit::perMinute(10)->by((string) $request->ip()));
+        // A factory's people all reach the API from one address (user, 2026-11-26: email sign-in was 10 a
+        // minute for everybody together): ten a minute per account, the address far wider.
+        RateLimiter::for('api-auth', fn (Request $request) => [
+            Limit::perMinute(10)->by('auth|'.sha1(mb_strtolower(trim((string) $request->input('email', $request->input('login', '')))).'|'.$request->ip())),
+            Limit::perMinute(300)->by('auth-ip|'.$request->ip()),
+        ]);
+
+        // A QC's PIN sign-in (AnnotechERP 37): by phone and ID, because a floor's phones share one
+        // address; the address has a far wider limit of its own. Wrong PINs are locked by the sign-in itself.
+        RateLimiter::for('qt-sign-in', fn (Request $request) => [
+            Limit::perMinute(10)->by('qt|'.sha1(json_encode([$request->input('phone.install_id'), $request->input('employee_id')]) ?: '')),
+            Limit::perMinute(300)->by('qt-ip|'.$request->ip()),
+        ]);
+        RateLimiter::for('qt-phone', fn (Request $request) => Limit::perMinute(300)->by('qt-phone|'.$request->header('X-Phone-Id', (string) $request->ip())));
 
         // Readings arrive from controllers and PLCs in bursts — a dye house
         // posting a batch at shift change is normal traffic, not abuse.

@@ -1,0 +1,17 @@
+[
+ { "goto": "/m/merchandising/finish-fabric-opening-balance" },
+ { "click": "button:has-text('Opening Balance Entry')", "wait": 2500 },
+ { "peek": "div:has(> label:has-text('Receiving Store')) button", "wait": 1500 },
+ { "popup": "stores" },
+ { "escape": true },
+ { "peek": "div:has(> label:has-text('Fab Composition')) button", "wait": 1500 },
+ { "popup": "compositions" },
+ { "escape": true },
+ { "fillsel": "input[name='fabDescription'], div:has(> label:has-text('Fab Description')) input", "text": "Probe fabric" },
+ { "click": "button:has-text('Add Row')", "wait": 1500 },
+ { "texts": "add_msgs", "of": "main p, [role=alert]" },
+ { "texts": "grid_head", "of": "main table thead th" },
+ { "texts": "grid_row", "of": "main table tbody tr" },
+ { "dump": "after_add", "root": "main" },
+ { "fullshot": "ffob-grid" }
+]

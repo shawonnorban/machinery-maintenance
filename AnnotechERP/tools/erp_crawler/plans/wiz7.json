@@ -1,0 +1,83 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Open Inbox'), main a:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Review')",
+  "wait": 3500
+ },
+ {
+  "texts": "locked",
+  "of": "[role=dialog] p, [role=dialog] [role=alert], [role=dialog] div.text-sm"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Open Inbox'), main a:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Approve')",
+  "wait": 2000
+ },
+ {
+  "type": "[role=dialog] textarea",
+  "text": "Probe approved"
+ },
+ {
+  "click": "[role=dialog] button:text-is('Approve')",
+  "wait": 3500
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "list_row",
+  "of": "main table tbody tr:has-text('637PK')"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('View')",
+  "wait": 3500
+ },
+ {
+  "texts": "after_view",
+  "of": "[role=dialog]"
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "sre",
+  "of": "main table"
+ },
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "texts": "sd_row",
+  "of": "main table tbody tr:has-text('637PK')"
+ }
+]

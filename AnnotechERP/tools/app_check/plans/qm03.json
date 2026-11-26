@@ -1,0 +1,22 @@
+[
+ {"goto": "/assembly-floor/quality-out"},
+ {"wait": 15000},
+ {"choose": "main select[aria-label='Section']", "option": "Final Inspection"},
+ {"wait": 800},
+ {"choose": "main select[aria-label='Floor']", "option": "Ground Floor · B-GF"},
+ {"wait": 800},
+ {"choose": "main select[aria-label='Line']", "option": "Quality Line1 — Quality Line 1"},
+ {"wait": 8000},
+ {"fill": "scan", "sel": "main input[id='qm-out-scan']", "text": "BND202611060001"},
+ {"click": "main button:has-text('Load Bundle')", "after": 15000},
+ {"fill": "remarks", "sel": "main textarea", "text": "Released to packing"},
+ {"texts": "final", "of": "main dl dd"},
+ {"shot": "out-ready"},
+ {"click": "main button:has-text('Confirm Quality OUT')", "after": 18000},
+ {"texts": "out_rows", "of": "main tbody tr"},
+ {"texts": "out_banner", "of": "main [role=status] p"},
+ {"shot": "out-done"},
+ {"goto": "/assembly-floor/quality-out"},
+ {"wait": 15000},
+ {"texts": "remembered", "of": "main div[role=status] p"}
+]

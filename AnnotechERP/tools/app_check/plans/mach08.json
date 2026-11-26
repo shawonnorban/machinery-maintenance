@@ -1,0 +1,8 @@
+[
+ {"goto": "/breakdowns/create"}, {"wait": 15000}, {"shot": "h01-breakdown-create"},
+ {"goto": "/vendors/create"}, {"wait": 12000}, {"shot": "h02-vendor-create"},
+ {"goto": "/inventory/parts/create"}, {"wait": 12000}, {"shot": "h03-part-create"},
+ {"goto": "/inventory/transfers/create"}, {"wait": 12000}, {"shot": "h04-transfer-create"},
+ {"goto": "/work-orders/WO-DHK-202609-00004"}, {"wait": 15000}, {"shot": "h05-wo-detail"},
+ {"goto": "/inventory/parts/BRG-6203-2RS"}, {"wait": 12000}, {"click": "role=tab[name='Transactions']", "after": 6000}, {"shot": "h06-part-transactions"}
+]

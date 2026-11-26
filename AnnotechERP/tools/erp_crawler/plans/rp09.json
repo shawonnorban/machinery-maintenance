@@ -1,0 +1,712 @@
+[
+{
+"goto": "/m/ie/ie-reports"
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Efficiency Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Date Wise Input, Output & WIP Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Line Wise Profit-Loss Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Daily Line Costing Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Monthly Line Costing Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Manpower Requirment Plan\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Line Wise Plan + Actual Prod With Value\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"GMT Finishing WIP Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Floor Wise Plan Prod with Value\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Date Wise Target Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Machine Variance-Layout vs Costing\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Target & Achievement Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Monthly Achievement Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Capacity Vs Booking Summary Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Date Wise Plan Vs Target Vs Input Vs Production\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Cost Analysis for Print/Embroidery\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"IE-Gmt Item Analysis Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Target & Achv In Gen and OT Hour\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Manpower Utilization Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Pre-Post Layout Balancing Efficiency\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Day Wise Pre-Post Balancing Efficiency\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"GMT Item Wise Profit-Loss Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"GMT Item Wise Pcs Transactions\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Planning Vs IE Target Vs Production Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Daily Manpower Status\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Section Wise Profit-Loss Summary\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Order Wise Profit-Loss Transaction\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Line Wise Hourly Production Status\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Line Feeding & SCO Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"OT Plan- Garment Division\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"OT Plan vs Actual- Garment Division\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Line Wise Profit/Loss-Hour Slab\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Daily Manpower Utilization\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"Daily Line Wise Sewing Target\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"click": "main button[role=tab]:has-text('Preview')",
+"wait": 1500
+},
+{
+"peek": "main div:has(> label:has-text('Report')) button",
+"wait": 900
+},
+{
+"click": "xpath=(//*[@role='option'][normalize-space(.)=\"CPM Based Profitability Report\"])[1]",
+"wait": 500
+},
+{
+"type": "main input[type=date]",
+"text": "2026-10-25"
+},
+{
+"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1",
+"wait": 3500
+},
+{
+"goto": "/m/ie/ie-reports"
+},
+{
+"texts": "rows",
+"of": "main table tbody tr"
+}
+]

@@ -1,0 +1,6 @@
+[
+ {"goto": "/m/buyer-portal/portal-users"}, {"wait": 4000}, {"shot": "u0"},
+ {"goto": "/m/buyer-portal/access-permissions"}, {"wait": 4000}, {"shot": "p0"},
+ {"goto": "/m/buyer-portal/buyer-onboarding"}, {"wait": 4000}, {"shot": "o0"},
+ {"goto": "/m/buyer-portal/notification-preferences"}, {"wait": 4000}, {"shot": "n0"}
+]

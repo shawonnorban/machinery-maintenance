@@ -1,0 +1,8 @@
+[
+ {"goto": "/quality-tally/quality-tally"},
+ {"wait": 16000},
+ {"choose": "main label:has-text('Line') select", "option": "Quality Line 2", "after": 4000},
+ {"choose": "main label:has-text('Job') select", "option": "26DAL00103", "after": 7000},
+ {"click": "main button.bg-success", "after": 5000},
+ {"shot": "qt129-qqc"}
+]

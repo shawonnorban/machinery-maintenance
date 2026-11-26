@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { ReportBreakdownForm } from "@/components/breakdowns/report-breakdown-form";
 import { getT } from "@/lib/i18n-server";
 
@@ -11,13 +10,9 @@ export default async function ReportBreakdownPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: t("breakdowns"), href: "/breakdowns" }, { label: t("report") }]} title={t("report_breakdown")} />
+      <ScreenHeader parentUrl="/breakdowns" title={t("report_breakdown")} />
 
-      <Card>
-        <CardBody>
-          <ReportBreakdownForm options={options} initialAssetId={params.asset_id ?? ""} />
-        </CardBody>
-      </Card>
+      <ReportBreakdownForm options={options} initialAssetId={params.asset_id ?? ""} />
     </>
   );
 }

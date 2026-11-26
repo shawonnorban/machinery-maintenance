@@ -26,18 +26,38 @@ use Spatie\Permission\Models\Role as SpatieRole;
  */
 class Role extends SpatieRole
 {
+    /**
+     * Roles that only open a portal (Material Procurement's Supplier Portal,
+     * AnnotechERP 08/07): an account holding nothing else does no work of
+     * the company's own, so it takes no subscription seat.
+     */
+    public const PORTAL_ONLY = ['SUPPLIER'];
+
+    /** Whether every one of these roles is portal-only (and there is at least one). @param list<int|string> $roleIds */
+    public static function onlyPortal(array $roleIds): bool
+    {
+        if ($roleIds === []) {
+            return false;
+        }
+
+        return self::query()->whereIn('id', $roleIds)->whereNotIn('name', self::PORTAL_ONLY)->doesntExist();
+    }
+
     protected function casts(): array
     {
-        return ['is_system' => 'boolean'];
+        return ['is_system' => 'boolean', 'is_admin' => 'boolean', 'active' => 'boolean', 'rank' => 'integer', 'template_permissions' => 'array'];
     }
 
     /**
-     * Roles a given company may assign: its own, plus the platform-seeded set.
+     * Roles a given company may assign: its own, plus the platform-seeded
+     * set — but a seeded role the company has its own copy of (same code,
+     * RoleProvisioner) is the copy only.
      */
     public function scopeAvailableTo($query, string $companyId)
     {
         return $query->where(function ($q) use ($companyId): void {
-            $q->whereNull('company_id')->orWhere('company_id', $companyId);
+            $q->where('roles.company_id', $companyId)->orWhere(fn ($g) => $g->whereNull('roles.company_id')->where('roles.scope', '!=', 'PLATFORM')
+                ->whereNotExists(fn ($e) => $e->from('roles as own')->where('own.company_id', $companyId)->whereColumn('own.name', 'roles.name')));
         });
     }
 

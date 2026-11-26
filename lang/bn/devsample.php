@@ -1,0 +1,161 @@
+<?php
+
+declare(strict_types=1);
+
+// ডেভ স্যাম্পল স্ট্যাটাস (AnnotechERP 31, ব্যবহারকারীর Norban ERP থেকে)।
+return [
+    'folders' => ['samples' => 'স্যাম্পল', 'reports' => 'রিপোর্ট', 'setup' => 'সেটআপ'],
+    'screens' => [
+        'dashboard' => 'ড্যাশবোর্ড',
+        'list' => 'সব ডেভ স্যাম্পল',
+        'new' => 'নতুন ডেভ স্যাম্পল',
+        'edit' => 'ডেভ স্যাম্পল এডিট',
+        'report' => 'পিভট রিপোর্ট',
+        'columns' => 'কলাম সেটআপ',
+    ],
+    'descriptions' => [
+        'dashboard' => 'এক নজরে স্যাম্পল: নরবানের সামারি কার্ড, ডেডলাইনের আর কত দিন বাকি অনুযায়ী সাবমিট-বাকি স্যাম্পল, স্ট্যাটাস, বায়ার আর অনুরোধের মাস অনুযায়ী স্যাম্পল, আর সর্বশেষ সেভ।',
+        'list' => 'সব ডেভেলপমেন্ট স্যাম্পল, শিট হিসেবে: যেকোনো কলামে ফিল্টার, সারি টিক দিয়ে ঘরেই এডিট, Excel-এর মতো কপি-পেস্ট।',
+        'new' => 'নতুন ডেভেলপমেন্ট স্যাম্পল, Excel-এর মতো শিটে লিখুন: বায়ারের অনুরোধ, স্যাম্পলের তারিখ, পরিমাণ, কোট করা দাম আর স্ট্যাটাস।',
+        'columns' => 'স্যাম্পল শিটের গ্রুপ আর কলাম: কলাম যোগ বা বদল, ফর্মুলা, রঙের নিয়ম, width, freeze আর কে কোন কলাম দেখবে।',
+        'edit' => 'একটা ডেভেলপমেন্ট স্যাম্পল বদলান।',
+        'report' => 'চলমান ডেভেলপমেন্ট স্যাম্পলের সারাংশ: অর্ডার কনফার্মেশন অনুযায়ী বায়ার, আর স্যাম্পল স্ট্যাটাস অনুযায়ী যত খুশি বিস্তারিত।',
+    ],
+
+    'sections' => [
+        'basic' => 'মূল তথ্য',
+        'details' => 'স্যাম্পলের বিবরণ',
+        'dates' => 'তারিখ',
+        'tracking' => 'প্রোডাকশন ও স্যাম্পল ট্র্যাকিং',
+        'qty_price' => 'পরিমাণ ও দাম',
+        'status' => 'স্ট্যাটাস',
+    ],
+
+    'f' => [
+        'season' => 'সিজন', 'buyer' => 'বায়ার', 'customer_name' => 'কাস্টমারের নাম', 'brand' => 'ব্র্যান্ড', 'department' => 'ডিপার্টমেন্ট',
+        'division' => 'ডিভিশন', 'styling' => 'স্টাইলিং', 'image' => 'ছবি', 'job_no' => 'জব নং', 'items' => 'আইটেম',
+        'required_category' => 'প্রয়োজনীয় ক্যাটাগরি', 'sample_type' => 'স্যাম্পলের ধরন', 'fabrication' => 'ফেব্রিকেশন', 'colours' => 'রঙ ও পরিমাণ',
+        'tp_rcv_date' => 'TP প্রাপ্তির তারিখ', 'buyer_requested_date' => 'বায়ারের চাওয়া তারিখ', 'submission_deadline' => 'সাবমিশনের শেষ তারিখ', 'sub_plan_date' => 'সাবমিশনের পরিকল্পিত তারিখ',
+        'booking_date' => 'বুকিংয়ের তারিখ', 'knitting_plan_date' => 'নিটিংয়ের পরিকল্পিত তারিখ', 'actual_grige_rcvd_date' => 'গ্রে প্রাপ্তির প্রকৃত তারিখ',
+        'finish_fabric_delivery_plan_date' => 'ফিনিশড ফ্যাব্রিক ডেলিভারির পরিকল্পিত তারিখ', 'finish_fabric_rcvd_date' => 'ফিনিশড ফ্যাব্রিক প্রাপ্তির তারিখ',
+        'sample_sewing_plan_date' => 'স্যাম্পল সেলাইয়ের পরিকল্পিত তারিখ', 'file_handover_date' => 'ফাইল হস্তান্তরের তারিখ', 'pattern_ready_date' => 'প্যাটার্ন প্রস্তুতের তারিখ',
+        'cutting_date' => 'কাটিংয়ের তারিখ', 'print_emb_date' => 'প্রিন্ট/এমব্রয়ডারির তারিখ', 'sewing_start_date' => 'সেলাই শুরুর তারিখ', 'sewing_output_date' => 'সেলাই আউটপুটের তারিখ',
+        'sample_submitted_date' => 'স্যাম্পল সাবমিটের তারিখ', 'awb_tracking' => 'AWB ট্র্যাকিং',
+        'sample_qty' => 'স্যাম্পল পরিমাণ (বায়ার)', 'possible_qty' => 'সম্ভাব্য পরিমাণ', 'actual_order_qty' => 'প্রকৃত অর্ডার পরিমাণ',
+        'target_prices' => 'বায়ারের টার্গেট দাম ($)', 'fob_prices' => 'FOB দাম ($)', 'last_price_quote_date' => 'শেষ দাম কোটের তারিখ',
+        'price_status' => 'দামের স্ট্যাটাস', 'sample_status' => 'স্যাম্পল স্ট্যাটাস', 'order_confirmation' => 'অর্ডার কনফার্মেশন',
+        'current_order_situation' => 'অর্ডারের বর্তমান অবস্থা', 'remarks' => 'মন্তব্য', 'search' => 'খুঁজুন', 'per_page' => 'প্রতি পাতায়',
+        'colour' => 'রঙ', 'qty' => 'পরিমাণ', 'label' => 'লেবেল', 'price' => 'দাম ($)',
+    ],
+    'ph' => [
+        'styling' => 'যেমন NW7431 OPT-1', 'job_no' => 'যেমন NCL-SMN-25-00390', 'fabrication' => 'যেমন TERRY -Y/D Loop Back', 'awb_tracking' => 'AWB / ট্র্যাকিং নং',
+        'search' => 'স্টাইলিং / জব / আইটেম / রঙ', 'items' => 'আইটেম বাছুন', 'label' => 'যেমন BIO', 'select' => '-- বাছুন --',
+    ],
+    'help' => [
+        'pcs' => 'পিস',
+        'quote_by' => 'কে দিয়েছেন তা স্বয়ংক্রিয়ভাবে সাইন-ইন করা ব্যবহারকারী হিসেবে রাখা হয়।',
+        'quote_by_named' => 'দিয়েছেন :name',
+        'price_levels' => 'প্রথম লাইন সারাংশের দাম; দ্বিতীয়টা (না থাকলে প্রথমটা) রাখা হয়।',
+        'image' => 'JPG, PNG, WEBP বা GIF, সর্বোচ্চ ২ MB।',
+    ],
+
+    'col' => [
+        'serial' => '#', 'season' => 'সিজন', 'buyer' => 'বায়ার', 'customer_name' => 'কাস্টমারের নাম', 'brand' => 'ব্র্যান্ড', 'department' => 'ডিপার্টমেন্ট',
+        'division' => 'ডিভিশন', 'styling' => 'স্টাইলিং', 'image' => 'ছবি', 'job_no' => 'জব', 'items' => 'আইটেম', 'required_category' => 'প্রয়োজনীয় ক্যাটাগরি',
+        'sample_type' => 'স্যাম্পলের ধরন', 'fabrication' => 'ফেব্রিকেশন', 'colours' => 'রঙ', 'sample_qty' => 'স্যাম্পল পরিমাণ', 'possible_qty' => 'সম্ভাব্য পরিমাণ',
+        'actual_order_qty' => 'প্রকৃত অর্ডার', 'target_prices' => 'টার্গেট দাম', 'fob_prices' => 'FOB দাম', 'tp_rcv_date' => 'TP প্রাপ্তি',
+        'buyer_requested_date' => 'বায়ারের চাওয়া তারিখ', 'submission_deadline' => 'সাবমিশনের শেষ তারিখ', 'sub_plan_date' => 'সাবমিশন পরিকল্পনা',
+        'booking_date' => 'বুকিং', 'knitting_plan_date' => 'নিটিং পরিকল্পনা', 'actual_grige_rcvd_date' => 'গ্রে প্রাপ্তি',
+        'finish_fabric_delivery_plan_date' => 'ফিনিশড ফ্যাব্রিক ডেলিভারি পরিকল্পনা', 'finish_fabric_rcvd_date' => 'ফিনিশড ফ্যাব্রিক প্রাপ্তি',
+        'sample_sewing_plan_date' => 'স্যাম্পল সেলাই পরিকল্পনা', 'file_handover_date' => 'ফাইল হস্তান্তর', 'pattern_ready_date' => 'প্যাটার্ন প্রস্তুত',
+        'cutting_date' => 'কাটিং', 'print_emb_date' => 'প্রিন্ট/এমব্রয়ডারি', 'sewing_start_date' => 'সেলাই শুরু', 'sewing_output_date' => 'সেলাই আউটপুট',
+        'sample_submitted_date' => 'স্যাম্পল সাবমিট', 'awb_tracking' => 'AWB ট্র্যাকিং', 'last_price_quote_date' => 'শেষ কোট',
+        'price_status' => 'দামের স্ট্যাটাস', 'sample_status' => 'স্যাম্পল স্ট্যাটাস', 'order_confirmation' => 'অর্ডার কনফার্মেশন',
+        'current_order_situation' => 'অর্ডারের বর্তমান অবস্থা', 'remarks' => 'মন্তব্য', 'last_update' => 'শেষ আপডেট', 'actions' => 'অ্যাকশন',
+    ],
+
+    'kpi' => [
+        'total_records' => 'মোট অর্ডার', 'submission_pending' => 'সাবমিশন বাকি', 'submitted' => 'সাবমিট হয়েছে',
+        'order_dropped' => 'অর্ডার বাদ', 'order_confirmed' => 'অর্ডার কনফার্মড', 'total_sample_qty' => 'মোট স্যাম্পল পরিমাণ',
+        'total_possible_qty' => 'মোট সম্ভাব্য পরিমাণ', 'avg_target_price' => 'গড় টার্গেট দাম', 'avg_fob_price' => 'গড় FOB দাম',
+        'total_fob_value' => 'মোট FOB মূল্য',
+    ],
+
+    'dash' => [
+        'deadline' => 'সাবমিট বাকি, সাবমিশন ডেডলাইনের আর কত দিন', 'by_status' => 'স্যাম্পল স্ট্যাটাস অনুযায়ী', 'by_buyer' => 'বায়ার অনুযায়ী',
+        'by_month' => 'বায়ারের অনুরোধের মাস অনুযায়ী', 'buyer' => 'বায়ার', 'samples' => 'স্যাম্পল', 'qty' => 'স্যাম্পল পরিমাণ', 'value' => 'FOB মূল্য',
+        'pending' => 'সাবমিট বাকি', 'no_status' => 'স্ট্যাটাস নেই', 'recent' => 'সর্বশেষ পরিবর্তন', 'no_recent' => 'এখনো কিছু বদলায়নি।',
+        'recent_line' => ':samples স্যাম্পল, :cells ঘর',
+        'bucket' => ['overdue' => 'সময় পেরিয়েছে', 'week' => '০–৭ দিন', 'month' => '৮–৩০ দিন', 'later' => '৩০+ দিন', 'none' => 'তারিখ নেই'],
+        'kind' => ['CREATE' => 'তৈরি', 'EDIT' => 'বদল', 'DELETE' => 'মুছে ফেলা', 'RECALC' => 'আবার হিসাব'],
+    ],
+
+    'btn' => [
+        'add_new' => 'নতুন স্যাম্পল', 'report' => 'পিভট রিপোর্ট', 'print' => 'প্রিন্ট', 'raw_copy' => 'র কপি', 'columns' => 'কলাম',
+        'all' => 'সব', 'none' => 'কোনোটা না', 'apply' => 'প্রয়োগ', 'reset_default' => 'রিসেট', 'save' => 'রেকর্ড সেভ', 'save_changes' => 'পরিবর্তন সেভ',
+        'cancel' => 'বাতিল', 'back' => 'তালিকায় ফিরুন', 'add_colour' => 'রঙ ও পরিমাণ যোগ', 'add_level' => 'যোগ (লেবেল – $)', 'remove' => 'সরান',
+        'edit' => 'এডিট', 'delete' => 'মুছুন', 'copy_all' => 'সব ক্লিপবোর্ডে কপি', 'close' => 'বন্ধ', 'save_field' => 'সেভ', 'full_edit' => 'পুরো এডিট',
+        'upload' => 'ছবি বাছুন', 'remove_image' => 'ছবি সরান', 'view_all' => 'সব দেখুন',
+    ],
+
+    'msg' => [
+        'saved' => 'স্যাম্পল #:no সেভ হয়েছে।', 'updated' => 'স্যাম্পল #:no আপডেট হয়েছে।', 'deleted' => 'স্যাম্পল মোছা হয়েছে।', 'copied' => 'কপি হয়েছে — Excel বা Google Sheets-এ পেস্ট করুন।',
+        'delete_title' => 'এই স্যাম্পলটা মুছবেন?', 'delete_text' => 'স্যাম্পল #:no (:styling) তালিকা থেকে সরে যাবে।',
+        'empty' => 'কোনো ডেভেলপমেন্ট স্যাম্পল মেলেনি।', 'error' => 'কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'image_failed' => 'ছবিটা আপলোড করা যায়নি।',
+        'cell_full_edit' => 'এই ঘরটা পুরো ফর্মে এডিট হয়।', 'raw_hint' => 'সরাসরি Excel বা Google Sheets-এ পেস্ট করুন (Ctrl+V)।',
+        'showing' => ':total-টার মধ্যে :from থেকে :to দেখানো হচ্ছে', 'no_image' => 'ছবি নেই', 'columns_hint' => 'তালিকা আর প্রিন্টে কোন কলাম দেখাবে বাছুন।',
+    ],
+
+    'report' => [
+        'summary' => 'স্টাইল নাম/নম্বর', 'detail' => 'স্টাইল নাম/নম্বর (বায়ার অনুযায়ী বিস্তারিত)', 'show_in_report' => 'রিপোর্টে দেখান:',
+        'buyer' => 'বায়ার', 'row_labels' => 'সারি', 'grand_total' => 'সর্বমোট', 'blank' => '(ফাঁকা)', 'empty' => 'এই ফিল্টারে কোনো স্যাম্পল নেই।',
+        'levels' => ['sample_type' => 'স্যাম্পলের ধরন', 'item' => 'আইটেম', 'styling' => 'স্টাইলিং', 'job_no' => 'জব নং', 'color' => 'রঙ', 'fabrication' => 'ফেব্রিকেশন'],
+        'all_seasons' => 'সব সিজন', 'all_buyers' => 'সব বায়ার',
+    ],
+
+    'opt' => [
+        'required_category' => ['SAMPLE' => 'স্যাম্পল', 'SAMPLE_WITH_PRICE' => 'দামসহ স্যাম্পল'],
+        'sample_type' => [
+            'PROTO' => 'প্রোটো/প্রাথমিক ডেভেলপমেন্ট', 'PP' => 'PP স্যাম্পল', 'REVISED_PROTO' => 'সংশোধিত প্রোটো', 'STRIKE_OFF' => 'স্ট্রাইক অফ',
+            'SMS' => 'SMS স্যাম্পল', 'FABRIC_HANGER' => 'শুধু ফ্যাব্রিক হ্যাঙ্গার', 'PRICE_ONLY' => 'শুধু দাম', 'SHIPMENT' => 'শিপমেন্ট স্যাম্পল', 'OTHERS' => 'অন্যান্য',
+        ],
+        'price_status' => ['OFFERED' => 'দাম দেওয়া হয়েছে', 'PENDING_OFFER' => 'দাম দেওয়া বাকি', 'CANCELLED' => 'বাতিল', 'SELF_DROP' => 'নিজে বাদ', 'CONFIRMED' => 'কনফার্মড'],
+        'sample_status' => ['SUBMISSION_PENDING' => 'সাবমিশন বাকি', 'SUBMITTED' => 'সাবমিট হয়েছে', 'CLARIFICATION' => 'ব্যাখ্যা চলছে', 'CANCELLED' => 'বাতিল', 'SELF_DROP' => 'নিজে বাদ'],
+        'order_confirmation' => [
+            'CONFIRMED_WITH_DEV' => 'ডেভেলপমেন্টসহ কনফার্মড', 'CONFIRMED_WITHOUT_DEV' => 'ডেভেলপমেন্ট ছাড়া কনফার্মড', 'ORDER_CONFIRMED' => 'অর্ডার কনফার্মড',
+            'CONFIRMATION_PENDING' => 'কনফার্মেশন বাকি', 'NEGOTIATION' => 'আলোচনা চলছে', 'PENDING_OFFER' => 'দাম দেওয়া বাকি',
+            'DROP' => 'বাদ', 'CANCELLED' => 'বাতিল', 'SELF_DROP' => 'নিজে বাদ',
+        ],
+        'current_order_situation' => [
+            'FABRIC_BOOKING' => 'ফ্যাব্রিক বুকিং পর্যায়ে', 'KNITTING' => 'নিটিং পর্যায়ে', 'DYEING_FINISHING' => 'ডাইং ও ফিনিশিং পর্যায়ে',
+            'CUTTING' => 'কাটিং পর্যায়ে', 'PRINT_EMB' => 'প্রিন্ট/এমব্রয়ডারি পর্যায়ে', 'SEWING' => 'সেলাই পর্যায়ে', 'READY_TO_SEND' => 'স্যাম্পল পাঠানোর জন্য প্রস্তুত',
+            'SENT_TO_BUYER' => 'স্যাম্পল বায়ারকে পাঠানো হয়েছে', 'CANCELLED' => 'বাতিল', 'SELF_DROP' => 'নিজে বাদ',
+        ],
+    ],
+
+    'attrs' => [
+        'season' => 'সিজন', 'buyer_id' => 'বায়ার', 'customer_name' => 'কাস্টমারের নাম', 'brand' => 'ব্র্যান্ড', 'department' => 'ডিপার্টমেন্ট', 'division' => 'ডিভিশন',
+        'styling' => 'স্টাইলিং', 'job_no' => 'জব নং', 'image_file_id' => 'ছবি', 'items' => 'আইটেম', 'colours' => 'রঙ', 'colours_name' => 'রঙ',
+        'colours_qty' => 'রঙের পরিমাণ', 'target_prices_price' => 'টার্গেট দাম', 'fob_prices_price' => 'FOB দাম',
+        'target_prices_label' => 'টার্গেট দামের লেবেল', 'fob_prices_label' => 'FOB দামের লেবেল', 'sample_qty' => 'স্যাম্পল পরিমাণ', 'possible_qty' => 'সম্ভাব্য পরিমাণ',
+        'actual_order_qty' => 'প্রকৃত অর্ডার পরিমাণ', 'price_status' => 'দামের স্ট্যাটাস', 'sample_status' => 'স্যাম্পল স্ট্যাটাস', 'order_confirmation' => 'অর্ডার কনফার্মেশন',
+        'current_order_situation' => 'অর্ডারের বর্তমান অবস্থা', 'required_category' => 'প্রয়োজনীয় ক্যাটাগরি', 'sample_type' => 'স্যাম্পলের ধরন',
+        'last_price_quote_date' => 'শেষ দাম কোটের তারিখ', 'file' => 'ছবি',
+    ],
+
+    // স্যাম্পল শিট আর তার কলাম সেটআপ (2026-11-21)।
+    'v' => [
+        'number' => ':column-এ একটা সংখ্যা দিন।',
+        'date' => ':column-এ একটা তারিখ দিন।',
+        'option' => ':column: তালিকা থেকে একটা বাছুন।',
+        'image' => ':column-এ একটা ছবি আপলোড করুন।',
+        'read_only' => 'আপনি :column বদলাতে পারবেন না।',
+        'row_gone' => 'এই স্যাম্পলটা এর মধ্যে মুছে ফেলা হয়েছে।',
+        'missing' => 'সারি :row (:serial): :columns পূরণ করুন।',
+        'system_column' => 'শুরুর কলাম মোছা যায় না; লুকিয়ে রাখুন।',
+        'column_in_use' => 'এই ফর্মুলাগুলো কলামটা পড়ে: :columns',
+    ],
+    'cs' => [
+        'source' => ['buyers' => 'বায়ার', 'items' => 'আইটেম (গার্মেন্ট)', 'colours' => 'রঙ', 'fabric_types' => 'ফেব্রিক টাইপ', 'compositions' => 'কম্পোজিশন', 'suppliers' => 'সাপ্লায়ার মাস্টার', 'ds' => 'ডেভ স্যাম্পল তালিকা: :name'],
+    ],
+];

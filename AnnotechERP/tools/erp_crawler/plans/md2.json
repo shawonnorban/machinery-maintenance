@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/merchandising/accessories-booking-view" },
+ { "wait": 4000 },
+ { "click": "aside button:has-text('MASTER DATA')", "wait": 2000 },
+ { "click": "aside a:has-text('Item Type Master')", "wait": 4000 },
+ { "url": "u1" },
+ { "dump": "it_records", "root": "main" },
+ { "texts": "it_texts", "of": "main h1, main p, main th, main td, main button" },
+ { "fullshot": "it-records" },
+ { "click": "aside a:has-text('Nature of Work Master')", "wait": 4000 },
+ { "url": "u2" },
+ { "dump": "nw_records", "root": "main" },
+ { "texts": "nw_texts", "of": "main h1, main p, main th, main td, main button" },
+ { "fullshot": "nw-records" },
+ { "click": "aside a:has-text('Style & Order Upload')", "wait": 4000 },
+ { "url": "u3" },
+ { "dump": "up", "root": "main" },
+ { "texts": "up_texts", "of": "main h1, main h2, main h3, main p, main th, main td, main button, main label" },
+ { "fullshot": "up-records" }
+]

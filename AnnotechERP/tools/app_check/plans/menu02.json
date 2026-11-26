@@ -1,0 +1,2 @@
+[{"goto": "/merchandise-desk/style-order-dashboard"}, {"wait": 25000}, {"shot": "merch-menu"},
+ {"goto": "/dye-house/dyeing-method-setup"}, {"wait": 25000}, {"shot": "dye-menu"}]

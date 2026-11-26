@@ -252,11 +252,19 @@ class MaintenanceTemplateApiController extends ApiController
         return $validated;
     }
 
+    /**
+     * By ULID or by code — pages address a template by its code
+     * (`PM-SEW-WEEKLY`), never the ULID. A code is unique within one company
+     * and within the platform's own set, so where both have it the
+     * company's own template wins.
+     */
     private function findTemplate(string $id): MaintenanceTemplate
     {
         return MaintenanceTemplate::availableTo($this->context->companyId())
+            ->where(fn ($q) => $q->whereKey($id)->orWhere('code', $id))
             ->with(['assetType:id,name', 'maintenanceType:id,name', 'versions'])
-            ->findOrFail($id);
+            ->orderByRaw('company_id IS NULL')
+            ->firstOrFail();
     }
 
     /**

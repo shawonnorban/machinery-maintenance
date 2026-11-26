@@ -1,0 +1,60 @@
+[
+ {
+  "goto": "/finishing-line/df-production-amendment?tab=new"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "Amendment Date",
+  "exact": true,
+  "text": "2026-11-07"
+ },
+ {
+  "pick": "Production Line",
+  "exact": true,
+  "option": "Stentering (ST)"
+ },
+ {
+  "fill": "Input (Kg)",
+  "exact": true,
+  "text": "99.2"
+ },
+ {
+  "fill": "Output (Kg)",
+  "exact": true,
+  "text": "97.9"
+ },
+ {
+  "fill": "Reason for Correction",
+  "exact": true,
+  "text": "Scale re-read at the stenter exit"
+ },
+ {
+  "shot": "am-new"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 14000
+ },
+ {
+  "goto": "/finishing-line/df-production-amendment"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "texts": "amends",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/df-production-entry-mc-wise?tab=records"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "sheets",
+  "of": "main tbody tr"
+ }
+]

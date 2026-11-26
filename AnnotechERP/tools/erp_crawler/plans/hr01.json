@@ -1,0 +1,18 @@
+[
+ { "goto": "/m/hr-payroll/employee-quick-registration" }, { "wait": 6000 },
+ { "texts": "qr", "of": "main h2, main h3, main p, main label, main button, main span, main option" },
+ { "fullshot": "hr01-quick-reg" },
+ { "click": "main button:has-text('Save') >> visible=true >> nth=0", "wait": 2000 },
+ { "texts": "qr_empty", "of": "main p, main span, [role=alert], li" },
+ { "fullshot": "hr01-quick-reg-empty" },
+ { "goto": "/m/hr-payroll/employee-register" }, { "wait": 6000 },
+ { "texts": "el", "of": "main h2, main h3, main p, main th, main td, main button, main label" },
+ { "html": "el_actions", "of": "main tbody tr:first-child td:last-child *" },
+ { "fullshot": "hr01-employee-list" },
+ { "goto": "/m/hr-payroll/employee-assignment" }, { "wait": 6000 },
+ { "texts": "ea", "of": "main h2, main h3, main p, main th, main td, main button, main label, main option" },
+ { "fullshot": "hr01-assignment" },
+ { "click": "main tbody tr >> nth=0", "wait": 2000 },
+ { "texts": "ea_row", "of": "main h2, main h3, main p, main label, main button, main option" },
+ { "fullshot": "hr01-assignment-row" }
+]

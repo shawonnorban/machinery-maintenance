@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/material-procurement/procurement-notifications" },
+ { "wait": 5000 },
+ { "dump": "notif_dump", "root": "main" },
+ { "texts": "notif_texts", "of": "main h1, main h2, main h3, main p, main li, main button, main a, main span" },
+ { "fullshot": "mp36-notifications" },
+ { "goto": "/m/material-procurement/procurement-audit-trail" },
+ { "wait": 5000 },
+ { "dump": "audit_dump", "root": "main" },
+ { "texts": "audit_texts", "of": "main h2, main h3, main p, main th, main td, main button, main select, main option" },
+ { "fullshot": "mp36-audit" },
+ { "click": "main tbody tr >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "audit_row_click", "of": "[role=dialog] *, main aside *" },
+ { "fullshot": "mp36-audit-row" }
+]

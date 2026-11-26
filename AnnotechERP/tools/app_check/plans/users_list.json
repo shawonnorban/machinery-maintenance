@@ -1,0 +1,6 @@
+[
+ {"goto": "/access-control/user-account"},
+ {"see": "Rahim Uddin"},
+ {"eval": "document.querySelectorAll('tbody tr').length"},
+ {"shot": "users"}
+]

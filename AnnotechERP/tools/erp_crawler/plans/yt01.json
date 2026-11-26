@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/knitting/knit-plan-requisition-for-yarn-test"},
+ {"fullshot": "list"},
+ {"texts": "list_rows", "of": "main tbody tr"},
+ {"options": "status_opts", "of": "main select >> nth=0"},
+ {"click": "main [role=tab]:has-text('Knit Plan & Requisition for Yarn Test') >> nth=1", "wait": 2500},
+ {"fullshot": "form"},
+ {"texts": "labels", "of": "main label"},
+ {"texts": "hints", "of": "main p"},
+ {"html": "inputs", "of": "main input, main select, main textarea, main button[aria-haspopup]"},
+ {"texts": "buttons", "of": "main button"}
+]

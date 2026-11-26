@@ -9,8 +9,10 @@ async function createTechnician(previousState, formData) {
     await apiFetch("/technicians", {
       method: "POST",
       body: JSON.stringify({
-        name: formData.get("name"),
-        employee_id: formData.get("employee_id"),
+        // Picked from HR & Payroll; the API fills name and ID from the employee.
+        hr_employee_id: formData.get("hr_employee_id") || null,
+        name: formData.get("name") || null,
+        employee_id: formData.get("employee_id") || null,
         factory_id: formData.get("factory_id"),
         department_id: formData.get("department_id") || null,
         production_line_id: formData.get("production_line_id") || null,

@@ -1,42 +1,41 @@
 import Link from "next/link";
 import { Plus, Building2, CheckCircle2, Ban, Archive } from "lucide-react";
 import { platformApiFetch } from "@/lib/platform-api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { StatCard } from "@/components/ui/stat-card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { PlatformHeader, Kpi } from "@/components/platform/ui";
 import { TenantsTable } from "@/components/platform/tenants-table";
 import { ClosedTenantsList } from "@/components/platform/closed-tenants-list";
 import { restoreTenant } from "./actions";
 
-/** Mirrors `TenantController::index` — every customer, seen from the platform (SRS 3.1, 5, 40). */
+/** Every customer, seen from the platform (SRS 3.1, 5, 40). */
 export default async function PlatformTenantsPage() {
-  const [tenants, closed] = await Promise.all([
-    platformApiFetch("/tenants"),
-    platformApiFetch("/tenants?status=closed"),
-  ]);
+  const [tenants, closed] = await Promise.all([platformApiFetch("/tenants"), platformApiFetch("/tenants?status=closed")]);
 
   const active = tenants.filter((t) => t.status === "ACTIVE").length;
   const suspended = tenants.filter((t) => t.status === "SUSPENDED").length;
+  const users = tenants.reduce((a, t) => a + (t.users ?? 0), 0);
 
   return (
     <>
-      <PageHeader
+      <PlatformHeader
         breadcrumb={[{ label: "Customers" }]}
         title="Customers"
-        description="Every company on the platform, and the contract behind each one."
+        description="Every company on the platform, the contract behind each one, and what it uses."
+        icon={<Building2 />}
         actions={
-          <Link href="/platform/tenants/new" className={cn(buttonVariants({ size: "sm" }))}>
+          <Link href="/platform/tenants/new" className={cn(buttonVariants())}>
             <Plus /> New customer
           </Link>
         }
       />
 
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total customers" value={tenants.length} icon={<Building2 />} tone="brand" />
-        <StatCard label="Active" value={active} icon={<CheckCircle2 />} tone="success" />
-        <StatCard label="Suspended" value={suspended} icon={<Ban />} tone="danger" />
-        <StatCard label="Closed" value={closed.length} icon={<Archive />} tone="warning" />
+      <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-5">
+        <Kpi label="Customers" value={tenants.length} icon={<Building2 />} tone="brand" />
+        <Kpi label="Active" value={active} icon={<CheckCircle2 />} tone="success" />
+        <Kpi label="Suspended" value={suspended} icon={<Ban />} tone="danger" />
+        <Kpi label="Closed" value={closed.length} icon={<Archive />} tone="warning" />
+        <Kpi label="Users" value={users.toLocaleString("en-US")} tone="info" sub="across every customer" />
       </div>
 
       <TenantsTable tenants={tenants} />

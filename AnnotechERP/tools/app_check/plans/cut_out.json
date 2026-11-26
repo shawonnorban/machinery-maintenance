@@ -1,0 +1,89 @@
+[
+ {
+  "goto": "/cutting-floor/create-bundle-card"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='PO No']",
+  "text": "PO-1001"
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Color']",
+  "text": "White"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": "tr:has-text('CUT-20261116-0001') >> role=button[name='Open']",
+  "after": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Good pieces, size S']",
+  "text": "78"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Rejected pieces, size S']",
+  "text": "2"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Fabric Used (kg)']",
+  "text": "58.5"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Remnant / Returned (kg)']",
+  "text": "0.75"
+ },
+ {
+  "shot": "out-filled"
+ },
+ {
+  "click": "role=button[name='Save Output']",
+  "after": 20000
+ },
+ {
+  "shot": "out-saved"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Pcs per Bundle']",
+  "text": "20"
+ },
+ {
+  "click": "role=button[name=/Create 10 Cards/]",
+  "after": 20000
+ },
+ {
+  "shot": "cards-made"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Pieces to card, size S']",
+  "text": "10"
+ },
+ {
+  "click": "role=button[name=/Create 1 Cards/]",
+  "after": 15000
+ },
+ {
+  "shot": "over-warn"
+ },
+ {
+  "click": "[role=alertdialog] >> role=button[name='Make the cards'], [role=dialog] >> role=button[name='Make the cards']",
+  "after": 15000
+ },
+ {
+  "shot": "over-made"
+ }
+]

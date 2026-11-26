@@ -1,0 +1,342 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "goto": "/work-study/item-spec-wise-cm?tab=new"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "shot": "c01-cm-new"
+ },
+ {
+  "pick": "Item Specification",
+  "option": "SS27-TEE01/1"
+ },
+ {
+  "pick": "Buyer",
+  "option": "LPP"
+ },
+ {
+  "fill": "Booking Month",
+  "text": "2026-10"
+ },
+ {
+  "fill": "Order Qty",
+  "text": "1900"
+ },
+ {
+  "fill": "CM/Dz",
+  "text": "14.5"
+ },
+ {
+  "fill": "Budget Exp %",
+  "text": "6"
+ },
+ {
+  "fill": "Lead Time",
+  "text": "60"
+ },
+ {
+  "fill": "Confirm Date",
+  "text": "2026-10-12"
+ },
+ {
+  "fill": "Ship Date",
+  "text": "2026-12-20"
+ },
+ {
+  "click": "main button:has-text('Save CM rate')"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "c02-cm-records"
+ },
+ {
+  "goto": "/work-study/item-spec-wise-cm?tab=groups"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": "main button:has-text('Knit Tops')"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "shot": "c03-cm-groups"
+ },
+ {
+  "goto": "/work-study/gmt-item-specification?tab=list"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "shot": "c04-item-list"
+ },
+ {
+  "goto": "/work-study/oh-cost-allocation?tab=new"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Company",
+  "option": "Delta"
+ },
+ {
+  "pick": "Select Year",
+  "option": "2026"
+ },
+ {
+  "pick": "Month",
+  "option": "December"
+ },
+ {
+  "pick": "Cost Head",
+  "option": "Garments Section \u2014 Wages And Allowance"
+ },
+ {
+  "fill": "Monthly Expense",
+  "text": "250000"
+ },
+ {
+  "fill": "WrkDay/Mn",
+  "text": "26"
+ },
+ {
+  "shot": "c05-oh-new"
+ },
+ {
+  "click": "main button:has-text('Save cost head')"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "c06-oh-records"
+ },
+ {
+  "goto": "/work-study/oh-cost-allocation?tab=monthly"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Company",
+  "option": "Delta"
+ },
+ {
+  "pick": "Select Year",
+  "option": "2026"
+ },
+ {
+  "pick": "Month",
+  "option": "December"
+ },
+ {
+  "click": "main button:has-text('Show')"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "fill": "Wages And Allowance Cutting",
+  "sel": "input[aria-label='Wages And Allowance Cutting']",
+  "text": "20000"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Wages And Allowance Sewing']",
+  "text": "130000"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Salary And Allowance Monthly Expense']",
+  "text": "52000"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Salary And Allowance Sewing']",
+  "text": "52000"
+ },
+ {
+  "click": "main button:has-text('Save Sheet')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "c07-oh-sheet"
+ },
+ {
+  "goto": "/work-study/oh-cost-allocation?tab=heads"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": "main button:has-text('Garments Section')"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "shot": "c08-oh-heads"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=config&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "c09-config-loaded"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LPP-2026-000001 %BgtAsCM']",
+  "text": "12"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LPP-2026-000001 ExcRate']",
+  "text": "110"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LPP-2026-000001 Rate/Pcs(CUT)']",
+  "text": "0.6"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LPP-2026-000001 Rate/Pcs(SEW)']",
+  "text": "3.5"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LPP-2026-000001 Rate/Pcs(FIN)']",
+  "text": "1.1"
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "c10-config-saved"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=lines&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LINE01 Prod[g]']",
+  "text": "800"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LINE01 Prod[aot]']",
+  "text": "100"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LINE01 Prod[eot]']",
+  "text": "50"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LINE01 ManOT[aot]']",
+  "text": "60"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LINE05 Prod[g]']",
+  "text": "600"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LINE05 Prod[aot]']",
+  "text": "80"
+ },
+ {
+  "shot": "c11-lines-filled"
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "c12-lines-saved"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=profit&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "c13-profit"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "c14-profit"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=config&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "c15-config"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation?tab=lines&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "c16-lines"
+ },
+ {
+  "goto": "/work-study/oh-cost-allocation?tab=monthly&period=2026-12"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "shot": "c17-sheet-url"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "c18-sheet"
+ },
+ {
+  "goto": "/work-study/daily-line-costing-operation"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "shot": "c19-dl-records"
+ }
+]

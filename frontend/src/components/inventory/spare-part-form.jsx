@@ -1,8 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { startTransition, useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,20 +66,14 @@ function SparePartForm({ part = null, categories, manufacturers, uoms = [], acti
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {state?.status === "error" && !state.errors ? (
-        <div className="lg:col-span-12">
-          <Alert variant="danger">{state.message}</Alert>
-        </div>
+        <Alert variant="danger">{state.message}</Alert>
       ) : null}
 
-      <div className="lg:col-span-7">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("details")}</CardTitle>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-3">
+      <div>
+        <FormSection legend={t("details")}>
+            <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
               <FormField label={t("part_number")} required error={state?.errors?.part_number?.[0]}>
                 {(fieldProps) => <Input {...fieldProps} value={partNumber} onChange={(e) => setPartNumber(e.target.value)} maxLength={64} required />}
               </FormField>
@@ -91,7 +86,7 @@ function SparePartForm({ part = null, categories, manufacturers, uoms = [], acti
               {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
             </FormField>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
               <FormField label={t("category")} error={state?.errors?.category_id?.[0]}>
                 {(fieldProps) => (
                   <Select
@@ -121,17 +116,12 @@ function SparePartForm({ part = null, categories, manufacturers, uoms = [], acti
             <FormField label={t("notes")} error={state?.errors?.notes?.[0]}>
               {(fieldProps) => <Textarea {...fieldProps} value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={2000} />}
             </FormField>
-          </CardBody>
-        </Card>
+        </FormSection>
       </div>
 
-      <div className="lg:col-span-5">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("stock")}</CardTitle>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-3">
+      <div>
+        <FormSection legend={t("stock")}>
+            <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
               <FormField label={t("minimum_stock")} error={state?.errors?.minimum_stock?.[0]}>
                 {(fieldProps) => (
                   <Input {...fieldProps} type="number" step="0.0001" min="0" value={minimumStock} onChange={(e) => setMinimumStock(e.target.value)} />
@@ -143,9 +133,9 @@ function SparePartForm({ part = null, categories, manufacturers, uoms = [], acti
                 )}
               </FormField>
             </div>
-            <p className="-mt-2 text-xs text-foreground-muted">{t("reorder_hint")}</p>
+            <p className="text-xs text-foreground-muted sm:pl-[11.25rem]">{t("reorder_hint")}</p>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
               <FormField label={t("lead_time_days")} error={state?.errors?.lead_time_days?.[0]}>
                 {(fieldProps) => (
                   <Input {...fieldProps} type="number" min="0" max="3650" value={leadTimeDays} onChange={(e) => setLeadTimeDays(e.target.value)} />
@@ -159,31 +149,30 @@ function SparePartForm({ part = null, categories, manufacturers, uoms = [], acti
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 text-sm text-foreground">
+              <label className="flex items-center gap-2 sm:ml-[11.25rem] text-sm text-foreground">
                 <Checkbox checked={isCriticalSpare} onCheckedChange={setIsCriticalSpare} />
                 {t("is_critical_spare")}
               </label>
-              <p className="pl-7 text-xs text-foreground-muted">{t("critical_hint")}</p>
+              <p className="pl-7 text-xs text-foreground-muted sm:ml-[11.25rem]">{t("critical_hint")}</p>
 
-              <label className="flex items-center gap-2 text-sm text-foreground">
+              <label className="flex items-center gap-2 sm:ml-[11.25rem] text-sm text-foreground">
                 <Checkbox checked={hazardous} onCheckedChange={setHazardous} />
                 {t("hazardous")}
               </label>
             </div>
 
             <p className="text-xs text-foreground-muted">{t("no_opening_quantity_hint")}</p>
-          </CardBody>
-        </Card>
-
-        <div className="mt-4 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            {tc("cancel")}
-          </Button>
-          <Button type="submit" loading={pending}>
-            {isEdit ? t("save_changes") : t("create_part")}
-          </Button>
-        </div>
+        </FormSection>
       </div>
+
+      <FormActions>
+        <Button type="button" variant="outline" onClick={() => router.back()}>
+          <ArrowLeft /> {tc("cancel")}
+        </Button>
+        <Button type="submit" loading={pending}>
+          <Save /> {isEdit ? t("save_changes") : t("create_part")}
+        </Button>
+      </FormActions>
     </form>
   );
 }

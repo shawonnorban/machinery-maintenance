@@ -6,7 +6,9 @@ namespace App\Modules\Metering\Models;
 
 use App\Modules\Asset\Models\Asset;
 use App\Shared\Casts\MoneyCast;
+use App\Shared\Concerns\AssignsDocumentNumber;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,9 +21,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class AssetMeter extends BaseModel
 {
     use BelongsToTenant;
+    use AssignsDocumentNumber;
+    use ResolvesByReference;
+
+    /** Pages address it by this number (MTR-00001), never the ULID. */
+    public const ROUTE_REFERENCE = 'meter_number';
+
+    public const NUMBER_SERIES = 'ASSET_METER';
 
     protected $fillable = [
-        'company_id', 'asset_id', 'meter_type_id',
+        'company_id', 'meter_number', 'asset_id', 'meter_type_id',
         'current_value', 'last_reading_at', 'status',
     ];
 

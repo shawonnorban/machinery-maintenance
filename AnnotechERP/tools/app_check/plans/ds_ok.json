@@ -1,0 +1,1 @@
+[{"goto": "/dev-sample-status/list"}, {"wait": 6000}, {"as": "ok", "eval": "JSON.stringify({rows:document.querySelectorAll('tbody tr[data-row]').length})"}]

@@ -1,0 +1,16 @@
+[
+ {"goto": "/m/dyeing/grey-fabric-requisition-bulk"},
+ {"click": "main button[role=tab]:has-text('Records')", "wait": 2500},
+ {"texts": "indent_th", "of": "main thead th"},
+ {"dump": "indent_rec", "root": "main"},
+ {"goto": "/m/dyeing/dyeing-batch-src-f-fab"},
+ {"click": "main button[role=tab]:has-text('Records')", "wait": 2500},
+ {"texts": "ffab_th", "of": "main thead th"},
+ {"dump": "ffab_rec", "root": "main"},
+ {"goto": "/m/dyeing/gray-2-leftover-transfer-batch-end"},
+ {"texts": "g2l_th", "of": "main thead th"},
+ {"fullshot": "g2l"},
+ {"goto": "/m/dyeing/batch-card-split"},
+ {"texts": "split_th", "of": "main thead th"},
+ {"fullshot": "split"}
+]

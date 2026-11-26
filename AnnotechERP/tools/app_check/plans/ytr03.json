@@ -1,0 +1,9 @@
+[
+ {"goto": "/knit-production/dyed-yarn-receive-challan?tab=entry&ref=DYR-2026110001"},
+ {"wait": 6000},
+ {"texts": "labels", "of": "main label > span:first-child"},
+ {"texts": "alert", "of": "main [role=alert]"},
+ {"goto": "/knit-production/grey-yarn-transfer-challan-for-yd"},
+ {"wait": 4000},
+ {"printpdf": "main button[aria-label^='Print GYT']", "as": "ytr-grey-print2"}
+]

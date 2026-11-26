@@ -1,0 +1,22 @@
+[
+ {"goto": "/m/merchandising/price-quotation"},
+ {"clickSel": "main [role=tab]:has-text('Buyer Rates')"},
+ {"clickSel": "main button:has-text('INQ-20260001')", "shot": "pq_rates_inq", "rows": 15},
+ {"scroll": 0.5, "shot": "pq_rates_inq_mid", "rows": 15},
+ {"goto": "/m/merchandising/price-quotation"},
+ {"clickSel": "main table tbody tr:first-child button:has-text('Edit')", "shot": "pq_edit", "rows": 6},
+ {"goto": "/m/merchandising/price-quotation"},
+ {"peek": "main table tbody tr:first-child td:last-child button:last-child", "shot": "pq_delete", "rows": 4},
+ {"escape": true},
+ {"goto": "/m/merchandising/price-quotation"},
+ {"clickSel": "main [role=tab]:has-text('Quotation')"},
+ {"clickSel": "main button:has-text('LPP')"},
+ {"peek": "main table tbody tr:first-child button:has-text('Revise')", "shot": "pq_revise", "rows": 6},
+ {"escape": true},
+ {"peek": "main table tbody tr:first-child button:has-text('Send Quotation')", "shot": "pq_send", "rows": 6},
+ {"escape": true},
+ {"peek": "main table tbody tr:first-child button:has-text('Confirm')", "shot": "pq_confirm", "rows": 6},
+ {"escape": true},
+ {"peek": "main table tbody tr:first-child button:has-text('Cancel')", "shot": "pq_cancel", "rows": 6},
+ {"escape": true}
+]

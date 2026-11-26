@@ -1,0 +1,1 @@
+[{"goto":"/work-study/gmt-item-specification"},{"wait":3000},{"printpdf":"button:has-text(\"Print\")","as":"p-itemlist"}]

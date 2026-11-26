@@ -1,0 +1,271 @@
+[
+ {
+  "goto": "/finishing-line/finishing-qc-entry?tab=new"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "Entry Date",
+  "exact": true,
+  "text": "2026-11-06"
+ },
+ {
+  "pick": "Batch No",
+  "exact": true,
+  "option": "B-26110011"
+ },
+ {
+  "pick": "Shift",
+  "exact": true,
+  "option": "A"
+ },
+ {
+  "fill": "Roll No",
+  "exact": true,
+  "text": "r-01"
+ },
+ {
+  "fill": "Weight (Kg)",
+  "exact": true,
+  "text": "16.5"
+ },
+ {
+  "fill": "GSM",
+  "exact": true,
+  "text": "181"
+ },
+ {
+  "fill": "Dia",
+  "exact": true,
+  "text": "72"
+ },
+ {
+  "pick": "Shade",
+  "exact": true,
+  "option": "On Shade"
+ },
+ {
+  "pick": "Result",
+  "exact": true,
+  "option": "OK"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 14000
+ },
+ {
+  "goto": "/finishing-line/finishing-qc-entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "entries",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "q-entries"
+ },
+ {
+  "goto": "/finishing-line/shade-gsm-width-check?tab=new"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "pick": "Batch",
+  "exact": true,
+  "option": "B-26110011"
+ },
+ {
+  "fill": "Model/Continuity",
+  "exact": true,
+  "text": "Body + rib, one continuity"
+ },
+ {
+  "pick": "Status",
+  "exact": true,
+  "option": "Approved"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 14000
+ },
+ {
+  "goto": "/finishing-line/shade-gsm-width-check"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "texts": "decisions",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "q-decisions"
+ },
+ {
+  "goto": "/finishing-line/fabric-inspection-4-point?tab=entry"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "pick": "batch",
+  "sel": "main label:has(> span:text-matches(\"^Batch No.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "B-26110011"
+ },
+ {
+  "pick": "shift",
+  "sel": "main label:has(> span:text-matches(\"^Shift.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "A"
+ },
+ {
+  "fill": "dia",
+  "sel": "main label:has(> span:text-matches(\"^Actual Dia.?$\")) input >> nth=0",
+  "text": "72"
+ },
+ {
+  "fill": "sl",
+  "sel": "main label:has(> span:text-matches(\"^Shrinkage L%.?$\")) input >> nth=0",
+  "text": "-3.5"
+ },
+ {
+  "fill": "sw",
+  "sel": "main label:has(> span:text-matches(\"^Shrinkage W%.?$\")) input >> nth=0",
+  "text": "-2"
+ },
+ {
+  "fill": "sp",
+  "sel": "main label:has(> span:text-matches(\"^Spirality.?$\")) input >> nth=0",
+  "text": "4"
+ },
+ {
+  "pick": "verdict",
+  "sel": "main label:has(> span:text-matches(\"^Verdict.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Pass"
+ },
+ {
+  "fill": "roll",
+  "sel": "main label:has(> span:text-matches(\"^Fabric Roll No.?$\")) input >> nth=0",
+  "text": "R-01"
+ },
+ {
+  "fill": "w",
+  "sel": "main label:has(> span:text-matches(\"^Weight .Kg..?$\")) input >> nth=0",
+  "text": "16.5"
+ },
+ {
+  "fill": "pts",
+  "sel": "main label:has(> span:text-matches(\"^4-Point.?$\")) input >> nth=0",
+  "text": "6"
+ },
+ {
+  "fill": "gr",
+  "sel": "main label:has(> span:text-matches(\"^Grade.?$\")) input >> nth=0",
+  "text": "A"
+ },
+ {
+  "pick": "res",
+  "sel": "main label:has(> span:text-matches(\"^Result.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Pass"
+ },
+ {
+  "click": "main button:has-text('Add Roll')",
+  "after": 800
+ },
+ {
+  "fill": "roll2",
+  "sel": "main label:has(> span:text-matches(\"^Fabric Roll No.?$\")) input >> nth=0",
+  "text": "R-02"
+ },
+ {
+  "fill": "w2",
+  "sel": "main label:has(> span:text-matches(\"^Weight .Kg..?$\")) input >> nth=0",
+  "text": "17.2"
+ },
+ {
+  "fill": "pts2",
+  "sel": "main label:has(> span:text-matches(\"^4-Point.?$\")) input >> nth=0",
+  "text": "11"
+ },
+ {
+  "fill": "gr2",
+  "sel": "main label:has(> span:text-matches(\"^Grade.?$\")) input >> nth=0",
+  "text": "B"
+ },
+ {
+  "pick": "res2",
+  "sel": "main label:has(> span:text-matches(\"^Result.?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Pass"
+ },
+ {
+  "click": "main button:has-text('Add Roll')",
+  "after": 800
+ },
+ {
+  "shot": "i-filled"
+ },
+ {
+  "click": "main button:has-text('Save') >> nth=-1",
+  "after": 16000
+ },
+ {
+  "texts": "i_badge",
+  "of": "main span.rounded-full"
+ },
+ {
+  "goto": "/finishing-line/fabric-inspection-4-point"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Post')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Post'), [role=dialog] button:has-text('Post')",
+  "after": 15000
+ },
+ {
+  "texts": "inspections",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "tiles",
+  "of": "main span.inline-flex"
+ },
+ {
+  "shot": "i-list"
+ },
+ {
+  "goto": "/finishing-line/df-process-wise-delivery"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "board",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/finishing-line/qc-rejection-re-process-advice?tab=new"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "a-new"
+ },
+ {
+  "goto": "/finishing-line/fabric-inspection-4-point?tab=entry&doc=FFI-2026110001"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "i-posted"
+ }
+]

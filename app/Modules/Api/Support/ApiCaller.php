@@ -6,6 +6,8 @@ namespace App\Modules\Api\Support;
 
 use App\Modules\Api\Models\ApiClient;
 use App\Modules\Identity\Models\User;
+use App\Modules\Identity\Support\MenuRegistry;
+use App\Modules\Platform\Support\LicensedModules;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
 
@@ -62,12 +64,23 @@ class ApiCaller
             return false;
         }
 
+        // A module the platform has not given this company refuses everyone, machines included.
+        if (! LicensedModules::permits($this->companyId, $permission)) {
+            return false;
+        }
+
         if ($this->client !== null) {
             return $this->client->allows($permission);
         }
 
         // Gate::forUser rather than Gate::allows: nothing has logged this user
         // in, and nothing should — a bearer token is not a session.
+        if ($this->user !== null && $this->user->isReadOnly() && MenuRegistry::flagFor($permission) !== 'V') {
+            // A READ_ONLY account (AnnotechERP 02/01) signs in and looks;
+            // every permission that would change something is withheld.
+            return false;
+        }
+
         return $this->user !== null && Gate::forUser($this->user)->allows($permission);
     }
 

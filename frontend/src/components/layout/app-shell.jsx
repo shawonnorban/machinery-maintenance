@@ -1,52 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, ChevronLeft, ChevronRight, Wrench } from "lucide-react";
+import { Menu, X, PanelLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { SupportSessionBanner } from "@/components/layout/support-session-banner";
 import { SyncIndicator } from "@/components/offline/sync-indicator";
 import { LocaleToggle } from "@/components/layout/locale-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
-import { SidebarProfile } from "@/components/layout/sidebar-profile";
+import { ChatButton } from "@/components/chat/chat-button";
+import { ChatDock } from "@/components/chat/chat-dock";
 import { CompanySwitcher } from "@/components/layout/company-switcher";
-import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { ErpSidebar } from "@/components/layout/erp-sidebar";
+import { ModuleChip, ScreenSearch, UserMenu } from "@/components/layout/erp-topbar";
 
 /**
- * docs/UI-DESIGN-SYSTEM.md §2: the tenant application shell. Fixed sidebar
- * (260px expanded / 72px collapsed, an overlay drawer below `lg`), sticky
- * topbar, `w-[95%] p-6 space-y-6` content (widened from the design doc's own
- * `max-w-7xl` per direct request — most screens here are dense tables/forms
- * that benefit from the extra width more than a hard cap helps readability).
+ * The tenant application shell, laid out as Brickland's (AnnotechERP UI
+ * parity): a sidebar of sections → modules → folders → screens with the
+ * company mark on top and the system-status card at the foot; a topbar with
+ * the current module chip, screen search, the company, theme, language,
+ * notifications and the signed-in user; the page; a one-line footer.
  *
- * `navGroups` is plain serializable data, rendered into `SidebarNav` here
- * rather than the caller building `<SidebarNav>` itself and handing this
- * component the element (or a function of `collapsed`) — a `Server
- * Component` caller (the (app) layout) can pass a plain-data prop across
- * the client boundary, but not a function, which RSC serialization
- * rejects outright ("Functions cannot be passed directly to Client
- * Components"). Owning the render here is also what actually gets this
- * shell's own `collapsed` state to `SidebarNav`'s icon-only mode, which a
- * pre-built element from the caller could never receive.
+ * `modules` is plain data with rendered icon nodes — a server component can
+ * pass JSX across the client boundary, but not a function.
  *
  * @param {{
- *   navGroups: { label: string, items: { label: string, href: string, icon?: React.ReactNode }[] }[],
- *   topbarExtra?: React.ReactNode,
- *   unreadNotifications?: number,
- *   recentNotifications?: object[],
- *   locale?: string,
- *   userName?: string,
- *   userEmail?: string,
- *   companies?: { id: string, name: string, code: string }[],
- *   currentCompanyId?: string,
- *   companyLogoUrl?: string,
- *   switchCompanyAction?: (companyId: string) => Promise<void>,
- *   children: React.ReactNode,
+ *   modules: object[], moduleCount?: number, unreadNotifications?: number, recentNotifications?: object[],
+ *   locale?: string, userName?: string, userEmail?: string, companies?: object[], currentCompanyId?: string,
+ *   companyName?: string, companyLogoUrl?: string, switchCompanyAction?: (companyId: string) => Promise<void>,
+ *   impersonatedBy?: object, children: React.ReactNode,
  * }} props
  */
 function AppShell({
-  navGroups,
-  topbarExtra,
+  modules = [],
+  moduleCount = 0,
   unreadNotifications = 0,
   recentNotifications = [],
   locale = "en",
@@ -54,6 +41,7 @@ function AppShell({
   userEmail,
   companies = [],
   currentCompanyId,
+  companyName,
   companyLogoUrl,
   switchCompanyAction,
   impersonatedBy,
@@ -64,153 +52,95 @@ function AppShell({
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Mobile overlay drawer */}
       {mobileOpen ? (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-foreground/40" onClick={() => setMobileOpen(false)} />
-          <div className="relative z-10 flex h-full w-[260px] flex-col border-r border-border bg-surface shadow-lg">
-            <SidebarHeader
-              onClose={() => setMobileOpen(false)}
-              companies={companies}
-              currentCompanyId={currentCompanyId}
-              companyLogoUrl={companyLogoUrl}
-              switchCompanyAction={switchCompanyAction}
-            />
-            <SidebarNav groups={navGroups} />
-            <SidebarProfile name={userName} email={userEmail} />
+          <div className="relative z-10 flex h-full w-[272px] flex-col border-r border-border bg-surface shadow-lg">
+            <SidebarBrand name={companyName} logoUrl={companyLogoUrl} onClose={() => setMobileOpen(false)} />
+            <ErpSidebar modules={modules} moduleCount={moduleCount} />
           </div>
         </div>
       ) : null}
 
-      {/* Fixed sidebar, desktop — `sticky top-0 h-screen` pins the whole rail
-          to the viewport regardless of how tall the main content grows, so
-          the logo/switcher header and the profile footer never scroll out
-          of view; only `SidebarNav`'s own `overflow-y-auto` list scrolls. */}
-      <aside
-        className={cn(
-          "sticky top-0 hidden h-screen shrink-0 flex-col border-r border-border bg-surface transition-[width] duration-150 ease-out lg:flex",
-          collapsed ? "w-[72px]" : "w-[260px]",
-        )}
-      >
-        <SidebarHeader
-          collapsed={collapsed}
-          onToggleCollapse={() => setCollapsed((value) => !value)}
-          companies={companies}
-          currentCompanyId={currentCompanyId}
-          companyLogoUrl={companyLogoUrl}
-          switchCompanyAction={switchCompanyAction}
-        />
-        <SidebarNav groups={navGroups} collapsed={collapsed} />
-        <SidebarProfile name={userName} email={userEmail} collapsed={collapsed} />
+      {/* Pinned to the viewport: only the menu list scrolls. */}
+      <aside className={cn("sticky top-0 hidden h-screen shrink-0 flex-col border-r border-border bg-surface transition-[width] duration-150 ease-out lg:flex", collapsed ? "w-[72px]" : "w-[272px]")}>
+        <SidebarBrand name={companyName} logoUrl={companyLogoUrl} collapsed={collapsed} />
+        <ErpSidebar modules={modules} collapsed={collapsed} moduleCount={moduleCount} />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        {impersonatedBy ? (
-          <SupportSessionBanner actingAsName={userName} actingAsEmail={userEmail} staffName={impersonatedBy.name} />
-        ) : null}
+        {impersonatedBy ? <SupportSessionBanner actingAsName={userName} actingAsEmail={userEmail} staffName={impersonatedBy.name} /> : null}
 
-        <Topbar
-          onOpenMobileNav={() => setMobileOpen(true)}
-          extra={topbarExtra}
-          unreadNotifications={unreadNotifications}
-          recentNotifications={recentNotifications}
-          locale={locale}
-        />
-
-        <main className="flex-1">
-          <div className="mx-auto w-[95%] p-4 sm:p-6">{children}</div>
-        </main>
-
-        <Footer />
-      </div>
-    </div>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="sticky bottom-0 z-20 flex h-10 shrink-0 items-center justify-between border-t border-border bg-surface/95 px-4 text-xs text-foreground-muted backdrop-blur supports-backdrop-filter:bg-surface/75 sm:px-6">
-      <span>A Product by Data State Ltd</span>
-      <span>App Version : 2.0</span>
-    </footer>
-  );
-}
-
-function SidebarHeader({ collapsed = false, onClose, onToggleCollapse, companies = [], currentCompanyId, companyLogoUrl, switchCompanyAction }) {
-  return (
-    <div className="flex shrink-0 flex-col gap-2 border-b border-border p-3">
-      <div className="flex items-center justify-between gap-2">
-        {companyLogoUrl ? (
-          // A real logo keeps its own shape (most are landscape wordmarks,
-          // not square icons) rather than being force-cropped into the
-          // fallback mark's square badge — `object-contain` never crops,
-          // just shrinks to fit the height available.
-          // eslint-disable-next-line @next/next/no-img-element -- a tenant-hosted, on-disk logo, not an optimizable remote asset worth Next's image pipeline
-          <img
-            src={companyLogoUrl}
-            alt=""
-            className={cn("h-8 shrink-0 object-contain object-left", collapsed ? "w-8" : "max-w-[160px]")}
-          />
-        ) : (
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-sm bg-brand text-brand-foreground">
-            <Wrench className="size-4" />
-          </span>
-        )}
-
-        {onToggleCollapse ? (
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-border bg-surface/95 px-4 backdrop-blur supports-backdrop-filter:bg-surface/80 sm:px-6">
+          <button type="button" onClick={() => setMobileOpen(true)} className="rounded-md p-1.5 text-foreground-muted hover:bg-surface-muted hover:text-foreground lg:hidden" aria-label="Open menu">
+            <Menu className="size-5" />
+          </button>
           <button
             type="button"
-            onClick={onToggleCollapse}
-            className={cn("rounded-sm p-1.5 text-foreground-muted hover:bg-surface-muted hover:text-foreground", collapsed && "hidden")}
+            onClick={() => setCollapsed((value) => !value)}
+            className="hidden rounded-md p-1.5 text-foreground-muted hover:bg-surface-muted hover:text-foreground lg:block"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            <ChevronLeft className="size-4" />
+            <PanelLeft className="size-5" />
           </button>
-        ) : null}
 
-        {onClose ? (
-          <button type="button" onClick={onClose} className="rounded-sm p-1 hover:bg-surface-muted lg:hidden">
-            <X className="size-5" />
-          </button>
-        ) : null}
+          <ModuleChip modules={modules} />
+          <ScreenSearch modules={modules} />
+          <div className="hidden rounded-full border border-border px-1.5 py-0.5 xl:block">
+            <CompanySwitcher companies={companies} currentCompanyId={currentCompanyId} switchCompanyAction={switchCompanyAction} />
+          </div>
+
+          <div className="ml-auto flex items-center gap-1">
+            <SyncIndicator />
+            <ThemeToggle />
+            <LocaleToggle locale={locale} />
+            <ChatButton />
+            <NotificationBell unreadCount={unreadNotifications} recent={recentNotifications} />
+            <span className="mx-2 hidden h-8 w-px bg-border sm:block" aria-hidden />
+            <UserMenu name={userName} email={userEmail} />
+          </div>
+        </header>
+
+        <ChatDock />
+        <main className="flex-1">
+          <div className="mx-auto w-full p-4 sm:px-6 sm:py-5">{children}</div>
+        </main>
+
+        <footer className="sticky bottom-0 z-20 flex h-10 shrink-0 items-center justify-between gap-4 border-t border-border bg-surface/95 px-4 text-xs text-foreground-muted backdrop-blur supports-backdrop-filter:bg-surface/80 sm:px-6">
+          <span className="truncate">
+            Annotech ERP · <span className="font-medium text-brand">{companyName}</span> · A Product by Data State Ltd
+          </span>
+          <span className="shrink-0">App Version : 2.0</span>
+        </footer>
       </div>
-
-      {collapsed ? (
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          className="flex items-center justify-center rounded-sm p-1.5 text-foreground-muted hover:bg-surface-muted hover:text-foreground"
-          aria-label="Expand sidebar"
-        >
-          <ChevronRight className="size-4" />
-        </button>
-      ) : null}
-
-      <CompanySwitcher companies={companies} currentCompanyId={currentCompanyId} switchCompanyAction={switchCompanyAction} collapsed={collapsed} />
     </div>
   );
 }
 
-function Topbar({ onOpenMobileNav, extra, unreadNotifications = 0, recentNotifications = [], locale = "en" }) {
+/** The company mark and name at the head of the sidebar, as Brickland shows its own. */
+function SidebarBrand({ name, logoUrl, collapsed = false, onClose }) {
+  const initial = name?.charAt(0)?.toUpperCase() || "A";
+
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-border bg-surface/95 px-4 backdrop-blur supports-backdrop-filter:bg-surface/75 sm:px-6">
-      <button
-        type="button"
-        onClick={onOpenMobileNav}
-        className="rounded-sm p-1.5 text-foreground-muted hover:bg-surface-muted hover:text-foreground lg:hidden"
-      >
-        <Menu className="size-5" />
-      </button>
-
-      <div className="min-w-0 flex-1">{extra}</div>
-
-      <div className="flex items-center gap-1">
-        <SyncIndicator />
-        <LocaleToggle locale={locale} />
-        <ThemeToggle />
-        <NotificationBell unreadCount={unreadNotifications} recent={recentNotifications} />
-      </div>
-    </header>
+    <div className={cn("flex h-16 shrink-0 items-center gap-2.5 border-b border-border px-4", collapsed && "justify-center px-0")}>
+      {logoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element -- a tenant-hosted, on-disk logo, not an optimizable remote asset
+        <img src={logoUrl} alt="" className="size-9 shrink-0 rounded-full border border-border object-contain" />
+      ) : (
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-brand-foreground">{initial}</span>
+      )}
+      {!collapsed ? (
+        <span className="min-w-0 flex-1 leading-tight">
+          <span className="block truncate text-[15px] font-bold text-brand">{name}</span>
+          <span className="block text-[10px] font-semibold tracking-[0.16em] text-foreground-muted uppercase">Annotech ERP</span>
+        </span>
+      ) : null}
+      {onClose ? (
+        <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-surface-muted lg:hidden" aria-label="Close menu">
+          <X className="size-5" />
+        </button>
+      ) : null}
+    </div>
   );
 }
 

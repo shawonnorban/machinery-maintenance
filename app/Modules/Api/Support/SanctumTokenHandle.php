@@ -50,6 +50,11 @@ class SanctumTokenHandle implements TokenHandle
         return $this->token->impersonated_by;
     }
 
+    public function pinSessionId(): ?string
+    {
+        return $this->token->qt_session_id;
+    }
+
     public function expiresAt(): ?Carbon
     {
         return $this->token->expires_at;

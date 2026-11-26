@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { startTransition, useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -91,10 +93,11 @@ function VendorForm({ vendor = null, options = {}, action }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <FormSection>
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("name")} required error={state?.errors?.name?.[0]}>
           {(fieldProps) => <Input {...fieldProps} value={name} onChange={(e) => setName(e.target.value)} maxLength={255} required />}
         </FormField>
@@ -126,6 +129,8 @@ function VendorForm({ vendor = null, options = {}, action }) {
       <FormField label={t("address")}>
         {(fieldProps) => <Textarea {...fieldProps} value={address} onChange={(e) => setAddress(e.target.value)} rows={2} maxLength={1000} />}
       </FormField>
+
+      </FormSection>
 
       <Section title={t("registration_section")}>
         <FormField label={t("tax_reference")} helperText={t("tax_reference_hint")}>
@@ -160,8 +165,9 @@ function VendorForm({ vendor = null, options = {}, action }) {
       </Section>
 
       <Section title={t("procurement_section")}>
-        <div className="sm:col-span-2">
-          <span className="text-sm font-medium text-foreground">{t("supply_categories")}</span>
+        <div className="grid items-start gap-x-3 gap-y-1 sm:grid-cols-[10.5rem_1fr] lg:col-span-2">
+          <span className="pt-0.5 text-[13px] font-semibold text-foreground sm:text-right">{t("supply_categories")}</span>
+          <div>
           <p className="text-xs text-foreground-muted">{t("supply_categories_hint")}</p>
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
             {(options.supply_categories ?? []).map((category) => (
@@ -172,6 +178,7 @@ function VendorForm({ vendor = null, options = {}, action }) {
             ))}
           </div>
           {state?.errors?.supply_categories?.[0] ? <p className="mt-1 text-xs text-danger">{state.errors.supply_categories[0]}</p> : null}
+          </div>
         </div>
         <FormField label={t("default_currency")} error={state?.errors?.default_currency?.[0]}>
           {(fieldProps) => (
@@ -193,28 +200,29 @@ function VendorForm({ vendor = null, options = {}, action }) {
         </FormField>
       </Section>
 
+      <FormSection legend={t("notes")}>
       <FormField label={t("notes")}>
         {(fieldProps) => <Textarea {...fieldProps} value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={2000} />}
       </FormField>
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {isEdit ? t("save_changes") : t("create_vendor")}
+          <Save /> {isEdit ? t("save_changes") : t("create_vendor")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }
 
 function Section({ title, children }) {
   return (
-    <div className="border-t border-border pt-4">
-      <h3 className="mb-3 text-sm font-semibold text-foreground">{title}</h3>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{children}</div>
-    </div>
+    <FormSection legend={title}>
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">{children}</div>
+    </FormSection>
   );
 }
 

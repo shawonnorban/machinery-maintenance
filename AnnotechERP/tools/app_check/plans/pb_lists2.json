@@ -1,0 +1,5 @@
+[
+ {"goto": "/pre-budget-master/master-data?tab=parts"},
+ {"see": "Parts"},
+ {"eval": "JSON.stringify({rows: document.querySelectorAll('tbody tr').length, tables: document.querySelectorAll('table').length, h: document.body.scrollHeight, tabs: [...document.querySelectorAll('[role=tab]')].map(t=>t.innerText).join('|'), big: [...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().height>20000).slice(-3).map(e=>e.tagName+'.'+String(e.className).slice(0,80))})"}
+]

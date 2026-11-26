@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { ArrowRightLeft } from "lucide-react";
 
 function SubmitButton() {
   const t = useT("asset");
@@ -54,7 +55,7 @@ function TransferRequestModal({ version, locations, action }) {
   return (
     <>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        {t("request_transfer")}
+        <ArrowRightLeft /> {t("request_transfer")}
       </Button>
 
       <Modal open={open} onOpenChange={setOpen} title={t("request_transfer")} description={t("request_transfer_hint")}>

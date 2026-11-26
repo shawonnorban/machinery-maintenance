@@ -1,0 +1,84 @@
+[
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main [role=tab]:has-text('Registration') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('New Style Registration Request')",
+  "wait": 3000
+ },
+ {
+  "texts": "new_t",
+  "of": "body [role=dialog]"
+ },
+ {
+  "dump": "new_d",
+  "root": "body"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main [role=tab]:has-text('Registration') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Open'), main table tbody tr:first-child a:has-text('Open')",
+  "wait": 3500
+ },
+ {
+  "texts": "open_t",
+  "of": "body [role=dialog]"
+ },
+ {
+  "dump": "open_d",
+  "root": "body"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main [role=tab]:has-text('Registration') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Registered Styles'), main [role=tab]:has-text('Registered Styles')",
+  "wait": 2500
+ },
+ {
+  "texts": "regd_t",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main [role=tab]:has-text('Registration') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "hrefs": "row_links",
+  "of": "main table tbody tr:first-child a"
+ }
+]

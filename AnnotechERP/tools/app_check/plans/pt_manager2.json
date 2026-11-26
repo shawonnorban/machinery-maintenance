@@ -1,0 +1,45 @@
+[
+ {
+  "goto": "/production-tracking/daily-plan"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "shot": "mgr2-start"
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-002') >> role=button[name='Reject']",
+  "after": 1500
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Reject']",
+  "after": 20000
+ },
+ {
+  "see": "reason",
+  "as": "reason_error"
+ },
+ {
+  "shot": "mgr2-noreason"
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] textarea",
+  "text": "Line 02 changes over to FLOW STYLE-01 after lunch \u2014 plan 6 hours."
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Reject']",
+  "after": 20000
+ },
+ {
+  "shot": "mgr2-decided"
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-001') >> role=button[name='History']",
+  "after": 12000
+ },
+ {
+  "shot": "mgr2-history"
+ }
+]

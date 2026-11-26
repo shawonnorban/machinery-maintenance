@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -24,7 +26,8 @@ function WarrantyForm({ assets, vendors, assetId, action }) {
 
   return (
     <form action={dispatch} className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <FormSection>
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("asset")} required error={state?.errors?.asset_id?.[0]}>
           {(fieldProps) => (
             <Select
@@ -43,7 +46,7 @@ function WarrantyForm({ assets, vendors, assetId, action }) {
         </FormField>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("warranty_type")} required>
           {(fieldProps) => <Select {...fieldProps} name="warranty_type" defaultValue="MANUFACTURER" options={TYPE_OPTIONS} />}
         </FormField>
@@ -59,7 +62,7 @@ function WarrantyForm({ assets, vendors, assetId, action }) {
         {(fieldProps) => <Input {...fieldProps} name="reference" />}
       </FormField>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("coverage")}>
           {(fieldProps) => <Textarea {...fieldProps} name="coverage" rows={3} />}
         </FormField>
@@ -69,15 +72,16 @@ function WarrantyForm({ assets, vendors, assetId, action }) {
       </div>
 
       {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {tc("save")}
+          <Save /> {tc("save")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

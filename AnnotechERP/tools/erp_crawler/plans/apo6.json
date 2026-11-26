@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/merchandising/accessories-po" },
+ { "click": "button:has-text('Purchase Order Entry')", "wait": 2500 },
+ { "click": "button:has-text('Save purchase order')", "wait": 2500 },
+ { "texts": "empty_save_msgs", "of": "[role=alert], .text-danger, [class*=danger], [class*=error]" },
+ { "choose": "select[name=requisitionId]", "label": "PRQ-ACC-2026100001" },
+ { "wait": 3000 },
+ { "texts": "rows_after_pr", "of": "table tbody tr" },
+ { "fullshot": "apo-pr-chosen" },
+ { "dump": "entry_after_pr", "root": "main" }
+]

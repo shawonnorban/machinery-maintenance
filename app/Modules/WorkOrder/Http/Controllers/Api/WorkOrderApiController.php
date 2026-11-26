@@ -59,8 +59,11 @@ class WorkOrderApiController extends ApiController
             ->with(['asset:id,asset_code,name', 'factory:id,name'])
             ->whereIn('factory_id', $this->context->accessibleFactoryIds());
 
+        // "Open only" is the same set the Open counter above the list counts
+        // (and Breakdowns' own open filter): a COMPLETED order is done work,
+        // shown under All and counted by Awaiting verification instead.
         if ($request->query('open') === 'true') {
-            $query->whereNotIn('status', WorkOrder::TERMINAL_STATUSES);
+            $query->whereIn('status', WorkOrder::OPEN_STATUSES);
         }
 
         $query = $this->applyFilters($query, $request, self::FILTERS);

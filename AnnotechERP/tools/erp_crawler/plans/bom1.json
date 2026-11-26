@@ -1,0 +1,22 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('BOM')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "bom_tab",
+  "root": "[data-panel]"
+ }
+]

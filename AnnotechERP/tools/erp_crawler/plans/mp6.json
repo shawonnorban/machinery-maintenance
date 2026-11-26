@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Create Direct Requisition')", "wait": 3000 },
+ { "peek": "main button:has-text('Select…') >> nth=0", "wait": 1500 },
+ { "peek": "[role=option]:has-text('FAB-001') >> nth=0", "wait": 2000 },
+ { "texts": "after_item", "of": "main label, main input" },
+ { "dump": "after_item_dump", "root": "main" },
+ { "type": "main input[type=number] >> nth=0", "text": "120" },
+ { "type": "main input[type=date] >> nth=0", "text": "2026-11-20" },
+ { "click": "main button:has-text('Save draft')", "wait": 4000 },
+ { "url": "after_save_url" },
+ { "texts": "after_save", "of": "main h2, main h3, main p, main span, li[data-sonner-toast], [role=status]" },
+ { "fullshot": "mp6-after-save" },
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00006') >> nth=0", "wait": 3000 },
+ { "texts": "draft_row", "of": "main h3, main h4, main p, main th, main td, main button, main span" },
+ { "fullshot": "mp6-draft-row" }
+]

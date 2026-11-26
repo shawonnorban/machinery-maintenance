@@ -7,19 +7,18 @@ namespace App\Modules\Settings\MasterData;
 use App\Modules\Settings\MasterData\Types\AssetCategoryData;
 use App\Modules\Settings\MasterData\Types\AssetModelData;
 use App\Modules\Settings\MasterData\Types\AssetTypeData;
-use App\Modules\Settings\MasterData\Types\BankData;
 use App\Modules\Settings\MasterData\Types\BinData;
 use App\Modules\Settings\MasterData\Types\BuildingData;
 use App\Modules\Settings\MasterData\Types\CostCategoryData;
 use App\Modules\Settings\MasterData\Types\DepartmentData;
+use App\Modules\Settings\MasterData\Types\DesignationData;
 use App\Modules\Settings\MasterData\Types\DowntimeReasonCodeData;
 use App\Modules\Settings\MasterData\Types\FabricDefectData;
 use App\Modules\Settings\MasterData\Types\FailureCategoryData;
 use App\Modules\Settings\MasterData\Types\FailureCodeData;
 use App\Modules\Settings\MasterData\Types\FloorData;
-use App\Modules\Settings\MasterData\Types\GlAccountData;
+use App\Modules\Settings\MasterData\Types\GradeData;
 use App\Modules\Settings\MasterData\Types\HsCodeData;
-use App\Modules\Settings\MasterData\Types\ItemCategoryData;
 use App\Modules\Settings\MasterData\Types\ItemDepartmentData;
 use App\Modules\Settings\MasterData\Types\MaintenanceTypeData;
 use App\Modules\Settings\MasterData\Types\ManufacturerData;
@@ -28,10 +27,7 @@ use App\Modules\Settings\MasterData\Types\PaymentTypeData;
 use App\Modules\Settings\MasterData\Types\ProductionLineData;
 use App\Modules\Settings\MasterData\Types\RootCauseData;
 use App\Modules\Settings\MasterData\Types\SectionData;
-use App\Modules\Settings\MasterData\Types\SparePartCategoryData;
-use App\Modules\Settings\MasterData\Types\StoreData;
 use App\Modules\Settings\MasterData\Types\UomConversionData;
-use App\Modules\Settings\MasterData\Types\UomData;
 use App\Modules\Settings\MasterData\Types\WarehouseData;
 use App\Modules\Settings\MasterData\Types\WorkstationData;
 
@@ -70,6 +66,9 @@ class MasterDataRegistry
             new SectionData,
             new ProductionLineData,
             new WorkstationData,
+            // Company Management: grades before the designations that name them.
+            new GradeData,
+            new DesignationData,
 
             new AssetTypeData,
             new AssetCategoryData,
@@ -83,23 +82,17 @@ class MasterDataRegistry
             new MeterTypeData,
             // Parents before children: a bin cannot exist before its store.
             new WarehouseData,
-            new StoreData,
             new BinData,
-            new SparePartCategoryData,
             // The item library's own axes: department first, then the category tree.
             new ItemDepartmentData,
-            new ItemCategoryData,
             // A conversion names two units, so the units come first.
-            new UomData,
             new UomConversionData,
             new HsCodeData,
             new CostCategoryData,
             // The roll inspection screen's own catalogue (Inventory spec §4.4).
             new FabricDefectData,
 
-            new BankData,
             new PaymentTypeData,
-            new GlAccountData,
         ])->keyBy(fn (MasterDataType $type) => $type->key())->all();
     }
 

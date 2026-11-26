@@ -1,0 +1,37 @@
+[
+ {"goto": "/sales-shipment/export-documents"},
+ {"wait": 15000},
+ {"click": "main tbody tr button:has-text('Edit')", "after": 3000},
+ {"upload": "main input[type=file]", "file": "out/ed01/exp-scan.pdf"},
+ {"click": "main button:has-text('Save')", "after": 15000},
+ {"goto": "/sales-shipment/export-documents"},
+ {"wait": 12000},
+ {"texts": "ed_rows", "of": "main tbody tr"},
+ {"shot": "ed-list"},
+
+ {"goto": "/sales-shipment/certificate-management"},
+ {"wait": 15000},
+ {"click": "main tbody tr button:has-text('Edit')", "after": 3000},
+ {"upload": "main input[type=file]", "file": "out/ed01/exp-scan.pdf"},
+ {"click": "main button:has-text('Save')", "after": 15000},
+ {"goto": "/sales-shipment/certificate-management"},
+ {"wait": 12000},
+ {"texts": "ce_rows", "of": "main tbody tr"},
+
+ {"goto": "/sales-shipment/shipment-attachments"},
+ {"wait": 15000},
+ {"click": "main tbody tr button:has-text('Edit')", "after": 3000},
+ {"fill": "File Name", "exact": true, "text": "Final inspection report (signed)"},
+ {"upload": "main input[type=file]", "file": "out/ed01/exp-scan.pdf"},
+ {"click": "main button:has-text('Save')", "after": 15000},
+ {"goto": "/sales-shipment/shipment-attachments"},
+ {"wait": 12000},
+ {"texts": "sa_rows", "of": "main tbody tr"},
+
+ {"goto": "/sales-shipment/shipment-confirmation"},
+ {"wait": 15000},
+ {"pick": "Shipment", "exact": true, "option": "SHP-2026-000002"},
+ {"click": "main button:has-text('Check')", "after": 8000},
+ {"shot": "cf-check"},
+ {"texts": "cf_check", "of": "main section, main [data-slot=card]"}
+]

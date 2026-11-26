@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { PlanForm } from "@/components/maintenance/plan-form";
 import { getT } from "@/lib/i18n-server";
 import { createPlan } from "./actions";
@@ -14,16 +13,12 @@ export default async function CreateMaintenancePlanPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("maintenance") }, { label: t("plans"), href: "/maintenance/plans" }, { label: t("new_plan") }]}
+      <ScreenHeader
+        parentUrl="/maintenance/plans"
         title={t("new_plan_title")}
       />
 
-      <Card>
-        <CardBody>
-          <PlanForm options={options} action={createPlan} previewAction={previewPlan} />
-        </CardBody>
-      </Card>
+      <PlanForm options={options} action={createPlan} previewAction={previewPlan} />
     </>
   );
 }

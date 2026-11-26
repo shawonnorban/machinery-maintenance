@@ -1,0 +1,5889 @@
+[
+ {
+  "module": "executive-dashboard",
+  "group": "Command Center",
+  "name": "Departmental Performance Boards",
+  "menu_name": "Departmental Performance Boards",
+  "path": "/m/executive-dashboard/department-dashboards"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "Command Center",
+  "name": "Metric Drill-down Explorer",
+  "menu_name": "Metric Drill-down Explorer",
+  "path": "/m/executive-dashboard/drill-down-explorer"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "Command Center",
+  "name": "Dashboard Composer",
+  "menu_name": "Dashboard Composer",
+  "path": "/m/executive-dashboard/dashboard-builder"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "KPI & TARGETS",
+  "name": "KPI Master Library",
+  "menu_name": "KPI Master Library",
+  "path": "/m/executive-dashboard/kpi-library"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "KPI & TARGETS",
+  "name": "Balanced Scorecard Board",
+  "menu_name": "Balanced Scorecard Board",
+  "path": "/m/executive-dashboard/balanced-scorecards"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "KPI & TARGETS",
+  "name": "Target Definition",
+  "menu_name": "Target Definition",
+  "path": "/m/executive-dashboard/target-setting"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "KPI & TARGETS",
+  "name": "Target Achievement Tracking",
+  "menu_name": "Target Achievement Tracking",
+  "path": "/m/executive-dashboard/target-tracking"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "KPI & TARGETS",
+  "name": "KPI Approval Queue",
+  "menu_name": "KPI Approval Queue",
+  "path": "/m/executive-dashboard/kpi-approvals"
+ },
+ {
+  "module": "bi-analytics",
+  "group": "GENERAL",
+  "name": "Report Catalogue",
+  "menu_name": "Insight Studio",
+  "path": "/m/bi-analytics/report-library"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ACCESS & ONBOARDING",
+  "name": "Portal User Accounts",
+  "menu_name": "Portal User Accounts",
+  "path": "/m/buyer-portal/portal-users"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SALES & MARKETING",
+  "name": "Campaign Management",
+  "menu_name": "Campaign Management",
+  "path": "/m/crm-marketing/marketing-campaign"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTAKE",
+  "name": "Universal File Intake",
+  "menu_name": "Universal File Intake",
+  "path": "/m/ai-file-import/omni-file-intelligence"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "Module Registration",
+  "menu_name": "Module Registration",
+  "path": "/m/security/module-creation"
+ },
+ {
+  "module": "approval-center",
+  "group": "REQUEST INBOX",
+  "name": "All Requests",
+  "menu_name": "All Requests",
+  "path": "/m/approval-center/all-requests"
+ },
+ {
+  "module": "settings",
+  "group": "DEVICE INTEGRATION",
+  "name": "Attendance Devices",
+  "menu_name": "Attendance Devices",
+  "path": "/m/settings/attendance-devices"
+ },
+ {
+  "module": "company-management",
+  "group": "Company Management",
+  "name": "Company Management",
+  "menu_name": "Dashboard",
+  "path": "/m/company-management/company-management"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ALERTS & EXCEPTIONS",
+  "name": "KPI Threshold Rules",
+  "menu_name": "KPI Threshold Rules",
+  "path": "/m/executive-dashboard/kpi-alert-rules"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ALERTS & EXCEPTIONS",
+  "name": "Alert History Log",
+  "menu_name": "Alert History Log",
+  "path": "/m/executive-dashboard/alert-log"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ALERTS & EXCEPTIONS",
+  "name": "Exception Review Center",
+  "menu_name": "Exception Review Center",
+  "path": "/m/executive-dashboard/exception-center"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "STRATEGY & RISK",
+  "name": "Leadership Calendar",
+  "menu_name": "Leadership Calendar",
+  "path": "/m/executive-dashboard/executive-calendar"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "STRATEGY & RISK",
+  "name": "Strategic Initiative Tracker",
+  "menu_name": "Strategic Initiative Tracker",
+  "path": "/m/executive-dashboard/strategic-initiatives"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "STRATEGY & RISK",
+  "name": "Enterprise Risk Log",
+  "menu_name": "Enterprise Risk Log",
+  "path": "/m/executive-dashboard/enterprise-risk-register"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ANALYTICS & REPORTING",
+  "name": "Board Review Pack",
+  "menu_name": "Board Review Pack",
+  "path": "/m/executive-dashboard/board-reporting-pack"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ANALYTICS & REPORTING",
+  "name": "Peer Benchmark Study",
+  "menu_name": "Peer Benchmark Study",
+  "path": "/m/executive-dashboard/industry-benchmarking"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ANALYTICS & REPORTING",
+  "name": "Revenue Performance Insight",
+  "menu_name": "Revenue Performance Insight",
+  "path": "/m/executive-dashboard/revenue-analytics"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ANALYTICS & REPORTING",
+  "name": "Cost Performance Insight",
+  "menu_name": "Cost Performance Insight",
+  "path": "/m/executive-dashboard/cost-analytics"
+ },
+ {
+  "module": "executive-dashboard",
+  "group": "ANALYTICS & REPORTING",
+  "name": "Board Report Subscriptions",
+  "menu_name": "Board Report Subscriptions",
+  "path": "/m/executive-dashboard/report-subscriptions"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ACCESS & ONBOARDING",
+  "name": "Portal Access Permissions",
+  "menu_name": "Portal Access Permissions",
+  "path": "/m/buyer-portal/access-permissions"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ACCESS & ONBOARDING",
+  "name": "Buyer Onboarding Workflow",
+  "menu_name": "Buyer Onboarding Workflow",
+  "path": "/m/buyer-portal/buyer-onboarding"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ACCESS & ONBOARDING",
+  "name": "Notification Settings",
+  "menu_name": "Notification Settings",
+  "path": "/m/buyer-portal/notification-preferences"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ORDER & SHIPMENT VISIBILITY",
+  "name": "Order Visibility Rules",
+  "menu_name": "Order Visibility Rules",
+  "path": "/m/buyer-portal/order-visibility"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ORDER & SHIPMENT VISIBILITY",
+  "name": "Sample Progress View",
+  "menu_name": "Sample Progress View",
+  "path": "/m/buyer-portal/sample-status"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ORDER & SHIPMENT VISIBILITY",
+  "name": "Shipment Progress View",
+  "menu_name": "Shipment Progress View",
+  "path": "/m/buyer-portal/shipment-status"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "ORDER & SHIPMENT VISIBILITY",
+  "name": "Shared Document Vault",
+  "menu_name": "Shared Document Vault",
+  "path": "/m/buyer-portal/document-sharing"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "PRICING & BILLING",
+  "name": "Quotation Request Inbox",
+  "menu_name": "Quotation Request Inbox",
+  "path": "/m/buyer-portal/rfq-inbox"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "PRICING & BILLING",
+  "name": "Buyer Price Schedules",
+  "menu_name": "Buyer Price Schedules",
+  "path": "/m/buyer-portal/buyer-price-lists"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "PRICING & BILLING",
+  "name": "Invoice Lookup",
+  "menu_name": "Invoice Lookup",
+  "path": "/m/buyer-portal/invoice-view"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "PRICING & BILLING",
+  "name": "Payment Progress View",
+  "menu_name": "Payment Progress View",
+  "path": "/m/buyer-portal/payment-status"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "BUYER ENGAGEMENT",
+  "name": "Buyer Request Inbox",
+  "menu_name": "Buyer Request Inbox",
+  "path": "/m/buyer-portal/buyer-requests"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "BUYER ENGAGEMENT",
+  "name": "Complaint & Claim Register",
+  "menu_name": "Complaint & Claim Register",
+  "path": "/m/buyer-portal/complaint-register"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "BUYER ENGAGEMENT",
+  "name": "Portal Announcements",
+  "menu_name": "Portal Announcements",
+  "path": "/m/buyer-portal/announcements"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "BUYER ENGAGEMENT",
+  "name": "Buyer Feedback Survey",
+  "menu_name": "Buyer Feedback Survey",
+  "path": "/m/buyer-portal/feedback-survey"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "BUYER ENGAGEMENT",
+  "name": "Support Ticket Desk",
+  "menu_name": "Support Ticket Desk",
+  "path": "/m/buyer-portal/support-tickets"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "PORTAL ADMINISTRATION",
+  "name": "Portal Usage Insight",
+  "menu_name": "Portal Usage Insight",
+  "path": "/m/buyer-portal/portal-analytics"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "PORTAL ADMINISTRATION",
+  "name": "Portal Branding Setup",
+  "menu_name": "Portal Branding Setup",
+  "path": "/m/buyer-portal/portal-branding"
+ },
+ {
+  "module": "buyer-portal",
+  "group": "PORTAL ADMINISTRATION",
+  "name": "Portal Activity Trail",
+  "menu_name": "Portal Activity Trail",
+  "path": "/m/buyer-portal/portal-activity-log"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SALES & MARKETING",
+  "name": "Lead Source Master",
+  "menu_name": "Lead Source Master",
+  "path": "/m/crm-marketing/marketing-source"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SALES & MARKETING",
+  "name": "Lead Pipeline",
+  "menu_name": "Lead Pipeline",
+  "path": "/m/crm-marketing/lead-management"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SALES & MARKETING",
+  "name": "Opportunity Pipeline",
+  "menu_name": "Opportunity Pipeline",
+  "path": "/m/crm-marketing/opportunity-management"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SALES & MARKETING",
+  "name": "Buyer Acquisition Tracking",
+  "menu_name": "Buyer Acquisition Tracking",
+  "path": "/m/crm-marketing/customer-acquisition"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SALES & MARKETING",
+  "name": "Sales Activity Log",
+  "menu_name": "Sales Activity Log",
+  "path": "/m/crm-marketing/sales-activities"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Relationship Dashboard",
+  "menu_name": "Relationship Dashboard",
+  "path": "/m/crm-marketing/crm-dashboard"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Buyer Account Register",
+  "menu_name": "Buyer Account Register",
+  "path": "/m/crm-marketing/buyer-accounts"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Contact Directory",
+  "menu_name": "Contact Directory",
+  "path": "/m/crm-marketing/contacts"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Buyer Master",
+  "menu_name": "Buyer Master",
+  "path": "/m/crm-marketing/buyer"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Buyer Segment Grouping",
+  "menu_name": "Buyer Segment Grouping",
+  "path": "/m/crm-marketing/buyer-segmentation"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Follow-up Scheduler",
+  "menu_name": "Follow-up Scheduler",
+  "path": "/m/crm-marketing/follow-up-management"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Visit Plan & Log",
+  "menu_name": "Visit Plan & Log",
+  "path": "/m/crm-marketing/visit-planning"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Complaint & Claim Desk",
+  "menu_name": "Complaint & Claim Desk",
+  "path": "/m/crm-marketing/complaint-claims"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Competitor Watch",
+  "menu_name": "Competitor Watch",
+  "path": "/m/crm-marketing/competitor-tracking"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "CRM OPERATIONS",
+  "name": "Win & Loss Review",
+  "menu_name": "Win & Loss Review",
+  "path": "/m/crm-marketing/win-loss-analysis"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "INQUIRY & PRODUCT DEVELOPMENT",
+  "name": "Buyer Inquiry Register",
+  "menu_name": "Buyer Inquiry Register",
+  "path": "/m/crm-marketing/customer-buyer-inquiry"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "INQUIRY & PRODUCT DEVELOPMENT",
+  "name": "Development Request Desk",
+  "menu_name": "Development Request Desk",
+  "path": "/m/crm-marketing/development-request"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "INQUIRY & PRODUCT DEVELOPMENT",
+  "name": "Assisted Tech Pack",
+  "menu_name": "Assisted Tech Pack",
+  "path": "/m/crm-marketing/ai-tech-pack"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "INQUIRY & PRODUCT DEVELOPMENT",
+  "name": "Style & Product Master",
+  "menu_name": "Style & Product Master",
+  "path": "/m/crm-marketing/product-style-master"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "INQUIRY & PRODUCT DEVELOPMENT",
+  "name": "Material Requirement Sheet",
+  "menu_name": "Material Requirement Sheet",
+  "path": "/m/crm-marketing/bom-material-requirement"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "INQUIRY & PRODUCT DEVELOPMENT",
+  "name": "Counter Sample Testing",
+  "menu_name": "Counter Sample Testing",
+  "path": "/m/crm-marketing/counter-sample-testing"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SAMPLE & BUYER APPROVAL",
+  "name": "Sample Development Tracker",
+  "menu_name": "Sample Development Tracker",
+  "path": "/m/crm-marketing/sample-development"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SAMPLE & BUYER APPROVAL",
+  "name": "Sample Submission Log",
+  "menu_name": "Sample Submission Log",
+  "path": "/m/crm-marketing/sample-submission"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SAMPLE & BUYER APPROVAL",
+  "name": "Buyer Comment Sheet",
+  "menu_name": "Buyer Comment Sheet",
+  "path": "/m/crm-marketing/buyer-comments"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SAMPLE & BUYER APPROVAL",
+  "name": "Sample Revision Control",
+  "menu_name": "Sample Revision Control",
+  "path": "/m/crm-marketing/sample-revision"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SAMPLE & BUYER APPROVAL",
+  "name": "Buyer Approval Desk",
+  "menu_name": "Buyer Approval Desk",
+  "path": "/m/crm-marketing/buyer-approval"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SAMPLE & BUYER APPROVAL",
+  "name": "Approval History Trail",
+  "menu_name": "Approval History Trail",
+  "path": "/m/crm-marketing/approval-history"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "SAMPLE & BUYER APPROVAL",
+  "name": "Sample Progress Tracking",
+  "menu_name": "Sample Progress Tracking",
+  "path": "/m/crm-marketing/sample-tracking"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "COSTING & QUOTATION",
+  "name": "Assisted Cost Estimation",
+  "menu_name": "Assisted Cost Estimation",
+  "path": "/m/crm-marketing/ai-auto-costing"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "COSTING & QUOTATION",
+  "name": "Costing Worksheet",
+  "menu_name": "Costing Worksheet",
+  "path": "/m/crm-marketing/costing-sheet"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "COSTING & QUOTATION",
+  "name": "Cost Revision Control",
+  "menu_name": "Cost Revision Control",
+  "path": "/m/crm-marketing/cost-revision"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "COSTING & QUOTATION",
+  "name": "Cost Approval Desk",
+  "menu_name": "Cost Approval Desk",
+  "path": "/m/crm-marketing/cost-approval"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "COSTING & QUOTATION",
+  "name": "Quotation Entry",
+  "menu_name": "Quotation Entry",
+  "path": "/m/crm-marketing/quotation"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "COSTING & QUOTATION",
+  "name": "Quotation History Trail",
+  "menu_name": "Quotation History Trail",
+  "path": "/m/crm-marketing/quotation-history"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "PI & ORDER RELEASE",
+  "name": "Proforma Invoice Entry",
+  "menu_name": "Proforma Invoice Entry",
+  "path": "/m/crm-marketing/proforma-invoice"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "PI & ORDER RELEASE",
+  "name": "Order Confirmation Sheet",
+  "menu_name": "Order Confirmation Sheet",
+  "path": "/m/crm-marketing/order-confirmation"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "PI & ORDER RELEASE",
+  "name": "Order Handover Note",
+  "menu_name": "Order Handover Note",
+  "path": "/m/crm-marketing/order-handover"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "PI & ORDER RELEASE",
+  "name": "Production Release Order",
+  "menu_name": "Production Release Order",
+  "path": "/m/crm-marketing/production-release"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Relationship Reports",
+  "menu_name": "Relationship Reports",
+  "path": "/m/crm-marketing/crm-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Buyer Performance Analysis",
+  "menu_name": "Buyer Performance Analysis",
+  "path": "/m/crm-marketing/buyer-performance-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Inquiry Analysis Reports",
+  "menu_name": "Inquiry Analysis Reports",
+  "path": "/m/crm-marketing/inquiry-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Development Status Reports",
+  "menu_name": "Development Status Reports",
+  "path": "/m/crm-marketing/development-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Sample Status Reports",
+  "menu_name": "Sample Status Reports",
+  "path": "/m/crm-marketing/sample-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Costing Analysis Reports",
+  "menu_name": "Costing Analysis Reports",
+  "path": "/m/crm-marketing/costing-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Quotation Status Reports",
+  "menu_name": "Quotation Status Reports",
+  "path": "/m/crm-marketing/quotation-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Approval Status Reports",
+  "menu_name": "Approval Status Reports",
+  "path": "/m/crm-marketing/approval-reports"
+ },
+ {
+  "module": "crm-marketing",
+  "group": "REPORTS & CONTROLS",
+  "name": "Assistant Activity Log",
+  "menu_name": "Assistant Activity Log",
+  "path": "/m/crm-marketing/ai-activity-audit-log"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTAKE",
+  "name": "Document Recognition Engine",
+  "menu_name": "Document Recognition Engine",
+  "path": "/m/ai-file-import/recognition-engine"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTAKE",
+  "name": "Field Extraction Rules",
+  "menu_name": "Field Extraction Rules",
+  "path": "/m/ai-file-import/field-extraction"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTAKE",
+  "name": "Data Validation Engine",
+  "menu_name": "Data Validation Engine",
+  "path": "/m/ai-file-import/validation-engine"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTAKE",
+  "name": "Import Approval Workflow",
+  "menu_name": "Import Approval Workflow",
+  "path": "/m/ai-file-import/approval-workflow"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Inquiry Document Intake",
+  "menu_name": "Inquiry Document Intake",
+  "path": "/m/ai-file-import/inquiry-files"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Purchase Order Reading",
+  "menu_name": "Purchase Order Reading",
+  "path": "/m/ai-file-import/po-order-processing"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Tech Pack Reading",
+  "menu_name": "Tech Pack Reading",
+  "path": "/m/ai-file-import/tech-pack"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Artwork File Reading",
+  "menu_name": "Artwork File Reading",
+  "path": "/m/ai-file-import/artwork"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Bill of Materials Reading",
+  "menu_name": "Bill of Materials Reading",
+  "path": "/m/ai-file-import/bom"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Process Routing Reading",
+  "menu_name": "Process Routing Reading",
+  "path": "/m/ai-file-import/routing"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Work Order Reading",
+  "menu_name": "Work Order Reading",
+  "path": "/m/ai-file-import/work-order"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Cost Sheet Reading",
+  "menu_name": "Cost Sheet Reading",
+  "path": "/m/ai-file-import/cost-sheet"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Commercial Document Reading",
+  "menu_name": "Commercial Document Reading",
+  "path": "/m/ai-file-import/commercial-documents"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Production Report Reading",
+  "menu_name": "Production Report Reading",
+  "path": "/m/ai-file-import/production-report"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Quality Document Reading",
+  "menu_name": "Quality Document Reading",
+  "path": "/m/ai-file-import/quality-documents"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DOCUMENTS",
+  "name": "Image & CAD Reading",
+  "menu_name": "Image & CAD Reading",
+  "path": "/m/ai-file-import/image-cad"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "LEARNING",
+  "name": "Buyer Layout Learning",
+  "menu_name": "Buyer Layout Learning",
+  "path": "/m/ai-file-import/buyer-template-learning"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "LEARNING",
+  "name": "Layout Template Library",
+  "menu_name": "Layout Template Library",
+  "path": "/m/ai-file-import/template-library"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "LEARNING",
+  "name": "Template Match Selection",
+  "menu_name": "Template Match Selection",
+  "path": "/m/ai-file-import/template-selection"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "LEARNING",
+  "name": "Adaptive Field Mapping",
+  "menu_name": "Adaptive Field Mapping",
+  "path": "/m/ai-file-import/dynamic-ai-mapping"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "LEARNING",
+  "name": "Colour & Size Dictionary",
+  "menu_name": "Colour & Size Dictionary",
+  "path": "/m/ai-file-import/colour-size-vocabulary"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DATA & FLOW",
+  "name": "Unified Data Hub",
+  "menu_name": "Unified Data Hub",
+  "path": "/m/ai-file-import/central-data-hub"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DATA & FLOW",
+  "name": "Digital Style Twin",
+  "menu_name": "Digital Style Twin",
+  "path": "/m/ai-file-import/digital-product-twin"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DATA & FLOW",
+  "name": "Automated ERP Posting",
+  "menu_name": "Automated ERP Posting",
+  "path": "/m/ai-file-import/erp-auto-data-flow"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "DATA & FLOW",
+  "name": "Import Job Register",
+  "menu_name": "Import Job Register",
+  "path": "/m/ai-file-import/all-imports"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTELLIGENCE",
+  "name": "ERP Assistant Copilot",
+  "menu_name": "ERP Assistant Copilot",
+  "path": "/m/ai-file-import/ai-erp-copilot"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTELLIGENCE",
+  "name": "Document Query Assistant",
+  "menu_name": "Document Query Assistant",
+  "path": "/m/ai-file-import/document-assistant"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "INTELLIGENCE",
+  "name": "Engine Control Board",
+  "menu_name": "Engine Control Board",
+  "path": "/m/ai-file-import/ai-control-dashboard"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "GOVERNANCE",
+  "name": "Governance & Access Rules",
+  "menu_name": "Governance & Access Rules",
+  "path": "/m/ai-file-import/security-governance"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "GOVERNANCE",
+  "name": "Import Audit Trail",
+  "menu_name": "Import Audit Trail",
+  "path": "/m/ai-file-import/audit-trail"
+ },
+ {
+  "module": "ai-file-import",
+  "group": "GOVERNANCE",
+  "name": "Engine Settings",
+  "menu_name": "Engine Settings",
+  "path": "/m/ai-file-import/ai-settings"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "Menu Definition",
+  "menu_name": "Menu Definition",
+  "path": "/m/security/menu-creation"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "Lookup Table Master",
+  "menu_name": "Lookup Table Master",
+  "path": "/m/security/lookup-tables"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "System Parameter Update",
+  "menu_name": "System Parameter Update",
+  "path": "/m/security/system-param-data-update"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "Role Definition",
+  "menu_name": "Role Definition",
+  "path": "/m/security/role-creation"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "Role Menu Assignment",
+  "menu_name": "Role Menu Assignment",
+  "path": "/m/security/assign-menu-to-role"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "User Account Registration",
+  "menu_name": "User Account Registration",
+  "path": "/m/security/user-registration"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "Password Change",
+  "menu_name": "Password Change",
+  "path": "/m/security/change-password"
+ },
+ {
+  "module": "security",
+  "group": "STRUCTURE",
+  "name": "Category Access Permission",
+  "menu_name": "Category Access Permission",
+  "path": "/m/security/category-permission"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "Buyer-Wise Fabric Transaction Rights",
+  "menu_name": "Buyer-Wise Fabric Transaction Rights",
+  "path": "/m/security/buyer-wise-fabric-trans-permission"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "User Rule Mapping",
+  "menu_name": "User Rule Mapping",
+  "path": "/m/security/user-and-rules-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "User Requisition Mapping",
+  "menu_name": "User Requisition Mapping",
+  "path": "/m/security/user-and-requisition-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "User Store Mapping",
+  "menu_name": "User Store Mapping",
+  "path": "/m/security/user-and-store-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "User Company Mapping",
+  "menu_name": "User Company Mapping",
+  "path": "/m/security/user-wise-company-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "User Production Category Mapping",
+  "menu_name": "User Production Category Mapping",
+  "path": "/m/security/user-and-production-category-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "Fabric Defect Mapping",
+  "menu_name": "Fabric Defect Mapping",
+  "path": "/m/security/fabric-defect-type-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "Buyer Store Assignment",
+  "menu_name": "Buyer Store Assignment",
+  "path": "/m/security/buyer-store-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "Menu Report Mapping",
+  "menu_name": "Menu Report Mapping",
+  "path": "/m/security/menu-wise-report-mapping"
+ },
+ {
+  "module": "security",
+  "group": "MAPPINGS",
+  "name": "Buyer Item Category Mapping",
+  "menu_name": "Buyer Item Category Mapping",
+  "path": "/m/security/buyer-wise-item-category-mapping"
+ },
+ {
+  "module": "security",
+  "group": "CONFIGURATION",
+  "name": "Approval Workflow Designer",
+  "menu_name": "Approval Workflow Designer",
+  "path": "/m/security/request-and-approval-work-flow"
+ },
+ {
+  "module": "security",
+  "group": "CONFIGURATION",
+  "name": "Report Template Setup",
+  "menu_name": "Report Template Setup",
+  "path": "/m/security/report-template"
+ },
+ {
+  "module": "security",
+  "group": "CONFIGURATION",
+  "name": "Mail Service Configuration",
+  "menu_name": "Mail Service Configuration",
+  "path": "/m/security/mail-service-config"
+ },
+ {
+  "module": "security",
+  "group": "CONFIGURATION",
+  "name": "Ledger Integration Setup",
+  "menu_name": "Ledger Integration Setup",
+  "path": "/m/security/gl-configuration"
+ },
+ {
+  "module": "security",
+  "group": "OPERATIONS",
+  "name": "Rule Violation Log",
+  "menu_name": "Rule Violation Log",
+  "path": "/m/security/rules-violation"
+ },
+ {
+  "module": "security",
+  "group": "OPERATIONS",
+  "name": "TNA Task Status Setup",
+  "menu_name": "TNA Task Status Setup",
+  "path": "/m/security/tna-task-status"
+ },
+ {
+  "module": "security",
+  "group": "OPERATIONS",
+  "name": "Global Notification Broadcast",
+  "menu_name": "Global Notification Broadcast",
+  "path": "/m/security/global-notification"
+ },
+ {
+  "module": "security",
+  "group": "OPERATIONS",
+  "name": "Document Deletion Console",
+  "menu_name": "Document Deletion Console",
+  "path": "/m/security/pr-po-mrr-etc-deletion"
+ },
+ {
+  "module": "approval-center",
+  "group": "REQUEST INBOX",
+  "name": "Pending Requests",
+  "menu_name": "Pending Requests",
+  "path": "/m/approval-center/pending-requests"
+ },
+ {
+  "module": "approval-center",
+  "group": "REQUEST INBOX",
+  "name": "My Submitted Requests",
+  "menu_name": "My Submitted Requests",
+  "path": "/m/approval-center/my-submitted-requests"
+ },
+ {
+  "module": "approval-center",
+  "group": "REQUEST INBOX",
+  "name": "Assigned to Me",
+  "menu_name": "Assigned to Me",
+  "path": "/m/approval-center/assigned-to-me"
+ },
+ {
+  "module": "approval-center",
+  "group": "DECISIONS",
+  "name": "Approved Requests",
+  "menu_name": "Approved Requests",
+  "path": "/m/approval-center/approved-requests"
+ },
+ {
+  "module": "approval-center",
+  "group": "DECISIONS",
+  "name": "Rejected Requests",
+  "menu_name": "Rejected Requests",
+  "path": "/m/approval-center/rejected-requests"
+ },
+ {
+  "module": "approval-center",
+  "group": "DECISIONS",
+  "name": "Returned / Revision Requests",
+  "menu_name": "Returned / Revision Requests",
+  "path": "/m/approval-center/returned-requests"
+ },
+ {
+  "module": "approval-center",
+  "group": "DECISIONS",
+  "name": "Approval History",
+  "menu_name": "Approval History",
+  "path": "/m/approval-center/approval-history"
+ },
+ {
+  "module": "approval-center",
+  "group": "DASHBOARD & SETUP",
+  "name": "Request Dashboard",
+  "menu_name": "Request Dashboard",
+  "path": "/m/approval-center/request-dashboard"
+ },
+ {
+  "module": "approval-center",
+  "group": "DASHBOARD & SETUP",
+  "name": "Request Types & Routing",
+  "menu_name": "Request Types & Routing",
+  "path": "/m/approval-center/request-types"
+ },
+ {
+  "module": "settings",
+  "group": "DEVICE INTEGRATION",
+  "name": "Device Punch Log",
+  "menu_name": "Device Punch Log",
+  "path": "/m/settings/device-punch-log"
+ },
+ {
+  "module": "settings",
+  "group": "DEVICE INTEGRATION",
+  "name": "Device Enrolled Users",
+  "menu_name": "Device Enrolled Users",
+  "path": "/m/settings/device-users"
+ },
+ {
+  "module": "settings",
+  "group": "DEVICE INTEGRATION",
+  "name": "Device Command Queue",
+  "menu_name": "Device Command Queue",
+  "path": "/m/settings/device-commands"
+ },
+ {
+  "module": "settings",
+  "group": "INTEGRATION HUB",
+  "name": "Integration Endpoints",
+  "menu_name": "Integration Endpoints",
+  "path": "/m/settings/integration-endpoints"
+ },
+ {
+  "module": "settings",
+  "group": "INTEGRATION HUB",
+  "name": "Integration Activity Log",
+  "menu_name": "Integration Activity Log",
+  "path": "/m/settings/integration-activity"
+ },
+ {
+  "module": "settings",
+  "group": "INTEGRATION HUB",
+  "name": "SMS Gateway",
+  "menu_name": "SMS Gateway",
+  "path": "/m/settings/sms-gateway"
+ },
+ {
+  "module": "settings",
+  "group": "INTEGRATION HUB",
+  "name": "Bank & Payment Integration",
+  "menu_name": "Bank & Payment Integration",
+  "path": "/m/settings/bank-payment-integration"
+ },
+ {
+  "module": "settings",
+  "group": "INTEGRATION HUB",
+  "name": "API Keys & Webhooks",
+  "menu_name": "API Keys & Webhooks",
+  "path": "/m/settings/api-keys-webhooks"
+ },
+ {
+  "module": "settings",
+  "group": "GENERAL SETTINGS",
+  "name": "General Preferences",
+  "menu_name": "General Preferences",
+  "path": "/m/settings/general-preferences"
+ },
+ {
+  "module": "settings",
+  "group": "GENERAL SETTINGS",
+  "name": "Date, Currency & Localization",
+  "menu_name": "Date, Currency & Localization",
+  "path": "/m/settings/localization"
+ },
+ {
+  "module": "settings",
+  "group": "GENERAL SETTINGS",
+  "name": "Document Numbering Series",
+  "menu_name": "Document Numbering Series",
+  "path": "/m/settings/document-numbering"
+ },
+ {
+  "module": "settings",
+  "group": "GENERAL SETTINGS",
+  "name": "Print & Letterhead Settings",
+  "menu_name": "Print & Letterhead Settings",
+  "path": "/m/settings/print-letterhead"
+ },
+ {
+  "module": "settings",
+  "group": "GENERAL SETTINGS",
+  "name": "Barcode & Label Settings",
+  "menu_name": "Barcode & Label Settings",
+  "path": "/m/settings/barcode-label"
+ },
+ {
+  "module": "settings",
+  "group": "SYSTEM & MAINTENANCE",
+  "name": "Notification Preferences",
+  "menu_name": "Notification Preferences",
+  "path": "/m/settings/notification-preferences"
+ },
+ {
+  "module": "settings",
+  "group": "SYSTEM & MAINTENANCE",
+  "name": "Scheduled Jobs",
+  "menu_name": "Scheduled Jobs",
+  "path": "/m/settings/scheduled-jobs"
+ },
+ {
+  "module": "settings",
+  "group": "SYSTEM & MAINTENANCE",
+  "name": "Backup & Restore",
+  "menu_name": "Backup & Restore",
+  "path": "/m/settings/backup-restore"
+ },
+ {
+  "module": "settings",
+  "group": "SYSTEM & MAINTENANCE",
+  "name": "System Health Monitor",
+  "menu_name": "System Health Monitor",
+  "path": "/m/settings/system-health"
+ },
+ {
+  "module": "settings",
+  "group": "SYSTEM & MAINTENANCE",
+  "name": "Data Retention & Purge",
+  "menu_name": "Data Retention & Purge",
+  "path": "/m/settings/data-retention"
+ },
+ {
+  "module": "company-management",
+  "group": "Company Management",
+  "name": "Company Profile",
+  "menu_name": "Company Profile",
+  "path": "/m/company-management/company-profile"
+ },
+ {
+  "module": "company-management",
+  "group": "Company Management",
+  "name": "Company Documents",
+  "menu_name": "Company Documents",
+  "path": "/m/company-management/company-documents"
+ },
+ {
+  "module": "company-management",
+  "group": "Factory Setup",
+  "name": "Factory",
+  "menu_name": "Factory",
+  "path": "/m/company-management/company-factory"
+ },
+ {
+  "module": "company-management",
+  "group": "Factory Setup",
+  "name": "Building",
+  "menu_name": "Building",
+  "path": "/m/company-management/company-building"
+ },
+ {
+  "module": "company-management",
+  "group": "Factory Setup",
+  "name": "Floor",
+  "menu_name": "Floor",
+  "path": "/m/company-management/company-floor"
+ },
+ {
+  "module": "company-management",
+  "group": "Organization",
+  "name": "Department",
+  "menu_name": "Department",
+  "path": "/m/company-management/company-department"
+ },
+ {
+  "module": "company-management",
+  "group": "Organization",
+  "name": "Section",
+  "menu_name": "Section",
+  "path": "/m/company-management/company-section"
+ },
+ {
+  "module": "company-management",
+  "group": "Organization",
+  "name": "Line Master",
+  "menu_name": "Line",
+  "path": "/m/company-management/company-line"
+ },
+ {
+  "module": "company-management",
+  "group": "Organization",
+  "name": "Workstation",
+  "menu_name": "Workstation",
+  "path": "/m/company-management/company-workstation"
+ },
+ {
+  "module": "company-management",
+  "group": "Machine Management",
+  "name": "Machine Master",
+  "menu_name": "Machine Master",
+  "path": "/m/company-management/company-machine"
+ },
+ {
+  "module": "company-management",
+  "group": "Machine Management",
+  "name": "Machine Allocation",
+  "menu_name": "Machine Allocation",
+  "path": "/m/company-management/company-machine-allocation"
+ },
+ {
+  "module": "company-management",
+  "group": "Designation & Grade",
+  "name": "Designation",
+  "menu_name": "Designation",
+  "path": "/m/company-management/company-designation"
+ },
+ {
+  "module": "company-management",
+  "group": "Designation & Grade",
+  "name": "Grade",
+  "menu_name": "Grade",
+  "path": "/m/company-management/company-grade"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "HR & Payroll",
+  "name": "Dashboard",
+  "menu_name": "Dashboard",
+  "path": "/m/hr-payroll/hr-dashboard"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "HR & Payroll",
+  "name": "Reports",
+  "menu_name": "Reports",
+  "path": "/m/hr-payroll/hr-reports"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Employment Type",
+  "menu_name": "Employment Type",
+  "path": "/m/hr-payroll/employee-type"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Employee Category",
+  "menu_name": "Employee Category",
+  "path": "/m/hr-payroll/designation-group"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Pay Grade",
+  "menu_name": "Pay Grade",
+  "path": "/m/hr-payroll/grade"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Pay Element",
+  "menu_name": "Pay Element",
+  "path": "/m/hr-payroll/pay-element"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Allowance",
+  "menu_name": "Allowance",
+  "path": "/m/hr-payroll/allowance-entry"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Deduction",
+  "menu_name": "Deduction",
+  "path": "/m/hr-payroll/head-wise-deduction"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Shift",
+  "menu_name": "Shift",
+  "path": "/m/hr-payroll/shift-master"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Leave Type",
+  "menu_name": "Leave Type",
+  "path": "/m/hr-payroll/leave-type"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "OT Rule",
+  "menu_name": "OT Rule",
+  "path": "/m/hr-payroll/ot-rule"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Bonus Rule",
+  "menu_name": "Bonus Rule",
+  "path": "/m/hr-payroll/bonus-rules-setup"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Wage/Gazette Rule",
+  "menu_name": "Wage/Gazette Rule",
+  "path": "/m/hr-payroll/salary-policy-and-rules"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Gazette Grade Wage",
+  "menu_name": "Gazette Grade Wage",
+  "path": "/m/hr-payroll/gazette-grade-wage"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Festival Calendar",
+  "menu_name": "Festival Calendar",
+  "path": "/m/hr-payroll/festival-calendar"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Master Data",
+  "name": "Payroll Settings",
+  "menu_name": "Payroll Settings",
+  "path": "/m/hr-payroll/company-pay-period"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee",
+  "name": "Quick Registration",
+  "menu_name": "Quick Registration",
+  "path": "/m/hr-payroll/employee-quick-registration"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee",
+  "name": "Employee List",
+  "menu_name": "Employee List",
+  "path": "/m/hr-payroll/employee-register"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee",
+  "name": "Employee Profile",
+  "menu_name": "Employee Profile",
+  "path": "/m/hr-payroll/employee-profile"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee",
+  "name": "Employee Assignment",
+  "menu_name": "Employee Assignment",
+  "path": "/m/hr-payroll/employee-assignment"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee",
+  "name": "Biometric / Fingerprint",
+  "menu_name": "Biometric / Fingerprint",
+  "path": "/m/hr-payroll/biometric-fingerprint"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee",
+  "name": "ID Card",
+  "menu_name": "ID Card",
+  "path": "/m/hr-payroll/id-card-print"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Attendance & Shift",
+  "name": "Daily Attendance",
+  "menu_name": "Daily Attendance",
+  "path": "/m/hr-payroll/daily-attendance"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Attendance & Shift",
+  "name": "Biometric Sync",
+  "menu_name": "Biometric Sync",
+  "path": "/m/hr-payroll/biometric-sync"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Attendance & Shift",
+  "name": "Missing Punch",
+  "menu_name": "Missing Punch",
+  "path": "/m/hr-payroll/missing-punch"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Attendance & Shift",
+  "name": "Attendance Correction",
+  "menu_name": "Attendance Correction",
+  "path": "/m/hr-payroll/attendance-correction"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Attendance & Shift",
+  "name": "Shift Roster",
+  "menu_name": "Shift Roster",
+  "path": "/m/hr-payroll/shift-roster"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Leave & Overtime",
+  "name": "Leave",
+  "menu_name": "Leave",
+  "path": "/m/hr-payroll/leave-application"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Leave & Overtime",
+  "name": "OT Request",
+  "menu_name": "OT Request",
+  "path": "/m/hr-payroll/ot-request"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Leave & Overtime",
+  "name": "OT Approval",
+  "menu_name": "OT Approval",
+  "path": "/m/hr-payroll/ot-approval"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Salary Processing",
+  "name": "Daily Salary",
+  "menu_name": "Daily Salary",
+  "path": "/m/hr-payroll/daily-salary"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Salary Processing",
+  "name": "OT Salary",
+  "menu_name": "OT Salary",
+  "path": "/m/hr-payroll/ot-salary"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Salary Processing",
+  "name": "Festival Bonus",
+  "menu_name": "Festival Bonus",
+  "path": "/m/hr-payroll/festival-bonus"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Salary Processing",
+  "name": "Monthly Salary",
+  "menu_name": "Monthly Salary",
+  "path": "/m/hr-payroll/monthly-salary"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee Movement",
+  "name": "Transfer",
+  "menu_name": "Transfer",
+  "path": "/m/hr-payroll/employee-transfer"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee Movement",
+  "name": "Promotion",
+  "menu_name": "Promotion",
+  "path": "/m/hr-payroll/employee-promotion"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee Movement",
+  "name": "Increment",
+  "menu_name": "Increment",
+  "path": "/m/hr-payroll/employee-increment"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Employee Movement",
+  "name": "Re-Joining",
+  "menu_name": "Re-Joining",
+  "path": "/m/hr-payroll/employee-re-join"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Separation",
+  "name": "Resignation / Release",
+  "menu_name": "Resignation / Release",
+  "path": "/m/hr-payroll/employee-separation"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Separation",
+  "name": "Final Settlement",
+  "menu_name": "Final Settlement",
+  "path": "/m/hr-payroll/final-settlement"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Letter Management",
+  "name": "Letter Master",
+  "menu_name": "Letter Master",
+  "path": "/m/hr-payroll/letter-master"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Letter Management",
+  "name": "Generate Letter",
+  "menu_name": "Generate Letter",
+  "path": "/m/hr-payroll/generate-letter"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Letter Management",
+  "name": "Letter History",
+  "menu_name": "Letter History",
+  "path": "/m/hr-payroll/letter-history"
+ },
+ {
+  "module": "hr-payroll",
+  "group": "Letter Management",
+  "name": "Letter Reports",
+  "menu_name": "Letter Reports",
+  "path": "/m/hr-payroll/letter-reports"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Order Portfolio Overview",
+  "menu_name": "Order Portfolio Overview",
+  "path": "/m/merchandising/ai-order-overview"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Order Completion Rate",
+  "menu_name": "Order Completion Rate",
+  "path": "/m/merchandising/ai-order-completion"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Critical & At-Risk Orders",
+  "menu_name": "Critical & At-Risk Orders",
+  "path": "/m/merchandising/ai-at-risk-critical-orders"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Delayed Order Register",
+  "menu_name": "Delayed Order Register",
+  "path": "/m/merchandising/ai-delayed-orders"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Pending Activity Board",
+  "menu_name": "Pending Activity Board",
+  "path": "/m/merchandising/ai-pending-activities"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Upcoming Deadline Board",
+  "menu_name": "Upcoming Deadline Board",
+  "path": "/m/merchandising/ai-upcoming-deadlines"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Buyer-Wise Order Status",
+  "menu_name": "Buyer-Wise Order Status",
+  "path": "/m/merchandising/ai-buyer-wise-status"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Merchandiser Scorecard",
+  "menu_name": "Merchandiser Scorecard",
+  "path": "/m/merchandising/ai-merchandiser-performance"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI MERCHANDISING DASHBOARD",
+  "name": "Assisted Alerts & Advice",
+  "menu_name": "Assisted Alerts & Advice",
+  "path": "/m/merchandising/ai-alerts-recommendations"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Order Risk Rating",
+  "menu_name": "Order Risk Rating",
+  "path": "/m/merchandising/ai-order-risk-score"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Order Health Rating",
+  "menu_name": "Order Health Rating",
+  "path": "/m/merchandising/ai-order-health-score"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Delay Likelihood Rating",
+  "menu_name": "Delay Likelihood Rating",
+  "path": "/m/merchandising/ai-delay-probability"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Material Risk Watch",
+  "menu_name": "Material Risk Watch",
+  "path": "/m/merchandising/ai-material-risk"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Production Risk Watch",
+  "menu_name": "Production Risk Watch",
+  "path": "/m/merchandising/ai-production-risk"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Approval Risk Watch",
+  "menu_name": "Approval Risk Watch",
+  "path": "/m/merchandising/ai-approval-risk"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Shipment Risk Watch",
+  "menu_name": "Shipment Risk Watch",
+  "path": "/m/merchandising/ai-shipment-risk"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Risk Driver Analysis",
+  "menu_name": "Risk Driver Analysis",
+  "path": "/m/merchandising/ai-risk-factor-analysis"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Expected Delay Forecast",
+  "menu_name": "Expected Delay Forecast",
+  "path": "/m/merchandising/ai-expected-delay"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER RISK & HEALTH",
+  "name": "Recommended Action Advice",
+  "menu_name": "Recommended Action Advice",
+  "path": "/m/merchandising/ai-recommended-action"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Overall Order Progress",
+  "menu_name": "Overall Order Progress",
+  "path": "/m/merchandising/ai-overall-order-progress"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Task Completion Rate",
+  "menu_name": "Task Completion Rate",
+  "path": "/m/merchandising/ai-task-completion"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Milestone Progress Tracking",
+  "menu_name": "Milestone Progress Tracking",
+  "path": "/m/merchandising/ai-milestone-tracking"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Department-Wise Progress",
+  "menu_name": "Department-Wise Progress",
+  "path": "/m/merchandising/ai-department-wise-progress"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Pending Task Queue",
+  "menu_name": "Pending Task Queue",
+  "path": "/m/merchandising/ai-pending-tasks"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Overdue Task Queue",
+  "menu_name": "Overdue Task Queue",
+  "path": "/m/merchandising/ai-overdue-tasks"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Deadline Watch Board",
+  "menu_name": "Deadline Watch Board",
+  "path": "/m/merchandising/ai-deadline-monitoring"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Delay Forecast",
+  "menu_name": "Delay Forecast",
+  "path": "/m/merchandising/ai-delay-prediction"
+ },
+ {
+  "module": "merchandising",
+  "group": "AI ORDER PROGRESS & TASK MONITOR",
+  "name": "Task Priority Advice",
+  "menu_name": "Task Priority Advice",
+  "path": "/m/merchandising/ai-task-priority-recommendation"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Dyeing Process Loss Norms",
+  "menu_name": "Dyeing Process Loss Norms",
+  "path": "/m/merchandising/dyeing-process-loss-chart"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Country & Origin Master",
+  "menu_name": "Country & Origin Master",
+  "path": "/m/merchandising/country-origin-master"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Buyer Office Directory",
+  "menu_name": "Buyer Office Directory",
+  "path": "/m/merchandising/buyer-office-master"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Buyer Account Master",
+  "menu_name": "Buyer Account Master",
+  "path": "/m/merchandising/buyer-master"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Buyer Account Permission",
+  "menu_name": "Buyer Account Permission",
+  "path": "/m/merchandising/buyer-ac-permission"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Buyer Sample Mapping",
+  "menu_name": "Buyer Sample Mapping",
+  "path": "/m/merchandising/buyer-sample-mapping"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Buyer Test Lab Mapping",
+  "menu_name": "Buyer Test Lab Mapping",
+  "path": "/m/merchandising/buyer-test-institute-mapping"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Country Configuration",
+  "menu_name": "Country Configuration",
+  "path": "/m/merchandising/country-setup"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Buyer-Wise Trims & Accessories",
+  "menu_name": "Buyer-Wise Trims & Accessories",
+  "path": "/m/merchandising/buyer-wise-trim-accessories"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Buyer-Wise Supplier Configuration",
+  "menu_name": "Buyer-Wise Supplier Configuration",
+  "path": "/m/merchandising/buyer-supplier-config"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Marketing Buyer Permission",
+  "menu_name": "Marketing Buyer Permission",
+  "path": "/m/merchandising/buyer-ac-permission-mkt"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Process Loss Quantity Setup",
+  "menu_name": "Process Loss Quantity Setup",
+  "path": "/m/merchandising/process-loss-qty-config"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Cutting Process Loss Setup",
+  "menu_name": "Cutting Process Loss Setup",
+  "path": "/m/merchandising/cutting-process-loss-config"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Colour Directory",
+  "menu_name": "Colour Directory",
+  "path": "/m/merchandising/colour-master"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Size Directory",
+  "menu_name": "Size Directory",
+  "path": "/m/merchandising/size-master"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Garment Part Master",
+  "menu_name": "Garment Part Master",
+  "path": "/m/merchandising/garment-part"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Service Type Setup",
+  "menu_name": "Service Type Setup",
+  "path": "/m/merchandising/service-type-setup"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Fabric Type Master",
+  "menu_name": "Fabric Type Master",
+  "path": "/m/merchandising/fabric-type-entry"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Fiber Master",
+  "menu_name": "Fiber Master",
+  "path": "/m/merchandising/fiber-master"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Fiber Composition",
+  "menu_name": "Fiber Composition",
+  "path": "/m/merchandising/fiber-composition"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Inquiry Rate Chart",
+  "menu_name": "Inquiry Rate Chart",
+  "path": "/m/merchandising/rate-chart-for-inquiry"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Trims & Accessories Spec Setup",
+  "menu_name": "Trims & Accessories Spec Setup",
+  "path": "/m/merchandising/trim-accessories-spec-cfg"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "TNA Task Rights",
+  "menu_name": "TNA Task Rights",
+  "path": "/m/merchandising/tna-task-permission"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "TNA Template Setup",
+  "menu_name": "TNA Template Setup",
+  "path": "/m/merchandising/template-for-tna"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Task & Action Register",
+  "menu_name": "Task & Action Register",
+  "path": "/m/merchandising/task-action-list"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "Style & Order Upload",
+  "menu_name": "Style & Order Upload",
+  "path": "/m/merchandising/upload-style-and-order"
+ },
+ {
+  "module": "merchandising",
+  "group": "MASTER DATA",
+  "name": "GSM-Wise Yarn Count Setup",
+  "menu_name": "GSM-Wise Yarn Count Setup",
+  "path": "/m/merchandising/gsm-wise-count-conf"
+ },
+ {
+  "module": "merchandising",
+  "group": "INQUIRY",
+  "name": "Price Quotation Entry",
+  "menu_name": "Price Quotation Entry",
+  "path": "/m/merchandising/price-quotation"
+ },
+ {
+  "module": "merchandising",
+  "group": "INQUIRY",
+  "name": "Style Development Sheet",
+  "menu_name": "Style Development Sheet",
+  "path": "/m/merchandising/style-development"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Accessories Purchase Indent",
+  "menu_name": "Accessories Purchase Indent",
+  "path": "/m/merchandising/accessories-pr"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Accessories Purchase Order",
+  "menu_name": "Accessories Purchase Order",
+  "path": "/m/merchandising/accessories-po"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Accessories Receipt Report",
+  "menu_name": "Accessories Receipt Report",
+  "path": "/m/merchandising/accessories-mrr"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Procurement Cost Head",
+  "menu_name": "Procurement Cost Head",
+  "path": "/m/merchandising/procurement-cost-head"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Procurement Posting Setup",
+  "menu_name": "Procurement Posting Setup",
+  "path": "/m/merchandising/procurement-posting-setup"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Accessories Supplier Return Challan",
+  "menu_name": "Accessories Supplier Return Challan",
+  "path": "/m/merchandising/accessories-return-challan-to-supplier"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Purchased Fabric Opening Balance",
+  "menu_name": "Purchased Fabric Opening Balance",
+  "path": "/m/merchandising/purchase-fabric-opening-balance"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Dummy Order Accessories Indent",
+  "menu_name": "Dummy Order Accessories Indent",
+  "path": "/m/merchandising/accessories-pr-dummy-ord"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Purchased Fabric Indent",
+  "menu_name": "Purchased Fabric Indent",
+  "path": "/m/merchandising/purchase-fabric-pr"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Purchased Fabric Purchase Order",
+  "menu_name": "Purchased Fabric Purchase Order",
+  "path": "/m/merchandising/purchase-fabric-po"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Purchased Fabric Receipt Report",
+  "menu_name": "Purchased Fabric Receipt Report",
+  "path": "/m/merchandising/purchase-fabric-mrr"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Fabric Supplier Return Challan",
+  "menu_name": "Fabric Supplier Return Challan",
+  "path": "/m/merchandising/fabric-return-challan-to-supplier"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Finished Fabric Opening Balance",
+  "menu_name": "Finished Fabric Opening Balance",
+  "path": "/m/merchandising/finish-fabric-opening-balance"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Purchased Fabric Closing",
+  "menu_name": "Purchased Fabric Closing",
+  "path": "/m/merchandising/purchase-fabric-closing"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Finished Fabric Closing",
+  "menu_name": "Finished Fabric Closing",
+  "path": "/m/merchandising/finish-fabric-closing"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Trims Stock Closing",
+  "menu_name": "Trims Stock Closing",
+  "path": "/m/merchandising/trims-closing"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Batch Fabric Stock Closing",
+  "menu_name": "Batch Fabric Stock Closing",
+  "path": "/m/merchandising/batch-fabric-closing"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Grey Fabric Leftover Closing",
+  "menu_name": "Grey Fabric Leftover Closing",
+  "path": "/m/merchandising/gray-fab-left-over-closing"
+ },
+ {
+  "module": "merchandising",
+  "group": "TRIMS & ACCESSORIES",
+  "name": "Finished Fabric Leftover Closing",
+  "menu_name": "Finished Fabric Leftover Closing",
+  "path": "/m/merchandising/finish-fab-left-over-closing"
+ },
+ {
+  "module": "merchandising",
+  "group": "Style & Order",
+  "name": "Style & Order Dashboard",
+  "menu_name": "Style & Order Dashboard",
+  "path": "/m/merchandising/style-order-dashboard"
+ },
+ {
+  "module": "merchandising",
+  "group": "Style & Order",
+  "name": "Order Confirmation",
+  "menu_name": "Order Confirmation",
+  "path": "/m/merchandising/style-order-confirmation"
+ },
+ {
+  "module": "merchandising",
+  "group": "Style & Order",
+  "name": "Order Register",
+  "menu_name": "Order Register",
+  "path": "/m/merchandising/order-list"
+ },
+ {
+  "module": "merchandising",
+  "group": "Style & Order",
+  "name": "Style Progress Board",
+  "menu_name": "Style Progress Board",
+  "path": "/m/merchandising/style-dashboard"
+ },
+ {
+  "module": "merchandising",
+  "group": "Style & Order",
+  "name": "Buyer-Wise Style & Order Follow-up",
+  "menu_name": "Buyer-Wise Style & Order Follow-up",
+  "path": "/m/merchandising/pms-buyer-wise-style-and-order-followup-list"
+ },
+ {
+  "module": "merchandising",
+  "group": "Style & Order",
+  "name": "Projection & Call-Off Order",
+  "menu_name": "Projection & Call-Off Order",
+  "path": "/m/merchandising/projection-call-off-order"
+ },
+ {
+  "module": "merchandising",
+  "group": "Accessories & Trims",
+  "name": "Accessories Booking Lookup",
+  "menu_name": "Accessories Booking Lookup",
+  "path": "/m/merchandising/accessories-booking-view"
+ },
+ {
+  "module": "merchandising",
+  "group": "Accessories & Trims",
+  "name": "Trims & Accessories Sourcing",
+  "menu_name": "Trims & Accessories Sourcing",
+  "path": "/m/merchandising/sourcing-of-trims-accessories"
+ },
+ {
+  "module": "merchandising",
+  "group": "Accessories & Trims",
+  "name": "Trims Dyeing Programme",
+  "menu_name": "Trims Dyeing Programme",
+  "path": "/m/merchandising/dyeing-program-for-trims"
+ },
+ {
+  "module": "merchandising",
+  "group": "Accessories & Trims",
+  "name": "Trims Accessories Booking",
+  "menu_name": "Trims Accessories Booking",
+  "path": "/m/merchandising/accessories-booking-trims"
+ },
+ {
+  "module": "merchandising",
+  "group": "Accessories & Trims",
+  "name": "Accessories Booking Register",
+  "menu_name": "Accessories Booking Register",
+  "path": "/m/merchandising/accessories-booking-list"
+ },
+ {
+  "module": "merchandising",
+  "group": "Accessories & Trims",
+  "name": "Accessories Purchase Register",
+  "menu_name": "Accessories Purchase Register",
+  "path": "/m/merchandising/accessories-purchase-list"
+ },
+ {
+  "module": "merchandising",
+  "group": "Costing & Budget",
+  "name": "Fabric Process Rate",
+  "menu_name": "Fabric Process Rate",
+  "path": "/m/merchandising/fab-process-rate"
+ },
+ {
+  "module": "merchandising",
+  "group": "Costing & Budget",
+  "name": "Order Budget Sheet",
+  "menu_name": "Order Budget Sheet",
+  "path": "/m/merchandising/budget-sheet"
+ },
+ {
+  "module": "merchandising",
+  "group": "Costing & Budget",
+  "name": "CAD Consumption Register",
+  "menu_name": "CAD Consumption Register",
+  "path": "/m/merchandising/cad-consumption-list"
+ },
+ {
+  "module": "merchandising",
+  "group": "Costing & Budget",
+  "name": "Print & Embroidery Rate Setup",
+  "menu_name": "Print & Embroidery Rate Setup",
+  "path": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "module": "merchandising",
+  "group": "Costing & Budget",
+  "name": "Budget vs Actual Costing",
+  "menu_name": "Budget vs Actual Costing",
+  "path": "/m/merchandising/budget-vs-post-prod-costing"
+ },
+ {
+  "module": "merchandising",
+  "group": "Costing & Budget",
+  "name": "Budget Sheet Workflow",
+  "menu_name": "Budget Sheet Workflow",
+  "path": "/m/merchandising/budget-sheet-workflow"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Lab Dip Programme",
+  "menu_name": "Lab Dip Programme",
+  "path": "/m/merchandising/labdip-program"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Lab Dip Submission",
+  "menu_name": "Lab Dip Submission",
+  "path": "/m/merchandising/labdip-submission"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Sample Programme",
+  "menu_name": "Sample Programme",
+  "path": "/m/merchandising/sample-program"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Print Design Sheet",
+  "menu_name": "Print Design Sheet",
+  "path": "/m/merchandising/print-design"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Sample Production Entry",
+  "menu_name": "Sample Production Entry",
+  "path": "/m/merchandising/sample-production"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Sample Delivery Challan",
+  "menu_name": "Sample Delivery Challan",
+  "path": "/m/merchandising/sample-delivery-challan"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Buyer Sample Feedback",
+  "menu_name": "Buyer Sample Feedback",
+  "path": "/m/merchandising/buyer-feedback-for-sample"
+ },
+ {
+  "module": "merchandising",
+  "group": "Lab Dip & Sample",
+  "name": "Collar & Cuff Measurement Sheet",
+  "menu_name": "Collar & Cuff Measurement Sheet",
+  "path": "/m/merchandising/collar-cuff-measurement"
+ },
+ {
+  "module": "merchandising",
+  "group": "Fabric Booking",
+  "name": "Bulk Fabric Booking Entry",
+  "menu_name": "Bulk Fabric Booking Entry",
+  "path": "/m/merchandising/bulk-fabric-booking"
+ },
+ {
+  "module": "merchandising",
+  "group": "Fabric Booking",
+  "name": "Approved Fabric Booking List",
+  "menu_name": "Approved Fabric Booking List",
+  "path": "/m/merchandising/fabric-booking-list-approved"
+ },
+ {
+  "module": "merchandising",
+  "group": "Fabric Booking",
+  "name": "Style-Wise Yarn Spec Confirmation",
+  "menu_name": "Style-Wise Yarn Spec Confirmation",
+  "path": "/m/merchandising/style-wise-yarn-spec-confirm"
+ },
+ {
+  "module": "merchandising",
+  "group": "Fabric Booking",
+  "name": "Additional Fabric Booking Entry",
+  "menu_name": "Additional Fabric Booking Entry",
+  "path": "/m/merchandising/additional-fabric-booking"
+ },
+ {
+  "module": "merchandising",
+  "group": "Fabric Booking",
+  "name": "Purchase Buffer Booking",
+  "menu_name": "Purchase Buffer Booking",
+  "path": "/m/merchandising/buffer-booking-purchase"
+ },
+ {
+  "module": "merchandising",
+  "group": "Fabric Booking",
+  "name": "Imported Fabric Booking",
+  "menu_name": "Imported Fabric Booking",
+  "path": "/m/merchandising/import-fabric-booking-purchase"
+ },
+ {
+  "module": "merchandising",
+  "group": "T&A Followup",
+  "name": "Merchandising TNA Follow-up",
+  "menu_name": "Merchandising TNA Follow-up",
+  "path": "/m/merchandising/tna-followup-marchandising"
+ },
+ {
+  "module": "merchandising",
+  "group": "REPORTS",
+  "name": "Order Merchandising Reports",
+  "menu_name": "Order Merchandising Reports",
+  "path": "/m/merchandising/merchandising-reports"
+ },
+ {
+  "module": "material-procurement",
+  "group": "DASHBOARD",
+  "name": "Procurement Dashboard",
+  "menu_name": "Procurement Dashboard",
+  "path": "/m/material-procurement/procurement-dashboard"
+ },
+ {
+  "module": "material-procurement",
+  "group": "MASTER DATA",
+  "name": "Fabric Master",
+  "menu_name": "Fabric Master",
+  "path": "/m/material-procurement/fabric-master"
+ },
+ {
+  "module": "material-procurement",
+  "group": "MASTER DATA",
+  "name": "Trims & Accessories Master",
+  "menu_name": "Trims & Accessories Master",
+  "path": "/m/material-procurement/accessories-master"
+ },
+ {
+  "module": "material-procurement",
+  "group": "MASTER DATA",
+  "name": "Supplier Master",
+  "menu_name": "Supplier Master",
+  "path": "/m/material-procurement/supplier-master"
+ },
+ {
+  "module": "material-procurement",
+  "group": "PURCHASE REQUISITION",
+  "name": "Create Requisition",
+  "menu_name": "Create Requisition",
+  "path": "/m/material-procurement/create-requisition"
+ },
+ {
+  "module": "material-procurement",
+  "group": "PURCHASE REQUISITION",
+  "name": "My Requisitions",
+  "menu_name": "My Requisitions",
+  "path": "/m/material-procurement/my-requisitions"
+ },
+ {
+  "module": "material-procurement",
+  "group": "SUPPLIER PORTAL",
+  "name": "Supplier Dashboard",
+  "menu_name": "Supplier Dashboard",
+  "path": "/m/material-procurement/supplier-dashboard"
+ },
+ {
+  "module": "material-procurement",
+  "group": "SUPPLIER PORTAL",
+  "name": "Available Requirements",
+  "menu_name": "Available Requirements",
+  "path": "/m/material-procurement/available-requirements"
+ },
+ {
+  "module": "material-procurement",
+  "group": "SUPPLIER PORTAL",
+  "name": "Quotation History",
+  "menu_name": "Quotation History",
+  "path": "/m/material-procurement/quotation-history"
+ },
+ {
+  "module": "material-procurement",
+  "group": "PRICE REVIEW & APPROVAL",
+  "name": "Price Review & Approval",
+  "menu_name": "Price Review & Approval",
+  "path": "/m/material-procurement/price-review"
+ },
+ {
+  "module": "material-procurement",
+  "group": "APPROVED MATERIAL & FOLLOW-UP",
+  "name": "Assigned Materials",
+  "menu_name": "Assigned Materials",
+  "path": "/m/material-procurement/assigned-materials"
+ },
+ {
+  "module": "material-procurement",
+  "group": "APPROVED MATERIAL & FOLLOW-UP",
+  "name": "Delivery Tracking",
+  "menu_name": "Delivery Tracking",
+  "path": "/m/material-procurement/delivery-tracking"
+ },
+ {
+  "module": "material-procurement",
+  "group": "CONTROL",
+  "name": "Notifications",
+  "menu_name": "Notifications",
+  "path": "/m/material-procurement/procurement-notifications"
+ },
+ {
+  "module": "material-procurement",
+  "group": "CONTROL",
+  "name": "Audit Trail",
+  "menu_name": "Audit Trail",
+  "path": "/m/material-procurement/procurement-audit-trail"
+ },
+ {
+  "module": "material-procurement",
+  "group": "CONTROL",
+  "name": "Supplier Portal Access",
+  "menu_name": "Supplier Portal Access",
+  "path": "/m/material-procurement/supplier-portal-access"
+ },
+ {
+  "module": "sample",
+  "group": "DASHBOARD",
+  "name": "Prototype Dashboard",
+  "menu_name": "Prototype Dashboard",
+  "path": "/m/sample/prototype-dashboard"
+ },
+ {
+  "module": "sample",
+  "group": "DASHBOARD",
+  "name": "Sample 360° View",
+  "menu_name": "Sample 360° View",
+  "path": "/m/sample/sample-360-view"
+ },
+ {
+  "module": "sample",
+  "group": "DASHBOARD",
+  "name": "Notifications & Alerts",
+  "menu_name": "Notifications & Alerts",
+  "path": "/m/sample/sample-alerts"
+ },
+ {
+  "module": "sample",
+  "group": "MASTER DATA",
+  "name": "Sample Type Configuration",
+  "menu_name": "Sample Type Configuration",
+  "path": "/m/sample/sample-type-configuration"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Requisition",
+  "menu_name": "Sample Requisition",
+  "path": "/m/sample/prototype-requisition"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Development",
+  "menu_name": "Sample Development",
+  "path": "/m/sample/sample-development"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Revision",
+  "menu_name": "Sample Revision",
+  "path": "/m/sample/sample-revision"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Prototype Material Requisition",
+  "menu_name": "Prototype Material Requisition",
+  "path": "/m/sample/sample-requisition"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Bundle Card Issue",
+  "menu_name": "Sample Bundle Card Issue",
+  "path": "/m/sample/bundle-card-create"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Room Daily Target",
+  "menu_name": "Sample Room Daily Target",
+  "path": "/m/sample/daily-target-setting"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Bundle Tracking",
+  "menu_name": "Sample Bundle Tracking",
+  "path": "/m/sample/bundle-movement"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Quality Check",
+  "menu_name": "Sample Quality Check",
+  "path": "/m/sample/sample-quality-check"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Approval",
+  "menu_name": "Sample Approval",
+  "path": "/m/sample/sample-approval"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Buyer Feedback",
+  "menu_name": "Buyer Feedback",
+  "path": "/m/sample/buyer-feedback"
+ },
+ {
+  "module": "sample",
+  "group": "Prototype Desk operations",
+  "name": "Sample Handover / Delivery",
+  "menu_name": "Sample Handover / Delivery",
+  "path": "/m/sample/sample-handover"
+ },
+ {
+  "module": "sample",
+  "group": "REPORTS",
+  "name": "Sample Status Report",
+  "menu_name": "Sample Status Report",
+  "path": "/m/sample/sample-status-report"
+ },
+ {
+  "module": "sample",
+  "group": "REPORTS",
+  "name": "Sample Pending Report",
+  "menu_name": "Sample Pending Report",
+  "path": "/m/sample/sample-pending-report"
+ },
+ {
+  "module": "sample",
+  "group": "REPORTS",
+  "name": "Sample Approval Report",
+  "menu_name": "Sample Approval Report",
+  "path": "/m/sample/sample-approval-report"
+ },
+ {
+  "module": "sample",
+  "group": "REPORTS",
+  "name": "Sample Revision Report",
+  "menu_name": "Sample Revision Report",
+  "path": "/m/sample/sample-revision-report"
+ },
+ {
+  "module": "sample",
+  "group": "GENERAL",
+  "name": "Sample Delay Report",
+  "menu_name": "Sample Delay Report",
+  "path": "/m/sample/sample-delay-report"
+ },
+ {
+  "module": "sample",
+  "group": "REPORTS",
+  "name": "Sample Material Report",
+  "menu_name": "Sample Material Report",
+  "path": "/m/sample/sample-material-report"
+ },
+ {
+  "module": "sample",
+  "group": "REPORTS",
+  "name": "Daily Target vs Achievement",
+  "menu_name": "Daily Target vs Achievement",
+  "path": "/m/sample/target-vs-achievement-report"
+ },
+ {
+  "module": "sample",
+  "group": "REPORTS",
+  "name": "Sample Performance Report",
+  "menu_name": "Sample Performance Report",
+  "path": "/m/sample/sample-performance-report"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "OPERATION",
+  "name": "Sales & Shipment Settings",
+  "menu_name": "Sales & Shipment Settings",
+  "path": "/m/sales-delivery/sd-settings"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Sales Order Entry",
+  "menu_name": "Sales Order Entry",
+  "path": "/m/sales-delivery/sales-order"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Sales Order Amendment",
+  "menu_name": "Sales Order Amendment",
+  "path": "/m/sales-delivery/so-amendment"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Order Confirmation",
+  "menu_name": "Order Confirmation",
+  "path": "/m/sales-delivery/order-confirmation"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Delivery Challan Issue",
+  "menu_name": "Delivery Challan Issue",
+  "path": "/m/sales-delivery/delivery-chalan"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Delivery Challan Return",
+  "menu_name": "Delivery Challan Return",
+  "path": "/m/sales-delivery/delivery-challan-return"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Delivery Bill Verification",
+  "menu_name": "Delivery Bill Verification",
+  "path": "/m/sales-delivery/check-bill"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Delivery Completion",
+  "menu_name": "Delivery Completion",
+  "path": "/m/sales-delivery/delivery-completion"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Order & Delivery",
+  "name": "Sales Order Month Close",
+  "menu_name": "Sales Order Month Close",
+  "path": "/m/sales-delivery/so-month-closing"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Sub-Contract",
+  "name": "Sub-Contract Delivery Register",
+  "menu_name": "Sub-Contract Delivery Register",
+  "path": "/m/sales-delivery/sc-delivery-list"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Sub-Contract",
+  "name": "Sub-Contract Receipt Register",
+  "menu_name": "Sub-Contract Receipt Register",
+  "path": "/m/sales-delivery/sc-receive-list"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Sub-Contract",
+  "name": "Sub-Contract Pending",
+  "menu_name": "Sub-Contract Pending",
+  "path": "/m/sales-delivery/sc-pending"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Sub-Contract",
+  "name": "Sub-Contract Return",
+  "menu_name": "Sub-Contract Return",
+  "path": "/m/sales-delivery/sc-return"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Sub-Contract",
+  "name": "Sub-Contract Reconciliation",
+  "menu_name": "Sub-Contract Reconciliation",
+  "path": "/m/sales-delivery/sc-reconciliation"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "GENERAL",
+  "name": "Shipment Planning",
+  "menu_name": "Shipment Planning",
+  "path": "/m/sales-delivery/shipment-planning"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Shipment",
+  "name": "Shipment Booking",
+  "menu_name": "Shipment Booking",
+  "path": "/m/sales-delivery/shipment-booking"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Shipment",
+  "name": "Container / Vessel Details",
+  "menu_name": "Container / Vessel Details",
+  "path": "/m/sales-delivery/container-vessel"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Shipment",
+  "name": "Commercial Document Handover",
+  "menu_name": "Commercial Document Handover",
+  "path": "/m/sales-delivery/commercial-doc-handover"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Shipment",
+  "name": "Shipment Invoice",
+  "menu_name": "Shipment Invoice",
+  "path": "/m/sales-delivery/shipment-invoice"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Shipment",
+  "name": "Packing List",
+  "menu_name": "Packing List",
+  "path": "/m/sales-delivery/packing-list"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Shipment",
+  "name": "Shipment Confirmation",
+  "menu_name": "Shipment Confirmation",
+  "path": "/m/sales-delivery/shipment-confirmation"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Shipment",
+  "name": "Shipment Closing",
+  "menu_name": "Shipment Closing",
+  "path": "/m/sales-delivery/shipment-closing"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Export Documentation",
+  "name": "EXP / Export Documents",
+  "menu_name": "EXP / Export Documents",
+  "path": "/m/sales-delivery/export-documents"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Export Documentation",
+  "name": "Certificate Management",
+  "menu_name": "Certificate Management",
+  "path": "/m/sales-delivery/certificate-management"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Export Documentation",
+  "name": "COO / Certificate of Origin",
+  "menu_name": "COO / Certificate of Origin",
+  "path": "/m/sales-delivery/certificate-of-origin"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Export Documentation",
+  "name": "GSP / REX",
+  "menu_name": "GSP / REX",
+  "path": "/m/sales-delivery/gsp-rex"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Export Documentation",
+  "name": "Bill of Lading / AWB",
+  "menu_name": "Bill of Lading / AWB",
+  "path": "/m/sales-delivery/bl-awb"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Export Documentation",
+  "name": "Document Handover",
+  "menu_name": "Document Handover",
+  "path": "/m/sales-delivery/document-handover"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "Export Documentation",
+  "name": "Shipment Attachments",
+  "menu_name": "Shipment Attachments",
+  "path": "/m/sales-delivery/shipment-attachments"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "REPORT",
+  "name": "Sales & Shipment Reports",
+  "menu_name": "Sales & Shipment Reports",
+  "path": "/m/sales-delivery/sd-report"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "REPORT",
+  "name": "Order-wise Tracking",
+  "menu_name": "Order-wise Tracking",
+  "path": "/m/sales-delivery/order-tracking"
+ },
+ {
+  "module": "sales-delivery",
+  "group": "REPORT",
+  "name": "Notifications & Alerts",
+  "menu_name": "Notifications & Alerts",
+  "path": "/m/sales-delivery/sd-alerts"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "Factory Calendar",
+  "menu_name": "Factory Calendar",
+  "path": "/m/planning/factory-calendar"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "Production Line",
+  "menu_name": "Production Line",
+  "path": "/m/planning/planning-line-setup"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "Machine Master",
+  "menu_name": "Machine Master",
+  "path": "/m/planning/machine-master"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "Manpower Master",
+  "menu_name": "Manpower Master",
+  "path": "/m/planning/manpower-master"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "Shift Master",
+  "menu_name": "Shift Master",
+  "path": "/m/planning/shift-master"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "Efficiency Master",
+  "menu_name": "Efficiency Master",
+  "path": "/m/planning/efficiency-master"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "SMV / SAM Master",
+  "menu_name": "SMV / SAM Master",
+  "path": "/m/planning/smv-sam-master"
+ },
+ {
+  "module": "planning",
+  "group": "MASTER DATA",
+  "name": "Other Setup",
+  "menu_name": "Other Setup",
+  "path": "/m/planning/planning-setup"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Projections",
+  "menu_name": "Projections",
+  "path": "/m/planning/projections"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Master Plan",
+  "menu_name": "Master Plan",
+  "path": "/m/planning/master-plan"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Master Plan List",
+  "menu_name": "Master Plan List",
+  "path": "/m/planning/master-plan-list"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Plan vs Actual & Forecast",
+  "menu_name": "Plan vs Actual & Forecast",
+  "path": "/m/planning/plan-vs-actual"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Revision Request",
+  "menu_name": "Revision Request",
+  "path": "/m/planning/revision-request"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Daily Plan",
+  "menu_name": "Daily Plan",
+  "path": "/m/planning/daily-plan"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Daily Plan List",
+  "menu_name": "Daily Plan List",
+  "path": "/m/planning/daily-plan-list"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Line Capacity View",
+  "menu_name": "Line Capacity View",
+  "path": "/m/planning/line-capacity-view"
+ },
+ {
+  "module": "planning",
+  "group": "PRODUCTION PLAN",
+  "name": "Gantt / Timeline",
+  "menu_name": "Gantt / Timeline",
+  "path": "/m/planning/plan-timeline"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "MASTER DATA",
+  "name": "Batch Lead Days Before PCD",
+  "menu_name": "Batch Lead Days Before PCD",
+  "path": "/m/fabric-planning/batch-plan-date-before-shipment-pcd"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "MASTER DATA",
+  "name": "Standard Batch Hour Norms",
+  "menu_name": "Standard Batch Hour Norms",
+  "path": "/m/fabric-planning/standard-batch-hour-setup"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "MASTER DATA",
+  "name": "Dye Machine Route Master",
+  "menu_name": "Dye Machine Route Master",
+  "path": "/m/fabric-planning/dyeing-machine-routing-setup"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "OPERATIONS",
+  "name": "Planning Constraint Ruleset",
+  "menu_name": "Planning Constraint Ruleset",
+  "path": "/m/fabric-planning/planning-constraints-rules"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "OPERATIONS",
+  "name": "Fabric Batch Plan Entry",
+  "menu_name": "Fabric Batch Plan Entry",
+  "path": "/m/fabric-planning/batch-planning"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "OPERATIONS",
+  "name": "Factory Calendar & Holidays",
+  "menu_name": "Factory Calendar & Holidays",
+  "path": "/m/fabric-planning/factory-holiday-model"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "OPERATIONS",
+  "name": "Dye Machine Capacity Board",
+  "menu_name": "Dye Machine Capacity Board",
+  "path": "/m/fabric-planning/dyeing-machine-capacity-dashboard"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "OPERATIONS",
+  "name": "Batch Schedule Board",
+  "menu_name": "Batch Schedule Board",
+  "path": "/m/fabric-planning/batch-scheduling"
+ },
+ {
+  "module": "fabric-planning",
+  "group": "REPORTS",
+  "name": "Fabric Requirement Reports",
+  "menu_name": "Fabric Requirement Reports",
+  "path": "/m/fabric-planning/fabric-planning-reports"
+ },
+ {
+  "module": "knitting",
+  "group": "MASTER DATA",
+  "name": "User Company & Office Mapping",
+  "menu_name": "User Company & Office Mapping",
+  "path": "/m/knitting/user-company-office-mapping"
+ },
+ {
+  "module": "knitting",
+  "group": "MASTER DATA",
+  "name": "Machine Capacity Hour Plan",
+  "menu_name": "Machine Capacity Hour Plan",
+  "path": "/m/knitting/machine-capacity-hour-plan-list"
+ },
+ {
+  "module": "knitting",
+  "group": "MASTER DATA",
+  "name": "Knitting Machine Profile",
+  "menu_name": "Knitting Machine Profile",
+  "path": "/m/knitting/machine-profile"
+ },
+ {
+  "module": "knitting",
+  "group": "MASTER DATA",
+  "name": "Machine Operator Assignment",
+  "menu_name": "Machine Operator Assignment",
+  "path": "/m/knitting/assign-machine-operator"
+ },
+ {
+  "module": "knitting",
+  "group": "MASTER DATA",
+  "name": "Yarn Count Master",
+  "menu_name": "Yarn Count Master",
+  "path": "/m/knitting/yarn-count-setup"
+ },
+ {
+  "module": "knitting",
+  "group": "MASTER DATA",
+  "name": "Label Printer Configuration",
+  "menu_name": "Label Printer Configuration",
+  "path": "/m/knitting/label-printer-setup"
+ },
+ {
+  "module": "knitting",
+  "group": "MASTER DATA",
+  "name": "Sub-Contract Party Rate",
+  "menu_name": "Sub-Contract Party Rate",
+  "path": "/m/knitting/sc-party-rate"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN PROCUREMENT",
+  "name": "Yarn Purchase Indent",
+  "menu_name": "Yarn Purchase Indent",
+  "path": "/m/knitting/yarn-purchase-requisition"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN PROCUREMENT",
+  "name": "Yarn Indent Approval List",
+  "menu_name": "Yarn Indent Approval List",
+  "path": "/m/knitting/yr-pr-approve-list"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN PROCUREMENT",
+  "name": "Yarn Comparative Statement",
+  "menu_name": "Yarn Comparative Statement",
+  "path": "/m/knitting/comparative-statement"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN PROCUREMENT",
+  "name": "Yarn Purchase Order",
+  "menu_name": "Yarn Purchase Order",
+  "path": "/m/knitting/yarn-purchase-order"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Opening Entry",
+  "menu_name": "Yarn Opening Entry",
+  "path": "/m/knitting/yarn-opening"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Dyeing Loss Adjustment",
+  "menu_name": "Yarn Dyeing Loss Adjustment",
+  "path": "/m/knitting/process-loss-adjustment-yd"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Dyeing Statement",
+  "menu_name": "Yarn Dyeing Statement",
+  "path": "/m/knitting/knitting-yd-statement"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Store Opening Balance",
+  "menu_name": "Yarn Store Opening Balance",
+  "path": "/m/knitting/opening-balance"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Daily Yarn Receipt",
+  "menu_name": "Daily Yarn Receipt",
+  "path": "/m/knitting/daily-receive"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Racking Board",
+  "menu_name": "Yarn Racking Board",
+  "path": "/m/knitting/yarn-stock-racking-board"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Issue against Indent",
+  "menu_name": "Yarn Issue against Indent",
+  "path": "/m/knitting/issue-against-requisition"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Issue Return against Indent",
+  "menu_name": "Yarn Issue Return against Indent",
+  "path": "/m/knitting/issue-return-against-requisition"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "In-House Sub-Contract Yarn Receipt",
+  "menu_name": "In-House Sub-Contract Yarn Receipt",
+  "path": "/m/knitting/yarn-receive-challan-sc-in-house"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Party-Wise Yarn Issue Challan",
+  "menu_name": "Party-Wise Yarn Issue Challan",
+  "path": "/m/knitting/party-wise-yarn-issue-challan"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "In-House Dyed Yarn Receipt",
+  "menu_name": "In-House Dyed Yarn Receipt",
+  "path": "/m/knitting/dyed-yarn-receive-in-house"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "In-House Yarn Dye Re-Process",
+  "menu_name": "In-House Yarn Dye Re-Process",
+  "path": "/m/knitting/yd-reprocess-in-house-to-yd-factory"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Sub-Contract Yarn Dye Re-Process",
+  "menu_name": "Sub-Contract Yarn Dye Re-Process",
+  "path": "/m/knitting/yd-reprocess-sc-knitting-to-yd-factory"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Supplier Yarn Replacement Register",
+  "menu_name": "Supplier Yarn Replacement Register",
+  "path": "/m/knitting/issue-yarn-replace-by-supplier-list"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Daily Yarn Receipt Return",
+  "menu_name": "Daily Yarn Receipt Return",
+  "path": "/m/knitting/daily-receive-return"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Store Month Closing",
+  "menu_name": "Yarn Store Month Closing",
+  "path": "/m/knitting/yarn-month-closing"
+ },
+ {
+  "module": "knitting",
+  "group": "YARN STORE",
+  "name": "Yarn Stock Adjustment",
+  "menu_name": "Yarn Stock Adjustment",
+  "path": "/m/knitting/yarn-adjustment"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Bulk Fabric Production Order",
+  "menu_name": "Bulk Fabric Production Order",
+  "path": "/m/knitting/fabric-production-order-bulk"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Flat Knit Grey Fabric Transfer",
+  "menu_name": "Flat Knit Grey Fabric Transfer",
+  "path": "/m/knitting/flat-knit-grey-transfer"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Yarn-Dyed Fabric Production Order",
+  "menu_name": "Yarn-Dyed Fabric Production Order",
+  "path": "/m/knitting/fabric-production-order-yd"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Grey Store to Batch Transfer",
+  "menu_name": "Grey Store to Batch Transfer",
+  "path": "/m/knitting/grey-fabric-transfer-grey-to-batch"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Sample Fabric Production Order",
+  "menu_name": "Sample Fabric Production Order",
+  "path": "/m/knitting/fabric-production-order-sample"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Flat Bed Rib Production Order",
+  "menu_name": "Flat Bed Rib Production Order",
+  "path": "/m/knitting/fabric-production-order-flat-bed-rib"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Manual Roll Production Entry",
+  "menu_name": "Manual Roll Production Entry",
+  "path": "/m/knitting/roll-production-manual"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Operator Roll Production Entry",
+  "menu_name": "Operator Roll Production Entry",
+  "path": "/m/knitting/roll-production-operator"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Bulk Solid Sub-Contract Knit Programme",
+  "menu_name": "Bulk Solid Sub-Contract Knit Programme",
+  "path": "/m/knitting/issue-sc-knitting-program-bulk-solid"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Sample Solid Sub-Contract Knit Programme",
+  "menu_name": "Sample Solid Sub-Contract Knit Programme",
+  "path": "/m/knitting/issue-sc-knitting-program-sample-solid"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Yarn-Dyed Sub-Contract Knit Programme",
+  "menu_name": "Yarn-Dyed Sub-Contract Knit Programme",
+  "path": "/m/knitting/issue-sc-knitting-program-party-yd"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Yarn Twisting Entry",
+  "menu_name": "Yarn Twisting Entry",
+  "path": "/m/knitting/yarn-twist"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Order-to-Order Grey Transfer",
+  "menu_name": "Order-to-Order Grey Transfer",
+  "path": "/m/knitting/grey-fabric-transfer-order-to-order"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Grey Reuse from Leftover Store",
+  "menu_name": "Grey Reuse from Leftover Store",
+  "path": "/m/knitting/grey-fabric-reuse-from-left-over-store"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Grey Store to Leftover Transfer",
+  "menu_name": "Grey Store to Leftover Transfer",
+  "path": "/m/knitting/grey-fabric-transfer-grey-store-to-left-over"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Batch Store to Leftover Transfer",
+  "menu_name": "Batch Store to Leftover Transfer",
+  "path": "/m/knitting/grey-fabric-transfer-batch-store-to-left-over"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "General Yarn Issue Indent",
+  "menu_name": "General Yarn Issue Indent",
+  "path": "/m/knitting/general-requisition-for-yarn-issue"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Knit Machine Loading Plan",
+  "menu_name": "Knit Machine Loading Plan",
+  "path": "/m/knitting/machine-loading-plan"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Yarn Return to Yarn Store",
+  "menu_name": "Yarn Return to Yarn Store",
+  "path": "/m/knitting/yarn-return-to-store"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Yarn Dyeing Programme Register",
+  "menu_name": "Yarn Dyeing Programme Register",
+  "path": "/m/knitting/yd-program-list"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Sub-Contract Programme Receipt",
+  "menu_name": "Sub-Contract Programme Receipt",
+  "path": "/m/knitting/receive-sc-program-from-party"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Daily Knit Fabric Output",
+  "menu_name": "Daily Knit Fabric Output",
+  "path": "/m/knitting/daily-fabric-production"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Solid Sample Knit Plan",
+  "menu_name": "Solid Sample Knit Plan",
+  "path": "/m/knitting/knit-plan-for-sample-solid"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Yarn-Dyed Sample Knit Plan",
+  "menu_name": "Yarn-Dyed Sample Knit Plan",
+  "path": "/m/knitting/knit-plan-for-sample-yd"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Grey Roll Quality Inspection",
+  "menu_name": "Grey Roll Quality Inspection",
+  "path": "/m/knitting/grey-fab-roll-inspection"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Supplier Yarn Replacement Indent",
+  "menu_name": "Supplier Yarn Replacement Indent",
+  "path": "/m/knitting/requisition-for-yarn-replace-by-supplier"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Production Test Clearance",
+  "menu_name": "Production Test Clearance",
+  "path": "/m/knitting/test-for-production"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Approval Without Testing",
+  "menu_name": "Approval Without Testing",
+  "path": "/m/knitting/approval-without-test"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Direct Knit Fabric Booking",
+  "menu_name": "Direct Knit Fabric Booking",
+  "path": "/m/knitting/direct-fabric-booking"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Grey Fabric Racking Board",
+  "menu_name": "Grey Fabric Racking Board",
+  "path": "/m/knitting/grey-fabric-racking-board"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Knit Plan & Yarn Test Indent",
+  "menu_name": "Knit Plan & Yarn Test Indent",
+  "path": "/m/knitting/knit-plan-requisition-for-yarn-test"
+ },
+ {
+  "module": "knitting",
+  "group": "Knit Production",
+  "name": "Yarn Test Result Register",
+  "menu_name": "Yarn Test Result Register",
+  "path": "/m/knitting/yarn-test-register"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "In-House Sub-Contract Bill",
+  "menu_name": "In-House Sub-Contract Bill",
+  "path": "/m/knitting/sc-in-house-bill"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Out-House Sub-Contract Bill",
+  "menu_name": "Out-House Sub-Contract Bill",
+  "path": "/m/knitting/sc-out-house-bill"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "503 Service Temporarily Unavailable",
+  "menu_name": "Out-House Yarn Dyeing Bill",
+  "path": "/m/knitting/yd-bill-sc-out-house"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Grey Fabric Store Receipt",
+  "menu_name": "Grey Fabric Store Receipt",
+  "path": "/m/knitting/grey-fabric-receive-to-store"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Out-House Grey Receipt Challan",
+  "menu_name": "Out-House Grey Receipt Challan",
+  "path": "/m/knitting/grey-fabric-receive-challan-sc-out-house"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Out-House Collar & Cuff QC Receipt",
+  "menu_name": "Out-House Collar & Cuff QC Receipt",
+  "path": "/m/knitting/collar-cuff-receive-sc-out-house-qc"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Out-House Grey Return Challan",
+  "menu_name": "Out-House Grey Return Challan",
+  "path": "/m/knitting/grey-fabric-return-challan-sc-out-house"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "In-House Grey Return Challan",
+  "menu_name": "In-House Grey Return Challan",
+  "path": "/m/knitting/grey-fabric-return-challan-sc-in-house"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "In-House Grey Delivery Challan",
+  "menu_name": "In-House Grey Delivery Challan",
+  "path": "/m/knitting/grey-fabric-delivery-challan-sc-in-house"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Out-House Yarn Transfer",
+  "menu_name": "Out-House Yarn Transfer",
+  "path": "/m/knitting/yarn-transfer-sc-out-house"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Grey Yarn Transfer for Dyeing",
+  "menu_name": "Grey Yarn Transfer for Dyeing",
+  "path": "/m/knitting/grey-yarn-transfer-challan-for-yd"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Dyed Yarn Receipt Challan",
+  "menu_name": "Dyed Yarn Receipt Challan",
+  "path": "/m/knitting/dyed-yarn-receive-challan"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Out-House Dyed Yarn Transfer Challan",
+  "menu_name": "Out-House Dyed Yarn Transfer Challan",
+  "path": "/m/knitting/dyed-yarn-trans-challan-sc-out-house-knitting"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Grey Fabric Stock Close",
+  "menu_name": "Grey Fabric Stock Close",
+  "path": "/m/knitting/grey-fabric-stock-closing"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Out-House Debit Memo",
+  "menu_name": "Out-House Debit Memo",
+  "path": "/m/knitting/debit-memo-sc-out-house"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Grey Fabric Opening Stock",
+  "menu_name": "Grey Fabric Opening Stock",
+  "path": "/m/knitting/grey-fabric-stock-opening"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Grey Fabric Stock Correction",
+  "menu_name": "Grey Fabric Stock Correction",
+  "path": "/m/knitting/grey-fabric-stock-adjustment"
+ },
+ {
+  "module": "knitting",
+  "group": "FABRIC STORE",
+  "name": "Store-to-Store Grey Transfer",
+  "menu_name": "Store-to-Store Grey Transfer",
+  "path": "/m/knitting/grey-fabric-transfer-store-to-store"
+ },
+ {
+  "module": "knitting",
+  "group": "COLLAR/CUFF",
+  "name": "Collar & Cuff Output Entry",
+  "menu_name": "Collar & Cuff Output Entry",
+  "path": "/m/knitting/collar-cuff-production"
+ },
+ {
+  "module": "knitting",
+  "group": "COLLAR/CUFF",
+  "name": "Out-House Collar & Cuff Programme",
+  "menu_name": "Out-House Collar & Cuff Programme",
+  "path": "/m/knitting/collar-cuff-program-sc-out-house"
+ },
+ {
+  "module": "knitting",
+  "group": "COLLAR/CUFF",
+  "name": "Solid Collar & Cuff Yarn Indent",
+  "menu_name": "Solid Collar & Cuff Yarn Indent",
+  "path": "/m/knitting/yarn-req-collar-cuff-solid"
+ },
+ {
+  "module": "knitting",
+  "group": "COLLAR/CUFF",
+  "name": "Yarn-Dyed Collar & Cuff Indent",
+  "menu_name": "Yarn-Dyed Collar & Cuff Indent",
+  "path": "/m/knitting/yarn-req-collar-cuff-yd"
+ },
+ {
+  "module": "knitting",
+  "group": "COLLAR/CUFF",
+  "name": "Bulk Collar & Cuff Store Receipt",
+  "menu_name": "Bulk Collar & Cuff Store Receipt",
+  "path": "/m/knitting/collar-cuff-trans-recv-store-bulk"
+ },
+ {
+  "module": "knitting",
+  "group": "COLLAR/CUFF",
+  "name": "Sample Collar & Cuff Store Receipt",
+  "menu_name": "Sample Collar & Cuff Store Receipt",
+  "path": "/m/knitting/collar-cuff-trans-recv-store-sample"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Needle Loan Opening Balance",
+  "menu_name": "Needle Loan Opening Balance",
+  "path": "/m/knitting/mc-needle-loan-opening"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Needle Loan Indent",
+  "menu_name": "Needle Loan Indent",
+  "path": "/m/knitting/mc-needle-loan-requisition"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Machine Needle Receipt",
+  "menu_name": "Machine Needle Receipt",
+  "path": "/m/knitting/mc-needle-receive"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Needle Opening Balance",
+  "menu_name": "Needle Opening Balance",
+  "path": "/m/knitting/mc-needle-opening-balance"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Machine-Wise Needle Assignment",
+  "menu_name": "Machine-Wise Needle Assignment",
+  "path": "/m/knitting/mc-wise-needle-assign"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Machine-Wise Broken Needle",
+  "menu_name": "Machine-Wise Broken Needle",
+  "path": "/m/knitting/mc-wise-needle-broken"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Machine-Wise Needle Indent",
+  "menu_name": "Machine-Wise Needle Indent",
+  "path": "/m/knitting/mc-wise-needle-requisition"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Machine-Wise Needle Issue",
+  "menu_name": "Machine-Wise Needle Issue",
+  "path": "/m/knitting/mc-wise-needle-issue"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Needle Stock Closing",
+  "menu_name": "Needle Stock Closing",
+  "path": "/m/knitting/mc-needle-closing"
+ },
+ {
+  "module": "knitting",
+  "group": "NEEDLE STORE",
+  "name": "Needle Receipt Return Register",
+  "menu_name": "Needle Receipt Return Register",
+  "path": "/m/knitting/mc-needle-receive-return-list"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Issue to Party",
+  "name": "Needle Loan Issue Indent",
+  "menu_name": "Needle Loan Issue Indent",
+  "path": "/m/knitting/needle-req-for-loan-issue"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Issue to Party",
+  "name": "Needle Loan Return from Party",
+  "menu_name": "Needle Loan Return from Party",
+  "path": "/m/knitting/needle-loan-return-by-party"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Rcv from Party",
+  "name": "Borrowed Needle Receipt",
+  "menu_name": "Borrowed Needle Receipt",
+  "path": "/m/knitting/needle-loan-receive-from-party"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Rcv from Party",
+  "name": "Borrowed Needle Return Issue",
+  "menu_name": "Borrowed Needle Return Issue",
+  "path": "/m/knitting/needle-received-loan-issue-to-party"
+ },
+ {
+  "module": "knitting",
+  "group": "OIL STORE",
+  "name": "Knit Machine Oil Indent",
+  "menu_name": "Knit Machine Oil Indent",
+  "path": "/m/knitting/requisition-for-knitting-mc-oil"
+ },
+ {
+  "module": "knitting",
+  "group": "OIL STORE",
+  "name": "Machine Oil Opening Balance",
+  "menu_name": "Machine Oil Opening Balance",
+  "path": "/m/knitting/mc-oil-opening-blance"
+ },
+ {
+  "module": "knitting",
+  "group": "OIL STORE",
+  "name": "Daily Machine Oil Consumption",
+  "menu_name": "Daily Machine Oil Consumption",
+  "path": "/m/knitting/daily-macine-wise-oil-consumption"
+ },
+ {
+  "module": "knitting",
+  "group": "OIL STORE",
+  "name": "Oil Loan Opening Balance",
+  "menu_name": "Oil Loan Opening Balance",
+  "path": "/m/knitting/mc-oil-loan-opening"
+ },
+ {
+  "module": "knitting",
+  "group": "OIL STORE",
+  "name": "Machine Oil Receipt",
+  "menu_name": "Machine Oil Receipt",
+  "path": "/m/knitting/mc-oil-receive"
+ },
+ {
+  "module": "knitting",
+  "group": "OIL STORE",
+  "name": "Oil Receipt Return Register",
+  "menu_name": "Oil Receipt Return Register",
+  "path": "/m/knitting/mc-oil-receive-return-list"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Issue to Party",
+  "name": "Oil Loan Issue Indent",
+  "menu_name": "Oil Loan Issue Indent",
+  "path": "/m/knitting/oil-req-for-loan-issue"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Issue to Party",
+  "name": "Oil Loan Return from Party",
+  "menu_name": "Oil Loan Return from Party",
+  "path": "/m/knitting/oil-loan-return-by-party"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Rcv from Party",
+  "name": "Borrowed Oil Receipt",
+  "menu_name": "Borrowed Oil Receipt",
+  "path": "/m/knitting/oil-loan-receive-from-party"
+ },
+ {
+  "module": "knitting",
+  "group": "Loan Rcv from Party",
+  "name": "Borrowed Oil Return Issue",
+  "menu_name": "Borrowed Oil Return Issue",
+  "path": "/m/knitting/oil-received-loan-issue-to-party"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Knit Production Reports",
+  "menu_name": "Knit Production Reports",
+  "path": "/m/knitting/knitting-reports"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Yarn Stock Position",
+  "menu_name": "Yarn Stock Position",
+  "path": "/m/knitting/yarn-current-stock"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Grey Fabric Stock Position",
+  "menu_name": "Grey Fabric Stock Position",
+  "path": "/m/knitting/fabric-current-stock"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Yarn Store Register Report",
+  "menu_name": "Yarn Store Register Report",
+  "path": "/m/knitting/yarn-store-report"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Grey Fabric Store Report",
+  "menu_name": "Grey Fabric Store Report",
+  "path": "/m/knitting/gfs-report"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Knit Quality Report",
+  "menu_name": "Knit Quality Report",
+  "path": "/m/knitting/qc-report"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Flat Knit Production Report",
+  "menu_name": "Flat Knit Production Report",
+  "path": "/m/knitting/flatknit-report"
+ },
+ {
+  "module": "knitting",
+  "group": "REPORTS",
+  "name": "Daily Knit Output Report",
+  "menu_name": "Daily Knit Output Report",
+  "path": "/m/knitting/daily-knitting-production-report"
+ },
+ {
+  "module": "dyeing",
+  "group": "MASTER DATA",
+  "name": "Dye Method Master",
+  "menu_name": "Dye Method Master",
+  "path": "/m/dyeing/dyeing-method-setup"
+ },
+ {
+  "module": "dyeing",
+  "group": "MASTER DATA",
+  "name": "Dye Machine Profile",
+  "menu_name": "Dye Machine Profile",
+  "path": "/m/dyeing/dyeing-machine-profile"
+ },
+ {
+  "module": "dyeing",
+  "group": "MASTER DATA",
+  "name": "Finishing & Quality Owner Setup",
+  "menu_name": "Finishing & Quality Owner Setup",
+  "path": "/m/dyeing/dyeing-fin-and-g-quality-resp-emploee"
+ },
+ {
+  "module": "dyeing",
+  "group": "MASTER DATA",
+  "name": "Dye Chemical Audit Recipe",
+  "menu_name": "Dye Chemical Audit Recipe",
+  "path": "/m/dyeing/dyes-chemical-audit-recipe-setup"
+ },
+ {
+  "module": "dyeing",
+  "group": "MASTER DATA",
+  "name": "Colour Group Rate Update",
+  "menu_name": "Colour Group Rate Update",
+  "path": "/m/dyeing/color-group-wise-rate-update"
+ },
+ {
+  "module": "dyeing",
+  "group": "MASTER DATA",
+  "name": "Dye Sub-Contract Party Rate",
+  "menu_name": "Dye Sub-Contract Party Rate",
+  "path": "/m/dyeing/dyeing-sc-party-rate"
+ },
+ {
+  "module": "dyeing",
+  "group": "LAB-DIP",
+  "name": "Dosing Template Master",
+  "menu_name": "Dosing Template Master",
+  "path": "/m/dyeing/dosing-template"
+ },
+ {
+  "module": "dyeing",
+  "group": "LAB-DIP",
+  "name": "Lab Dip Recipe Entry",
+  "menu_name": "Lab Dip Recipe Entry",
+  "path": "/m/dyeing/lab-dip-recipe"
+ },
+ {
+  "module": "dyeing",
+  "group": "LAB-DIP",
+  "name": "Lab Dip Recipe Lookup",
+  "menu_name": "Lab Dip Recipe Lookup",
+  "path": "/m/dyeing/lab-dip-recipe-view"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Dye Batch Plan",
+  "menu_name": "Dye Batch Plan",
+  "path": "/m/dyeing/dyeing-batch-plan"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Bulk Grey Fabric Indent",
+  "menu_name": "Bulk Grey Fabric Indent",
+  "path": "/m/dyeing/grey-fabric-requisition-bulk"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Bulk Grey Fabric Issue Register",
+  "menu_name": "Bulk Grey Fabric Issue Register",
+  "path": "/m/dyeing/grey-fabric-requisition-issue-list-bulk"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Batch Card Splitting",
+  "menu_name": "Batch Card Splitting",
+  "path": "/m/dyeing/batch-card-split"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Sub-Contract Pre-Treatment Programme",
+  "menu_name": "Sub-Contract Pre-Treatment Programme",
+  "path": "/m/dyeing/sc-pre-treatment-program-heat-set-etc"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Sub-Contract Pre-Treatment Challan",
+  "menu_name": "Sub-Contract Pre-Treatment Challan",
+  "path": "/m/dyeing/sc-pre-treatment-challan"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Sub-Contract Pre-Treatment Receipt",
+  "menu_name": "Sub-Contract Pre-Treatment Receipt",
+  "path": "/m/dyeing/sc-pre-treatment-program-receive"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Sub-Contract Pre-Treatment Bill",
+  "menu_name": "Sub-Contract Pre-Treatment Bill",
+  "path": "/m/dyeing/sc-pre-treatment-bill"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Dye Batch from Finished Fabric",
+  "menu_name": "Dye Batch from Finished Fabric",
+  "path": "/m/dyeing/dyeing-batch-src-f-fab"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Order-Wise Grey Transfer from Batch Store",
+  "menu_name": "Order-Wise Grey Transfer from Batch Store",
+  "path": "/m/dyeing/order-wise-grey-fabric-trans-from-batch-store"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Batch Colour Replacement Transfer",
+  "menu_name": "Batch Colour Replacement Transfer",
+  "path": "/m/dyeing/dyeing-color-transfer-replace"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Batch Transfer to Leftover",
+  "menu_name": "Batch Transfer to Leftover",
+  "path": "/m/dyeing/batch-transfer-to-left-over"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Grey to Leftover Transfer",
+  "menu_name": "Grey to Leftover Transfer",
+  "path": "/m/dyeing/gray-2-leftover-transfer-batch-end"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (BULK)",
+  "name": "Manual Dye Batch Entry",
+  "menu_name": "Manual Dye Batch Entry",
+  "path": "/m/dyeing/manual-batch-for-dyeing"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (SAMPLE)",
+  "name": "Sample Grey Fabric Indent",
+  "menu_name": "Sample Grey Fabric Indent",
+  "path": "/m/dyeing/grey-fabric-requisition-sample"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (SAMPLE)",
+  "name": "Sample Grey Fabric Issue Register",
+  "menu_name": "Sample Grey Fabric Issue Register",
+  "path": "/m/dyeing/grey-fabric-requisition-issue-list-sample"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (SAMPLE)",
+  "name": "Sample Batch Production",
+  "menu_name": "Sample Batch Production",
+  "path": "/m/dyeing/batch-production-sample"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (SAMPLE)",
+  "name": "Sample Finishing Quality Check",
+  "menu_name": "Sample Finishing Quality Check",
+  "path": "/m/dyeing/dyeing-finishing-qc-sample"
+ },
+ {
+  "module": "dyeing",
+  "group": "BATCH (SAMPLE)",
+  "name": "Sample Batch from Bulk Lot",
+  "menu_name": "Sample Batch from Bulk Lot",
+  "path": "/m/dyeing/sample-batch-from-bulk"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Batch Dye Chemical Indent",
+  "menu_name": "Batch Dye Chemical Indent",
+  "path": "/m/dyeing/requisition-for-dc-for-batch"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Machine Wash Chemical Indent",
+  "menu_name": "Machine Wash Chemical Indent",
+  "path": "/m/dyeing/requisition-for-dc-machine-wash"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Finishing Process Chemical Indent",
+  "menu_name": "Finishing Process Chemical Indent",
+  "path": "/m/dyeing/requisition-for-dc-finishing-process"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Re-Process Approval Desk",
+  "menu_name": "Re-Process Approval Desk",
+  "path": "/m/dyeing/reprocess-approval"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Re-Process Update Entry",
+  "menu_name": "Re-Process Update Entry",
+  "path": "/m/dyeing/update-reprocess"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Dye Batch Re-Process",
+  "menu_name": "Dye Batch Re-Process",
+  "path": "/m/dyeing/dyeing-reprocess"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Dye Machine Maintenance",
+  "menu_name": "Dye Machine Maintenance",
+  "path": "/m/dyeing/dyeing-mc-maintenance"
+ },
+ {
+  "module": "dyeing",
+  "group": "REQUISITION",
+  "name": "Print Chemical Indent",
+  "menu_name": "Print Chemical Indent",
+  "path": "/m/dyeing/print-chemical-requisition"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Opening Balance",
+  "menu_name": "Chemical Opening Balance",
+  "path": "/m/dyeing/stock-opening-balance"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Daily Dye & Chemical Receipt",
+  "menu_name": "Daily Dye & Chemical Receipt",
+  "path": "/m/dyeing/daily-dyes-chemical-receive"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Loan Opening Balance",
+  "menu_name": "Chemical Loan Opening Balance",
+  "path": "/m/dyeing/loan-opening-balance"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Item Stock",
+  "menu_name": "Chemical Item Stock",
+  "path": "/m/dyeing/chemical-item-stock"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Dye & Chemical Receipt Return Register",
+  "menu_name": "Dye & Chemical Receipt Return Register",
+  "path": "/m/dyeing/daily-dyes-chemical-receive-return"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Store Transfer Issue",
+  "menu_name": "Chemical Store Transfer Issue",
+  "path": "/m/dyeing/store-transfer-requisition-and-issue"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Print Chemical Issue Note",
+  "menu_name": "Print Chemical Issue Note",
+  "path": "/m/dyeing/print-chemical-issue"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Machine Wash & Finishing Issue",
+  "menu_name": "Machine Wash & Finishing Issue",
+  "path": "/m/dyeing/machine-wash-and-finishing-issue"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Batch Programme Chemical Issue",
+  "menu_name": "Batch Programme Chemical Issue",
+  "path": "/m/dyeing/batch-program-issue"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Dye & Chemical Sales",
+  "menu_name": "Dye & Chemical Sales",
+  "path": "/m/dyeing/dyes-chemical-sales"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Comparative Statement",
+  "menu_name": "Chemical Comparative Statement",
+  "path": "/m/dyeing/chemical-cs"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Loan Issue Indent",
+  "menu_name": "Chemical Loan Issue Indent",
+  "path": "/m/dyeing/requisition-for-loan-issue"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Loan Return from Party",
+  "menu_name": "Chemical Loan Return from Party",
+  "path": "/m/dyeing/loan-return-by-party"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Dye Chemical Loan Receipt",
+  "menu_name": "Dye Chemical Loan Receipt",
+  "path": "/m/dyeing/dc-loan-receive"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Loan Return Indent",
+  "menu_name": "Chemical Loan Return Indent",
+  "path": "/m/dyeing/requisition-for-loan-return"
+ },
+ {
+  "module": "dyeing",
+  "group": "CHEMICAL STORE",
+  "name": "Chemical Month Closing",
+  "menu_name": "Chemical Month Closing",
+  "path": "/m/dyeing/month-closing"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "Bulk Batch Production",
+  "menu_name": "Bulk Batch Production",
+  "path": "/m/dyeing/batch-production"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "Machine Wash Output",
+  "menu_name": "Machine Wash Output",
+  "path": "/m/dyeing/machine-wash-production"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "Manual Daily Bulk Production",
+  "menu_name": "Manual Daily Bulk Production",
+  "path": "/m/dyeing/daily-batch-production-for-bulk-manual"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "Direct Fabric Booking Entry",
+  "menu_name": "Direct Fabric Booking Entry",
+  "path": "/m/dyeing/direct-fabric-booking"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "General Fabric Booking Entry",
+  "menu_name": "General Fabric Booking Entry",
+  "path": "/m/dyeing/general-fabric-booking"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "Trims Dyeing Programme",
+  "menu_name": "Trims Dyeing Programme",
+  "path": "/m/dyeing/dyeing-program-for-trims"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "Check Roll Parameter Setup",
+  "menu_name": "Check Roll Parameter Setup",
+  "path": "/m/dyeing/check-roll-parameter"
+ },
+ {
+  "module": "dyeing",
+  "group": "PRODUCTION BOARD",
+  "name": "Dyeing & Finishing Closing",
+  "menu_name": "Dyeing & Finishing Closing",
+  "path": "/m/dyeing/dyeing-and-finishing-close"
+ },
+ {
+  "module": "dyeing",
+  "group": "DYEING Q.C",
+  "name": "Check Roll Quality Inspection",
+  "menu_name": "Check Roll Quality Inspection",
+  "path": "/m/dyeing/check-roll-inspection"
+ },
+ {
+  "module": "dyeing",
+  "group": "DYEING Q.C",
+  "name": "Batch Programme Completion",
+  "menu_name": "Batch Programme Completion",
+  "path": "/m/dyeing/complete-batch-program"
+ },
+ {
+  "module": "dyeing",
+  "group": "DYEING Q.C",
+  "name": "Rib & Collar Shade Approval",
+  "menu_name": "Rib & Collar Shade Approval",
+  "path": "/m/dyeing/rib-collar-shade-approval"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C DYEING",
+  "name": "Out-House Sub-Contract Programme",
+  "menu_name": "Out-House Sub-Contract Programme",
+  "path": "/m/dyeing/sc-out-house-program"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C DYEING",
+  "name": "Sub-Contract Dye Batch Programme",
+  "menu_name": "Sub-Contract Dye Batch Programme",
+  "path": "/m/dyeing/dyeing-sc-program-batch"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C DYEING",
+  "name": "Sub-Contract Grey Fabric Indent List",
+  "menu_name": "Sub-Contract Grey Fabric Indent List",
+  "path": "/m/dyeing/grey-fab-requisition-list-dyeing-sc"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C DYEING",
+  "name": "Out-House Delivery Challan",
+  "menu_name": "Out-House Delivery Challan",
+  "path": "/m/dyeing/sc-out-house-challan"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C DYEING",
+  "name": "Out-House Challan Receipt",
+  "menu_name": "Out-House Challan Receipt",
+  "path": "/m/dyeing/sc-out-house-challan-receive"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C DYEING",
+  "name": "Out-House Floor Receipt",
+  "menu_name": "Out-House Floor Receipt",
+  "path": "/m/dyeing/sc-out-house-floor-receive"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C DYEING",
+  "name": "Out-House Process Bill",
+  "menu_name": "Out-House Process Bill",
+  "path": "/m/dyeing/sc-out-house-bill"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C IN HOUSE",
+  "name": "Sub-Contract Order Register",
+  "menu_name": "Sub-Contract Order Register",
+  "path": "/m/dyeing/sc-order-list"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C IN HOUSE",
+  "name": "In-House Sub-Contract Fabric Receipt",
+  "menu_name": "In-House Sub-Contract Fabric Receipt",
+  "path": "/m/dyeing/sc-in-house-fabric-receive"
+ },
+ {
+  "module": "dyeing",
+  "group": "S/C IN HOUSE",
+  "name": "In-House Sub-Contract Party Rate",
+  "menu_name": "In-House Sub-Contract Party Rate",
+  "path": "/m/dyeing/dyeing-sc-party-rate-in-house"
+ },
+ {
+  "module": "dyeing",
+  "group": "REPORTS",
+  "name": "Dye House Reports",
+  "menu_name": "Dye House Reports",
+  "path": "/m/dyeing/dyeing-reports"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "MASTER DATA",
+  "name": "Finishing Process Types",
+  "menu_name": "Finishing Process Types",
+  "path": "/m/dyeing-finishing/dyeing-finishing-process-type"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "MASTER DATA",
+  "name": "Finishing Machine Profile",
+  "menu_name": "Finishing Machine Profile",
+  "path": "/m/dyeing-finishing/dyeing-finishing-machine-profile"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "MASTER DATA",
+  "name": "Machine-Process Mapping",
+  "menu_name": "Machine-Process Mapping",
+  "path": "/m/dyeing-finishing/machine-and-process-mapping"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "MASTER DATA",
+  "name": "Machine-Wise Target Setup",
+  "menu_name": "Machine-Wise Target Setup",
+  "path": "/m/dyeing-finishing/df-mc-wise-production-target-setup"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "DF Production",
+  "name": "Batch Receipt from Dye House",
+  "menu_name": "Batch Receipt from Dye House",
+  "path": "/m/dyeing-finishing/batch-receive-from-dyeing"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "DF Production",
+  "name": "Machine-Wise Production Entry",
+  "menu_name": "Machine-Wise Production Entry",
+  "path": "/m/dyeing-finishing/df-production-entry-mc-wise"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "DF Production",
+  "name": "Process-Wise Delivery",
+  "menu_name": "Process-Wise Delivery",
+  "path": "/m/dyeing-finishing/df-process-wise-delivery"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "DF Production",
+  "name": "Batch Re-Process Return",
+  "menu_name": "Batch Re-Process Return",
+  "path": "/m/dyeing-finishing/batch-return-to-re-process"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "DF Production",
+  "name": "Finishing Production Amendment",
+  "menu_name": "Finishing Production Amendment",
+  "path": "/m/dyeing-finishing/df-production-amendment"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "S/C Process",
+  "name": "Sub-Contract Delivery Challan",
+  "menu_name": "Sub-Contract Delivery Challan",
+  "path": "/m/dyeing-finishing/sc-delivery-challan-gatepass"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "S/C Process",
+  "name": "Sub-Contract Finished Receipt",
+  "menu_name": "Sub-Contract Finished Receipt",
+  "path": "/m/dyeing-finishing/sc-receive-finished"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "S/C Process",
+  "name": "Sub-Contract Process Bill",
+  "menu_name": "Sub-Contract Process Bill",
+  "path": "/m/dyeing-finishing/sc-process-bill-entry"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "S/C Process",
+  "name": "Sub-Contract Party Balance",
+  "menu_name": "Sub-Contract Party Balance",
+  "path": "/m/dyeing-finishing/sc-party-wise-balance"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "QC Process",
+  "name": "Finishing Quality Entry",
+  "menu_name": "Finishing Quality Entry",
+  "path": "/m/dyeing-finishing/finishing-qc-entry"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "QC Process",
+  "name": "Shade, GSM & Width Test",
+  "menu_name": "Shade, GSM & Width Test",
+  "path": "/m/dyeing-finishing/shade-gsm-width-check"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "QC Process",
+  "name": "Four-Point Fabric Inspection",
+  "menu_name": "Four-Point Fabric Inspection",
+  "path": "/m/dyeing-finishing/fabric-inspection-4-point"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "QC Process",
+  "name": "Rejection & Re-Process Advice",
+  "menu_name": "Rejection & Re-Process Advice",
+  "path": "/m/dyeing-finishing/qc-rejection-re-process-advice"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "Fabric Store",
+  "name": "Finished Fabric Store Receipt",
+  "menu_name": "Finished Fabric Store Receipt",
+  "path": "/m/dyeing-finishing/finish-fabric-store-receive"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "Fabric Store",
+  "name": "Roll-Wise Racking & Barcode",
+  "menu_name": "Roll-Wise Racking & Barcode",
+  "path": "/m/dyeing-finishing/roll-wise-racking-barcode"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "Fabric Store",
+  "name": "Fabric Issue to Cutting Floor",
+  "menu_name": "Fabric Issue to Cutting Floor",
+  "path": "/m/dyeing-finishing/fabric-issue-to-cutting"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "Fabric Store",
+  "name": "Fabric Store Return & Transfer",
+  "menu_name": "Fabric Store Return & Transfer",
+  "path": "/m/dyeing-finishing/fabric-store-return-transfer"
+ },
+ {
+  "module": "dyeing-finishing",
+  "group": "REPORT",
+  "name": "Fabric Finishing Reports",
+  "menu_name": "Fabric Finishing Reports",
+  "path": "/m/dyeing-finishing/dyeing-finishing-report"
+ },
+ {
+  "module": "cutting",
+  "group": "CUTTING",
+  "name": "Dashboard",
+  "menu_name": "Dashboard",
+  "path": "/m/cutting/cut-dashboard"
+ },
+ {
+  "module": "cutting",
+  "group": "GENERAL",
+  "name": "New Cutting",
+  "menu_name": "New Cutting",
+  "path": "/m/cutting/new-cutting"
+ },
+ {
+  "module": "cutting",
+  "group": "GENERAL",
+  "name": "Cutting List",
+  "menu_name": "Cutting List",
+  "path": "/m/cutting/cutting-list"
+ },
+ {
+  "module": "cutting",
+  "group": "BUNDLE CARD",
+  "name": "Bundle Entry",
+  "menu_name": "Bundle Entry",
+  "path": "/m/cutting/create-bundle-card"
+ },
+ {
+  "module": "cutting",
+  "group": "GENERAL",
+  "name": "Bundle Card List",
+  "menu_name": "Bundle Card List",
+  "path": "/m/cutting/bundle-card-list"
+ },
+ {
+  "module": "cutting",
+  "group": "REPORTS",
+  "name": "Bundle Report",
+  "menu_name": "Bundle Report",
+  "path": "/m/cutting/bundle-report"
+ },
+ {
+  "module": "cutting",
+  "group": "REPORTS",
+  "name": "Additional Cutting List",
+  "menu_name": "Additional Cutting List",
+  "path": "/m/cutting/additional-cutting-list"
+ },
+ {
+  "module": "cutting",
+  "group": "REPORTS",
+  "name": "PO-wise Bundle Report",
+  "menu_name": "PO-wise Bundle Report",
+  "path": "/m/cutting/po-wise-bundle-report"
+ },
+ {
+  "module": "cutting",
+  "group": "REPORTS",
+  "name": "Style-wise Bundle Report",
+  "menu_name": "Style-wise Bundle Report",
+  "path": "/m/cutting/style-wise-bundle-report"
+ },
+ {
+  "module": "cutting",
+  "group": "REPORTS",
+  "name": "Size-wise Bundle Report",
+  "menu_name": "Size-wise Bundle Report",
+  "path": "/m/cutting/size-wise-bundle-report"
+ },
+ {
+  "module": "garments",
+  "group": "SEWING",
+  "name": "Sewing Dashboard",
+  "menu_name": "Sewing Dashboard",
+  "path": "/m/garments/sewing-dashboard"
+ },
+ {
+  "module": "garments",
+  "group": "SEWING",
+  "name": "Bundle IN",
+  "menu_name": "Bundle IN",
+  "path": "/m/garments/sewing-bundle-in"
+ },
+ {
+  "module": "garments",
+  "group": "SEWING",
+  "name": "Bundle OUT",
+  "menu_name": "Bundle OUT",
+  "path": "/m/garments/sewing-bundle-out"
+ },
+ {
+  "module": "garments",
+  "group": "FINISHING",
+  "name": "Finishing Dashboard",
+  "menu_name": "Finishing Dashboard",
+  "path": "/m/garments/finishing-dashboard"
+ },
+ {
+  "module": "garments",
+  "group": "FINISHING",
+  "name": "Finishing — Bundle IN",
+  "menu_name": "Bundle IN",
+  "path": "/m/garments/finishing-bundle-in"
+ },
+ {
+  "module": "garments",
+  "group": "FINISHING",
+  "name": "Finishing — Bundle OUT",
+  "menu_name": "Bundle OUT",
+  "path": "/m/garments/finishing-bundle-out"
+ },
+ {
+  "module": "garments",
+  "group": "QUALITY MANAGEMENT",
+  "name": "Quality Management Dashboard",
+  "menu_name": "Quality Dashboard",
+  "path": "/m/garments/quality-dashboard"
+ },
+ {
+  "module": "garments",
+  "group": "QUALITY MANAGEMENT",
+  "name": "Quality IN",
+  "menu_name": "Quality IN",
+  "path": "/m/garments/quality-in"
+ },
+ {
+  "module": "garments",
+  "group": "QUALITY MANAGEMENT",
+  "name": "Quality Inspection",
+  "menu_name": "Quality Inspection",
+  "path": "/m/garments/quality-inspection"
+ },
+ {
+  "module": "garments",
+  "group": "QUALITY MANAGEMENT",
+  "name": "Quality OUT",
+  "menu_name": "Quality OUT",
+  "path": "/m/garments/quality-out"
+ },
+ {
+  "module": "garments",
+  "group": "PACKING",
+  "name": "Packing Dashboard",
+  "menu_name": "Packing Dashboard",
+  "path": "/m/garments/packing-dashboard"
+ },
+ {
+  "module": "garments",
+  "group": "PACKING",
+  "name": "Packing In",
+  "menu_name": "Packing In",
+  "path": "/m/garments/packing-in"
+ },
+ {
+  "module": "garments",
+  "group": "PACKING",
+  "name": "Packing Out",
+  "menu_name": "Packing Out",
+  "path": "/m/garments/packing-out"
+ },
+ {
+  "module": "garments",
+  "group": "PACKING",
+  "name": "Packing Reports",
+  "menu_name": "Packing Reports",
+  "path": "/m/garments/packing-reports"
+ },
+ {
+  "module": "garments",
+  "group": "Packing Process",
+  "name": "Folding",
+  "menu_name": "Folding",
+  "path": "/m/garments/packing-folding"
+ },
+ {
+  "module": "garments",
+  "group": "Packing Process",
+  "name": "Poly Packing",
+  "menu_name": "Poly Packing",
+  "path": "/m/garments/packing-poly"
+ },
+ {
+  "module": "garments",
+  "group": "Packing Process",
+  "name": "Barcode & Label",
+  "menu_name": "Barcode & Label",
+  "path": "/m/garments/packing-barcode-label"
+ },
+ {
+  "module": "garments",
+  "group": "Packing Process",
+  "name": "Assortment",
+  "menu_name": "Assortment",
+  "path": "/m/garments/packing-assortment"
+ },
+ {
+  "module": "garments",
+  "group": "Packing Process",
+  "name": "Carton Packing",
+  "menu_name": "Carton Packing",
+  "path": "/m/garments/packing-carton"
+ },
+ {
+  "module": "garments",
+  "group": "Packing Process",
+  "name": "Carton Marking",
+  "menu_name": "Carton Marking",
+  "path": "/m/garments/packing-carton-marking"
+ },
+ {
+  "module": "garments",
+  "group": "Packing Process",
+  "name": "Carton Sealing",
+  "menu_name": "Carton Sealing",
+  "path": "/m/garments/packing-carton-sealing"
+ },
+ {
+  "module": "garments",
+  "group": "READY FOR SHIPMENT",
+  "name": "Ready for Shipment Dashboard",
+  "menu_name": "Ready for Shipment Dashboard",
+  "path": "/m/garments/ready-dashboard"
+ },
+ {
+  "module": "garments",
+  "group": "READY FOR SHIPMENT",
+  "name": "Finished Goods Stock",
+  "menu_name": "Finished Goods Stock",
+  "path": "/m/garments/finished-goods-stock"
+ },
+ {
+  "module": "garments",
+  "group": "SHIPMENT",
+  "name": "Shipment Dashboard",
+  "menu_name": "Shipment Dashboard",
+  "path": "/m/garments/shipment-dashboard"
+ },
+ {
+  "module": "garments",
+  "group": "SHIPMENT",
+  "name": "Shipment Entry",
+  "menu_name": "Shipment Entry",
+  "path": "/m/garments/shipment-entry"
+ },
+ {
+  "module": "garments",
+  "group": "SHIPMENT",
+  "name": "Mark as Shipped",
+  "menu_name": "Mark as Shipped",
+  "path": "/m/garments/shipment-mark-shipped"
+ },
+ {
+  "module": "garments",
+  "group": "SHIPMENT",
+  "name": "Shipment History",
+  "menu_name": "Shipment History",
+  "path": "/m/garments/shipment-history"
+ },
+ {
+  "module": "garments",
+  "group": "SHIPMENT",
+  "name": "Shipment Reports",
+  "menu_name": "Shipment Reports",
+  "path": "/m/garments/shipment-reports"
+ },
+ {
+  "module": "garments",
+  "group": "ACCESSORIES STORE",
+  "name": "Trims & Accessories Receipt",
+  "menu_name": "Trims & Accessories Receipt",
+  "path": "/m/garments/trims-accessories-receive"
+ },
+ {
+  "module": "garments",
+  "group": "ACCESSORIES STORE",
+  "name": "Trims & Accessories Issue",
+  "menu_name": "Trims & Accessories Issue",
+  "path": "/m/garments/trims-accessories-issue"
+ },
+ {
+  "module": "garments",
+  "group": "ACCESSORIES STORE",
+  "name": "Trims Receipt Return Register",
+  "menu_name": "Trims Receipt Return Register",
+  "path": "/m/garments/trims-accessories-receive-return-list"
+ },
+ {
+  "module": "garments",
+  "group": "REPORTS",
+  "name": "Apparel Assembly Reports",
+  "menu_name": "Apparel Assembly Reports",
+  "path": "/m/garments/garments-reports"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Dashboard",
+  "menu_name": "Dashboard",
+  "path": "/m/inventory/store-dashboard"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "In-House / GRN",
+  "menu_name": "In-House / GRN",
+  "path": "/m/inventory/in-house-grn"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Fabric Warehouse",
+  "menu_name": "Fabric Warehouse",
+  "path": "/m/inventory/fabric-warehouse"
+ },
+ {
+  "module": "inventory",
+  "group": "GENERAL",
+  "name": "Trims & Accessories Warehouse",
+  "menu_name": "Trims & Accessories",
+  "path": "/m/inventory/trims-warehouse"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Material Out",
+  "menu_name": "Material Out",
+  "path": "/m/inventory/material-out"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Material Return",
+  "menu_name": "Material Return",
+  "path": "/m/inventory/material-return"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Stock Adjustment",
+  "menu_name": "Stock Adjustment",
+  "path": "/m/inventory/stock-adjustment"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Stock Ledger",
+  "menu_name": "Stock Ledger",
+  "path": "/m/inventory/stock-ledger"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Traceability",
+  "menu_name": "Traceability",
+  "path": "/m/inventory/traceability"
+ },
+ {
+  "module": "inventory",
+  "group": "Store & Material",
+  "name": "Reports",
+  "menu_name": "Reports",
+  "path": "/m/inventory/store-reports"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Gate Pass",
+  "name": "Dashboard",
+  "menu_name": "Dashboard",
+  "path": "/m/gate-pass/gp-dashboard"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Gate Pass",
+  "name": "Reports",
+  "menu_name": "Reports",
+  "path": "/m/gate-pass/gp-reports"
+ },
+ {
+  "module": "gate-pass",
+  "group": "GENERAL",
+  "name": "Create Gate Pass",
+  "menu_name": "Create Gate Pass",
+  "path": "/m/gate-pass/gp-create"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Dashboard",
+  "name": "Gate Pass Approval",
+  "menu_name": "Gate Pass Approval",
+  "path": "/m/gate-pass/gp-approval"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Dashboard",
+  "name": "Gate Pass Out",
+  "menu_name": "Gate Pass Out",
+  "path": "/m/gate-pass/gp-out"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Dashboard",
+  "name": "Gate Pass In",
+  "menu_name": "Gate Pass In",
+  "path": "/m/gate-pass/gp-in"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Dashboard",
+  "name": "Return Reconciliation",
+  "menu_name": "Return Reconciliation",
+  "path": "/m/gate-pass/gp-reconciliation"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Dashboard",
+  "name": "Gate Pass List",
+  "menu_name": "Gate Pass List",
+  "path": "/m/gate-pass/gp-list"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Master Data",
+  "name": "Gate Pass Category",
+  "menu_name": "Gate Pass Category",
+  "path": "/m/gate-pass/gp-categories"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Master Data",
+  "name": "Location Type",
+  "menu_name": "Location Type",
+  "path": "/m/gate-pass/gp-location-types"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Master Data",
+  "name": "Factory / Location",
+  "menu_name": "Factory / Location",
+  "path": "/m/gate-pass/gp-locations"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Master Data",
+  "name": "Item / Product",
+  "menu_name": "Item / Product",
+  "path": "/m/gate-pass/gp-items"
+ },
+ {
+  "module": "gate-pass",
+  "group": "Master Data",
+  "name": "Purpose / Reason",
+  "menu_name": "Purpose / Reason",
+  "path": "/m/gate-pass/gp-purposes"
+ },
+ {
+  "module": "general-store",
+  "group": "General Store",
+  "name": "Dashboard",
+  "menu_name": "Dashboard",
+  "path": "/m/general-store/gs-dashboard"
+ },
+ {
+  "module": "general-store",
+  "group": "Master Data",
+  "name": "Item Category",
+  "menu_name": "Item Category",
+  "path": "/m/general-store/gs-categories"
+ },
+ {
+  "module": "general-store",
+  "group": "Master Data",
+  "name": "Item Master",
+  "menu_name": "Item Master",
+  "path": "/m/general-store/gs-items"
+ },
+ {
+  "module": "general-store",
+  "group": "Master Data",
+  "name": "Unit Master",
+  "menu_name": "Unit Master",
+  "path": "/m/general-store/gs-units"
+ },
+ {
+  "module": "general-store",
+  "group": "Master Data",
+  "name": "Department",
+  "menu_name": "Department",
+  "path": "/m/general-store/gs-departments"
+ },
+ {
+  "module": "general-store",
+  "group": "Master Data",
+  "name": "Supplier",
+  "menu_name": "Supplier",
+  "path": "/m/general-store/gs-suppliers"
+ },
+ {
+  "module": "general-store",
+  "group": "Master Data",
+  "name": "Store / Location",
+  "menu_name": "Store / Location",
+  "path": "/m/general-store/gs-stores"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Opening Stock",
+  "menu_name": "Opening Stock",
+  "path": "/m/general-store/gs-opening"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Stock Receive",
+  "menu_name": "Stock Receive",
+  "path": "/m/general-store/gs-receive"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Stock Issue",
+  "menu_name": "Stock Issue",
+  "path": "/m/general-store/gs-issue"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Stock Return",
+  "menu_name": "Stock Return",
+  "path": "/m/general-store/gs-return"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Stock Adjustment",
+  "menu_name": "Stock Adjustment",
+  "path": "/m/general-store/gs-adjustment"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Stock Transfer",
+  "menu_name": "Stock Transfer",
+  "path": "/m/general-store/gs-transfer"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Current Stock",
+  "menu_name": "Current Stock",
+  "path": "/m/general-store/gs-current-stock"
+ },
+ {
+  "module": "general-store",
+  "group": "Inventory",
+  "name": "Stock Ledger",
+  "menu_name": "Stock Ledger",
+  "path": "/m/general-store/gs-ledger"
+ },
+ {
+  "module": "general-store",
+  "group": "GENERAL",
+  "name": "New Requisition",
+  "menu_name": "New Requisition",
+  "path": "/m/general-store/gs-req-new"
+ },
+ {
+  "module": "general-store",
+  "group": "Requisition",
+  "name": "Pending Requisition",
+  "menu_name": "Pending Requisition",
+  "path": "/m/general-store/gs-req-pending"
+ },
+ {
+  "module": "general-store",
+  "group": "Requisition",
+  "name": "Approved Requisition",
+  "menu_name": "Approved Requisition",
+  "path": "/m/general-store/gs-req-approved"
+ },
+ {
+  "module": "general-store",
+  "group": "Requisition",
+  "name": "Issued Requisition",
+  "menu_name": "Issued Requisition",
+  "path": "/m/general-store/gs-req-issued"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Stock Report",
+  "menu_name": "Stock Report",
+  "path": "/m/general-store/gs-rpt-stock"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Receive Report",
+  "menu_name": "Receive Report",
+  "path": "/m/general-store/gs-rpt-receive"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Issue Report",
+  "menu_name": "Issue Report",
+  "path": "/m/general-store/gs-rpt-issue"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Return Report",
+  "menu_name": "Return Report",
+  "path": "/m/general-store/gs-rpt-return"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Adjustment Report",
+  "menu_name": "Adjustment Report",
+  "path": "/m/general-store/gs-rpt-adjustment"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Transfer Report",
+  "menu_name": "Transfer Report",
+  "path": "/m/general-store/gs-rpt-transfer"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Department-wise Report",
+  "menu_name": "Department-wise Report",
+  "path": "/m/general-store/gs-rpt-department"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Item-wise Consumption",
+  "menu_name": "Item-wise Consumption",
+  "path": "/m/general-store/gs-rpt-consumption"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Category-wise Stock",
+  "menu_name": "Category-wise Stock",
+  "path": "/m/general-store/gs-rpt-category"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Stock Valuation",
+  "menu_name": "Stock Valuation",
+  "path": "/m/general-store/gs-rpt-valuation"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Low Stock Report",
+  "menu_name": "Low Stock Report",
+  "path": "/m/general-store/gs-rpt-low-stock"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Monthly Report",
+  "menu_name": "Monthly Report",
+  "path": "/m/general-store/gs-rpt-monthly"
+ },
+ {
+  "module": "general-store",
+  "group": "Reports",
+  "name": "Transaction History",
+  "menu_name": "Transaction History",
+  "path": "/m/general-store/gs-rpt-history"
+ },
+ {
+  "module": "general-store",
+  "group": "Administration",
+  "name": "Audit Log",
+  "menu_name": "Audit Log",
+  "path": "/m/general-store/gs-audit-log"
+ },
+ {
+  "module": "general-store",
+  "group": "Administration",
+  "name": "Settings",
+  "menu_name": "Settings",
+  "path": "/m/general-store/gs-settings"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Payment Method Master",
+  "menu_name": "Payment Method Master",
+  "path": "/m/accounting/payment-mode"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Maker-Checker Setup",
+  "menu_name": "Maker-Checker Setup",
+  "path": "/m/accounting/checker-maker"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Chart of Accounts Master",
+  "menu_name": "Chart of Accounts Master",
+  "path": "/m/accounting/chart-of-account"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Cost Centre Grouping",
+  "menu_name": "Cost Centre Grouping",
+  "path": "/m/accounting/cost-center-group"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Cost Centre Master",
+  "menu_name": "Cost Centre Master",
+  "path": "/m/accounting/cost-center"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Cheque Book Register",
+  "menu_name": "Cheque Book Register",
+  "path": "/m/accounting/cheque-book-registers"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Bank Account Master",
+  "menu_name": "Bank Account Master",
+  "path": "/m/accounting/manage-bank"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Fiscal Year Setup",
+  "menu_name": "Fiscal Year Setup",
+  "path": "/m/accounting/fiscal-year"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Account Type Configuration",
+  "menu_name": "Account Type Configuration",
+  "path": "/m/accounting/coa-type-configuration"
+ },
+ {
+  "module": "accounting",
+  "group": "MASTER DATA",
+  "name": "Statutory Ledger Rules",
+  "menu_name": "Statutory Ledger Rules",
+  "path": "/m/accounting/compliance-ledger-rules"
+ },
+ {
+  "module": "accounting",
+  "group": "Voucher Entry",
+  "name": "Draft Voucher Entry",
+  "menu_name": "Draft Voucher Entry",
+  "path": "/m/accounting/draft-voucher"
+ },
+ {
+  "module": "accounting",
+  "group": "OPERATION",
+  "name": "Voucher Entry",
+  "menu_name": "Voucher Entry",
+  "path": "/m/accounting/voucher"
+ },
+ {
+  "module": "accounting",
+  "group": "Voucher Entry",
+  "name": "Voucher Posting Control",
+  "menu_name": "Voucher Posting Control",
+  "path": "/m/accounting/voucher-post-unpost"
+ },
+ {
+  "module": "accounting",
+  "group": "Voucher Entry",
+  "name": "Combined MRR Bill",
+  "menu_name": "Combined MRR Bill",
+  "path": "/m/accounting/mrr-combine-bill"
+ },
+ {
+  "module": "accounting",
+  "group": "Voucher Entry",
+  "name": "Statutory Voucher Register",
+  "menu_name": "Statutory Voucher Register",
+  "path": "/m/accounting/compliance-vouchers"
+ },
+ {
+  "module": "accounting",
+  "group": "Period Close",
+  "name": "Stock Value Closing",
+  "menu_name": "Stock Value Closing",
+  "path": "/m/accounting/stock-closing"
+ },
+ {
+  "module": "accounting",
+  "group": "Period Close",
+  "name": "Bank Statement Reconciliation",
+  "menu_name": "Bank Statement Reconciliation",
+  "path": "/m/accounting/bank-reconciliation"
+ },
+ {
+  "module": "accounting",
+  "group": "Period Close",
+  "name": "Fiscal Year Closing",
+  "menu_name": "Fiscal Year Closing",
+  "path": "/m/accounting/fiscal-year-close"
+ },
+ {
+  "module": "accounting",
+  "group": "Cheque Management",
+  "name": "Cheque Issue Entry",
+  "menu_name": "Cheque Issue Entry",
+  "path": "/m/accounting/cheque-issue"
+ },
+ {
+  "module": "accounting",
+  "group": "Cheque Management",
+  "name": "Cheque Cancellation Entry",
+  "menu_name": "Cheque Cancellation Entry",
+  "path": "/m/accounting/cheque-cancellation"
+ },
+ {
+  "module": "accounting",
+  "group": "Voucher Audit",
+  "name": "503 Service Temporarily Unavailable",
+  "menu_name": "Voucher Activity Trail",
+  "path": "/m/accounting/voucher-activity"
+ },
+ {
+  "module": "accounting",
+  "group": "Voucher Audit",
+  "name": "Deleted Voucher History",
+  "menu_name": "Deleted Voucher History",
+  "path": "/m/accounting/voucher-delete-history"
+ },
+ {
+  "module": "accounting",
+  "group": "Voucher Audit",
+  "name": "Voucher Amendment Log",
+  "menu_name": "Voucher Amendment Log",
+  "path": "/m/accounting/voucher-change-logs"
+ },
+ {
+  "module": "accounting",
+  "group": "REPORTS",
+  "name": "Financial Statement Reports",
+  "menu_name": "Financial Statement Reports",
+  "path": "/m/accounting/accounting-reports"
+ },
+ {
+  "module": "accounting",
+  "group": "REPORTS",
+  "name": "Ledger-Wise Cost Centre Summary",
+  "menu_name": "Ledger-Wise Cost Centre Summary",
+  "path": "/m/accounting/ledger-wise-cost-center-summary"
+ },
+ {
+  "module": "accounting",
+  "group": "REPORTS",
+  "name": "Cost Centre-Wise Ledger Summary",
+  "menu_name": "Cost Centre-Wise Ledger Summary",
+  "path": "/m/accounting/cost-center-wise-ledger-summary"
+ },
+ {
+  "module": "accounting",
+  "group": "REPORTS",
+  "name": "Payment Receipt Register",
+  "menu_name": "Payment Receipt Register",
+  "path": "/m/accounting/receive-payment"
+ },
+ {
+  "module": "accounting",
+  "group": "REPORTS",
+  "name": "Miscellaneous Finance Reports",
+  "menu_name": "Miscellaneous Finance Reports",
+  "path": "/m/accounting/accounting-misc-report"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Export L/C & Contract Entry",
+  "menu_name": "Export L/C & Contract Entry",
+  "path": "/m/commercial/export-lc-sales-contract-entry"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Export L/C Proforma Invoice",
+  "menu_name": "Export L/C Proforma Invoice",
+  "path": "/m/commercial/export-lc-pi"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Utilisation Declaration",
+  "menu_name": "Utilisation Declaration",
+  "path": "/m/commercial/lc-ud"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Export Commercial Invoice",
+  "menu_name": "Export Commercial Invoice",
+  "path": "/m/commercial/commercial-invoice"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Export Bill Lodgement",
+  "menu_name": "Export Bill Lodgement",
+  "path": "/m/commercial/bill-of-export"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Bill of Exchange Draft",
+  "menu_name": "Bill of Exchange Draft",
+  "path": "/m/commercial/bill-of-exchange"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Bank Bill Realisation",
+  "menu_name": "Bank Bill Realisation",
+  "path": "/m/commercial/bank-bill-collection"
+ },
+ {
+  "module": "commercial",
+  "group": "Operations",
+  "name": "Utilisation Declaration Transfer",
+  "menu_name": "Utilisation Declaration Transfer",
+  "path": "/m/commercial/ud-transfer"
+ },
+ {
+  "module": "commercial",
+  "group": "Master Data",
+  "name": "Document Reference Types",
+  "menu_name": "Document Reference Types",
+  "path": "/m/commercial/reference-type"
+ },
+ {
+  "module": "commercial",
+  "group": "Master Data",
+  "name": "Buyer-Wise Notify Party",
+  "menu_name": "Buyer-Wise Notify Party",
+  "path": "/m/commercial/buyer-wise-notify-party"
+ },
+ {
+  "module": "commercial",
+  "group": "Master Data",
+  "name": "L/C Applicant Master",
+  "menu_name": "L/C Applicant Master",
+  "path": "/m/commercial/lc-applicant"
+ },
+ {
+  "module": "commercial",
+  "group": "Master Data",
+  "name": "Currency Exchange Rates",
+  "menu_name": "Currency Exchange Rates",
+  "path": "/m/commercial/loc-exchng-rates"
+ },
+ {
+  "module": "commercial",
+  "group": "Master Data",
+  "name": "Bank Directory",
+  "menu_name": "Bank Directory",
+  "path": "/m/commercial/bank-list"
+ },
+ {
+  "module": "commercial",
+  "group": "IMPORT",
+  "name": "Import L/C Proforma Invoice",
+  "menu_name": "Import L/C Proforma Invoice",
+  "path": "/m/commercial/import-lc-pi"
+ },
+ {
+  "module": "commercial",
+  "group": "IMPORT",
+  "name": "Import L/C Opening",
+  "menu_name": "Import L/C Opening",
+  "path": "/m/commercial/import-lc"
+ },
+ {
+  "module": "commercial",
+  "group": "IMPORT",
+  "name": "Customs Bill of Entry",
+  "menu_name": "Customs Bill of Entry",
+  "path": "/m/commercial/bill-of-entry"
+ },
+ {
+  "module": "commercial",
+  "group": "IMPORT",
+  "name": "Import Bill Acceptance",
+  "menu_name": "Import Bill Acceptance",
+  "path": "/m/commercial/acceptance-of-import-bill"
+ },
+ {
+  "module": "commercial",
+  "group": "CM PAYMENT RECEIVE",
+  "name": "CM Payment Receipts",
+  "menu_name": "CM Payment Receipts",
+  "path": "/m/commercial/payment-receives"
+ },
+ {
+  "module": "commercial",
+  "group": "CM PAYMENT RECEIVE",
+  "name": "Bill Adjustment (Retired)",
+  "menu_name": "Bill Adjustment (Retired)",
+  "path": "/m/commercial/bill-adjustment-not-used"
+ },
+ {
+  "module": "commercial",
+  "group": "CM PAYMENT RECEIVE",
+  "name": "Margin Closing (Retired)",
+  "menu_name": "Margin Closing (Retired)",
+  "path": "/m/commercial/margin-closing-not-used"
+ },
+ {
+  "module": "commercial",
+  "group": "CASH INCENTIVE",
+  "name": "Cash Incentive Claims",
+  "menu_name": "Cash Incentive Claims",
+  "path": "/m/commercial/cash-incentives"
+ },
+ {
+  "module": "commercial",
+  "group": "REPORT",
+  "name": "Trade & Export Reports",
+  "menu_name": "Trade & Export Reports",
+  "path": "/m/commercial/commercial-reports"
+ },
+ {
+  "module": "ie",
+  "group": "MASTER DATA",
+  "name": "Item & Process Grouping",
+  "menu_name": "Item & Process Grouping",
+  "path": "/m/ie/item-and-process-group"
+ },
+ {
+  "module": "ie",
+  "group": "MASTER DATA",
+  "name": "Floor-Wise Target Setup",
+  "menu_name": "Floor-Wise Target Setup",
+  "path": "/m/ie/ie-floor-wise-target-setting-options"
+ },
+ {
+  "module": "ie",
+  "group": "MASTER DATA",
+  "name": "Finishing Floor Access Setup",
+  "menu_name": "Finishing Floor Access Setup",
+  "path": "/m/ie/finishing-floor-access-setting-options"
+ },
+ {
+  "module": "ie",
+  "group": "MASTER DATA",
+  "name": "Learning Curve Model",
+  "menu_name": "Learning Curve Model",
+  "path": "/m/ie/learning-curve"
+ },
+ {
+  "module": "ie",
+  "group": "MASTER DATA",
+  "name": "Responsible Owner Mapping",
+  "menu_name": "Responsible Owner Mapping",
+  "path": "/m/ie/responsible-dept-person-mapping"
+ },
+ {
+  "module": "ie",
+  "group": "MASTER DATA",
+  "name": "Resource Capability Profile",
+  "menu_name": "Resource Capability Profile",
+  "path": "/m/ie/resource-profiling"
+ },
+ {
+  "module": "ie",
+  "group": "REPORTS",
+  "name": "Work Study Reports",
+  "menu_name": "Work Study Reports",
+  "path": "/m/ie/ie-reports"
+ },
+ {
+  "module": "ie",
+  "group": "Target & Feeding",
+  "name": "Excess Yarn Allowance",
+  "menu_name": "Excess Yarn Allowance",
+  "path": "/m/ie/excess-yarn-target"
+ },
+ {
+  "module": "ie",
+  "group": "Target & Feeding",
+  "name": "Style Feeding & Change-over",
+  "menu_name": "Style Feeding & Change-over",
+  "path": "/m/ie/style-feeding-sco"
+ },
+ {
+  "module": "ie",
+  "group": "Target & Feeding",
+  "name": "Garment Target Setting",
+  "menu_name": "Garment Target Setting",
+  "path": "/m/ie/gmt-target-setting"
+ },
+ {
+  "module": "ie",
+  "group": "Item Specification",
+  "name": "Garment Spec Entry",
+  "menu_name": "Garment Spec Entry",
+  "path": "/m/ie/gmt-item-specification-entry"
+ },
+ {
+  "module": "ie",
+  "group": "Item Specification",
+  "name": "Garment Item Specification",
+  "menu_name": "Garment Item Specification",
+  "path": "/m/ie/gmt-item-specification"
+ },
+ {
+  "module": "ie",
+  "group": "Costing",
+  "name": "Spec-Wise CM Rate",
+  "menu_name": "Spec-Wise CM Rate",
+  "path": "/m/ie/item-spec-wise-cm"
+ },
+ {
+  "module": "ie",
+  "group": "Costing",
+  "name": "Overhead Cost Allocation",
+  "menu_name": "Overhead Cost Allocation",
+  "path": "/m/ie/oh-cost-allocation"
+ },
+ {
+  "module": "ie",
+  "group": "Costing",
+  "name": "Daily Line Cost Sheet",
+  "menu_name": "Daily Line Cost Sheet",
+  "path": "/m/ie/daily-line-costing-operation"
+ },
+ {
+  "module": "ie",
+  "group": "OT & Salary",
+  "name": "Garment Overtime Plan",
+  "menu_name": "Garment Overtime Plan",
+  "path": "/m/ie/ot-plan-garment-division"
+ },
+ {
+  "module": "ie",
+  "group": "OT & Salary",
+  "name": "Monthly Salary & OT Rates",
+  "menu_name": "Monthly Salary & OT Rates",
+  "path": "/m/ie/monthly-op-aso-salary-ot-rate"
+ },
+ {
+  "module": "ie",
+  "group": "Floor Operations",
+  "name": "Sewing Output Adjustment",
+  "menu_name": "Sewing Output Adjustment",
+  "path": "/m/ie/sewing-prod-adjustment"
+ },
+ {
+  "module": "ie",
+  "group": "Floor Operations",
+  "name": "Garment Wash Requisition",
+  "menu_name": "Garment Wash Requisition",
+  "path": "/m/ie/gmt-wash-requisition"
+ },
+ {
+  "module": "ie",
+  "group": "Floor Operations",
+  "name": "Standard Minute Adjustment",
+  "menu_name": "Standard Minute Adjustment",
+  "path": "/m/ie/man-minutes-adjustment"
+ },
+ {
+  "module": "ie",
+  "group": "Section Profitability",
+  "name": "Section Profit & Loss Setup",
+  "menu_name": "Section Profit & Loss Setup",
+  "path": "/m/ie/sec-wise-profit-loss-config"
+ },
+ {
+  "module": "ie",
+  "group": "Section Profitability",
+  "name": "Section Profit & Loss Entry",
+  "menu_name": "Section Profit & Loss Entry",
+  "path": "/m/ie/sec-wise-profit-loss-trans"
+ },
+ {
+  "module": "dyeing-lab",
+  "group": "OPERATIONS",
+  "name": "Test Certificate Directory",
+  "menu_name": "Test Certificate Directory",
+  "path": "/m/dyeing-lab/certificate-list"
+ },
+ {
+  "module": "dyeing-lab",
+  "group": "OPERATIONS",
+  "name": "Chemical Trial Workbench",
+  "menu_name": "Chemical Trial Workbench",
+  "path": "/m/dyeing-lab/chemical-trial-lab"
+ },
+ {
+  "module": "dyeing-lab",
+  "group": "OPERATIONS",
+  "name": "Certificate Issue Register",
+  "menu_name": "Certificate Issue Register",
+  "path": "/m/dyeing-lab/certificate-register"
+ },
+ {
+  "module": "dyeing-lab",
+  "group": "OPERATIONS",
+  "name": "In-House Fabric Testing",
+  "menu_name": "In-House Fabric Testing",
+  "path": "/m/dyeing-lab/inh-fab-test"
+ },
+ {
+  "module": "dyeing-lab",
+  "group": "REPORTS",
+  "name": "Lab Test Reports",
+  "menu_name": "Lab Test Reports",
+  "path": "/m/dyeing-lab/dyeing-lab-reports"
+ },
+ {
+  "module": "production-tracking",
+  "group": "DASHBOARDS",
+  "name": "All Dashboard",
+  "menu_name": "All Dashboard",
+  "path": "/m/production-tracking/all-dashboard"
+ },
+ {
+  "module": "production-tracking",
+  "group": "DASHBOARDS",
+  "name": "Cutting Dashboard",
+  "menu_name": "Cutting Dashboard",
+  "path": "/m/production-tracking/cutting-dashboard"
+ },
+ {
+  "module": "production-tracking",
+  "group": "DASHBOARDS",
+  "name": "Sewing Dashboard",
+  "menu_name": "Sewing Dashboard",
+  "path": "/m/production-tracking/sewing-dashboard"
+ },
+ {
+  "module": "production-tracking",
+  "group": "DASHBOARDS",
+  "name": "Finishing Dashboard",
+  "menu_name": "Finishing Dashboard",
+  "path": "/m/production-tracking/finishing-dashboard"
+ },
+ {
+  "module": "production-tracking",
+  "group": "ORDER PROGRESS",
+  "name": "Buyer-wise",
+  "menu_name": "Buyer-wise",
+  "path": "/m/production-tracking/buyer-wise"
+ },
+ {
+  "module": "production-tracking",
+  "group": "ORDER PROGRESS",
+  "name": "Style-wise",
+  "menu_name": "Style-wise",
+  "path": "/m/production-tracking/style-wise"
+ },
+ {
+  "module": "production-tracking",
+  "group": "ORDER PROGRESS",
+  "name": "PO-wise",
+  "menu_name": "PO-wise",
+  "path": "/m/production-tracking/po-wise"
+ },
+ {
+  "module": "production-tracking",
+  "group": "TV DISPLAY",
+  "name": "TV Dashboard Show",
+  "menu_name": "TV Dashboard Show",
+  "path": "/m/production-tracking/tv-dashboard"
+ },
+ {
+  "module": "production-tracking",
+  "group": "REPORTS",
+  "name": "Reports",
+  "menu_name": "Reports",
+  "path": "/m/production-tracking/reports"
+ },
+ {
+  "module": "production-tracking",
+  "group": "MASTER DATA",
+  "name": "Production Master Data",
+  "menu_name": "Production Master Data",
+  "path": "/m/production-tracking/production-data"
+ },
+ {
+  "module": "production-tracking",
+  "group": "MASTER DATA",
+  "name": "Line Capacity Master",
+  "menu_name": "Line Capacity Master",
+  "path": "/m/production-tracking/line-capacity"
+ },
+ {
+  "module": "production-tracking",
+  "group": "Production Tracking",
+  "name": "Daily Production Plan",
+  "menu_name": "Daily Production Plan",
+  "path": "/m/production-tracking/daily-plan"
+ },
+ {
+  "module": "production-tracking",
+  "group": "Production Tracking",
+  "name": "Settings",
+  "menu_name": "Settings",
+  "path": "/m/production-tracking/settings"
+ }
+]

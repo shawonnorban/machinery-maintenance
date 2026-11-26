@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/merchandising/purchase-fabric-mrr" },
+ { "click": "button:has-text('Fabric MRR')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "click": "button:has-text('Add received line')", "wait": 1200 },
+ { "click": "button:has-text('Add other cost')", "wait": 1200 },
+ { "dump": "lines", "root": "main" },
+ { "fullshot": "fmrr-entry" }
+]

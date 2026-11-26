@@ -1,0 +1,176 @@
+[
+ {
+  "goto": "/assembly-floor/packing-folding"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "fold-queue"
+ },
+ {
+  "click": "main li button:has-text('PKG-20261107-0001')",
+  "after": 12000
+ },
+ {
+  "click": "main button:has-text('Start Folding')",
+  "after": 15000
+ },
+ {
+  "fill": "remarks",
+  "sel": "main label:has-text('Remarks') input",
+  "text": "Folded by size"
+ },
+ {
+  "click": "main button:has-text('Complete Folding')",
+  "after": 15000
+ },
+ {
+  "texts": "fold_done",
+  "of": "main p.text-success"
+ },
+ {
+  "shot": "fold-done"
+ },
+ {
+  "goto": "/assembly-floor/packing-poly"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "find",
+  "sel": "main input[id='pk-proc-find']",
+  "text": "PKG-20261107-0001"
+ },
+ {
+  "click": "main form button[aria-label='Scan']",
+  "after": 12000
+ },
+ {
+  "click": "main button:has-text('Start Poly Packing')",
+  "after": 15000
+ },
+ {
+  "click": "main button:has-text('Complete Poly Packing')",
+  "after": 15000
+ },
+ {
+  "texts": "poly_done",
+  "of": "main p.text-success"
+ },
+ {
+  "goto": "/assembly-floor/packing-barcode-label"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "find",
+  "sel": "main input[id='pk-proc-find']",
+  "text": "PKG-20261107-0001"
+ },
+ {
+  "click": "main form button[aria-label='Scan']",
+  "after": 12000
+ },
+ {
+  "click": "main button:has-text('Start Barcode & Label')",
+  "after": 15000
+ },
+ {
+  "shot": "label-start"
+ },
+ {
+  "printpdf": "main button:has-text('Print Labels')",
+  "as": "labels"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "verify",
+  "sel": "main input[id='pk-label-verify']",
+  "text": "LBL20261107000101"
+ },
+ {
+  "click": "main button:has-text('Verify')",
+  "after": 15000
+ },
+ {
+  "texts": "label_note",
+  "of": "main [role=status]"
+ },
+ {
+  "shot": "label-verified"
+ },
+ {
+  "click": "main button:has-text('Complete Barcode & Label')",
+  "after": 15000
+ },
+ {
+  "texts": "label_done",
+  "of": "main p.text-success"
+ },
+ {
+  "goto": "/assembly-floor/packing-assortment"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "fill": "find",
+  "sel": "main input[id='pk-proc-find']",
+  "text": "PKG-20261107-0001"
+ },
+ {
+  "click": "main form button[aria-label='Scan']",
+  "after": 12000
+ },
+ {
+  "fill": "ratio",
+  "sel": "main label:has-text('Assortment Ratio') input",
+  "text": "S:1, XL:1"
+ },
+ {
+  "texts": "ratio_check",
+  "of": "main label:has-text('Assortment Ratio') span"
+ },
+ {
+  "click": "main button:has-text('Start Assortment')",
+  "after": 15000
+ },
+ {
+  "fill": "ratio",
+  "sel": "main label:has-text('Assortment Ratio') input",
+  "text": "S:1, XL:1"
+ },
+ {
+  "texts": "ratio_check",
+  "of": "main label:has-text('Assortment Ratio') span"
+ },
+ {
+  "click": "main button:has-text('Complete Assortment')",
+  "after": 15000
+ },
+ {
+  "texts": "ratio_err",
+  "of": "main [role=alert]"
+ },
+ {
+  "fill": "ratio",
+  "sel": "main label:has-text('Assortment Ratio') input",
+  "text": ""
+ },
+ {
+  "click": "main button:has-text('Complete Assortment')",
+  "after": 15000
+ },
+ {
+  "texts": "assort_done",
+  "of": "main p.text-success"
+ },
+ {
+  "shot": "assort-done"
+ }
+]

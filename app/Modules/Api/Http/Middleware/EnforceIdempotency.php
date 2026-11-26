@@ -11,8 +11,10 @@ use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Closure;
 use Illuminate\Database\QueryException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -120,7 +122,8 @@ class EnforceIdempotency
         $now = Carbon::now();
 
         try {
-            return IdempotencyKey::create([
+            // In a savepoint: on Postgres a failed insert would otherwise poison the surrounding transaction.
+            return DB::transaction(fn (): IdempotencyKey => IdempotencyKey::create([
                 'company_id' => $companyId,
                 'user_id' => $request->user()?->id,
                 'api_client_id' => $request->attributes->get('api_client_id'),
@@ -130,7 +133,7 @@ class EnforceIdempotency
                 'status' => 'IN_PROGRESS',
                 'locked_at' => $now,
                 'expires_at' => $now->copy()->addHours(IdempotencyKey::TTL_HOURS),
-            ]);
+            ]));
         } catch (QueryException $e) {
             if (! $this->isDuplicate($e)) {
                 throw $e;
@@ -191,8 +194,9 @@ class EnforceIdempotency
         $claim->delete();
     }
 
+    /** A unique-key clash on any driver: MySQL's 1062, Postgres's SQLSTATE 23505. */
     private function isDuplicate(QueryException $e): bool
     {
-        return ($e->errorInfo[1] ?? null) === 1062;
+        return $e instanceof UniqueConstraintViolationException || ($e->errorInfo[1] ?? null) === 1062;
     }
 }

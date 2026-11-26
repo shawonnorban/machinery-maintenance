@@ -1,0 +1,387 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "goto": "/work-study/excess-yarn-target?tab=new"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Company",
+  "option": "Delta"
+ },
+ {
+  "pick": "Select Year",
+  "option": "2026"
+ },
+ {
+  "pick": "Month",
+  "option": "December"
+ },
+ {
+  "pick": "Department",
+  "option": "Knitting"
+ },
+ {
+  "fill": "Target (Qty/Kg)",
+  "text": "350"
+ },
+ {
+  "click": "main button:has-text('Save excess yarn target')"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "t01-yarn-records"
+ },
+ {
+  "goto": "/work-study/excess-yarn-target?tab=yarn"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Company",
+  "option": "Delta"
+ },
+ {
+  "pick": "Month",
+  "option": "2026|December"
+ },
+ {
+  "click": "main button:has-text('Show')"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label^='Dyeing'][aria-label$='Target (Qty/Kg)']",
+  "text": "120"
+ },
+ {
+  "click": "main button:has-text('Save Target')"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "t02-yarn-sheet"
+ },
+ {
+  "goto": "/work-study/style-feeding-sco?tab=new"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Floor",
+  "option": "1st Floor \u2014 A-1F"
+ },
+ {
+  "wait": 600
+ },
+ {
+  "pick": "Line",
+  "option": "LINE05"
+ },
+ {
+  "fill": "Date",
+  "text": "2026-12-19"
+ },
+ {
+  "pick": "New Buyer",
+  "option": "LPP"
+ },
+ {
+  "pick": "New W.Style/Job#",
+  "option": "LPP-2026-000001"
+ },
+ {
+  "fill": "New Gmt. Item",
+  "text": "Ladies Tee"
+ },
+ {
+  "pick": "Previous Buyer",
+  "option": "LPP"
+ },
+ {
+  "pick": "Previous W.Style/Job#",
+  "option": "Order"
+ },
+ {
+  "fill": "Previous Output On",
+  "text": "2026-12-18"
+ },
+ {
+  "fill": "SCO (minutes)",
+  "text": "40"
+ },
+ {
+  "fill": "FT (hours)",
+  "text": "3"
+ },
+ {
+  "fill": "Remarks",
+  "text": "Hoodie to tee, collar attachment re-set"
+ },
+ {
+  "click": "main button:has-text('Save style change-over')"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "t03-sco-records"
+ },
+ {
+  "goto": "/work-study/style-feeding-sco?tab=dashboard"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "pick": "Floor",
+  "option": "1st Floor \u2014 A-1F"
+ },
+ {
+  "fill": "From",
+  "text": "2026-12-01"
+ },
+ {
+  "fill": "To Date",
+  "text": "2026-12-31"
+ },
+ {
+  "click": "main button:has-text('Search')"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> button[role=checkbox]"
+ },
+ {
+  "click": "main button:has-text('Finalize')"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "t04-sco-board"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=new"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "fill": "Date",
+  "text": "2026-12-19"
+ },
+ {
+  "pick": "Floor",
+  "option": "1st Floor \u2014 A-1F"
+ },
+ {
+  "wait": 600
+ },
+ {
+  "pick": "Line",
+  "option": "LINE01"
+ },
+ {
+  "pick": "Buyer",
+  "option": "LPP"
+ },
+ {
+  "fill": "Order/Style",
+  "text": "LPP-2026-000001"
+ },
+ {
+  "fill": "Used OP",
+  "text": "30"
+ },
+ {
+  "fill": "Used ASO",
+  "text": "6"
+ },
+ {
+  "fill": "Layout OP",
+  "text": "32"
+ },
+ {
+  "fill": "Layout ASO",
+  "text": "6"
+ },
+ {
+  "fill": "SMV",
+  "text": "9.2"
+ },
+ {
+  "fill": "T.Effi",
+  "text": "65"
+ },
+ {
+  "fill": "WH",
+  "text": "8",
+  "exact": true
+ },
+ {
+  "fill": "Prod Gen Hr",
+  "text": "800"
+ },
+ {
+  "fill": "Prod OT Hr",
+  "text": "150"
+ },
+ {
+  "click": "main button:has-text('Save sewing target')"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "shot": "t05-target-records"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=sheet&floor=A-1F&date=2026-12-19"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "shot": "t06-target-sheet"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "t07-targets"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=entry&floor=A-1F&line=LINE01"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Order/Style 1']",
+  "text": "LPP-2026-000001"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Style 1']",
+  "text": "SS27-TEE01"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Item 1']",
+  "text": "Ladies Tee"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='SMV 1']",
+  "text": "9.2"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Plan Prod Start 1']",
+  "text": "2026-12-19"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Plan Prod End 1']",
+  "text": "2026-12-24"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Allocation 1']",
+  "text": "1073"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Production 1']",
+  "text": "950"
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "t08-entry"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "t09-entry"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=plans&floor=A-1F&line=LINE01"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> button[role=checkbox]"
+ },
+ {
+  "click": "main button:text-is('Save')"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "t10-plans"
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "t11-plans"
+ },
+ {
+  "goto": "/work-study/gmt-target-setting?tab=npt&floor=A-1F&date=2026-12-19&line=LINE01"
+ },
+ {
+  "wait": 9000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Order/Style 1']",
+  "text": "LPP-2026-000001"
+ },
+ {
+  "pick": "x",
+  "sel": "button[aria-label='Reason Type 1']",
+  "option": "Machine Breakdown"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Reason Details 1']",
+  "text": "Overlock tension"
+ },
+ {
+  "pick": "x",
+  "sel": "button[aria-label='Responsible Dept. 1']",
+  "option": "Maintenance"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Manpower 1']",
+  "text": "4"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='-Min 1']",
+  "text": "30"
+ },
+ {
+  "shot": "t12-npt-filled"
+ }
+]

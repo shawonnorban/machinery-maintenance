@@ -1,0 +1,19 @@
+[
+ { "goto": "/m/merchandising/finish-fabric-opening-balance" },
+ { "wait": 2500 },
+ { "click": "main table tbody tr td >> nth=0", "wait": 2500 },
+ { "texts": "tabs_after_rowclick", "of": "main [role=tab], main h2" },
+ { "click": "button:has-text('Opening Balance Entry')", "wait": 2500 },
+ { "peek": "div:has(> label:has-text('Existing opening balance')) select", "wait": 500 },
+ { "texts": "existing", "of": "div:has(> label:has-text('Existing opening balance')) select option" },
+ { "choose": "div:has(> label:has-text('Existing opening balance')) select", "index": 1 },
+ { "wait": 2500 },
+ { "texts": "loaded_grid", "of": "main table thead th" },
+ { "fullshot": "ffob-loaded" },
+ { "texts": "loaded_buttons", "of": "main button" },
+ { "goto": "/m/merchandising/finish-fabric-opening-balance" },
+ { "wait": 2500 },
+ { "click": "main table tbody tr button >> nth=0", "wait": 1500 },
+ { "click": "[role=dialog] button:has-text('Remove')", "wait": 2500 },
+ { "texts": "after_remove", "of": "main table tbody tr" }
+]

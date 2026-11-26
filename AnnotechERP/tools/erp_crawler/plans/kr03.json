@@ -1,0 +1,23 @@
+[
+ {"goto": "/m/knitting/yarn-current-stock"},
+ {"html": "ycs_params", "of": "main select"},
+ {"click": "main button:has-text('Search')", "wait": 4000},
+ {"texts": "ycs_stats", "of": "main section:last-of-type, main > div > div:last-child"},
+ {"texts": "ycs_th", "of": "main thead th"},
+ {"texts": "ycs_tr", "of": "main tbody tr"},
+ {"goto": "/m/knitting/fabric-current-stock"},
+ {"html": "fcs_params", "of": "main select"},
+ {"fillsel": "main input[type=date] >> nth=0", "text": "2026-01-01"},
+ {"fillsel": "main input[type=date] >> nth=1", "text": "2026-12-31"},
+ {"click": "main button:has-text('Search')", "wait": 4000},
+ {"texts": "fcs_th", "of": "main thead th"},
+ {"texts": "fcs_tr", "of": "main tbody tr"},
+ {"goto": "/m/knitting/daily-knitting-production-report"},
+ {"html": "dkp_params", "of": "main select"},
+ {"fillsel": "main input[type=date] >> nth=0", "text": "2026-01-01"},
+ {"fillsel": "main input[type=date] >> nth=1", "text": "2026-12-31"},
+ {"click": "main button:has-text('Show')", "wait": 4000},
+ {"texts": "dkp_th", "of": "main thead th"},
+ {"texts": "dkp_tr", "of": "main tbody tr"},
+ {"texts": "dkp_p", "of": "main p"}
+]

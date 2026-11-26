@@ -1,0 +1,58 @@
+[
+ {
+  "goto": "/m/merchandising/order-list"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "dump": "records",
+  "root": "main"
+ },
+ {
+  "click": "main button:has-text('Size Breakdown')",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('LPP-2026-000008')",
+  "wait": 2500
+ },
+ {
+  "dump": "size",
+  "root": "main"
+ },
+ {
+  "texts": "size_text",
+  "of": "main"
+ },
+ {
+  "click": "main button:has-text('New order')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "label": "867MI-05X \u2014 867MI-05X (not active)"
+ },
+ {
+  "dump": "new_style",
+  "root": "main"
+ },
+ {
+  "goto": "/m/merchandising/order-list"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Edit')",
+  "wait": 2500
+ },
+ {
+  "dump": "edit",
+  "root": "main"
+ },
+ {
+  "texts": "edit_text",
+  "of": "main"
+ }
+]

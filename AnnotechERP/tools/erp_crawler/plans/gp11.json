@@ -1,0 +1,13 @@
+[
+ { "goto": "/m/gate-pass/gp-create" }, { "wait": 5000 },
+ { "click": "main label:has-text('Main Gate Pass')", "wait": 800 },
+ { "click": "main label:has-text('OUT ONLY')", "wait": 800 },
+ { "texts": "main_labels", "of": "main label, main h3, main p" },
+ { "fullshot": "gp11-main" },
+ { "click": "main label:has-text('Employee') >> nth=0", "wait": 600 },
+ { "fillsel": "main label:has-text('Employee Card No') >> xpath=following::input[1]", "text": "99999" },
+ { "click": "main label:has-text('Employee Card No') >> xpath=following::button[1]", "wait": 2500 },
+ { "texts": "emp_search", "of": "main p, main span, [data-sonner-toast]" },
+ { "click": "main button:has-text('Submit for Approval')", "wait": 2500 },
+ { "fullshot": "gp11-main-submit-empty" }
+]

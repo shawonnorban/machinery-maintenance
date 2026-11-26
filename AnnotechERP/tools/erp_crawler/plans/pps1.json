@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/merchandising/procurement-posting-setup" },
+ { "dump": "records", "root": "main" },
+ { "click": "button:has-text('New posting setup')", "wait": 2500 },
+ { "dump": "new", "root": "main" },
+ { "fullshot": "pps-new" },
+ { "click": "button:has-text('Save posting setup')", "wait": 2500 },
+ { "texts": "empty_msgs", "of": "main p, main span, [role=alert]" }
+]

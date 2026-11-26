@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Actions;
 
+use App\Modules\Identity\Models\Menu;
+use App\Modules\Identity\Models\MenuPermission;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\UserRole;
 use App\Shared\Tenancy\TenantContext;
@@ -41,9 +43,10 @@ class ManageRole
             'description' => $data['name'],
             'scope' => $data['scope'] ?? 'FACTORY',
             'is_system' => false,
-        ]);
+        ] + $this->profile($data));
 
         $this->syncPermissions($role, $data['permissions'] ?? []);
+        $this->applyAdmin($role);
 
         return $role->fresh('permissions');
     }
@@ -78,11 +81,13 @@ class ManageRole
             'name' => isset($data['code']) ? $this->normalizeCode($data['code']) : $role->name,
             'description' => $data['name'] ?? $role->description,
             'scope' => $data['scope'] ?? $role->scope,
-        ]);
+        ] + $this->profile($data, $role));
 
         if (array_key_exists('permissions', $data)) {
             $this->syncPermissions($role, $data['permissions']);
         }
+
+        $this->applyAdmin($role);
 
         return $role->fresh('permissions');
     }
@@ -100,6 +105,92 @@ class ManageRole
         }
 
         $role->delete();
+    }
+
+    /**
+     * Role Menu Assignment (AnnotechERP 02/01): `$grants` is menu code => the
+     * V/C/E/D/A/P/X flags ticked for it, covering the whole matrix. The role
+     * ends up with every permission those flags name, plus whatever it holds
+     * that no menu names at all — the matrix only rewrites what it shows.
+     *
+     * @param  array<string, list<string>>  $grants
+     */
+    public function grantMenus(Role $role, array $grants): Role
+    {
+        $this->assertEditable($role);
+
+        $mapped = MenuPermission::query()->pluck('permission_name')->unique()->all();
+        $outside = $role->permissions()->pluck('name')->diff($mapped)->all();
+
+        $menuIds = Menu::query()->whereIn('code', array_keys($grants))->pluck('id', 'code');
+        $granted = [];
+        foreach ($grants as $code => $flags) {
+            if (! isset($menuIds[$code]) || $flags === []) {
+                continue;
+            }
+            $granted = array_merge($granted, MenuPermission::query()
+                ->where('menu_id', $menuIds[$code])
+                ->whereIn('flag', array_intersect($flags, Menu::FLAGS))
+                ->pluck('permission_name')
+                ->all());
+        }
+
+        $this->syncPermissions($role, array_values(array_unique(array_merge($outside, $granted))));
+        $this->applyAdmin($role);
+
+        return $role->fresh('permissions');
+    }
+
+    /**
+     * Role Menu Assignment's "New menu grant": one menu's flags for one role.
+     * Unticking a flag drops its permissions — except those another menu
+     * also names, which may still be what the role holds that other screen
+     * by (one permission can gate several screens).
+     *
+     * @param  list<string>  $flags
+     */
+    public function grantMenu(Role $role, Menu $menu, array $flags): Role
+    {
+        $this->assertEditable($role);
+
+        $rows = MenuPermission::query()->where('menu_id', $menu->id)->get();
+        $add = $rows->whereIn('flag', array_intersect($flags, Menu::FLAGS))->pluck('permission_name')->unique();
+        $drop = $rows->whereNotIn('flag', $flags)->pluck('permission_name')->unique()->diff($add);
+        $shared = MenuPermission::query()->whereIn('permission_name', $drop)->where('menu_id', '!=', $menu->id)->pluck('permission_name')->unique();
+        $drop = $drop->diff($shared);
+
+        $current = $role->permissions()->pluck('name');
+        $this->syncPermissions($role, $current->merge($add)->unique()->diff($drop)->values()->all());
+        $this->applyAdmin($role);
+
+        return $role->fresh('permissions');
+    }
+
+    /**
+     * Brickland's Role Definition columns (AnnotechERP 02/01). On update a key
+     * the caller did not send keeps its value.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function profile(array $data, ?Role $role = null): array
+    {
+        $out = [];
+        foreach (['name_bn', 'short_name', 'rank', 'is_admin', 'active'] as $key) {
+            if (array_key_exists($key, $data)) {
+                $out[$key] = $data[$key];
+            }
+        }
+
+        return $out;
+    }
+
+    /** An admin role bypasses the menu matrix: it simply holds every permission. */
+    private function applyAdmin(Role $role): void
+    {
+        if ($role->is_admin) {
+            $this->syncPermissions($role, Permission::query()->pluck('name')->all());
+        }
     }
 
     /**

@@ -16,6 +16,8 @@ use App\Modules\WorkOrder\Actions\CreateWorkOrder;
 use App\Modules\WorkOrder\Models\Technician;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Tests\Support\TenantFixture;
 use Tests\Support\WorkOrderFixture;
 use Tests\TestCase;
@@ -59,12 +61,19 @@ class TechnicianApiTest extends TestCase
                 'name' => 'Karim Mia',
                 'employee_id' => 'EMP-1001',
                 'factory_id' => $this->dhaka->id,
+                'specialization' => 'Sewing machines',
             ])
             ->assertCreated()
             ->assertJsonPath('data.employee_id', 'EMP-1001')
             ->assertJsonPath('data.status', 'ACTIVE');
 
         $technicianId = $created->json('data.id');
+
+        // The roster list carries it too: its Specialization column read a field only the detail sent.
+        $this->withToken($this->tokenFor($this->manager))
+            ->getJson('/api/v1/technicians')
+            ->assertOk()
+            ->assertJsonPath('data.0.specialization', 'Sewing machines');
 
         // So an edit form can preselect these without a second round trip.
         $department = Department::create([
@@ -236,6 +245,79 @@ class TechnicianApiTest extends TestCase
         $this->withToken($this->tokenFor($this->technicianRole))
             ->getJson('/api/v1/technicians')
             ->assertForbidden();
+    }
+
+    public function test_a_technician_is_picked_from_the_hr_employee_list(): void
+    {
+        $karim = $this->hrEmployee('EMP-000101', 'Karim Mechanic');
+        $token = $this->tokenFor($this->manager);
+
+        $options = $this->withToken($token)->getJson('/api/v1/technicians/form-options')->assertOk();
+        $this->assertContains($karim, array_column($options->json('data.employees'), 'id'));
+
+        // Name and ID come from HR, not from what the form sent.
+        $created = $this->withToken($token)->postJson('/api/v1/technicians', [
+            'hr_employee_id' => $karim,
+            'name' => 'Typed over',
+            'factory_id' => $this->dhaka->id,
+        ])->assertCreated()
+            ->assertJsonPath('data.name', 'Karim Mechanic')
+            ->assertJsonPath('data.employee_id', 'EMP-000101')
+            ->assertJsonPath('data.phone', '01710000101')
+            ->assertJsonPath('data.hr_employee_id', $karim)
+            ->assertJsonPath('data.hr_employee.employee_code', 'EMP-000101');
+
+        // Already on the roster: not offered again as someone else's, and refused if sent.
+        $again = $this->withToken($token)->getJson('/api/v1/technicians/form-options')->json('data.employees');
+        $this->assertSame($created->json('data.id'), collect($again)->firstWhere('id', $karim)['technician_id']);
+
+        $this->withToken($token)->postJson('/api/v1/technicians', [
+            'hr_employee_id' => $karim,
+            'factory_id' => $this->dhaka->id,
+        ])->assertStatus(409)->assertJsonValidationErrors('hr_employee_id');
+
+        // HR's later change reaches the roster on the next save.
+        DB::table('hr_employees')->where('id', $karim)->update(['name' => 'Karim Uddin']);
+        $this->withToken($token)->patchJson('/api/v1/technicians/'.$created->json('data.id'), [
+            'hr_employee_id' => $karim,
+            'factory_id' => $this->dhaka->id,
+        ])->assertOk()->assertJsonPath('data.name', 'Karim Uddin');
+    }
+
+    public function test_a_separated_employee_cannot_be_put_on_the_roster(): void
+    {
+        $gone = $this->hrEmployee('EMP-000102', 'Left Last Month', 'SEPARATED');
+
+        $this->withToken($this->tokenFor($this->manager))->postJson('/api/v1/technicians', [
+            'hr_employee_id' => $gone,
+            'factory_id' => $this->dhaka->id,
+        ])->assertUnprocessable()->assertJsonValidationErrors('hr_employee_id');
+    }
+
+    /** An HR & Payroll employee of Delta, posted to Dhaka: the least HR needs (a gazette and an employment type). */
+    private function hrEmployee(string $code, string $name, string $status = 'ACTIVE'): string
+    {
+        $now = now();
+        $gazette = DB::table('hr_gazettes')->where('company_id', $this->delta->id)->value('id');
+        if ($gazette === null) {
+            $gazette = (string) Str::ulid();
+            DB::table('hr_gazettes')->insert(['id' => $gazette, 'company_id' => $this->delta->id, 'name' => 'RMG 2023', 'effective_date' => '2023-12-01', 'created_at' => $now, 'updated_at' => $now]);
+        }
+        $type = DB::table('hr_employment_types')->where('company_id', $this->delta->id)->value('id');
+        if ($type === null) {
+            $type = (string) Str::ulid();
+            DB::table('hr_employment_types')->insert(['id' => $type, 'company_id' => $this->delta->id, 'name' => 'Worker', 'name_bn' => 'শ্রমিক', 'short_name' => 'WRK', 'created_at' => $now, 'updated_at' => $now]);
+        }
+
+        $id = (string) Str::ulid();
+        DB::table('hr_employees')->insert([
+            'id' => $id, 'company_id' => $this->delta->id, 'employee_code' => $code, 'card_no' => 'C'.substr($code, -4),
+            'name' => $name, 'nid' => '1234567890', 'mobile' => '01710'.substr($code, -6), 'status' => $status,
+            'gazette_id' => $gazette, 'employment_type_id' => $type, 'gross_a' => 14000, 'gross_b' => 18000,
+            'factory_id' => $this->dhaka->id, 'joining_date' => '2025-02-01', 'created_at' => $now, 'updated_at' => $now,
+        ]);
+
+        return $id;
     }
 
     private function tokenFor(User $user): string

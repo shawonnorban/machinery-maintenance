@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { ReportFilters } from "@/components/reports/report-filters";
@@ -43,7 +43,7 @@ export default async function ReportDetailPage({ params, searchParams }) {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: t("reports"), href: "/reports" }, { label: title }]} title={title} description={description} />
+      <ScreenHeader parentUrl="/reports" title={title} description={description} />
 
       <div className="flex flex-col gap-4">
         <Card>

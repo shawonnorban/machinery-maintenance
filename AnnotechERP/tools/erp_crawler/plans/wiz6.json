@@ -1,0 +1,66 @@
+[
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Open Inbox'), main a:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Approve')",
+  "wait": 2500
+ },
+ {
+  "texts": "approve_t",
+  "of": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Open Inbox'), main a:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Revision')",
+  "wait": 2500
+ },
+ {
+  "texts": "revision_t",
+  "of": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/merchandising/development-style-gallery"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Open Inbox'), main a:has-text('Open Inbox')",
+  "wait": 2500
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Review')",
+  "wait": 3500
+ },
+ {
+  "texts": "review_t",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "review_d",
+  "root": "[role=dialog]"
+ }
+]

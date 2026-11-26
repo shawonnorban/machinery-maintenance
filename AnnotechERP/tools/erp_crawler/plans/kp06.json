@@ -1,0 +1,42 @@
+[
+{
+"goto": "/m/knitting/fabric-production-order-bulk"
+},
+{
+"click": "main [role=tab]:has-text('Knit Programmes')",
+"wait": 3000
+},
+{
+"click": "main :text('770MR \u00b7 S/J 30/1 Combed') >> nth=0",
+"wait": 3000
+},
+{
+"click": "main button:has-text('Release Programme')",
+"wait": 2000
+},
+{
+"texts": "kp_p",
+"of": "main p"
+},
+{
+"texts": "kp_h",
+"of": "main table thead"
+},
+{
+"texts": "kp_rows",
+"of": "main table tbody tr"
+},
+{
+"html": "kp_inputs",
+"of": "main table input, main table select, main table button"
+},
+{
+"fullshot": "kp-add"
+},
+{
+"scroll": 600
+},
+{
+"fullshot": "kp-add2"
+}
+]

@@ -1,0 +1,4 @@
+[
+ { "goto": "/print/employee/957" }, { "wait": 6000 }, { "shot": "print_employee" },
+ { "goto": "/print/employee-sb/957" }, { "wait": 6000 }, { "shot": "print_employee_sb" }
+]

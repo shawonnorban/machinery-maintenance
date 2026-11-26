@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -19,7 +19,7 @@ export default async function ReportJobsPage() {
 
   return (
     <>
-      <PageHeader breadcrumb={[{ label: t("reports"), href: "/reports" }, { label: t("my_exports") }]} title={t("my_exports")} />
+      <ScreenHeader parentUrl="/reports" title={t("my_exports")} />
 
       {jobs.data.length === 0 ? (
         <EmptyState title={t("job.none")} description={t("job.none_hint")} />

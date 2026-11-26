@@ -28,11 +28,17 @@ class ApprovalRule extends BaseModel
     protected $fillable = [
         'company_id', 'workflow_id', 'condition_json', 'sequence',
         'role_id', 'user_id', 'team_id', 'name',
+        // Approval Workflow Designer (AnnotechERP 02/03).
+        'task_message', 'role_flag', 'next_action', 'level',
+        'requires_signature', 'can_repeat', 'can_cancel', 'can_resend', 'active',
     ];
 
     protected function casts(): array
     {
-        return ['condition_json' => 'array', 'sequence' => 'integer'];
+        return [
+            'condition_json' => 'array', 'sequence' => 'integer', 'level' => 'integer',
+            'requires_signature' => 'boolean', 'can_repeat' => 'boolean', 'can_cancel' => 'boolean', 'can_resend' => 'boolean', 'active' => 'boolean',
+        ];
     }
 
     public function workflow(): BelongsTo

@@ -1,0 +1,10 @@
+[
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00006') >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "pr6", "of": "main th, main td" },
+ { "goto": "/m/material-procurement/price-review" },
+ { "wait": 4000 },
+ { "texts": "review", "of": "main h2, main h3, main p, main th, main td, main button, main span" },
+ { "fullshot": "mp17-review" }
+]

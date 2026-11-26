@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/gate-pass/gp-reconciliation" }, { "wait": 5000 },
+ { "click": "main tbody tr >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Approve Short & Close')", "wait": 2000 },
+ { "fillsel": "[role=dialog] textarea", "text": "Annotech probe — closing the test pass" },
+ { "click": "[role=dialog] button:has-text('Approve & Close')", "wait": 4000 },
+ { "texts": "recon_after", "of": "main tbody tr" },
+ { "goto": "/m/gate-pass/gp-list" }, { "wait": 5000 },
+ { "texts": "list_rows", "of": "main tbody tr" },
+ { "options": "list_status", "of": "main select >> nth=2" },
+ { "fullshot": "gp10-list" },
+ { "goto": "/m/gate-pass/gp-dashboard" }, { "wait": 5000 },
+ { "texts": "dash", "of": "main h2, main h3, main p, main td, main span" },
+ { "fullshot": "gp10-dashboard" },
+ { "goto": "/m/gate-pass/gp-reports" }, { "wait": 5000 },
+ { "options": "report_list", "of": "main select >> nth=0" },
+ { "click": "main button:has-text('View')", "wait": 3000 },
+ { "texts": "register", "of": "main tbody tr, main tfoot tr, main h2, main h3, main p" },
+ { "fullshot": "gp10-reports" }
+]

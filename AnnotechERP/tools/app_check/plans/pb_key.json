@@ -1,0 +1,6 @@
+[
+ {"goto": "/pre-budget-master/master-data"},
+ {"see": "Accessories Items"},
+ {"click": "[role=tab]:has-text('Parts')"},
+ {"see": "Parts"}
+]

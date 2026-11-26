@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { AssetForm } from "@/components/assets/asset-form";
 import { getT } from "@/lib/i18n-server";
 import { updateAsset } from "./actions";
@@ -18,22 +17,18 @@ export default async function EditAssetPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: asset.asset_code, href: `/assets/${assetId}` }, { label: tc("edit") }]}
+      <ScreenHeader
+        parentUrl="/assets" trail={[{ label: asset.asset_code, href: `/assets/${assetId}` }]}
         title={t("edit_asset_title", { code: asset.asset_code })}
       />
 
-      <Card>
-        <CardBody>
-          <AssetForm
+      <AssetForm
             asset={asset}
             options={options}
             customFieldSchema={customFields.schema}
             customFieldValues={customFields.values}
             action={updateAsset.bind(null, assetId)}
           />
-        </CardBody>
-      </Card>
     </>
   );
 }

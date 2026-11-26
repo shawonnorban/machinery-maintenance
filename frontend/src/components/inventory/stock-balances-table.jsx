@@ -6,6 +6,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { formatQuantity, formatCurrency } from "@/lib/format";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /**
  * Column `render` functions can't cross the Server→Client boundary, so this
@@ -32,7 +33,7 @@ function StockBalancesTable({ balances, meta, search, binId }) {
           render: (row) =>
             row.spare_part ? (
               <div>
-                <Link href={`/inventory/parts/${row.spare_part.id}`} className="font-medium text-brand hover:underline">
+                <Link href={`/inventory/parts/${refOf(row.spare_part, "part_number")}`} className="font-medium text-brand hover:underline">
                   {row.spare_part.part_number}
                 </Link>
                 <div className="text-xs text-foreground-muted">{row.spare_part.name}</div>
@@ -56,7 +57,7 @@ function StockBalancesTable({ balances, meta, search, binId }) {
         },
         {
           key: "low",
-          header: "",
+          header: t("flags"),
           render: (row) =>
             row.spare_part && Number(row.on_hand) <= Number(row.spare_part.reorder_level ?? 0) ? (
               <Badge variant="warning">{t("low")}</Badge>
@@ -73,6 +74,7 @@ function StockBalancesTable({ balances, meta, search, binId }) {
       rowKey={(row) => row.id}
       emptyTitle={t("no_stock")}
       pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+      perPageSelect
       onPageChange={navigate}
     />
   );

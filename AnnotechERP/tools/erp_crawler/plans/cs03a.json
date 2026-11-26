@@ -1,0 +1,6 @@
+[
+ {"goto": "/m/ie/oh-cost-allocation"}, {"click": "main button[role=tab]:has-text('New cost head')", "wait": 2500},
+ {"html": "oh_month_box", "of": "main div:has(> label:has-text('Month'))"},
+ {"html": "oh_head_box", "of": "main div:has(> label:has-text('Cost Head'))"},
+ {"peek": "main div:has(> label:has-text('Cost Head')) button", "wait": 1500}, {"popup": "oh_head_opts"}, {"fullshot": "oh-head-open"}
+]

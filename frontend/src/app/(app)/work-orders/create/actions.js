@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `WorkOrderController::store`. `redirect()` stays outside the try/catch — it works by throwing internally. */
 async function createWorkOrder(previousState, formData) {
@@ -20,7 +21,7 @@ async function createWorkOrder(previousState, formData) {
     throw error;
   }
 
-  redirect(`/work-orders/${workOrder.id}`);
+  redirect(`/work-orders/${refOf(workOrder, "work_order_number")}`);
 }
 
 export { createWorkOrder };

@@ -1,0 +1,125 @@
+[
+ {
+  "goto": "/assembly-floor/packing-out"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "waiting",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main button:has-text('Open')",
+  "after": 15000
+ },
+ {
+  "texts": "checks",
+  "of": "main ul li"
+ },
+ {
+  "shot": "out-preview"
+ },
+ {
+  "click": "main button:has-text('Confirm Packing Out')",
+  "after": 18000
+ },
+ {
+  "texts": "out_note",
+  "of": "main [role=status]"
+ },
+ {
+  "texts": "auto",
+  "of": "main section p"
+ },
+ {
+  "texts": "today",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "out-done"
+ },
+ {
+  "goto": "/assembly-floor/packing-dashboard"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "kpis",
+  "of": "main section[aria-label='Key figures'] span.tabular"
+ },
+ {
+  "texts": "ready",
+  "of": "main tbody tr"
+ },
+ {
+  "fill": "trace",
+  "sel": "main input[id='pk-trace']",
+  "text": "CTN202611070002"
+ },
+ {
+  "click": "main button:has-text('Trace')",
+  "after": 15000
+ },
+ {
+  "texts": "trace",
+  "of": "main ol li p.text-sm"
+ },
+ {
+  "shot": "dash-trace"
+ },
+ {
+  "goto": "/assembly-floor/packing-reports"
+ },
+ {
+  "wait": 15000
+ },
+ {
+  "texts": "daily",
+  "of": "main tbody tr, main tfoot tr"
+ },
+ {
+  "choose": "main select",
+  "option": "Carton Report"
+ },
+ {
+  "click": "main button:has-text('Run')",
+  "after": 15000
+ },
+ {
+  "texts": "carton",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "rep-carton"
+ },
+ {
+  "printpdf": "main button:has-text('Print')",
+  "as": "rep-carton-print"
+ },
+ {
+  "choose": "main select",
+  "option": "Pending Packing Report"
+ },
+ {
+  "click": "main button:has-text('Run')",
+  "after": 15000
+ },
+ {
+  "texts": "pending",
+  "of": "main tbody tr, main p"
+ },
+ {
+  "choose": "main select",
+  "option": "PO-wise Packing Report"
+ },
+ {
+  "click": "main button:has-text('Run')",
+  "after": 15000
+ },
+ {
+  "texts": "po",
+  "of": "main tbody tr"
+ }
+]

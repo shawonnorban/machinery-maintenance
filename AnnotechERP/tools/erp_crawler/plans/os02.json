@@ -1,0 +1,241 @@
+[
+ {
+  "goto": "/m/ie/monthly-op-aso-salary-ot-rate"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New salary')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=companyId]",
+  "index": 1
+ },
+ {
+  "choose": "main select[name=year]",
+  "label": "2026"
+ },
+ {
+  "peek": "main div:has(> label:has-text('Month')) button",
+  "wait": 1200
+ },
+ {
+  "popup": "sr_months"
+ },
+ {
+  "click": "[role=option]:has-text('October')",
+  "wait": 800
+ },
+ {
+  "type": "main input[name=opSalaryAvg]",
+  "text": "12000"
+ },
+ {
+  "type": "main input[name=asoSalaryAvg]",
+  "text": "9000"
+ },
+ {
+  "type": "main input[name=opOtRate]",
+  "text": "60"
+ },
+ {
+  "type": "main input[name=asoOtRate]",
+  "text": "45"
+ },
+ {
+  "click": "main button:has-text('Save salary and OT rate')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "sr-saved"
+ },
+ {
+  "goto": "/m/ie/monthly-op-aso-salary-ot-rate"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fullshot": "sr-records"
+ },
+ {
+  "dump": "sr_records",
+  "root": "main"
+ },
+ {
+  "click": "main table button:has-text('Edit')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "sr-edit"
+ },
+ {
+  "goto": "/m/ie/monthly-op-aso-salary-ot-rate"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Cost Particulars')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "index": 1
+ },
+ {
+  "choose": "main select >> nth=1",
+  "label": "2026"
+ },
+ {
+  "click": "main button:has-text('Show')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "sr-cp"
+ },
+ {
+  "dump": "sr_cp",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/daily-line-costing-operation"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Overall Profit')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[type=date]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 4000
+ },
+ {
+  "dump": "dl_profit",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/ot-plan-garment-division"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New OT plan')",
+  "wait": 2500
+ },
+ {
+  "type": "main input[name=planDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1200
+ },
+ {
+  "popup": "ot_lines"
+ },
+ {
+  "click": "[role=option] >> nth=1",
+  "wait": 800
+ },
+ {
+  "peek": "main div:has(> label:has-text('Dept.')) button",
+  "wait": 1200
+ },
+ {
+  "popup": "ot_depts"
+ },
+ {
+  "click": "[role=option] >> nth=1",
+  "wait": 800
+ },
+ {
+  "peek": "main div:has(> label:has-text('Designation')) button",
+  "wait": 1200
+ },
+ {
+  "popup": "ot_desigs"
+ },
+ {
+  "click": "[role=option] >> nth=1",
+  "wait": 800
+ },
+ {
+  "fullshot": "ot-new-picked"
+ },
+ {
+  "type": "main input[name=manpowerGen]",
+  "text": "36"
+ },
+ {
+  "type": "main input[name=workHourGen]",
+  "text": "8"
+ },
+ {
+  "type": "main input[name=hourCount]",
+  "text": "3"
+ },
+ {
+  "type": "main input[name=opPerHour]",
+  "text": "30"
+ },
+ {
+  "type": "main input[name=asoPerHour]",
+  "text": "6"
+ },
+ {
+  "type": "main input[name=remarks]",
+  "text": "Annotech probe OT"
+ },
+ {
+  "click": "main button:has-text('Save OT plan row')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "ot-saved"
+ },
+ {
+  "goto": "/m/ie/ot-plan-garment-division"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fullshot": "ot-records"
+ },
+ {
+  "dump": "ot_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('OT Plan')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select >> nth=0",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[type=date]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "ot-plan"
+ },
+ {
+  "dump": "ot_plan",
+  "root": "main"
+ }
+]

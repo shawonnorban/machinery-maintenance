@@ -1,0 +1,107 @@
+[
+ {
+  "goto": "/cutting-floor/new-cutting"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='PO No']",
+  "text": "PO-SS27-01"
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "choose": "select[aria-label='Color']",
+  "option": "Navy Blue"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "nc-ctx"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Parts Name']",
+  "text": "Back Panel"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Batch Number']",
+  "text": "B-202"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Pcs per Bundle']",
+  "text": "30"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Pcs to cut, size S']",
+  "text": "60"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Pcs to cut, size M']",
+  "text": "90"
+ },
+ {
+  "wait": 500
+ },
+ {
+  "shot": "nc-filled"
+ },
+ {
+  "click": "role=button[name=/Create 5 Cards/]",
+  "after": 20000
+ },
+ {
+  "shot": "nc-created"
+ },
+ {
+  "goto": "/cutting-floor/create-bundle-card"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='PO No']",
+  "text": "PO-SS27-01"
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "choose": "select[aria-label='Color']",
+  "option": "Navy Blue"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "choose": "select[aria-label='Cutting']",
+  "option": "Back Panel \u00b7 Batch B-202"
+ },
+ {
+  "wait": 500
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Size']",
+  "text": "S"
+ },
+ {
+  "wait": 500
+ },
+ {
+  "shot": "be-picked"
+ },
+ {
+  "texts": "serial_from",
+  "of": "input[aria-label='Serial From']"
+ }
+]

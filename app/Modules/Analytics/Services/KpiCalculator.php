@@ -7,7 +7,7 @@ namespace App\Modules\Analytics\Services;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\DowntimeRecord;
-use App\Modules\Calendar\Services\WorkingTimeService;
+use App\Modules\HrPayroll\Services\WorkingTimeService;
 use App\Modules\Maintenance\Models\MaintenanceSchedule;
 use App\Modules\Settings\Services\SettingsResolver;
 use App\Modules\Tenancy\Models\Factory;

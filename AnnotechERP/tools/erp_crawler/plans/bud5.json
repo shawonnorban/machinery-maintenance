@@ -1,0 +1,105 @@
+[
+ {
+  "goto": "/m/merchandising/budget-sheet"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "choose": "main select >> nth=1",
+  "index": 8
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "choose": "main select >> nth=2",
+  "index": 1
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "wait": 1500
+ },
+ {
+  "click": "main button:has-text('1 .Yarn')",
+  "wait": 1500
+ },
+ {
+  "texts": "yarn",
+  "of": "main"
+ },
+ {
+  "dump": "yarn_d",
+  "root": "main"
+ },
+ {
+  "type": "main table >> nth=1 >> input >> nth=0",
+  "text": "Probe 30/1 combed cotton"
+ },
+ {
+  "type": "main table >> nth=1 >> input >> nth=2",
+  "text": "120"
+ },
+ {
+  "type": "main table >> nth=1 >> input >> nth=3",
+  "text": "3.5"
+ },
+ {
+  "click": "main button:has-text('Overall Cost')",
+  "wait": 1500
+ },
+ {
+  "type": "main table >> nth=1 >> tbody tr:has-text('CM') input",
+  "text": "1.2"
+ },
+ {
+  "texts": "oc_after",
+  "of": "main"
+ },
+ {
+  "click": "main button:text-is('Save')",
+  "wait": 3500
+ },
+ {
+  "texts": "after_save",
+  "of": "main"
+ },
+ {
+  "texts": "toast",
+  "of": "[data-sonner-toast], [role=status], [role=alert]"
+ },
+ {
+  "click": "main button:has-text('Create Booking')",
+  "wait": 3000
+ },
+ {
+  "url": "booking_url"
+ },
+ {
+  "goto": "/m/merchandising/budget-sheet"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "choose": "main select >> nth=1",
+  "index": 8
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "choose": "main select >> nth=2",
+  "index": 1
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "reloaded",
+  "of": "main"
+ }
+]

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `ServiceContractApiController::store` (`ManageServiceContract::create`). `redirect()` stays outside the try/catch — it works by throwing internally. */
 async function createContract(previousState, formData) {
@@ -34,7 +35,7 @@ async function createContract(previousState, formData) {
     throw error;
   }
 
-  redirect(`/vendors/service-contracts/${contract.id}`);
+  redirect(`/vendors/service-contracts/${refOf(contract, "contract_number")}`);
 }
 
 export { createContract };

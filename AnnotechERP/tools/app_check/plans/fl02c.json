@@ -1,0 +1,6 @@
+[{"goto": "/finance-ledger/mrr-combine-bill?no=MCB-2026-000001"}, {"wait": 30000},
+ {"printpdf": "main button:has-text('Print')", "as": "mb-print"},
+ {"goto": "/finance-ledger/voucher-post-unpost"}, {"wait": 25000},
+ {"click": "main button[role=tab]:has-text('Post / Unpost')", "after": 2000},
+ {"click": "main aside button:has-text('Delta Apparels')", "after": 2000},
+ {"shot": "pu-board"}]

@@ -12,7 +12,11 @@ use App\Modules\Api\Support\SanctumTokenHandle;
 use App\Modules\Audit\Services\AuditRecorder;
 use App\Modules\Identity\Actions\AttemptLogin;
 use App\Modules\Identity\Models\CompanyUser;
+use App\Modules\Identity\Models\PasswordChange;
+use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
+use App\Modules\Identity\Models\UserRole;
+use App\Modules\QualityTally\Support\QtPhones;
 use App\Modules\Tenancy\Models\Company;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiException;
@@ -20,11 +24,13 @@ use App\Shared\Http\Api\ApiResponse;
 use App\Shared\Http\Api\ErrorCode;
 use App\Shared\Scopes\TenantScope;
 use App\Shared\Support\UserAgent;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
@@ -52,21 +58,36 @@ class AuthController extends ApiController
     public function login(Request $request, AttemptLogin $login, IssueApiToken $tokens): JsonResponse
     {
         $data = $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255'],
+            // The email, or Brickland's User ID (AnnotechERP 02/01) — the key
+            // stays `email` so every existing client keeps working.
+            'email' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],
             // Optional. A person in one company never has to say which.
             'company_id' => ['nullable', 'string', 'size:26'],
+            // The app's way of saying it (AnnotechERP 37): the code given when the company was set up.
+            'company_code' => ['nullable', 'string', 'max:50'],
             'device_name' => ['nullable', 'string', 'max:255'],
             'expires_in_days' => ['nullable', 'integer', 'min:1', 'max:'.ApiToken::MAX_LIFETIME_DAYS],
-        ]);
+        ] + QtPhones::rules('sometimes'));
 
         $user = $login->verify($data['email'], $data['password'], (string) $request->ip());
 
         $companyId = $data['company_id'] ?? $this->defaultCompanyId($user->id);
 
+        if (! empty($data['company_code'])) {
+            $companyId = Company::query()->whereRaw('upper(code) = ?', [Str::upper(trim($data['company_code']))])->value('id');
+
+            if ($companyId === null || ! $user->belongsToCompany($companyId)) {
+                throw ValidationException::withMessages(['company_code' => __('auth.company_code')]);
+            }
+        }
+
         if ($companyId === null) {
             throw ApiException::of(ErrorCode::TENANT_CONTEXT_REQUIRED, __('auth.no_company_membership'));
         }
+
+        // A blocked phone signs nobody in (it was lost, or somebody else's).
+        $phone = isset($data['phone']) ? QtPhones::arrive($companyId, $data['phone'], $user->id, $request->ip()) : null;
 
         ['token' => $token, 'plain' => $plain] = $tokens->forUser(
             $user,
@@ -74,6 +95,10 @@ class AuthController extends ApiController
             $data['device_name'] ?? __('api.default_token_name'),
             days: $data['expires_in_days'] ?? null,
         );
+
+        if ($phone !== null) {
+            $token->forceFill(['qt_phone_id' => $phone->id])->save();
+        }
 
         // Set here rather than inside the credential check: a token in hand is
         // an arrival, and that is what this column is asked about afterwards.
@@ -153,6 +178,14 @@ class AuthController extends ApiController
                 'name' => $caller->user->name,
                 'email' => $caller->user->email,
                 'locale' => $caller->user->locale,
+                // The next screen must be the password change (AnnotechERP 02/01).
+                'must_change_password' => $caller->user->mustChangePassword(),
+                'read_only' => $caller->user->isReadOnly(),
+                // Only a portal here (a supplier's login, AnnotechERP 08/07): the
+                // frontend keeps it to the Supplier Portal's own screens.
+                'portal_only' => $caller->companyId !== null && Role::onlyPortal(
+                    UserRole::query()->withoutGlobalScopes()->where('company_id', $caller->companyId)->where('user_id', $caller->user->id)->pluck('role_id')->all(),
+                ),
             ],
             'client' => $caller->client === null ? null : [
                 'id' => $caller->client->id,
@@ -384,6 +417,12 @@ class AuthController extends ApiController
 
         $user = $caller->user;
 
+        if ($user->cannot_change_password) {
+            // Brickland's "User can not change password" (AnnotechERP 02/01):
+            // shared or kiosk accounts whose password an administrator holds.
+            throw ApiException::of(ErrorCode::FORBIDDEN, __('account.cannot_change_password'));
+        }
+
         $data = $request->validate([
             'current_password' => ['required', 'string'],
             // SRS 50.1: at least 10 characters and checked against a
@@ -400,7 +439,13 @@ class AuthController extends ApiController
             ]);
         }
 
-        $user->forceFill(['password' => $data['password']])->save();
+        // Changing it answers a forced change or an expiring password.
+        $user->forceFill([
+            'password' => $data['password'],
+            'must_change_password' => false,
+            'status' => $user->status === 'PASSWORD_EXPIRING' ? 'ACTIVE' : $user->status,
+        ])->save();
+        PasswordChange::record($user, 'SELF', $user->id);
 
         $isSanctumCaller = $caller->token instanceof SanctumTokenHandle;
         $currentTokenId = (string) $caller->token->id();
@@ -453,7 +498,7 @@ class AuthController extends ApiController
                 // (Laravel's session driver, not this app's convention), so
                 // it's converted here rather than left for the frontend to
                 // special-case one field.
-                'last_activity' => \Carbon\CarbonImmutable::createFromTimestamp($row->last_activity)->toIso8601String(),
+                'last_activity' => CarbonImmutable::createFromTimestamp($row->last_activity)->toIso8601String(),
             ])
             ->values()
             ->all();

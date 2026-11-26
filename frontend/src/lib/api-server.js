@@ -169,4 +169,22 @@ async function apiFetch(path, options = {}) {
   return includeMeta ? { data: body.data, meta: body.meta } : body.data;
 }
 
-export { apiFetch, BASE_URL, ensureDnsFallback };
+/**
+ * Every row of a paginated list, page after page (the API hands at most 100 a
+ * page): for pickers and lists that must show everyone — a company's users
+ * passed 100 once Norban's staff came in (2026-11-20).
+ *
+ * @param {string} path e.g. "/users?sort=name" — `per_page` / `page` are set here.
+ */
+async function apiFetchAll(path, options = {}) {
+  const join = path.includes("?") ? "&" : "?";
+  const rows = [];
+  for (let page = 1; page <= 50; page++) {
+    const { data, meta } = await apiFetch(`${path}${join}per_page=100&page=${page}`, { ...options, includeMeta: true });
+    rows.push(...(data ?? []));
+    if (!meta?.last_page || page >= meta.last_page) break;
+  }
+  return rows;
+}
+
+export { apiFetch, apiFetchAll, BASE_URL, ensureDnsFallback };

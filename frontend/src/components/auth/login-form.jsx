@@ -83,13 +83,13 @@ function LoginForm() {
       <form onSubmit={handleSubmit} method="post" className="flex flex-col gap-4">
         {error ? <Alert variant="danger">{error}</Alert> : null}
 
-        <FormField label={t("email_address")} required>
+        <FormField label={t("email_or_user_id")} required>
           {(fieldProps) => (
             <div className="relative">
               <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-subtle" />
               <Input
                 {...fieldProps}
-                type="email"
+                type="text"
                 name="email"
                 autoComplete="username"
                 placeholder="you@company.com"

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -39,8 +39,8 @@ export default async function SparePartDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("spare_parts"), href: "/inventory/parts" }, { label: part.part_number }]}
+      <ScreenHeader
+        parentUrl="/inventory/parts"
         title={part.part_number}
         description={part.name}
         actions={

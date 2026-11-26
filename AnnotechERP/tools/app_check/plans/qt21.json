@@ -1,0 +1,13 @@
+[
+ {"goto": "/quality-tally/cutting-target"},
+ {"wait": 16000},
+ {"click": "main tr:has-text('26DAL00103') button:has-text('Give target')", "after": 2500},
+ {"shot": "qt105-cutmgr-form"},
+ {"choose": "[role=dialog] label:has-text('Line') select", "option": "C1"},
+ {"fill": "x", "sel": "[role=dialog] label:has-text('Target (panels)') input", "text": "90"},
+ {"click": "[role=dialog] button:has-text('Save')", "after": 18000},
+ {"shot": "qt106-cutmgr-saved"},
+ {"goto": "/quality-tally/sewing-target"},
+ {"wait": 7000},
+ {"shot": "qt107-refused"}
+]

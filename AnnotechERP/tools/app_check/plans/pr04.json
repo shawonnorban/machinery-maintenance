@@ -1,0 +1,146 @@
+[
+ {
+  "goto": "/merchandise-desk/budget-sheet?order=Order"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p08-budget"
+ },
+ {
+  "goto": "/prototype-desk/sample-360-view"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p12-s360"
+ },
+ {
+  "goto": "/store-material/in-house-grn?grn=GRN-2026-00001"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p14-grn"
+ },
+ {
+  "goto": "/assets/labels?status=BREAKDOWN"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p16-labels"
+ },
+ {
+  "goto": "/gate-pass/gp-list"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "click": "tr:has-text('GP-2026-000002')"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p17-gatepass"
+ },
+ {
+  "goto": "/general-store/gs-issue"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "button:has(svg.lucide-printer)[aria-label$='IS-2026-000001']",
+  "as": "p19-gsissue"
+ },
+ {
+  "goto": "/general-store/gs-current-stock"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p22-gsstock"
+ },
+ {
+  "goto": "/general-store/gs-ledger"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "pick": "Item",
+  "option": "A4 Paper 80 GSM"
+ },
+ {
+  "click": "main button:has-text('Search')"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p23-gsledger"
+ },
+ {
+  "goto": "/general-store/gs-req-approved"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "click": "button[aria-label$='REQ-2026-000001']:has(svg.lucide-eye)"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "printpdf": "[role=dialog] button:has(svg.lucide-printer)",
+  "as": "p24-gsreq"
+ },
+ {
+  "goto": "/merchandise-desk/style-development?tab=sheet&style=FLOW%20STYLE-01"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "role=tab[name=/BOM/i]"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p25-bom"
+ },
+ {
+  "goto": "/merchandise-desk/style-registration?tab=registration&open=SRQ-2026-000001"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "printpdf": "[role=dialog] button:has(svg.lucide-printer)",
+  "as": "p29-registration"
+ }
+]

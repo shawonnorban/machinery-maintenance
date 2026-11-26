@@ -1,0 +1,8 @@
+[
+ {"goto": "/quality-tally/qc-assignment"},
+ {"wait": 5000},
+ {"shot": "qtph01-qc"},
+ {"goto": "/quality-tally/phones"},
+ {"wait": 5000},
+ {"shot": "qtph01-phones"}
+]

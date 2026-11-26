@@ -1,0 +1,15 @@
+[
+ {"goto": "/knit-production/knit-plan-for-sample-yd"},
+ {"pick": "Store", "exact": true, "option": "DHK-YRN"},
+ {"pick": "Requisition Type", "exact": true, "option": "Knitting - Development"},
+ {"fill": "Style/Order (as written)", "exact": true, "text": "H&M Y/D stripe dev — HM-DEV-2611"},
+ {"pick": "Fab. Type", "exact": true, "option": "Lycra Single Jersey"},
+ {"fill": "Colour (as written)", "exact": true, "text": "Navy / Ecru stripe 1x1 cm"},
+ {"fill": "Yarn Details", "exact": true, "text": "Dyed 30/1 navy + ecru, 5% lycra"},
+ {"fill": "Qty (Kg)", "exact": true, "text": "6"},
+ {"click": "main button:has-text('New Order/Kp')", "after": 500},
+ {"click": "main button:has-text('Save knit plan')", "after": 15000},
+ {"texts": "err", "of": "[role=alert]"},
+ {"texts": "head", "of": "main h2"},
+ {"shot": "yd-saved"}
+]

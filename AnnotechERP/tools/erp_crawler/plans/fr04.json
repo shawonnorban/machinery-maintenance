@@ -1,0 +1,20 @@
+[
+ {"goto": "/m/fabric-planning/fabric-planning-reports"}, {"wait": 4000},
+ {"fullshot": "rp-records"}, {"texts": "rp_records", "of": "main"},
+ {"click": "main button:has-text('Preview')", "wait": 2500},
+ {"fullshot": "rp-preview"}, {"texts": "rp_preview", "of": "main"},
+ {"click": "main button:has-text('New report run')", "wait": 2000},
+ {"fullshot": "rp-new"}, {"texts": "rp_new", "of": "main"},
+ {"options": "rp_reports", "of": "main select[name=reportCode], main form select"},
+ {"html": "rp_new_ctl", "of": "main form select, main form input"},
+ {"choose": "main form select >> nth=0", "index": 3},
+ {"click": "main form button[type=submit], main button:has-text('Save report run')", "wait": 4000},
+ {"fullshot": "rp-saved"}, {"texts": "rp_saved", "of": "main"},
+ {"goto": "/m/fabric-planning/fabric-planning-reports"}, {"wait": 4000},
+ {"fullshot": "rp-records2"}, {"texts": "rp_records2", "of": "main"},
+ {"click": "main button:has-text('Preview')", "wait": 2500},
+ {"fullshot": "rp-preview2"}, {"texts": "rp_preview2", "of": "main"},
+ {"click": "main button:has-text('Machine Load')", "wait": 3000},
+ {"fullshot": "rp-preview3"}, {"texts": "rp_preview3", "of": "main"},
+ {"html": "rp_preview_btns", "of": "main button"}
+]

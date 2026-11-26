@@ -21,10 +21,10 @@
  */
 
 :root {
-  /* Brand / primary action */
-  --brand: #2563eb;
-  --brand-hover: #1d4ed8;
-  --brand-subtle: #eff6ff;
+  /* Brand / primary action — Brickland's indigo accent (AnnotechERP UI parity) */
+  --brand: #4f46e5;
+  --brand-hover: #4338ca;
+  --brand-subtle: #eef2ff;
   --brand-foreground: #ffffff;
 
   /* Surfaces */
@@ -42,6 +42,21 @@
   --danger-subtle: #fef2f2;
   --info: #0284c7;
   --info-subtle: #f0f9ff;
+
+  /* Sidebar — Brickland's green screens and amber folders inside folders */
+  --nav-leaf: #15803d;
+  --nav-folder: #b45309;
+
+  /* Risk bands — one hue, light (low) to dark (critical); always shown with a label */
+  --risk-low: #fca5a5;
+  --risk-medium: #f87171;
+  --risk-high: #dc2626;
+  --risk-critical: #991b1b;
+
+  /* Chart series — categorical slots in fixed order (blue, orange, aqua), validated as a set; never cycled */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
 
   /* Borders */
   --border: #e2e8f0;
@@ -128,9 +143,9 @@
  * only while no explicit choice has been made. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --brand: #3b82f6;
-    --brand-hover: #60a5fa;
-    --brand-subtle: #172554;
+    --brand: #818cf8;
+    --brand-hover: #a5b4fc;
+    --brand-subtle: #1e1b4b;
     --brand-foreground: #ffffff;
 
     --background: #0b1120;
@@ -147,6 +162,18 @@
     --info: #38bdf8;
     --info-subtle: #082f49;
 
+    --nav-leaf: #4ade80;
+    --nav-folder: #fbbf24;
+
+    --risk-low: #7f1d1d;
+    --risk-medium: #b91c1c;
+    --risk-high: #f87171;
+    --risk-critical: #fecaca;
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+
     --border: #1e293b;
     --border-strong: #334155;
 
@@ -161,9 +188,9 @@
 
 /* Explicit toggle: always wins, in both directions, over the system. */
 :root[data-theme="dark"] {
-  --brand: #3b82f6;
-  --brand-hover: #60a5fa;
-  --brand-subtle: #172554;
+  --brand: #818cf8;
+  --brand-hover: #a5b4fc;
+  --brand-subtle: #1e1b4b;
   --brand-foreground: #ffffff;
 
   --background: #0b1120;
@@ -179,6 +206,18 @@
   --danger-subtle: #450a0a;
   --info: #38bdf8;
   --info-subtle: #082f49;
+
+  --nav-leaf: #4ade80;
+  --nav-folder: #fbbf24;
+
+  --risk-low: #7f1d1d;
+  --risk-medium: #b91c1c;
+  --risk-high: #f87171;
+  --risk-critical: #fecaca;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
 
   --border: #1e293b;
   --border-strong: #334155;
@@ -208,6 +247,8 @@
   --color-surface-muted: var(--surface-muted);
   --color-surface-raised: var(--surface-raised);
 
+  --color-nav-leaf: var(--nav-leaf);
+  --color-nav-folder: var(--nav-folder);
   --color-success: var(--success);
   --color-success-subtle: var(--success-subtle);
   --color-warning: var(--warning);
@@ -320,4 +361,11 @@
   --rdp-disabled-opacity: 0.4;
   --rdp-outside-opacity: 0.5;
   color: var(--foreground);
+}
+
+/* Chat: Latin and Bengali as everywhere, every emoji from Noto Color Emoji
+ * (see layout.js) so faces look the same — round and coloured — on Windows,
+ * Android and Mac alike. */
+.chat-emoji {
+  font-family: var(--font-segoe-ui), var(--font-anek-bangla), var(--font-noto-emoji), system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 }

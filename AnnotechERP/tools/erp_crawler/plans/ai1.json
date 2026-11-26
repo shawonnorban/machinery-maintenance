@@ -1,0 +1,87 @@
+[
+ {
+  "goto": "/m/merchandising/ai-order-overview"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "click": "main button:has-text('Run analysis')",
+  "wait": 6000
+ },
+ {
+  "texts": "ai-order-overview",
+  "of": "main h1, main h2, main h3, main p, main th, main td, main li, main dt, main dd, main [class*=stat], main button"
+ },
+ {
+  "fullshot": "ai-order-overview"
+ },
+ {
+  "goto": "/m/merchandising/ai-order-completion"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "click": "main button:has-text('Run analysis')",
+  "wait": 6000
+ },
+ {
+  "texts": "ai-order-completion",
+  "of": "main h1, main h2, main h3, main p, main th, main td, main li, main dt, main dd, main [class*=stat], main button"
+ },
+ {
+  "fullshot": "ai-order-completion"
+ },
+ {
+  "goto": "/m/merchandising/ai-at-risk-critical-orders"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "click": "main button:has-text('Run analysis')",
+  "wait": 6000
+ },
+ {
+  "texts": "ai-at-risk-critical-orders",
+  "of": "main h1, main h2, main h3, main p, main th, main td, main li, main dt, main dd, main [class*=stat], main button"
+ },
+ {
+  "fullshot": "ai-at-risk-critical-orders"
+ },
+ {
+  "goto": "/m/merchandising/ai-delayed-orders"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "click": "main button:has-text('Run analysis')",
+  "wait": 6000
+ },
+ {
+  "texts": "ai-delayed-orders",
+  "of": "main h1, main h2, main h3, main p, main th, main td, main li, main dt, main dd, main [class*=stat], main button"
+ },
+ {
+  "fullshot": "ai-delayed-orders"
+ },
+ {
+  "goto": "/m/merchandising/ai-pending-activities"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "click": "main button:has-text('Run analysis')",
+  "wait": 6000
+ },
+ {
+  "texts": "ai-pending-activities",
+  "of": "main h1, main h2, main h3, main p, main th, main td, main li, main dt, main dd, main [class*=stat], main button"
+ },
+ {
+  "fullshot": "ai-pending-activities"
+ }
+]

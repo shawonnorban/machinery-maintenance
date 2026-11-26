@@ -71,17 +71,30 @@ class NumberSequenceGenerator
         // §3.4). The licence and UD numbers come from customs, so only
         // the assessment is a series of ours.
         'DUTY_ASSESSMENT' => ['format' => 'DA-{FACTORY}-{YYYY}-{SEQ}', 'reset' => 'YEARLY', 'padding' => 4],
+        // A request written in the Approval Center (AnnotechERP 04/01).
+        'APPROVAL_REQUEST' => ['format' => 'APR-{YYYY}-{SEQ}', 'reset' => 'YEARLY', 'padding' => 5],
+        // Machinery records a page is addressed by (no ULIDs in URLs): a
+        // plan's or a warranty's name repeats across machines and a meter has
+        // none of its own, so each carries a number that never resets.
+        'MAINTENANCE_PLAN' => ['format' => 'PM-{SEQ}', 'reset' => 'NEVER', 'padding' => 5],
+        'WARRANTY' => ['format' => 'WTY-{SEQ}', 'reset' => 'NEVER', 'padding' => 5],
+        'ASSET_METER' => ['format' => 'MTR-{SEQ}', 'reset' => 'NEVER', 'padding' => 5],
     ];
 
     public function __construct(private readonly TenantContext $context) {}
 
-    public function next(string $documentType, ?Factory $factory = null, ?CarbonImmutable $at = null): string
+    /**
+     * `$companyId` is for a record numbering itself as it is created (see
+     * AssignsDocumentNumber): it knows its company even where no request
+     * context is set. Everything else leaves it to the context.
+     */
+    public function next(string $documentType, ?Factory $factory = null, ?CarbonImmutable $at = null, ?string $companyId = null): string
     {
         $config = self::FORMATS[$documentType]
             ?? throw new \InvalidArgumentException("Unknown document type [{$documentType}].");
 
         $at ??= CarbonImmutable::now($factory?->timezone ?? 'UTC');
-        $companyId = $this->context->companyId();
+        $companyId ??= $this->context->companyId();
         $periodKey = $this->periodKey($config['reset'], $at);
 
         // A company's own format, if it has set one. Read here and written on

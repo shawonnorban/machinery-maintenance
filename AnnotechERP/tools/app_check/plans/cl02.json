@@ -1,0 +1,7 @@
+[
+ {"goto": "/colour-lab/certificate-list?tab=entry"},
+ {"wait": 12000},
+ {"click": "main button:has-text(\"Save\")", "after": 9000},
+ {"texts": "alerts", "of": "main [role=alert]"},
+ {"shot": "cl-cert-empty"}
+]

@@ -1,0 +1,23 @@
+[
+ {"goto": "/merchandise-desk/style-development?tab=sheet&style=SS27-TEE01"},
+ {"wait": 5000},
+ {"click": "role=button[name='Item/Combo/Model(Fresh)']", "after": 3000},
+ {"click": "role=button[name='BOM']", "after": 6000},
+ {"click": "role=button[name=/^Sewing Accessories/]", "after": 1000},
+ {"click": "role=button[name='Add a BOM line']", "after": 1000},
+ {"fill": "x", "sel": "input[aria-label='Item Name']", "text": "Sewing Thread 40/2"},
+ {"fill": "x", "sel": "input[aria-label='Consumption']", "text": "150"},
+ {"pick": "Cons.Unit", "option": "Mtr"},
+ {"fill": "x", "sel": "input[aria-label='Rate']", "text": "0.002"},
+ {"fill": "x", "sel": "input[aria-label='Allow %']", "text": "10"},
+ {"shot": "bom-filled"},
+ {"click": "role=button[name='Save']", "after": 15000},
+ {"shot": "bom-saved"},
+ {"goto": "/merchandise-desk/budget-sheet?order=LPP-2026-000001"},
+ {"wait": 5000},
+ {"dialog": "accept", "text": ""},
+ {"click": "role=button[name='Load from BOM / Booking']", "after": 15000},
+ {"shot": "bgt-loaded"},
+ {"click": "role=button[name='Save']", "after": 20000},
+ {"shot": "bgt-saved"}
+]

@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/merchandising/finish-fabric-opening-balance" },
+ { "wait": 2500 },
+ { "dump": "records", "root": "main" },
+ { "texts": "head", "of": "main table thead th" },
+ { "texts": "rows", "of": "main table tbody tr" },
+ { "texts": "row_buttons", "of": "main table tbody tr button, main table tbody tr a" },
+ { "fullshot": "ffob-records2" },
+ { "click": "main table tbody tr button >> nth=0", "wait": 2500 },
+ { "url": "u" },
+ { "texts": "after_click", "of": "main h2, main p, [role=dialog] *" },
+ { "fullshot": "ffob-edit" },
+ { "dump": "edit", "root": "main" }
+]

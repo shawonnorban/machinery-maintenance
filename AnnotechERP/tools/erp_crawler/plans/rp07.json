@@ -1,0 +1,19 @@
+[
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main button[role=tab]:has-text('Preview')", "wait": 2000},
+ {"click": "main button:has-text('Preview'):not([role=tab]) >> nth=-1", "wait": 2500},
+ {"texts": "errs", "of": "main p"},
+ {"peek": "main div:has(> label:has-text('Report')) button", "wait": 1200},
+ {"click": "xpath=(//*[@role='option'][normalize-space(.)='Date Wise NPT Report'])[1]", "wait": 800},
+ {"choose": "main select >> nth=0", "index": 1},
+ {"choose": "main select >> nth=1", "label": "LPP (LPP)"},
+ {"choose": "main select >> nth=2", "label": "SWEING — BCL"},
+ {"type": "main input[type=text] >> nth=0", "text": "529/1"},
+ {"type": "main input[type=date]", "text": "2026-10-25"},
+ {"fullshot": "run-filled"},
+ {"netclick": "main button:has-text('Preview'):not([role=tab]) >> nth=-1", "as": "net", "wait": 8000},
+ {"fullshot": "run-after"},
+ {"click": "main button[role=tab]:has-text('Records')", "wait": 3000},
+ {"dump": "rec", "root": "main"},
+ {"fullshot": "rec"}
+]

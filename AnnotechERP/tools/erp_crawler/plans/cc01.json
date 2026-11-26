@@ -1,0 +1,83 @@
+[
+ {
+  "goto": "/m/executive-dashboard/department-dashboards"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "b0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "b1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "b2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/executive-dashboard/drill-down-explorer"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "d0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "d1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "d2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/executive-dashboard/dashboard-builder"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "c0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "c1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "c2-edit"
+ },
+ {
+  "escape": true
+ }
+]

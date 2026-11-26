@@ -1,0 +1,45 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "goto": "/merchandise-desk/style-development"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": ":nth-match(main :text-is('Sheet'), 2)"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main button:has-text('Item/Combo/Model(Fresh)')"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": "role=tab[name=/BOM/i]"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "shot": "p25-pre"
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p25-bom"
+ }
+]

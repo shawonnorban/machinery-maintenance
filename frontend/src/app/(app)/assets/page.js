@@ -1,12 +1,10 @@
-import Link from "next/link";
-import { Plus, Boxes, Play, TriangleAlert, Flame } from "lucide-react";
+import { Boxes, Play, TriangleAlert, Flame } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { AssetsTable } from "@/components/assets/assets-table";
 import { StatCard } from "@/components/ui/stat-card";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { getT } from "@/lib/i18n-server";
+import { applyPerPage } from "@/lib/per-page";
 
 const STATUSES = [
   "DRAFT", "PURCHASED", "INSTALLED", "COMMISSIONED", "RUNNING", "IDLE",
@@ -29,6 +27,7 @@ export default async function AssetsPage({ searchParams }) {
   const direction = params.direction ?? "asc";
 
   const query = new URLSearchParams({ page: String(page), sort, direction });
+  await applyPerPage(query, "/assets");
   if (search) query.set("search", search);
   if (status) query.set("status", status);
   if (criticality) query.set("criticality", criticality);
@@ -44,15 +43,10 @@ export default async function AssetsPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("assets") }]}
+      <ScreenHeader
+        url="/assets"
         title={t("assets")}
         description={t("page_description")}
-        actions={
-          <Link href="/assets/create" className={cn(buttonVariants({ size: "sm" }))}>
-            <Plus /> {t("new_asset")}
-          </Link>
-        }
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -63,6 +57,7 @@ export default async function AssetsPage({ searchParams }) {
       </div>
 
       <AssetsTable
+        addHref="/assets/create"
         assets={assets.data}
         meta={assets.meta}
         page={page}

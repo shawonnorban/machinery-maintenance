@@ -1,0 +1,74 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "goto": "/gate-pass/gp-reports"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "p27-gpreport"
+ },
+ {
+  "goto": "/general-store/gs-rpt-issue"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "p28-gsreport"
+ },
+ {
+  "goto": "/general-store/gs-rpt-stock"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "pdfhref": "main a:has(svg.lucide-printer)",
+  "as": "p30-gsstockreport"
+ },
+ {
+  "goto": "/merchandise-desk/style-development"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": ":nth-match(main :text-is('Sheet'), 2)"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "shot": "p25-pre"
+ },
+ {
+  "click": "role=tab[name=/BOM/i]"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p25-bom"
+ },
+ {
+  "goto": "/merchandise-desk/style-registration?tab=registration&open=SRQ-2026-000001",
+  "timeout": 180000
+ },
+ {
+  "wait": 15000
+ },
+ {
+  "printpdf": "[role=dialog] button:has(svg.lucide-printer)",
+  "as": "p29-registration"
+ }
+]

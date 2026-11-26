@@ -1,0 +1,13 @@
+[
+ { "goto": "/m/planning/master-plan?plan=4" }, { "wait": 6000 },
+ { "fullshot": "e-draft" }, { "texts": "draft_btns", "of": "main button" },
+ { "click": "main button:has-text('Confirm Master Plan')", "wait": 3000 },
+ { "click": "[role=dialog] button:has-text('Confirm & Lock'), [role=alertdialog] button:has-text('Confirm & Lock')", "wait": 5000 },
+ { "fullshot": "e-locked" }, { "texts": "locked_btns", "of": "main button" },
+ { "click": "main [role=tab]:has-text('Activity Plan')", "wait": 2000 }, { "texts": "t_activity", "of": "main [role=tabpanel]" },
+ { "click": "main [role=tab]:has-text('Plan vs Actual')", "wait": 2000 }, { "texts": "t_pva", "of": "main [role=tabpanel]" },
+ { "click": "main [role=tab]:has-text('Daily Schedule')", "wait": 2000 }, { "texts": "t_daily", "of": "main [role=tabpanel]" },
+ { "click": "main [role=tab]:has-text('Versions')", "wait": 2000 }, { "texts": "t_versions", "of": "main [role=tabpanel]" },
+ { "click": "main [role=tab]:has-text('Audit Trail')", "wait": 2000 }, { "texts": "t_audit", "of": "main [role=tabpanel]" },
+ { "click": "main [role=tab]:has-text('Gantt')", "wait": 2000 }, { "fullshot": "e-gantt" }
+]

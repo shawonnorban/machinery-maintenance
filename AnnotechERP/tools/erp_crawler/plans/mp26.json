@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/security/user-registration" },
+ { "wait": 5000 },
+ { "texts": "buttons", "of": "main button, main a" },
+ { "click": "main button:has-text('New'), main a:has-text('New'), main button:has-text('Add'), main button:has-text('Create') >> nth=0", "wait": 3000 },
+ { "url": "after_new" },
+ { "dump": "form", "root": "main" },
+ { "fullshot": "mp26-new-user" }
+]

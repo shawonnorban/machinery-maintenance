@@ -1,0 +1,23 @@
+[
+ { "goto": "/m/sample/prototype-requisition" },
+ { "wait": 3500 },
+ { "click": "button:has-text('Requisition Approval')", "wait": 2500 },
+ { "choose": "main select >> nth=0", "index": 1 },
+ { "wait": 2500 },
+ { "texts": "appr1_loaded", "of": "main label, main input, main td, main p" },
+ { "choose": "main select[name=decision], main select >> nth=1", "label": "Approve" },
+ { "fillsel": "main textarea >> nth=0", "text": "Fabric and trims confirmed for the PP sample." },
+ { "fullshot": "proto2-appr1-filled" },
+ { "click": "main button:has-text('Record Decision')", "wait": 4000 },
+ { "texts": "appr1_after", "of": "[role=alert], [data-sonner-toast], main p, main td" },
+ { "fullshot": "proto2-appr1-after" },
+ { "goto": "/m/sample/prototype-requisition" },
+ { "wait": 3500 },
+ { "texts": "list_after1", "of": "main table tbody tr" },
+ { "click": "button:has-text('Requisition Approval')", "wait": 2500 },
+ { "choose": "main select >> nth=0", "index": 1 },
+ { "wait": 2500 },
+ { "dump": "appr2_form", "root": "main" },
+ { "texts": "appr2_loaded", "of": "main label, main td, main p" },
+ { "fullshot": "proto2-appr2-loaded" }
+]

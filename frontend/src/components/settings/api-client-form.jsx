@@ -18,7 +18,7 @@ import { useT } from "@/lib/i18n";
  * in the action's own result (same reasoning as `WebhookForm`'s own
  * one-time secret reveal).
  */
-function ApiClientForm({ client = null, modules, action }) {
+function ApiClientForm({ client = null, modules, action, doneHref = "/system-settings/api-keys-webhooks" }) {
   const t = useT("api");
   const tc = useT("common");
   const isEdit = client !== null;
@@ -56,7 +56,7 @@ function ApiClientForm({ client = null, modules, action }) {
           <div className="rounded-sm border border-border bg-surface-muted px-4 py-3 font-mono text-sm break-all">{state.secret}</div>
         </div>
         <div>
-          <Link href="/settings/api-clients" className="text-sm font-medium text-brand hover:underline">
+          <Link href={doneHref} className="text-sm font-medium text-brand hover:underline">
             {t("back_to_clients")} →
           </Link>
         </div>

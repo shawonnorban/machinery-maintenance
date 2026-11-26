@@ -1,0 +1,6 @@
+[
+ {"goto": "/dye-house/chemical-item-stock"},
+ {"wait": 10000},
+ {"texts": "stock", "of": "main tbody tr"},
+ {"shot": "cs-stock-coded"}
+]

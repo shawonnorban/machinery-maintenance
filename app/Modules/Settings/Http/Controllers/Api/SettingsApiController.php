@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Settings\Http\Controllers\Api;
 
+use App\Modules\Identity\Models\User;
 use App\Modules\Settings\Actions\SetSetting;
 use App\Modules\Settings\Models\Setting;
 use App\Modules\Settings\Models\SettingDefinition;
@@ -39,9 +40,19 @@ class SettingsApiController extends ApiController
 
         $factoryId = $this->factoryId($request);
 
-        $rows = collect($this->resolver->all($factoryId))
-            ->map(function (array $resolved, string $key) use ($factoryId): array {
+        $resolved = $this->resolver->all($factoryId);
+        // When and by whom each answering row last changed (System Parameter
+        // Update's "Updated" column, AnnotechERP 02/01).
+        $changed = Setting::query()
+            ->whereIn('id', array_filter(array_column($resolved, 'setting_id')))
+            ->get(['id', 'updated_at', 'updated_by'])
+            ->keyBy('id');
+        $editors = User::query()->whereIn('id', $changed->pluck('updated_by')->filter()->unique())->pluck('name', 'id');
+
+        $rows = collect($resolved)
+            ->map(function (array $resolved, string $key) use ($factoryId, $changed, $editors): array {
                 $definition = $this->resolver->definition($key);
+                $row = $resolved['setting_id'] !== null ? $changed->get($resolved['setting_id']) : null;
 
                 return [
                     'key' => $key,
@@ -51,6 +62,8 @@ class SettingsApiController extends ApiController
                     'editable_here' => $factoryId === null
                         ? $definition->allowsLevel('COMPANY')
                         : $definition->allowsLevel('FACTORY'),
+                    'updated_at' => $row?->updated_at?->toIso8601String(),
+                    'updated_by' => $row?->updated_by !== null ? $editors->get($row->updated_by) : null,
                 ];
             })
             ->values();
@@ -96,9 +109,12 @@ class SettingsApiController extends ApiController
 
         $factoryId = $this->requestedFactoryId($data['factory_id'] ?? null);
 
-        $value = $definition->value_type === 'BOOL'
-            ? $request->boolean('value')
-            : ($data['value'] ?? null);
+        $value = match ($definition->value_type) {
+            'BOOL' => $request->boolean('value'),
+            // A cleared text field arrives as null; for a text setting that means empty.
+            'STRING' => (string) ($data['value'] ?? ''),
+            default => $data['value'] ?? null,
+        };
 
         $setting = $action->handle($key, $value, $factoryId, null, $this->caller()->auditUserId());
 

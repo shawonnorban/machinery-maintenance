@@ -1,0 +1,18 @@
+[
+ {"goto": "/m/knitting/gfs-report"},
+ {"texts": "gfs", "of": "main p"},
+ {"fullshot": "gfs"},
+ {"goto": "/m/knitting/flatknit-report"},
+ {"texts": "fk", "of": "main p"},
+ {"fullshot": "fk"},
+ {"goto": "/m/knitting/knitting-reports"},
+ {"texts": "kr", "of": "main p"},
+ {"goto": "/m/knitting/yarn-current-stock"},
+ {"texts": "ycs", "of": "main p"},
+ {"goto": "/m/knitting/fabric-current-stock"},
+ {"texts": "fcs", "of": "main p"},
+ {"goto": "/m/knitting/yarn-store-report"},
+ {"texts": "ysr", "of": "main p"},
+ {"goto": "/m/knitting/qc-report"},
+ {"texts": "qcr", "of": "main p"}
+]

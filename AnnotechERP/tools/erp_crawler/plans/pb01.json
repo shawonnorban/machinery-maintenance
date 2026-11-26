@@ -1,0 +1,341 @@
+[
+ {
+  "goto": "/m/dyeing/batch-production"
+ },
+ {
+  "fullshot": "p0-first"
+ },
+ {
+  "texts": "p0_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p0_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p0_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p0_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p0_first",
+  "root": "main"
+ },
+ {
+  "texts": "p0_list",
+  "of": "main li, main [role=listitem], main table tbody tr"
+ },
+ {
+  "click": "main tbody tr >> nth=0",
+  "wait": 3000
+ },
+ {
+  "fullshot": "p0-picked"
+ },
+ {
+  "dump": "p0_picked",
+  "root": "main"
+ },
+ {
+  "goto": "/m/dyeing/machine-wash-production"
+ },
+ {
+  "fullshot": "p1-first"
+ },
+ {
+  "texts": "p1_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p1_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p1_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p1_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p1_first",
+  "root": "main"
+ },
+ {
+  "peek": "main button:has-text('--Select Dept--')",
+  "wait": 1500
+ },
+ {
+  "popup": "p1_dept"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main button:has-text('-- Select User --')",
+  "wait": 1500
+ },
+ {
+  "popup": "p1_user"
+ },
+ {
+  "escape": true
+ },
+ {
+  "options": "p1_reqs",
+  "of": "main select >> nth=1"
+ },
+ {
+  "goto": "/m/dyeing/daily-batch-production-for-bulk-manual"
+ },
+ {
+  "fullshot": "p2-first"
+ },
+ {
+  "texts": "p2_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p2_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p2_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p2_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p2_first",
+  "root": "main"
+ },
+ {
+  "html": "p2_main",
+  "of": "main"
+ },
+ {
+  "goto": "/m/dyeing/direct-fabric-booking"
+ },
+ {
+  "fullshot": "p3-first"
+ },
+ {
+  "texts": "p3_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p3_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p3_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p3_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p3_first",
+  "root": "main"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "p3-entry"
+ },
+ {
+  "dump": "p3_entry",
+  "root": "main"
+ },
+ {
+  "texts": "p3_entry_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "peek": "main button:has-text('-- Select --')",
+  "wait": 1500
+ },
+ {
+  "popup": "p3_select"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main button:has-text('-- Color --')",
+  "wait": 1500
+ },
+ {
+  "popup": "p3_colors"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/dyeing/general-fabric-booking"
+ },
+ {
+  "fullshot": "p4-first"
+ },
+ {
+  "texts": "p4_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p4_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p4_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p4_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p4_first",
+  "root": "main"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "fullshot": "p4-entry"
+ },
+ {
+  "dump": "p4_entry",
+  "root": "main"
+ },
+ {
+  "texts": "p4_entry_p",
+  "of": "main p, main h2, main h3, main legend"
+ },
+ {
+  "peek": "main button:has-text('-- Select --')",
+  "wait": 1500
+ },
+ {
+  "popup": "p4_select"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main button:has-text('-- Color --')",
+  "wait": 1500
+ },
+ {
+  "popup": "p4_colors"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/dyeing/dyeing-program-for-trims"
+ },
+ {
+  "fullshot": "p5-first"
+ },
+ {
+  "texts": "p5_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p5_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p5_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p5_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p5_first",
+  "root": "main"
+ },
+ {
+  "peek": "main button:has-text('-- Select --')",
+  "wait": 1500
+ },
+ {
+  "popup": "p5_select"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/dyeing/check-roll-parameter"
+ },
+ {
+  "fullshot": "p6-first"
+ },
+ {
+  "texts": "p6_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p6_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p6_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p6_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p6_first",
+  "root": "main"
+ },
+ {
+  "goto": "/m/dyeing/dyeing-and-finishing-close"
+ },
+ {
+  "fullshot": "p7-first"
+ },
+ {
+  "texts": "p7_tabs",
+  "of": "main [role=tab]"
+ },
+ {
+  "texts": "p7_p",
+  "of": "main p, main h1, main h2, main h3, main legend"
+ },
+ {
+  "texts": "p7_th",
+  "of": "main thead th"
+ },
+ {
+  "texts": "p7_rows",
+  "of": "main tbody tr >> nth=0"
+ },
+ {
+  "dump": "p7_first",
+  "root": "main"
+ },
+ {
+  "options": "p7_ship",
+  "of": "main select >> nth=2"
+ },
+ {
+  "html": "p7_btn",
+  "of": "main tbody tr >> nth=0 >> button"
+ }
+]

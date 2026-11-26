@@ -1,0 +1,14 @@
+[
+ {"goto": "/m/buyer-portal/rfq-inbox"}, {"wait": 4000}, {"shot": "q0"},
+ {"peek": "main div:has(> h2) button, main button:has-text('New'), main button:has-text('Log'), main button:has-text('Add')"}, {"shot": "q1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "q2-edit"}, {"escape": true},
+ {"goto": "/m/buyer-portal/buyer-price-lists"}, {"wait": 4000}, {"shot": "l0"},
+ {"peek": "main button:has-text('New'), main button:has-text('Add')"}, {"shot": "l1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "l2-edit"}, {"escape": true},
+ {"goto": "/m/buyer-portal/invoice-view"}, {"wait": 4000}, {"shot": "i0"},
+ {"peek": "main button:has-text('New'), main button:has-text('Add'), main button:has-text('Publish')"}, {"shot": "i1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "i2-edit"}, {"escape": true},
+ {"goto": "/m/buyer-portal/payment-status"}, {"wait": 4000}, {"shot": "y0"},
+ {"peek": "main button:has-text('New'), main button:has-text('Add'), main button:has-text('Record')"}, {"shot": "y1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "y2-edit"}, {"escape": true}
+]

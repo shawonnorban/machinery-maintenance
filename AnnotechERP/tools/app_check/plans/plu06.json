@@ -1,0 +1,22 @@
+[
+ {"goto": "/capacity-planning/line-capacity-view?year=2026&month=12"},
+ {"texts": "lcv_tiles", "of": "main .grid p.text-lg"},
+ {"texts": "lcv_rows", "of": "main tbody tr"},
+ {"shot": "lcv"},
+ {"click": "button:has-text('Planned pieces')", "after": 800},
+ {"texts": "lcv_pieces", "of": "main tbody tr"},
+ {"choose": "select[aria-label='Month']", "option": "November", "after": 8000},
+ {"texts": "lcv_nov_tiles", "of": "main .grid p.text-lg"},
+ {"goto": "/capacity-planning/plan-timeline?year=2026&month=12"},
+ {"texts": "tl_head", "of": "main section h2, main section h2 + p"},
+ {"texts": "tl_plans", "of": "main section .flex-wrap.border-b"},
+ {"shot": "timeline"},
+ {"choose": "select[aria-label='Plans']", "option": "Drafts only", "after": 8000},
+ {"texts": "tl_drafts", "of": "main section .flex-wrap.border-b"},
+ {"fill": "x", "sel": "input[aria-label='Order, buyer, style, line…']", "text": "zzz"},
+ {"click": "main h2", "after": 6000},
+ {"texts": "tl_search", "of": "main section h2 + p"},
+ {"goto": "/capacity-planning/master-plan?plan=MP-2026120001&v=1"},
+ {"click": "role=tab >> text=Gantt / Timeline", "after": 1500},
+ {"shot": "mp-gantt"}
+]

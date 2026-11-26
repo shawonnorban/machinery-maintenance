@@ -1,0 +1,16 @@
+[
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main button[role=tab]:has-text('IE Reports')", "wait": 2000},
+ {"click": "main label:has-text('Date Wise NPT Report')", "wait": 800},
+ {"fillsel": "main input[type=date]", "text": "2026-10-25"},
+ {"popclick": "main button:not([role=tab]):has-text('Preview')", "as": "npt"},
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main button[role=tab]:has-text('IE Reports')", "wait": 2000},
+ {"click": "main label:has-text('Daily Line Costing Summary')", "wait": 800},
+ {"fillsel": "main input[type=date]", "text": "2026-10-25"},
+ {"popclick": "main button:not([role=tab]):has-text('Preview')", "as": "dlc"},
+ {"goto": "/m/ie/ie-reports"},
+ {"click": "main button[role=tab]:has-text('Preview')", "wait": 2000},
+ {"peek": "main div:has(> label:has-text('Report')) button", "wait": 1500},
+ {"popup": "report_opts"}
+]

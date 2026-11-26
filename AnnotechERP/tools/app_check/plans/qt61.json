@@ -1,0 +1,7 @@
+[
+ {"goto": "/quality-tally/sewing-tally"},
+ {"wait": 30000},
+ {"shot": "qt210-onelines"},
+ {"choose": "main label:has-text('Job') select", "option": "26DAL00103", "after": 9000},
+ {"shot": "qt211-job"}
+]

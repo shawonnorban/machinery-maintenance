@@ -48,6 +48,12 @@ class LegacyTokenHandle implements TokenHandle
         return null;
     }
 
+    /** Always null: a PIN session is a Sanctum token. */
+    public function pinSessionId(): ?string
+    {
+        return null;
+    }
+
     public function expiresAt(): ?Carbon
     {
         return $this->token->expires_at;

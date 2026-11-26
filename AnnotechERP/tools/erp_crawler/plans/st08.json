@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/inventory/store-dashboard" }, { "wait": 6000 },
+ { "hrefs": "dash_links", "of": "main a" },
+ { "click": "main td:has-text('GRN-2026-00005') >> visible=true >> nth=0", "wait": 4000 },
+ { "url": "after_click" },
+ { "texts": "after_click_texts", "of": "main h2, main h3, main p, [role=dialog] *" },
+ { "goto": "/m/material-procurement/procurement-notifications" }, { "wait": 5000 },
+ { "texts": "notifs", "of": "main li, main p" },
+ { "goto": "/m/inventory/traceability" }, { "wait": 5000 },
+ { "click": "main button:has-text('Trace by GRN') >> visible=true", "wait": 1500 },
+ { "type": "main input >> visible=true >> nth=0", "text": "GRN-2026-00005" },
+ { "click": "main button:has-text('Search') >> visible=true >> nth=0", "wait": 3000 },
+ { "hrefs": "trace_links", "of": "main a" },
+ { "texts": "trace_buttons", "of": "main button" }
+]

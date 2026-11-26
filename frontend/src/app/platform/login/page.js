@@ -4,7 +4,7 @@ import { PlatformLoginForm } from "@/components/auth/platform-login-form";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { cn } from "@/lib/utils";
 
-export const metadata = { title: "Platform sign in — Annotech RMG" };
+export const metadata = { title: "Platform sign in — Annotech ERP" };
 
 const HIGHLIGHTS = [
   { text: "Every customer, their contract and their status" },
@@ -87,7 +87,7 @@ export default function PlatformLoginPage() {
             <div className="flex size-9 items-center justify-center rounded-full bg-brand text-brand-foreground">
               <ShieldCheck className="size-4.5" />
             </div>
-            <span className="text-lg font-semibold text-foreground">Annotech RMG</span>
+            <span className="text-lg font-semibold text-foreground">Annotech ERP</span>
           </div>
           <ThemeToggle />
         </div>
@@ -124,7 +124,7 @@ export default function PlatformLoginPage() {
       >
         <span className="relative inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-900/10 bg-white/70 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-800 uppercase">
           <Sparkles className="size-3.5" />
-          Annotech RMG
+          Annotech ERP
         </span>
 
         <div className="relative flex w-full flex-col gap-8">

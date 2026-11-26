@@ -1,7 +1,7 @@
 {
     "upload_failed": "The file could not be uploaded. Try again.",
     "too_large": "The file is larger than :limit.",
-    "type_not_allowed": "Files of type :type are not accepted. Attach a photo (JPEG, PNG, WebP, HEIC) or a PDF.",
+    "type_not_allowed": "Files of type :type are not accepted. Attach a photo (JPEG, PNG, WebP, HEIC), a PDF or an Excel workbook (XLSX, XLS).",
     "attachment": "Attachment",
     "attachments": "Attachments",
     "uploaded_by": "Uploaded by",

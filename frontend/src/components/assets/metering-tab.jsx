@@ -8,6 +8,7 @@ import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { RecordReadingForm } from "@/components/metering/record-reading-form";
 import { formatQuantity } from "@/lib/format";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /**
  * The meters attached to this machine, each with its own record-reading
@@ -40,7 +41,7 @@ function MeteringTab({ meters, actions }) {
         <Card key={meter.id}>
           <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-1">
-              <Link href={`/metering/${meter.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/metering/${refOf(meter, "meter_number")}`} className="font-medium text-brand hover:underline">
                 {meter.type?.name}
               </Link>
               <span className="tabular text-2xl font-semibold text-foreground">

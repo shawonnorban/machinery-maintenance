@@ -1,0 +1,15 @@
+[
+ {"goto": "/m/cutting/new-cutting"},
+ {"html": "po_opts", "of": "datalist"},
+ {"scroll": 900}, {"fullshot": "n2"},
+ {"scroll": 1800}, {"fullshot": "n3"},
+ {"scroll": 2700}, {"fullshot": "n4"},
+ {"scroll": 4000}, {"fullshot": "n5"},
+ {"texts": "n_tables", "of": "main thead th"},
+ {"texts": "n_sum", "of": "main section:has-text('Today') , main div:has-text('Serial Search') >> nth=-1"},
+ {"goto": "/m/cutting/bundle-card-list"},
+ {"popclick": "main tbody tr >> nth=0 >> button:has-text('Print')", "as": "print1", "wait": 8000},
+ {"goto": "/m/cutting/bundle-card-list"},
+ {"netclick": "main tbody tr >> nth=0 >> button:has-text('Reprint')", "as": "reprint_net", "wait": 5000},
+ {"fullshot": "b-after-reprint"}
+]

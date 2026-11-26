@@ -1,0 +1,83 @@
+[
+ {
+  "goto": "/fabric-requirement/fabric-planning-reports?tab=preview"
+ },
+ {
+  "texts": "catalogue",
+  "of": "main ul li"
+ },
+ {
+  "shot": "rp-preview"
+ },
+ {
+  "goto": "/fabric-requirement/fabric-planning-reports?tab=preview&group=FP-MACHINE-LOAD"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "load",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "rp-load"
+ },
+ {
+  "download": "a:has-text('Export')",
+  "as": "excel"
+ },
+ {
+  "goto": "/fabric-requirement/fabric-planning-reports?tab=preview&group=FP-BATCH-PLAN"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "register",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/fabric-requirement/fabric-planning-reports?tab=new"
+ },
+ {
+  "click": "main form button[type=submit]",
+  "after": 6000
+ },
+ {
+  "texts": "err",
+  "of": "main form p.text-danger"
+ },
+ {
+  "pick": "Report",
+  "option": "Machine Load vs Capacity"
+ },
+ {
+  "pick": "Unit",
+  "option": "Dhaka Unit 1"
+ },
+ {
+  "pick": "Week",
+  "option": "2026-W44"
+ },
+ {
+  "click": "main form label:has-text('Export to Excel?')",
+  "after": 300
+ },
+ {
+  "click": "main form button[type=submit]",
+  "after": 12000
+ },
+ {
+  "goto": "/fabric-requirement/fabric-planning-reports"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "runs",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "rp-records"
+ }
+]

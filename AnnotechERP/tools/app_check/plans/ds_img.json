@@ -1,0 +1,1 @@
+[{"goto": "/dev-sample-status/list"}, {"wait": 12000}, {"as": "imgs", "eval": "JSON.stringify([...document.querySelectorAll('tbody img')].map(i=>[i.getAttribute('src'), i.naturalWidth]))"}]

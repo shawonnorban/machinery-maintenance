@@ -1,0 +1,1 @@
+[{ "goto": "/m/inventory/store-dashboard" }, { "wait": 5000 }, { "texts": "side", "of": "aside nav *" }]

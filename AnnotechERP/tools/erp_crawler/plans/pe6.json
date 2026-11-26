@@ -1,0 +1,28 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Pendings'), main [role=tab]:has-text('Pendings')",
+  "wait": 2500
+ },
+ {
+  "click": "role=button[name='LPP LPP 1']",
+  "wait": 3000
+ },
+ {
+  "click": "main table button:has-text('Confirm')",
+  "wait": 2000
+ },
+ {
+  "texts": "dlg",
+  "of": "[role=dialog], [role=alertdialog]"
+ },
+ {
+  "dump": "after",
+  "root": "body"
+ }
+]

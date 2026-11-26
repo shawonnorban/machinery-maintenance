@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/material-procurement/price-review" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Approve & Handover') >> visible=true >> nth=0", "wait": 2000 },
+ { "texts": "facts", "of": "[role=dialog] dd, [role=dialog] div.text-sm" },
+ { "peek": "[role=dialog] button:has-text('Select merchandiser')", "wait": 1200 },
+ { "popup": "merch" },
+ { "peek": "[role=option]:has-text('Annotech Probe') >> nth=-1", "wait": 1200 },
+ { "click": "[role=dialog] button:has-text('Confirm Approval & Handover')", "wait": 4000 },
+ { "texts": "after", "of": "li[data-sonner-toast] *, main p" }
+]

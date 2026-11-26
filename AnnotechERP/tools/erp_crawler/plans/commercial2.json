@@ -1,0 +1,17 @@
+[
+ {"goto": "/m/commercial/reference-type", "click": "Inco Term", "exact": true, "shot": "rt_inco", "rows": 40},
+ {"click": "Payment Term", "exact": true, "shot": "rt_payment", "rows": 40},
+ {"click": "Delivery Place", "exact": true, "shot": "rt_delivery", "rows": 40},
+ {"click": "Transit Port", "exact": true, "shot": "rt_transit", "rows": 40},
+ {"click": "LC Type", "exact": true, "shot": "rt_lctype", "rows": 40},
+ {"click": "Shipment Mode", "exact": true, "shot": "rt_shipment", "rows": 40},
+ {"click": "Garments Business Association", "exact": true, "shot": "rt_assoc", "rows": 40},
+ {"click": "Forwarders", "exact": true, "shot": "rt_forwarders", "rows": 40},
+ {"goto": "/m/commercial/buyer-wise-notify-party", "click": "LPP", "exact": true, "shot": "np_lpp"},
+ {"goto": "/m/commercial/loc-exchng-rates"},
+ {"peek": "button:has-text('Add New CM Local Exchange Rate')", "shot": "ex_add", "escape": true},
+ {"goto": "/m/commercial/bank-list", "shot": "bk_all", "rows": 60},
+ {"peek": "tbody tr:first-child button:has-text('New Branch')", "shot": "bk_branch", "escape": true},
+ {"goto": "/m/commercial/bank-list"},
+ {"peek": "tbody tr:first-child button:has-text('Edit Bank')", "shot": "bk_edit", "escape": true}
+]

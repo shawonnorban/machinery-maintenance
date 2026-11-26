@@ -1,0 +1,11 @@
+[
+ {"goto": "/quality-tally/sewing-target"},
+ {"wait": 16000},
+ {"shot": "qt109-sewmgr"},
+ {"click": "main tr:has-text('26DAL00101') button:has-text('Give target')", "after": 2500},
+ {"choose": "[role=dialog] label:has-text('Line') select", "option": "LINE01"},
+ {"fill": "x", "sel": "[role=dialog] label:has-text('Target (pcs)') input", "text": "300"},
+ {"shot": "qt110-sewmgr-form"},
+ {"click": "[role=dialog] button:has-text('Save')", "after": 18000},
+ {"shot": "qt111-sewmgr-saved"}
+]

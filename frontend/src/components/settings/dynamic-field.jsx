@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Textarea } from "@/components/ui/textarea";
 import { useT } from "@/lib/i18n";
 
 /**
@@ -14,7 +15,7 @@ import { useT } from "@/lib/i18n";
  * to describe. One component for all ~21 master-data types, the same
  * reason the backend is one controller for all of them.
  */
-function DynamicField({ field, value, onChange, referenceOptions, error }) {
+function DynamicField({ field, value, onChange, referenceOptions, error, autoCodeHint }) {
   const t = useT("masterdata");
 
   if (field.type === "BOOLEAN") {
@@ -50,7 +51,7 @@ function DynamicField({ field, value, onChange, referenceOptions, error }) {
             {...fieldProps}
             value={value ?? ""}
             onValueChange={onChange}
-            options={field.options.map((option) => ({ value: option, label: option }))}
+            options={field.options.map((option) => ({ value: option, label: field.option_labels?.[option] ?? option }))}
           />
         )}
       </FormField>
@@ -75,12 +76,28 @@ function DynamicField({ field, value, onChange, referenceOptions, error }) {
     );
   }
 
+  if (field.type === "TEXTAREA") {
+    return (
+      <FormField label={field.label} required={field.required} error={error}>
+        {(fieldProps) => <Textarea {...fieldProps} value={value ?? ""} onChange={(e) => onChange(e.target.value)} maxLength={2000} />}
+      </FormField>
+    );
+  }
+
   // TEXT and CODE both end up here — a code is still typed as plain text,
   // just uppercased server-side (SaveMasterDataRow) and shown that way
   // back, so this needs no special-casing on its own.
   return (
     <FormField label={field.label} required={field.required} error={error}>
-      {(fieldProps) => <Input {...fieldProps} value={value ?? ""} onChange={(e) => onChange(e.target.value)} maxLength={255} />}
+      {(fieldProps) => (
+        <Input
+          {...fieldProps}
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          maxLength={255}
+          placeholder={field.type === "CODE" && field.auto ? autoCodeHint : undefined}
+        />
+      )}
     </FormField>
   );
 }

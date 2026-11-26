@@ -1,0 +1,48 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('BOM')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)"
+ },
+ {
+  "click": "[data-panel] button:has-text('Approve BOM')",
+  "wait": 3000
+ },
+ {
+  "texts": "after_approve",
+  "of": "[data-panel]"
+ },
+ {
+  "dump": "approved",
+  "root": "[data-panel]"
+ },
+ {
+  "type": "[data-panel] table tbody tr:first-child td:nth-child(3) input",
+  "text": "1.5"
+ },
+ {
+  "click": "[data-panel] button:text-is('Save')",
+  "wait": 3500
+ },
+ {
+  "texts": "after_save",
+  "of": "[data-panel]"
+ },
+ {
+  "dump": "saved",
+  "root": "[data-panel]"
+ }
+]

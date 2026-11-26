@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `AssetController::store`. `redirect()` must stay outside the try/catch — it works by throwing internally. */
 async function createAsset(previousState, formData) {
@@ -29,7 +30,7 @@ async function createAsset(previousState, formData) {
     throw error;
   }
 
-  redirect(`/assets/${asset.id}`);
+  redirect(`/assets/${refOf(asset, "asset_code")}`);
 }
 
 export { createAsset };

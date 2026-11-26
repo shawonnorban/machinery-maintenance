@@ -1,0 +1,11 @@
+[
+ {"goto": "/hr-payroll/ot-eligibility"},
+ {"wait": 25000},
+ {"texts": "title", "of": "main h1"},
+ {"texts": "side", "of": "aside a:visible"},
+ {"shot": "eligibility2"},
+ {"goto": "/hr-payroll/ot-approval"},
+ {"wait": 20000},
+ {"texts": "title2", "of": "main h1"},
+ {"shot": "approval"}
+]

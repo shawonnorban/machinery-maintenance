@@ -1,0 +1,6 @@
+[
+ {"goto": "/knit-production/collar-cuff-production?tab=requirement"},
+ {"wait": 6000},
+ {"html": "rg", "of": "main [role=radiogroup]"},
+ {"texts": "labels", "of": "main label:has-text('Sample')"}
+]

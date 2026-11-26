@@ -287,7 +287,7 @@ class AssetLifecycleTest extends TestCase
         $this->assertSame('RUNNING', $asset->status);
         $this->assertSame(
             'WORK_ORDER',
-            AssetStatusHistory::where('asset_id', $asset->id)->orderByDesc('changed_at')->first()->source,
+            AssetStatusHistory::where('asset_id', $asset->id)->orderByDesc('changed_at')->orderByDesc('id')->first()->source,
         );
     }
 

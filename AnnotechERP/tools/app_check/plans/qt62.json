@@ -1,0 +1,5 @@
+[
+ {"goto": "/quality-tally/cutting-tally"},
+ {"wait": 25000},
+ {"shot": "qt212-two"}
+]

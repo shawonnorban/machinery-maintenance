@@ -1,0 +1,31 @@
+# Maintenance Cost & Analytics
+
+> **স্ট্যাটাস:** ✅ সম্পন্ন
+> **মডিউল:** [Machinery Maintenance](00_Index.md) · **ফেজ 0:** বিদ্যমান সিস্টেম, অপরিবর্তিত থাকবে · **কী:** `00/09`
+
+**⬅ ফিরে যান:** [Machinery Maintenance](00_Index.md) | [AnnotechERP Index](../00_Index.md)
+
+---
+
+## ১. বিবরণ
+
+বর্তমান machinery-maintenance সিস্টেমের অংশ। নতুন ERP-তে এটা অপরিবর্তিত থাকবে, শুধু লাইট থিম আর নতুন নেভিগেশনে বসবে।
+
+## ২. Implementation Files
+
+<!-- AUTO:impl:start -->
+বিদ্যমান কোড (জেনারেটর ডিস্ক থেকে মিলিয়ে লেখে):
+
+- `app/Modules/Costing/` (১১টা ফাইল)
+- `app/Modules/Analytics/` (১৩টা ফাইল)
+- `frontend/src/app/(app)/scan/` (২টা ফাইল)
+<!-- AUTO:impl:end -->
+
+## ৩. নতুন ERP-র সাথে সংযোগ
+
+Command Center-এর Command Deck (27/01) আলাদা; এখানকার ড্যাশবোর্ড Machinery-র নিজের।
+
+## ১১. As-built নোট
+
+- **২০২৬-১১-১২ ডিজাইন ও বাগ-ফিক্স:** সব পেজে ERP হেডার (`ScreenHeader`: Home › Modules › Machinery Maintenance › স্ক্রিন, আইকন, "NN of 23"), গ্রিডে নীল হেডার ও নম্বর-পেজার, ফিল্টারে "All …" লেবেল, ডিটেইল পেজের URL-এ ULID নয়, পড়া যায় এমন নম্বর (`ResolvesByReference` + `refOf`)।
+- ড্যাশবোর্ড: "Open work orders" কার্ডে completed-এর ট্রেন্ড তীর ছিল, যেটা খোলা সংখ্যার ট্রেন্ড মনে হতো। এখন লেখা থাকে "এই সময়ে N টি সম্পন্ন (±x% আগের সময়ের তুলনায়)"। Active breakdowns-এর নিচেও একইভাবে "এই সময়ে N টি রিপোর্ট"।

@@ -39,6 +39,8 @@ function RegisterServiceWorker() {
     // DevTools and unregister it by hand.
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       for (const registration of registrations) {
+        // Chat's push worker (public/chat-push-sw.js) caches nothing and is meant to stay.
+        if (registration.scope.endsWith("/chat-push/")) continue;
         registration.unregister().catch(() => {});
       }
     });

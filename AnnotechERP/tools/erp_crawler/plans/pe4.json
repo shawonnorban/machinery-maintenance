@@ -1,0 +1,31 @@
+[
+ {
+  "goto": "/m/merchandising/print-embr-rate-operation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Pendings'), main [role=tab]:has-text('Pendings')",
+  "wait": 2500
+ },
+ {
+  "click": "role=button[name='LPP LPP 1']",
+  "wait": 3000
+ },
+ {
+  "url": "pend_url"
+ },
+ {
+  "texts": "pend_lpp",
+  "of": "main"
+ },
+ {
+  "dump": "pend_d",
+  "root": "main"
+ },
+ {
+  "hrefs": "pend_links",
+  "of": "main a"
+ }
+]

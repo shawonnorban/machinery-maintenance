@@ -68,4 +68,22 @@ async function savePreferences(previousState, formData) {
   }
 }
 
-export { markRead, markAllRead, acknowledge, savePreferences };
+/**
+ * The bell's latest notifications and unread count, read again each time it
+ * opens: the app layout's copy is only made on a full page load, so a
+ * notification that came while moving between screens never showed (user,
+ * 2026-11-21).
+ */
+async function recentNotifications() {
+  try {
+    const { data, meta } = await apiFetch(`/notifications?filter=ALL&per_page=${BELL_SIZE}`, { includeMeta: true });
+    return { status: "success", recent: data, unread: meta?.unread_count ?? 0 };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+/** How many the bell lists (it scrolls); the rest are on /notifications. */
+const BELL_SIZE = 20;
+
+export { markRead, markAllRead, acknowledge, savePreferences, recentNotifications };

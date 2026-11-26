@@ -1,0 +1,85 @@
+[
+ {
+  "goto": "/m/inventory/store-reports?report=stock-summary"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_stock-summary",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "goto": "/m/inventory/store-reports?report=grn"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_grn",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "goto": "/m/inventory/store-reports?report=material-out"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_material-out",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "goto": "/m/inventory/store-reports?report=material-return"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_material-return",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "goto": "/m/inventory/store-reports?report=stock-ledger"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_stock-ledger",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "goto": "/m/inventory/store-reports?report=traceability"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_traceability",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "goto": "/m/inventory/store-reports?report=fabric-roll"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_fabric-roll",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "goto": "/m/inventory/store-reports?report=low-stock"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "texts": "rp_low-stock",
+  "of": "main h2, main h3, main label, main th, main td, main p"
+ },
+ {
+  "fullshot": "st12-low-stock"
+ }
+]

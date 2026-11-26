@@ -1,0 +1,8 @@
+[
+ {"goto": "/technicians"}, {"wait": 15000}, {"shot": "e01-technicians"},
+ {"goto": "/inventory/stock"}, {"wait": 12000}, {"shot": "e02-stock"},
+ {"goto": "/vendors"}, {"wait": 12000}, {"shot": "e03-vendors"},
+ {"goto": "/inventory/parts"}, {"wait": 12000},
+ {"fill": "Part", "text": "jk"}, {"click": "main button:has-text('Search')", "after": 12000}, {"shot": "e04-parts-search-jk"},
+ {"click": "main button:has-text('Reset')", "after": 12000}, {"shot": "e05-parts-reset"}
+]

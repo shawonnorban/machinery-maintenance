@@ -1,0 +1,82 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('529') button:has-text('Sheet') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Packing Instruction')",
+  "wait": 3500
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) input[placeholder^='Search'] >> nth=0",
+  "wait": 1200
+ },
+ {
+  "popup": "order_popup"
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) [role=option] >> nth=0, fieldset:has(legend:has-text('Work Style/Job#')) li >> nth=0",
+  "wait": 1000
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) input[placeholder^='Search'] >> nth=1",
+  "wait": 1200
+ },
+ {
+  "popup": "item_popup"
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) [role=option] >> nth=0, fieldset:has(legend:has-text('Work Style/Job#')) li >> nth=0",
+  "wait": 1000
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) input[placeholder^='Search'] >> nth=2",
+  "wait": 1200
+ },
+ {
+  "popup": "colour_popup"
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) [role=option] >> nth=0, fieldset:has(legend:has-text('Work Style/Job#')) li >> nth=0",
+  "wait": 1000
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) label:has-text('Uniform Ratio') input, fieldset:has(legend:has-text('Work Style/Job#')) input[type=radio] >> nth=1",
+  "wait": 1500
+ },
+ {
+  "texts": "form_uniform",
+  "of": "fieldset:has(legend:has-text('Work Style/Job#'))"
+ },
+ {
+  "dump": "uniform",
+  "root": "fieldset:has(legend:has-text('Work Style/Job#'))"
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) label:has-text('Random Ratio') input, fieldset:has(legend:has-text('Work Style/Job#')) input[type=radio] >> nth=2",
+  "wait": 1500
+ },
+ {
+  "texts": "form_random",
+  "of": "fieldset:has(legend:has-text('Work Style/Job#'))"
+ },
+ {
+  "dump": "random",
+  "root": "fieldset:has(legend:has-text('Work Style/Job#'))"
+ },
+ {
+  "click": "fieldset:has(legend:has-text('Work Style/Job#')) button:has-text('Add')",
+  "wait": 1500
+ },
+ {
+  "texts": "after_add",
+  "of": "main"
+ }
+]

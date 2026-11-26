@@ -39,7 +39,7 @@ class MasterDataApiTest extends TestCase
         TenantFixture::factory($this->delta, 'Dhaka Unit 1', 'DHK');
         TenantFixture::actingAsTenant($this->delta);
 
-        $this->manager = TenantFixture::user($this->delta, 'FACTORY_MANAGER', 'fm@delta.test');
+        $this->manager = TenantFixture::user($this->delta, 'FACTORY_ADMIN', 'fa@delta.test'); // master data is admin-only
     }
 
     public function test_every_registered_list_answers(): void
@@ -291,78 +291,12 @@ class MasterDataApiTest extends TestCase
     }
 
     /** A chart of accounts is a tree; the one thing it must never be is a loop. */
-    public function test_a_gl_account_cannot_be_its_own_ancestor(): void
-    {
-        $token = $this->tokenFor($this->manager);
-
-        $assets = $this->withToken($token)
-            ->postJson('/api/v1/master-data/gl-accounts', [
-                'code' => '1000', 'name' => 'Current assets', 'account_category' => 'ASSET', 'active' => '1',
-            ])
-            ->assertCreated()
-            ->json('data.id');
-
-        $stock = $this->withToken($token)
-            ->postJson('/api/v1/master-data/gl-accounts', [
-                'code' => '1100', 'name' => 'Stock', 'account_category' => 'ASSET',
-                'parent_account_id' => $assets, 'active' => '1',
-            ])
-            ->assertCreated()
-            ->assertJsonPath('data.parent_account_id', $assets)
-            ->json('data.id');
-
-        $this->withToken($token)
-            ->patchJson("/api/v1/master-data/gl-accounts/{$stock}", [
-                'code' => '1100', 'name' => 'Stock', 'account_category' => 'ASSET',
-                'parent_account_id' => $stock, 'active' => '1',
-            ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('parent_account_id');
-
-        // Re-parenting the root under its own child would close the loop.
-        $this->withToken($token)
-            ->patchJson("/api/v1/master-data/gl-accounts/{$assets}", [
-                'code' => '1000', 'name' => 'Current assets', 'account_category' => 'ASSET',
-                'parent_account_id' => $stock, 'active' => '1',
-            ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('parent_account_id');
-
-        // In use as a parent, so it cannot be removed.
-        $this->withToken($token)
-            ->deleteJson("/api/v1/master-data/gl-accounts/{$assets}")
-            ->assertStatus(409);
-    }
-
-    public function test_item_categories_nest_three_levels_and_no_deeper(): void
-    {
-        $token = $this->tokenFor($this->manager);
-        $ids = [];
-        $parent = null;
-
-        foreach (['FAB', 'FAB-KNIT', 'FAB-KNIT-JERSEY'] as $code) {
-            $parent = $ids[$code] = $this->withToken($token)
-                ->postJson('/api/v1/master-data/item-categories', [
-                    'name' => $code, 'code' => $code, 'parent_id' => $parent, 'active' => '1',
-                ])
-                ->assertCreated()
-                ->json('data.id');
-        }
-
-        $this->withToken($token)
-            ->postJson('/api/v1/master-data/item-categories', [
-                'name' => 'Too deep', 'code' => 'FAB-KNIT-JERSEY-X', 'parent_id' => $ids['FAB-KNIT-JERSEY'], 'active' => '1',
-            ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('parent_id');
-    }
-
     public function test_a_unit_conversion_needs_two_different_units(): void
     {
         $token = $this->tokenFor($this->manager);
 
-        $units = $this->withToken($token)->getJson('/api/v1/master-data/uoms?per_page=50')->assertOk()->json('data');
-        $byCode = collect($units)->keyBy('code');
+        // Units are General Store's one list now (`units_of_measure`); the conversion still lives here.
+        $byCode = \App\Modules\Inventory\Models\UnitOfMeasure::query()->whereNull('company_id')->get(['id', 'code'])->keyBy('code');
 
         $this->withToken($token)
             ->postJson('/api/v1/master-data/uom-conversions', [

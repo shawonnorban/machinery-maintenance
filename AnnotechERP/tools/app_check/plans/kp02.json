@@ -1,0 +1,167 @@
+[
+{
+"goto": "/knit-production/roll-production-manual?tab=entry"
+},
+{
+"pick": "Job Card No",
+"exact": true,
+"option": "KC-2026100001"
+},
+{
+"wait": 800
+},
+{
+"click": "main button:has-text('Add Roll')",
+"after": 600
+},
+{
+"click": "main button:has-text('Add Roll')",
+"after": 600
+},
+{
+"pick": "Shift 1",
+"option": "Day shift",
+"exact": true
+},
+{
+"pick": "Operator 1",
+"option": "Mohammad Sayem",
+"exact": true
+},
+{
+"pick": "M/C 1",
+"option": "KM-01",
+"exact": true
+},
+{
+"pick": "Shift 2",
+"option": "Day shift",
+"exact": true
+},
+{
+"pick": "Operator 2",
+"option": "Mohammad Sayem",
+"exact": true
+},
+{
+"pick": "M/C 2",
+"option": "KM-01",
+"exact": true
+},
+{
+"fill": "Roll Weight 1",
+"text": "22.5",
+"exact": true
+},
+{
+"fill": "Roll Weight 2",
+"text": "21.8",
+"exact": true
+},
+{
+"fill": "Deducted 2",
+"text": "0.3",
+"exact": true
+},
+{
+"shot": "r-filled"
+},
+{
+"click": "main button:has-text('Save roll sheet')",
+"after": 15000
+},
+{
+"shot": "r-saved"
+},
+{
+"goto": "/knit-production/roll-production-manual"
+},
+{
+"shot": "r-list"
+},
+{
+"printpdf": "main button[aria-label='Print Label KC-2026100001/1']",
+"as": "label"
+},
+{
+"goto": "/knit-production/grey-fab-roll-inspection?tab=entry"
+},
+{
+"pick": "Roll No",
+"exact": true,
+"option": "KC-2026100001/1"
+},
+{
+"fill": "Deduct Weight",
+"exact": true,
+"text": "0.2"
+},
+{
+"pick": "Shift",
+"exact": true,
+"option": "Day shift"
+},
+{
+"pick": "QC Name",
+"exact": true,
+"option": "Poritosh"
+},
+{
+"pick": "Defect",
+"exact": true,
+"option": "Slub"
+},
+{
+"fill": "Count",
+"exact": true,
+"text": "3"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"after": 500
+},
+{
+"pick": "Defect",
+"exact": true,
+"option": "Hole"
+},
+{
+"fill": "Count",
+"exact": true,
+"text": "1"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"after": 500
+},
+{
+"shot": "q-filled"
+},
+{
+"click": "main button:has-text('Save inspection sheet')",
+"after": 15000
+},
+{
+"shot": "q-saved"
+},
+{
+"goto": "/knit-production/grey-fab-roll-inspection"
+},
+{
+"shot": "q-list"
+},
+{
+"click": "main button:has-text('Print')",
+"after": 300
+},
+{
+"printpdf": "main button:has-text('Print') >> nth=0",
+"as": "qc-print"
+},
+{
+"goto": "/knit-production/daily-fabric-production"
+},
+{
+"shot": "o-out"
+}
+]

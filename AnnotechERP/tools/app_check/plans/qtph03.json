@@ -1,0 +1,17 @@
+[
+ {"goto": "/quality-tally/phones"},
+ {"wait": 6000},
+ {"shot": "qtph03-approved"},
+ {"click": "main button:has-text('Block')", "after": 2000},
+ {"shot": "qtph03-ask"},
+ {"click": "[role=alertdialog] button:has-text('Block')", "after": 25000},
+ {"goto": "/quality-tally/phones"},
+ {"wait": 5000},
+ {"shot": "qtph03-blocked"},
+ {"goto": "/quality-tally/qc-assignment"},
+ {"wait": 5000},
+ {"click": "main button:has-text('Reset PIN')", "after": 2000},
+ {"shot": "qtph03-reset"},
+ {"click": "[role=alertdialog] button:has-text('Reset PIN')", "after": 25000},
+ {"shot": "qtph03-qc"}
+]

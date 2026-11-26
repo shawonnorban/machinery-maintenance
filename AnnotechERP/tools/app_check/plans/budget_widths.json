@@ -1,0 +1,6 @@
+[
+ {"goto": "/pre-budget/create-budget?budget=PB-CNA-1126-0003"},
+ {"see": "Yarn Count"},
+ {"eval": "JSON.stringify([...document.querySelectorAll('section table')].slice(0,4).map(t => [...t.querySelector('thead tr').children].map(th => th.innerText.replace(/ +/g,' ').trim() + '=' + Math.round(th.getBoundingClientRect().width))))"},
+ {"shot": "budget_widths"}
+]

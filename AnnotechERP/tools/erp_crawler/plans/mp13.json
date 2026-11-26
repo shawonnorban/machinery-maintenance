@@ -1,0 +1,19 @@
+[
+ { "url": "landing" },
+ { "fullshot": "mp13-landing" },
+ { "texts": "sidebar", "of": "aside a, aside button, nav a" },
+ { "goto": "/m/material-procurement/supplier-dashboard" },
+ { "wait": 4000 },
+ { "texts": "sdash", "of": "main h1, main h2, main h3, main h4, main p, main th, main td, main button, main span" },
+ { "fullshot": "mp13-sdash" },
+ { "goto": "/m/material-procurement/available-requirements" },
+ { "wait": 4000 },
+ { "texts": "avail", "of": "main h1, main h2, main h3, main h4, main p, main th, main td, main button, main span, main label" },
+ { "fullshot": "mp13-avail" },
+ { "goto": "/m/material-procurement/quotation-history" },
+ { "wait": 4000 },
+ { "texts": "qhist", "of": "main h1, main h2, main h3, main h4, main p, main th, main td, main button, main span" },
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 3000 },
+ { "texts": "blocked", "of": "main h1, main h2, main p" }
+]

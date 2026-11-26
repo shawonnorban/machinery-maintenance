@@ -1,0 +1,15 @@
+[
+ { "goto": "/m/merchandising/accessories-mrr" },
+ { "dump": "records", "root": "main" },
+ { "fullshot": "mrr-records" },
+ { "click": "button:has-text('Receipt Entry')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "fullshot": "mrr-entry" },
+ { "click": "button:has-text('Add received line')", "wait": 1200 },
+ { "click": "button:has-text('Add other cost')", "wait": 1200 },
+ { "dump": "entry_lines", "root": "main" },
+ { "fullshot": "mrr-entry-lines" },
+ { "click": "button:has-text('Receive List')", "wait": 2500 },
+ { "dump": "receive_list", "root": "main" },
+ { "fullshot": "mrr-receive-list" }
+]

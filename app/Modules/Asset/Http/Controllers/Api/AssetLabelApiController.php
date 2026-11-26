@@ -50,6 +50,9 @@ class AssetLabelApiController extends ApiController
 
         $assets = Asset::query()
             ->with(['location:id,name'])
+            // Only machines in a factory the caller can reach — "all
+            // factories" means all of theirs, not the whole company.
+            ->whereIn('current_factory_id', $this->context->accessibleFactoryIds())
             ->when($selected !== [], fn ($q) => $q->whereIn('id', $selected))
             ->when($factoryId, fn ($q, $id) => $q->where('current_factory_id', $id))
             ->when($request->query('status'), fn ($q, $v) => $q->where('status', $v))

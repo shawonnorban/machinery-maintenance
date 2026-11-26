@@ -1,0 +1,84 @@
+[
+{
+"goto": "/m/knitting/issue-sc-knitting-program-bulk-solid"
+},
+{
+"click": "main [role=tab]:has-text('New S/C')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- Party --')",
+"wait": 1200
+},
+{
+"popup": "parties"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 800
+},
+{
+"type": "main input[type=date] >> nth=0",
+"text": "2026-10-29"
+},
+{
+"choose": "main select[name=programType]",
+"label": "Bulk"
+},
+{
+"choose": "main select[name=companyId]",
+"index": 1
+},
+{
+"peek": "main button:has-text('-- Select Type --')",
+"wait": 1200
+},
+{
+"popup": "prod_cats"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Order --')",
+"wait": 1200
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 1500
+},
+{
+"html": "after_order_inputs",
+"of": "main input[type=text]"
+},
+{
+"peek": "main button:has-text('-- Color --')",
+"wait": 1200
+},
+{
+"popup": "colors"
+},
+{
+"click": "[role=option] >> nth=2",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Group --')",
+"wait": 1200
+},
+{
+"popup": "groups"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 800
+},
+{
+"html": "line_inputs",
+"of": "main input, main select"
+},
+{
+"fullshot": "bs-fill0"
+}
+]

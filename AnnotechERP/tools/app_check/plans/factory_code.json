@@ -1,0 +1,6 @@
+[
+ {"goto": "/company-management/factory"},
+ {"see": "Add Factory"},
+ {"eval": "JSON.stringify([...document.querySelectorAll('input[aria-label=\"Code\"]')].map(i=>i.value))"},
+ {"shot": "factory"}
+]

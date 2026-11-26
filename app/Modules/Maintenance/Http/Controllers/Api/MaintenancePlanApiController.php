@@ -41,6 +41,13 @@ class MaintenancePlanApiController extends ApiController
             ->with(['asset:id,asset_code,name', 'assetType:id,name', 'maintenanceType:id,name'])
             ->withCount(['schedules as open_schedules_count' => fn ($q) => $q->whereIn('status', ['PLANNED', 'DUE', 'OVERDUE'])])
             ->when($request->query('active') !== null, fn ($q) => $q->where('active', $request->boolean('active')))
+            // Plan name, or the machine it covers by code or name; LOWER() on
+            // both sides because Postgres LIKE is case-sensitive.
+            ->when(is_string($request->query('search')) && trim($request->query('search')) !== '', function ($q) use ($request) {
+                $term = '%'.mb_strtolower(trim($request->query('search'))).'%';
+                $q->where(fn ($w) => $w->whereRaw('LOWER(name) LIKE ?', [$term])
+                    ->orWhereHas('asset', fn ($a) => $a->whereRaw('LOWER(asset_code) LIKE ?', [$term])->orWhereRaw('LOWER(name) LIKE ?', [$term])));
+            })
             ->orderByDesc('active')
             ->orderBy('name');
 
@@ -173,6 +180,7 @@ class MaintenancePlanApiController extends ApiController
     {
         return [
             'id' => $plan->id,
+            'plan_number' => $plan->plan_number,
             'name' => $plan->name,
             'active' => $plan->active,
             'trigger_type' => $plan->trigger_type,

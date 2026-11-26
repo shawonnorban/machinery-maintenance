@@ -1,0 +1,14 @@
+[
+ {"goto": "/m/buyer-portal/order-visibility"}, {"wait": 4000}, {"shot": "v0"},
+ {"peek": "main button:has-text('New')"}, {"shot": "v1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "v2-edit"}, {"escape": true},
+ {"goto": "/m/buyer-portal/sample-status"}, {"wait": 4000}, {"shot": "s0"},
+ {"peek": "main button:has-text('New')"}, {"shot": "s1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "s2-edit"}, {"escape": true},
+ {"goto": "/m/buyer-portal/shipment-status"}, {"wait": 4000}, {"shot": "h0"},
+ {"peek": "main button:has-text('New')"}, {"shot": "h1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "h2-edit"}, {"escape": true},
+ {"goto": "/m/buyer-portal/document-sharing"}, {"wait": 4000}, {"shot": "d0"},
+ {"peek": "main button:has-text('Share'), main button:has-text('New'), main button:has-text('Upload')"}, {"shot": "d1-new"}, {"escape": true},
+ {"peek": "main tbody tr:first-child td:last-child button >> nth=0"}, {"shot": "d2-edit"}, {"escape": true}
+]

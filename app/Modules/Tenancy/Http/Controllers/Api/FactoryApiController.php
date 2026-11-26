@@ -61,6 +61,11 @@ class FactoryApiController extends ApiController
             'name' => ['required', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:2000'],
             'timezone' => ['required', 'string', Rule::in(self::TIMEZONES)],
+            // Company Management's Factory tab (AnnotechERP 01/02).
+            'contact' => ['nullable', 'string', 'max:64'],
+            'established_date' => ['nullable', 'date'],
+            'area_sqft' => ['nullable', 'numeric', 'min:0', 'max:999999999999'],
+            'remarks' => ['nullable', 'string', 'max:2000'],
             'code' => [
                 'required', 'string', 'max:5', 'regex:/^[A-Za-z0-9]+$/',
                 Rule::unique('factories')->where('company_id', $this->context->companyId()),
@@ -73,11 +78,25 @@ class FactoryApiController extends ApiController
     public function update(Request $request, Factory $factory, SaveFactory $action): JsonResponse
     {
         $this->allow('settings.factory.manage');
+        if ($request->has('code')) {
+            // Codes are kept in capitals, so "nfl" and "NFL" are the same code.
+            $request->merge(['code' => strtoupper(trim((string) $request->input('code')))]);
+        }
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:2000'],
             'timezone' => ['required', 'string', Rule::in(self::TIMEZONES)],
+            // Company Management's Factory tab (AnnotechERP 01/02).
+            'contact' => ['nullable', 'string', 'max:64'],
+            'established_date' => ['nullable', 'date'],
+            'area_sqft' => ['nullable', 'numeric', 'min:0', 'max:999999999999'],
+            'remarks' => ['nullable', 'string', 'max:2000'],
+            // The code may change too; what keeps it as text follows (SaveFactory::renameCodeCopies).
+            'code' => [
+                'sometimes', 'required', 'string', 'max:5', 'regex:/^[A-Za-z0-9]+$/',
+                Rule::unique('factories')->where('company_id', $this->context->companyId())->ignore($factory->id),
+            ],
         ]);
 
         return ApiResponse::ok($this->summary($action->update($factory, $data)));
@@ -130,6 +149,10 @@ class FactoryApiController extends ApiController
             'address' => $factory->address,
             'timezone' => $factory->timezone,
             'status' => $factory->status,
+            'contact' => $factory->contact,
+            'established_date' => $factory->established_date?->format('Y-m-d'),
+            'area_sqft' => $factory->area_sqft,
+            'remarks' => $factory->remarks,
             'asset_count' => $factory->asset_count ?? null,
             'created_at' => $factory->created_at?->toIso8601String(),
         ];

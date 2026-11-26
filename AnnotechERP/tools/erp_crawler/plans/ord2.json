@@ -1,0 +1,39 @@
+[
+ {
+  "goto": "/m/merchandising/order-list"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Size Breakdown')",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('LPP-2026-000008')",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add line')",
+  "wait": 1500
+ },
+ {
+  "dump": "addline",
+  "root": "main"
+ },
+ {
+  "click": "main button:has-text('New order')",
+  "wait": 2500
+ },
+ {
+  "click": "main button:near(:text('Ship Country'))",
+  "wait": 1500
+ },
+ {
+  "popup": "country_popup"
+ },
+ {
+  "dump": "country",
+  "root": "body"
+ }
+]

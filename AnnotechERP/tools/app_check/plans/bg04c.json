@@ -1,0 +1,6 @@
+[
+ {"goto": "/buyer-gateway/support-tickets"},
+ {"wait": 25000},
+ {"texts": "tiles", "of": "main section div"},
+ {"shot": "t5"}
+]

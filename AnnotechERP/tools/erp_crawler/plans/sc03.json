@@ -1,0 +1,156 @@
+[
+{
+"goto": "/m/knitting/issue-sc-knitting-program-bulk-solid"
+},
+{
+"click": "main [role=tab]:has-text('New S/C')",
+"wait": 2500
+},
+{
+"peek": "main button:has-text('-- Party --')",
+"wait": 1200
+},
+{
+"popup": "parties"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 800
+},
+{
+"type": "main input[type=date] >> nth=0",
+"text": "2026-10-29"
+},
+{
+"choose": "main select[name=programType]",
+"label": "Bulk"
+},
+{
+"choose": "main select[name=companyId]",
+"index": 1
+},
+{
+"peek": "main button:has-text('-- Select Type --')",
+"wait": 1200
+},
+{
+"popup": "prod_cats"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Order --')",
+"wait": 1200
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 1500
+},
+{
+"html": "after_order_inputs",
+"of": "main input[type=text]"
+},
+{
+"peek": "main button:has-text('-- Color --')",
+"wait": 1200
+},
+{
+"popup": "colors"
+},
+{
+"click": "[role=option] >> nth=2",
+"wait": 800
+},
+{
+"peek": "main button:has-text('-- Group --')",
+"wait": 1200
+},
+{
+"popup": "groups"
+},
+{
+"click": "[role=option] >> nth=1",
+"wait": 800
+},
+{
+"type": "main input[type=text] >> nth=1",
+"text": "S/J 30/1 Combed 160 GSM"
+},
+{
+"type": "main input[type=text] >> nth=2",
+"text": "30"
+},
+{
+"type": "main input[type=text] >> nth=3",
+"text": "24"
+},
+{
+"type": "main input[type=text] >> nth=4",
+"text": "72"
+},
+{
+"type": "main input[type=text] >> nth=5",
+"text": "160"
+},
+{
+"type": "main input[type=number] >> nth=0",
+"text": "500"
+},
+{
+"type": "main input[type=number] >> nth=1",
+"text": "18"
+},
+{
+"peek": "main button:has-text('Select\u2026') >> nth=-1",
+"wait": 1200
+},
+{
+"popup": "uoms"
+},
+{
+"click": "[role=option]:has-text('Kg') >> nth=0",
+"wait": 800
+},
+{
+"click": "main button:has-text('Add Fabric')",
+"wait": 1500
+},
+{
+"texts": "lines_h",
+"of": "main table thead"
+},
+{
+"texts": "lines_rows",
+"of": "main table tbody tr"
+},
+{
+"netclick": "main button:has-text('Save programme')",
+"as": "save",
+"wait": 5000
+},
+{
+"texts": "after_p",
+"of": "main p"
+},
+{
+"click": "main [role=tab]:has-text('Records')",
+"wait": 3000
+},
+{
+"texts": "reg_h",
+"of": "main table thead"
+},
+{
+"texts": "reg_rows",
+"of": "main table tbody tr"
+},
+{
+"html": "reg_btns",
+"of": "main table tbody tr >> nth=1 >> button, main table tbody tr >> nth=1 >> a"
+},
+{
+"fullshot": "bs-reg"
+}
+]

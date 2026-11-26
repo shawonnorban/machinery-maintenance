@@ -1,0 +1,137 @@
+[
+ {
+  "goto": "/m/buyer-portal/buyer-requests"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "r0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "r1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "r2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/buyer-portal/complaint-register"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "c0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "c1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "c2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/buyer-portal/announcements"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "a0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "a1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "a2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/buyer-portal/feedback-survey"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "f0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "f1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "f2-edit"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/buyer-portal/support-tickets"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "shot": "t0"
+ },
+ {
+  "peek": "main div.justify-between > button, main button:has(svg.lucide-plus)"
+ },
+ {
+  "shot": "t1-new"
+ },
+ {
+  "escape": true
+ },
+ {
+  "peek": "main tbody tr:first-child td:last-child button >> nth=0"
+ },
+ {
+  "shot": "t2-edit"
+ },
+ {
+  "escape": true
+ }
+]

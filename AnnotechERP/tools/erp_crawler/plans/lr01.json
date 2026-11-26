@@ -1,0 +1,90 @@
+[
+ {
+  "goto": "/m/knitting/needle-loan-receive-from-party"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "needle-loan-receive-from-party#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "needle-loan-receive-from-party#t1",
+  "root": "main"
+ },
+ {
+  "goto": "/m/knitting/needle-received-loan-issue-to-party"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "needle-received-loan-issue-to-party#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "needle-received-loan-issue-to-party#t1",
+  "root": "main"
+ },
+ {
+  "goto": "/m/knitting/oil-loan-receive-from-party"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "oil-loan-receive-from-party#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "oil-loan-receive-from-party#t1",
+  "root": "main"
+ },
+ {
+  "goto": "/m/knitting/oil-received-loan-issue-to-party"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "oil-received-loan-issue-to-party#p0",
+  "of": "main p"
+ },
+ {
+  "click": "main [role=tab] >> nth=1",
+  "wait": 2500
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "wait": 1500
+ },
+ {
+  "dump": "oil-received-loan-issue-to-party#t1",
+  "root": "main"
+ }
+]

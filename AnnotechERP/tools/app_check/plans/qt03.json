@@ -1,0 +1,35 @@
+[
+ {"goto": "/quality-tally/jobs"},
+ {"wait": 4000},
+ {"click": "main tr:has-text('26DAL00102') button:has-text('Edit')", "after": 1500},
+ {"fill": "Size", "text": "S-XL"},
+ {"fill": "Due date", "text": "2026-12-02", "sel": "[role=dialog] input[type=date]"},
+ {"click": "[role=dialog] button:has-text('Save')", "after": 18000},
+ {"shot": "qt20-jobs-due"},
+
+ {"goto": "/quality-tally/line-attendance"},
+ {"wait": 5000},
+ {"fill": "x", "sel": "main tbody tr:has-text('LINE01') input >> nth=0", "text": "32"},
+ {"fill": "x", "sel": "main tbody tr:has-text('LINE01') input >> nth=1", "text": "60"},
+ {"fill": "x", "sel": "main tbody tr:has-text('LINE02') input >> nth=0", "text": "28"},
+ {"shot": "qt21-attendance"},
+ {"click": "main button:has-text('Save all')", "after": 18000},
+ {"shot": "qt22-attendance-saved"},
+
+ {"goto": "/quality-tally/line-target"},
+ {"wait": 4000},
+ {"click": "main button:has-text('Plan the day')", "after": 6000},
+ {"shot": "qt23-plan-day"},
+ {"choose": "[role=dialog] tbody tr:has-text('LINE02') select", "option": "26DAL00102"},
+ {"fill": "x", "sel": "[role=dialog] tbody tr:has-text('LINE02') input >> nth=1", "text": "28"},
+ {"fill": "x", "sel": "[role=dialog] tbody tr:has-text('LINE02') input >> nth=2", "text": "900"},
+ {"click": "[role=dialog] button:has-text('Save all')", "after": 18000},
+ {"shot": "qt24-targets-after-plan"},
+
+ {"goto": "/quality-tally/tally"},
+ {"wait": 6000},
+ {"shot": "qt25-tally-shift"},
+ {"goto": "/quality-tally/dashboard"},
+ {"wait": 5000},
+ {"shot": "qt26-dashboard-eff"}
+]

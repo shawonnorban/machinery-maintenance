@@ -827,9 +827,7 @@ class TenantController extends Controller
      */
     private function owner(Company $company): ?User
     {
-        $roleId = Role::whereNull('company_id')
-            ->where('name', 'COMPANY_OWNER')
-            ->value('id');
+        $roleId = \App\Modules\Identity\Support\RoleProvisioner::resolve('COMPANY_OWNER', $company->id)?->id;
 
         $userId = UserRole::withoutGlobalScope(TenantScope::class)
             ->where('company_id', $company->id)

@@ -1,0 +1,9 @@
+[
+ {"goto": "/m/sales-delivery/sd-settings"},
+ {"fullshot": "list"},
+ {"texts": "rows", "of": "main thead th, main tbody tr, main p, main h2"},
+ {"click": "main tbody tr button:has-text('Edit'), main tbody tr button[aria-label*='Edit']"},
+ {"fullshot": "edit"},
+ {"texts": "dlg", "of": "[role=dialog] label, [role=dialog] h2, [role=dialog] p, [role=dialog] legend, [role=dialog] button, [role=dialog] span.text-xs"},
+ {"html": "dlg_inputs", "of": "[role=dialog] input, [role=dialog] select, [role=dialog] textarea"}
+]

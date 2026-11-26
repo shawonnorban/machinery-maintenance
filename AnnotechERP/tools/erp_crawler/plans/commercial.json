@@ -1,0 +1,10 @@
+[
+ {"goto": "/m/commercial/reference-type", "shot": "rt_main", "rows": 30},
+ {"goto": "/m/commercial/buyer-wise-notify-party", "shot": "np_main", "rows": 10},
+ {"goto": "/m/commercial/lc-applicant", "shot": "ap_main", "rows": 10},
+ {"goto": "/m/commercial/loc-exchng-rates", "shot": "ex_main", "rows": 10},
+ {"goto": "/m/commercial/bank-list", "shot": "bk_main", "rows": 20},
+ {"peek": "button:has-text('▸')", "shot": "bk_branches", "rows": 20},
+ {"peek": "button:has-text('Add New')", "shot": "bk_add", "escape": true},
+ {"peek": "button:has-text('New Branch')", "shot": "bk_branch_new", "escape": true}
+]

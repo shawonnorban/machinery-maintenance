@@ -1,0 +1,26 @@
+[
+{
+"goto": "/m/knitting/receive-sc-program-from-party"
+},
+{
+"click": "main [role=tab]:has-text('Knitting Sub-contract Program')",
+"wait": 2500
+},
+{
+"html": "inputs",
+"of": "main input, main select, main textarea"
+},
+{
+"peek": "main button:has-text('-- Select --') >> nth=0",
+"wait": 1200
+},
+{
+"popup": "first_popup"
+},
+{
+"escape": true
+},
+{
+"fullshot": "rc-form"
+}
+]

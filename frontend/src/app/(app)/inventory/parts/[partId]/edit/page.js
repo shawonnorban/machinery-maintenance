@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { SparePartForm } from "@/components/inventory/spare-part-form";
 import { getT } from "@/lib/i18n-server";
 import { updateSparePart } from "./actions";
@@ -16,12 +16,8 @@ export default async function EditSparePartPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[
-          { label: t("spare_parts"), href: "/inventory/parts" },
-          { label: part.part_number, href: `/inventory/parts/${partId}` },
-          { label: tc("edit") },
-        ]}
+      <ScreenHeader
+        parentUrl="/inventory/parts" trail={[{ label: part.part_number, href: `/inventory/parts/${partId}` }]}
         title={t("edit_part_title", { number: part.part_number })}
       />
 

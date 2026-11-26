@@ -1,0 +1,20 @@
+[
+ {"goto": "/m/merchandising/price-quotation"},
+ {"clickSel": "main [role=tab]:has-text('Quotation')"},
+ {"clickSel": "main button:has-text('LPP')", "shot": "c_confirmed_row", "rows": 6},
+ {"goto": "/m/merchandising/price-quotation"},
+ {"clickSel": "main [role=tab]:has-text('New inquiry')"},
+ {"pick": "select[name=buyerId]", "label": "LPP (LPP)"},
+ {"fill": "input[name=styleNo]", "value": "AN-TEST-02"},
+ {"fill": "input[name=styleDesc]", "value": "Annotech parity test polo"},
+ {"fill": "input[name=inquiryDate]", "value": "2026-10-12"},
+ {"press": "main button:has-text('Save inquiry')", "wait": 1500},
+ {"goto": "/m/merchandising/price-quotation"},
+ {"clickSel": "main [role=tab]:has-text('Quotation')"},
+ {"clickSel": "main button:has-text('LPP')"},
+ {"peek": "main table tbody tr:has-text('AN-TEST-02') button:has-text('Revise')"},
+ {"press": "[role=alertdialog] button:text-is('Revise'), [role=dialog] button:text-is('Revise')", "wait": 1500, "shot": "c_revised", "rows": 6},
+ {"peek": "main table tbody tr:has-text('AN-TEST-02') button:has-text('Cancel')", "shot": "c_cancel_click", "rows": 6},
+ {"press": "[role=alertdialog] button:last-child, [role=dialog] button:has-text('Cancel inquiry'), [role=dialog] button:has-text('Yes')", "wait": 1500, "shot": "c_cancelled", "rows": 6},
+ {"goto": "/m/merchandising/price-quotation", "shot": "c_records", "rows": 6}
+]

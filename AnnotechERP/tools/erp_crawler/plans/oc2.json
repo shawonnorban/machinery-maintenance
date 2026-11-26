@@ -1,0 +1,82 @@
+[
+ {
+  "goto": "/m/merchandising/style-order-confirmation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "choose": "main select >> nth=0",
+  "label": "LPP"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "dump": "lpp",
+  "root": "main"
+ },
+ {
+  "click": "main table >> nth=0 >> tbody tr:first-child input[type=checkbox]",
+  "wait": 1500
+ },
+ {
+  "dump": "picked",
+  "root": "main"
+ },
+ {
+  "texts": "picked_text",
+  "of": "main"
+ },
+ {
+  "click": "main button:has-text('View Details')",
+  "wait": 2000
+ },
+ {
+  "dump": "details",
+  "root": "body"
+ },
+ {
+  "escape": true
+ },
+ {
+  "goto": "/m/merchandising/style-order-confirmation"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main table >> nth=-1 >> tbody tr:first-child button",
+  "wait": 2000
+ },
+ {
+  "dump": "eye",
+  "root": "body"
+ },
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Order Confirmation')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)"
+ },
+ {
+  "dump": "desk_oc",
+  "root": "[data-panel]"
+ },
+ {
+  "texts": "desk_text",
+  "of": "[data-panel]"
+ }
+]

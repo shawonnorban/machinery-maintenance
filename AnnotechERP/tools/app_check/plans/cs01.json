@@ -1,0 +1,829 @@
+[
+ {
+  "goto": "/dye-house/stock-opening-balance?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pick": "Receiving Store",
+  "exact": true,
+  "option": "Chemical & dyes store (DHK-CHM)"
+ },
+ {
+  "fill": "OB Date",
+  "exact": true,
+  "text": "2026-11-01"
+ },
+ {
+  "pick": "Item Name",
+  "exact": true,
+  "option": "CAUSTIC"
+ },
+ {
+  "pick": "Source",
+  "exact": true,
+  "option": "Local"
+ },
+ {
+  "fill": "Lot#",
+  "exact": true,
+  "text": "CS-2611"
+ },
+ {
+  "fill": "Exp Date",
+  "exact": true,
+  "text": "2027-10-31"
+ },
+ {
+  "fill": "Total Qty.",
+  "exact": true,
+  "text": "500"
+ },
+ {
+  "pick": "UoM",
+  "exact": true,
+  "option": "KG"
+ },
+ {
+  "fill": "Rate BDT",
+  "exact": true,
+  "text": "95"
+ },
+ {
+  "click": "main button[type=submit]:has-text('Save') >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/stock-opening-balance?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pick": "Receiving Store",
+  "exact": true,
+  "option": "Chemical & dyes store (DHK-CHM)"
+ },
+ {
+  "fill": "OB Date",
+  "exact": true,
+  "text": "2026-11-01"
+ },
+ {
+  "pick": "Item Name",
+  "exact": true,
+  "option": "ACETIC"
+ },
+ {
+  "pick": "Source",
+  "exact": true,
+  "option": "Local"
+ },
+ {
+  "fill": "Lot#",
+  "exact": true,
+  "text": "AA-2611"
+ },
+ {
+  "fill": "Exp Date",
+  "exact": true,
+  "text": "2027-10-31"
+ },
+ {
+  "fill": "Total Qty.",
+  "exact": true,
+  "text": "200"
+ },
+ {
+  "pick": "UoM",
+  "exact": true,
+  "option": "LTR"
+ },
+ {
+  "fill": "Rate BDT",
+  "exact": true,
+  "text": "140"
+ },
+ {
+  "click": "main button[type=submit]:has-text('Save') >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/stock-opening-balance?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pick": "Receiving Store",
+  "exact": true,
+  "option": "Chemical & dyes store (DHK-CHM)"
+ },
+ {
+  "fill": "OB Date",
+  "exact": true,
+  "text": "2026-11-01"
+ },
+ {
+  "pick": "Item Name",
+  "exact": true,
+  "option": "HYDROGEN"
+ },
+ {
+  "pick": "Source",
+  "exact": true,
+  "option": "Local"
+ },
+ {
+  "fill": "Lot#",
+  "exact": true,
+  "text": "HP-2611"
+ },
+ {
+  "fill": "Exp Date",
+  "exact": true,
+  "text": "2027-10-31"
+ },
+ {
+  "fill": "Total Qty.",
+  "exact": true,
+  "text": "300"
+ },
+ {
+  "pick": "UoM",
+  "exact": true,
+  "option": "LTR"
+ },
+ {
+  "fill": "Rate BDT",
+  "exact": true,
+  "text": "88"
+ },
+ {
+  "click": "main button[type=submit]:has-text('Save') >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/stock-opening-balance?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "pick": "Receiving Store",
+  "exact": true,
+  "option": "Chemical & dyes store (DHK-CHM)"
+ },
+ {
+  "fill": "OB Date",
+  "exact": true,
+  "text": "2026-11-01"
+ },
+ {
+  "pick": "Item Name",
+  "exact": true,
+  "option": "SODA ASH"
+ },
+ {
+  "pick": "Source",
+  "exact": true,
+  "option": "Local"
+ },
+ {
+  "fill": "Lot#",
+  "exact": true,
+  "text": "SA-2611"
+ },
+ {
+  "fill": "Exp Date",
+  "exact": true,
+  "text": "2027-10-31"
+ },
+ {
+  "fill": "Total Qty.",
+  "exact": true,
+  "text": "400"
+ },
+ {
+  "pick": "UoM",
+  "exact": true,
+  "option": "KG"
+ },
+ {
+  "fill": "Rate BDT",
+  "exact": true,
+  "text": "55"
+ },
+ {
+  "click": "main button[type=submit]:has-text('Save') >> nth=-1",
+  "after": 12000
+ },
+ {
+  "shot": "cs-ob-last"
+ },
+ {
+  "goto": "/dye-house/stock-opening-balance"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "ob_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/chemical-item-stock"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "stock_after_ob",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "cs-stock-1"
+ },
+ {
+  "goto": "/dye-house/daily-dyes-chemical-receive?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "Store",
+  "sel": "main label:has(> span:text-matches(\"^Store\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Chemical & dyes store (DHK-CHM)"
+ },
+ {
+  "pick": "Supplier",
+  "sel": "main label:has(> span:text-matches(\"^Supplier\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Square Textiles"
+ },
+ {
+  "pick": "Source Type",
+  "sel": "main label:has(> span:text-matches(\"^Source Type\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Import"
+ },
+ {
+  "fill": "Challan No",
+  "sel": "main label:has(> span:text-matches(\"^Challan No\\\\*?$\")) input >> nth=0",
+  "text": "CH-2611-77"
+ },
+ {
+  "fill": "L/C No",
+  "sel": "main label:has(> span:text-matches(\"^L/C No\\\\*?$\")) input >> nth=0",
+  "text": "LC-0912"
+ },
+ {
+  "fill": "Pay Method",
+  "sel": "main label:has(> span:text-matches(\"^Pay Method\\\\*?$\")) input >> nth=0",
+  "text": "L/C at sight"
+ },
+ {
+  "pick": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "CAUSTIC"
+ },
+ {
+  "fill": "Lot#",
+  "sel": "main label:has(> span:text-matches(\"^Lot#\\\\*?$\")) input >> nth=0",
+  "text": "CS-2611B"
+ },
+ {
+  "fill": "Exp Date",
+  "sel": "main label:has(> span:text-matches(\"^Exp Date\\\\*?$\")) input >> nth=0",
+  "text": "2027-12-31"
+ },
+ {
+  "fill": "Qty",
+  "sel": "main label:has(> span:text-matches(\"^Qty\\\\*?$\")) input >> nth=0",
+  "text": "250"
+ },
+ {
+  "pick": "UoM",
+  "sel": "main label:has(> span:text-is(\"UoM\")) button >> nth=0",
+  "option": "KG"
+ },
+ {
+  "fill": "Rate BDT",
+  "sel": "main label:has(> span:text-matches(\"^Rate BDT\\\\*?$\")) input >> nth=0",
+  "text": "97"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "after": 800
+ },
+ {
+  "pick": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "SODA ASH"
+ },
+ {
+  "fill": "Lot#",
+  "sel": "main label:has(> span:text-matches(\"^Lot#\\\\*?$\")) input >> nth=0",
+  "text": "SA-2611B"
+ },
+ {
+  "fill": "Qty",
+  "sel": "main label:has(> span:text-matches(\"^Qty\\\\*?$\")) input >> nth=0",
+  "text": "300"
+ },
+ {
+  "pick": "UoM",
+  "sel": "main label:has(> span:text-is(\"UoM\")) button >> nth=0",
+  "option": "KG"
+ },
+ {
+  "fill": "Rate BDT",
+  "sel": "main label:has(> span:text-matches(\"^Rate BDT\\\\*?$\")) input >> nth=0",
+  "text": "56"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "after": 800
+ },
+ {
+  "shot": "cs-rc-filled"
+ },
+ {
+  "click": "main button:has-text('Save receipt')",
+  "after": 15000
+ },
+ {
+  "shot": "cs-rc-saved"
+ },
+ {
+  "goto": "/dye-house/daily-dyes-chemical-receive"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "rc_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Finalise')",
+  "after": 1500
+ },
+ {
+  "texts": "rc_fin_dialog",
+  "of": "[role=alertdialog] h2, [role=alertdialog] p"
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Finalise')",
+  "after": 15000
+ },
+ {
+  "texts": "rc_rows_after",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Verify')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Verify')",
+  "after": 15000
+ },
+ {
+  "texts": "rc_rows_verified",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "cs-rc-register"
+ },
+ {
+  "goto": "/dye-house/daily-dyes-chemical-receive-return?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "MRR No",
+  "sel": "main label:has(> span:text-matches(\"^MRR No\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "MRR-202611"
+ },
+ {
+  "pick": "Return Challan Type",
+  "sel": "main label:has(> span:text-matches(\"^Return Challan Type\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Damage Return"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "pick": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "CAUSTIC"
+ },
+ {
+  "fill": "Qty",
+  "sel": "main label:has(> span:text-matches(\"^Qty\\\\*?$\")) input >> nth=0",
+  "text": "10"
+ },
+ {
+  "fill": "Remarks",
+  "sel": "main label:has(> span:text-matches(\"^Remarks\\\\*?$\")) input >> nth=0",
+  "text": "Drum dented"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "after": 800
+ },
+ {
+  "shot": "cs-rt-filled"
+ },
+ {
+  "click": "main button:has-text('Save return')",
+  "after": 15000
+ },
+ {
+  "goto": "/dye-house/daily-dyes-chemical-receive-return"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "rt_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Finalise')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Finalise')",
+  "after": 15000
+ },
+ {
+  "texts": "rt_rows_after",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/machine-wash-and-finishing-issue?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "From Store",
+  "sel": "main label:has(> span:text-matches(\"^From Store\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Chemical & dyes store (DHK-CHM)"
+ },
+ {
+  "pick": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "HYDROGEN"
+ },
+ {
+  "fill": "Required Qty",
+  "sel": "main label:has(> span:text-matches(\"^Required Qty\\\\*?$\")) input >> nth=0",
+  "text": "12"
+ },
+ {
+  "pick": "UoM",
+  "sel": "main label:has(> span:text-is(\"UoM\")) button >> nth=0",
+  "option": "LTR"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "after": 800
+ },
+ {
+  "pick": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "ACETIC"
+ },
+ {
+  "fill": "Required Qty",
+  "sel": "main label:has(> span:text-matches(\"^Required Qty\\\\*?$\")) input >> nth=0",
+  "text": "4"
+ },
+ {
+  "pick": "UoM",
+  "sel": "main label:has(> span:text-is(\"UoM\")) button >> nth=0",
+  "option": "LTR"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "after": 800
+ },
+ {
+  "click": "main button:has-text('Save issue')",
+  "after": 15000
+ },
+ {
+  "shot": "cs-mw-saved"
+ },
+ {
+  "goto": "/dye-house/machine-wash-and-finishing-issue"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Issue')",
+  "after": 6000
+ },
+ {
+  "shot": "cs-mw-dialog"
+ },
+ {
+  "texts": "mw_dialog",
+  "of": "[role=dialog] h2, [role=dialog] p, [role=dialog] tbody tr"
+ },
+ {
+  "fill": "now",
+  "sel": "[role=dialog] tbody tr >> nth=1 >> input",
+  "text": "2"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Issue') >> nth=-1",
+  "after": 15000
+ },
+ {
+  "texts": "mw_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/store-transfer-requisition-and-issue?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "pick": "From Store",
+  "sel": "main label:has(> span:text-matches(\"^From Store\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Chemical & dyes store (DHK-CHM)"
+ },
+ {
+  "pick": "To Store",
+  "sel": "main label:has(> span:text-matches(\"^To Store\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Chemical & dyes store (GAZ-CHM)"
+ },
+ {
+  "pick": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "CAUSTIC"
+ },
+ {
+  "fill": "Lot#",
+  "sel": "main label:has(> span:text-matches(\"^Lot#\\\\*?$\")) input >> nth=0",
+  "text": "CS-2611"
+ },
+ {
+  "fill": "Required Qty",
+  "sel": "main label:has(> span:text-matches(\"^Required Qty\\\\*?$\")) input >> nth=0",
+  "text": "40"
+ },
+ {
+  "pick": "UoM",
+  "sel": "main label:has(> span:text-is(\"UoM\")) button >> nth=0",
+  "option": "KG"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "after": 800
+ },
+ {
+  "click": "main button:has-text('Save transfer')",
+  "after": 15000
+ },
+ {
+  "goto": "/dye-house/store-transfer-requisition-and-issue"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "st_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Verify')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Verify')",
+  "after": 15000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Issue')",
+  "after": 6000
+ },
+ {
+  "fill": "Gate Pass",
+  "sel": "[role=dialog] label:has-text('Gate Pass') input",
+  "text": "GP-1105"
+ },
+ {
+  "click": "[role=dialog] button:has-text('Issue') >> nth=-1",
+  "after": 15000
+ },
+ {
+  "texts": "st_rows_after",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "cs-st-register"
+ },
+ {
+  "goto": "/dye-house/print-chemical-requisition"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main tbody tr:has-text('IR-DC-2026110002') >> button:has-text('10-Issue')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('10-Issue')",
+  "after": 15000
+ },
+ {
+  "texts": "pc_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/chemical-item-stock"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "stock_final",
+  "of": "main tbody tr"
+ },
+ {
+  "shot": "cs-stock-2"
+ },
+ {
+  "goto": "/dye-house/loan-opening-balance?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "fill": "OB Date",
+  "exact": true,
+  "text": "2026-11-01"
+ },
+ {
+  "pick": "Supplier Name",
+  "exact": true,
+  "option": "Square Textiles"
+ },
+ {
+  "pick": "Dyes/Chemical",
+  "exact": true,
+  "option": "SODA ASH"
+ },
+ {
+  "fill": "Loan Received",
+  "exact": true,
+  "text": "50"
+ },
+ {
+  "pick": "UoM",
+  "exact": true,
+  "option": "KG"
+ },
+ {
+  "click": "main button[type=submit]:has-text('Save') >> nth=-1",
+  "after": 12000
+ },
+ {
+  "goto": "/dye-house/loan-opening-balance"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "texts": "lo_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/chemical-cs?tab=entry"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "fill": "USD-2-BDT",
+  "sel": "main label:has(> span:text-matches(\"^USD-2-BDT\\\\*?$\")) input >> nth=0",
+  "text": "122"
+ },
+ {
+  "fill": "Mou Code",
+  "sel": "main label:has(> span:text-matches(\"^Mou Code\\\\*?$\")) input >> nth=0",
+  "text": "MOU-26"
+ },
+ {
+  "pick": "Supplier",
+  "sel": "main label:has(> span:text-matches(\"^Supplier\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Square Textiles"
+ },
+ {
+  "click": "main button:has-text('Add Supplier')",
+  "after": 600
+ },
+ {
+  "pick": "Supplier",
+  "sel": "main label:has(> span:text-matches(\"^Supplier\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "Coats Bangladesh"
+ },
+ {
+  "click": "main button:has-text('Add Supplier')",
+  "after": 600
+ },
+ {
+  "pick": "Item",
+  "sel": "main label:has(> span:text-matches(\"^Item\\\\*?$\")) [data-slot=select-trigger] >> nth=0",
+  "option": "CAUSTIC"
+ },
+ {
+  "fill": "Qty",
+  "sel": "main label:has(> span:text-matches(\"^Qty\\\\*?$\")) input >> nth=0",
+  "text": "1000"
+ },
+ {
+  "click": "main button:has-text('Add Item')",
+  "after": 800
+ },
+ {
+  "fill": "r1",
+  "sel": "main tbody tr >> nth=0 >> td >> nth=3 >> input",
+  "text": "96"
+ },
+ {
+  "fill": "r2",
+  "sel": "main tbody tr >> nth=0 >> td >> nth=4 >> input",
+  "text": "93.5"
+ },
+ {
+  "pick": "chosen",
+  "sel": "main tbody tr >> nth=0 >> td >> nth=5 >> [data-slot=select-trigger]",
+  "option": "Coats"
+ },
+ {
+  "shot": "cs-cs-filled"
+ },
+ {
+  "click": "main button:has-text('Save statement')",
+  "after": 15000
+ },
+ {
+  "goto": "/dye-house/chemical-cs"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "click": "main tbody tr >> nth=0 >> button:has-text('Submit')",
+  "after": 1500
+ },
+ {
+  "click": "[role=alertdialog] button:has-text('Submit')",
+  "after": 15000
+ },
+ {
+  "texts": "cs_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "goto": "/dye-house/month-closing?tab=new"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "fill": "Period",
+  "exact": true,
+  "text": "Nov/2026"
+ },
+ {
+  "click": "main button[type=submit] >> nth=-1",
+  "after": 12000
+ },
+ {
+  "texts": "close_err",
+  "of": "main [role=alert], main .text-danger, [data-slot=toast-title]"
+ },
+ {
+  "shot": "cs-close-refused"
+ },
+ {
+  "goto": "/dye-house/month-closing"
+ },
+ {
+  "wait": 6000
+ },
+ {
+  "texts": "close_rows",
+  "of": "main tbody tr"
+ }
+]

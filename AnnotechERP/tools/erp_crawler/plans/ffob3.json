@@ -1,0 +1,119 @@
+[
+ {
+  "goto": "/m/merchandising/finish-fabric-opening-balance"
+ },
+ {
+  "click": "button:has-text('Opening Balance Entry')",
+  "wait": 2500
+ },
+ {
+  "fillsel": "div:has(> label:has-text('Fab Description')) input",
+  "text": "Probe fabric"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('Fab Item')) input",
+  "text": "Probe item"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('Fab Color')) input",
+  "text": "Navy"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('FIN. GSM')) input",
+  "text": "180"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('FIN. DIA')) input",
+  "text": "60"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('Batch No')) input",
+  "text": "B-1"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('No Of Roll')) input",
+  "text": "2"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('OB QTY')) input",
+  "text": "50"
+ },
+ {
+  "fillsel": "div:has(> label:has-text('OB COST')) input",
+  "text": "10"
+ },
+ {
+  "click": "button:has-text('Add Row')",
+  "wait": 1500
+ },
+ {
+  "texts": "m1",
+  "of": "main [role=alert], main p.text-danger, main p"
+ },
+ {
+  "peek": "div:has(> label:has-text('Fab Type')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option]:has-text('Fleece') >> nth=0",
+  "wait": 600
+ },
+ {
+  "click": "button:has-text('Add Row')",
+  "wait": 1500
+ },
+ {
+  "choose": "div:has(> label:has-text('Fabric Group')) select",
+  "label": "Body"
+ },
+ {
+  "texts": "m2",
+  "of": "main [role=alert], main p"
+ },
+ {
+  "peek": "div:has(> label:has-text('Fab Composition')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option]:has-text('100% Cotton') >> nth=0",
+  "wait": 600
+ },
+ {
+  "click": "button:has-text('Add Row')",
+  "wait": 1500
+ },
+ {
+  "texts": "m3",
+  "of": "main [role=alert], main p"
+ },
+ {
+  "texts": "grid_head",
+  "of": "main table thead th"
+ },
+ {
+  "texts": "grid_row",
+  "of": "main table tbody tr"
+ },
+ {
+  "fullshot": "ffob-grid"
+ },
+ {
+  "peek": "div:has(> label:has-text('Receiving Store')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option]:has-text('Finished Fabric Store') >> nth=0",
+  "wait": 600
+ },
+ {
+  "click": "button:has-text('Save opening balance')",
+  "wait": 2500
+ },
+ {
+  "texts": "save_msgs",
+  "of": "main [role=alert], main p"
+ },
+ {
+  "fullshot": "ffob-save"
+ }
+]

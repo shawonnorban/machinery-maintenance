@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/sample/sample-requisition" },
+ { "wait": 3500 },
+ { "click": "main button:has-text('Material Issue') >> nth=0", "wait": 3000 },
+ { "choose": "main select >> nth=1", "index": 1 },
+ { "wait": 2500 },
+ { "fillsel": "main input[name=issueDate]", "text": "2026-10-22" },
+ { "type": "main input[name=receivedBy]", "text": "Sample Room" },
+ { "click": "main button:has-text('Add Line')", "wait": 1500 },
+ { "choose": "main table tbody tr >> nth=0 >> select >> nth=0", "index": 1 },
+ { "type": "main table tbody tr >> nth=0 >> input >> nth=0", "text": "10" },
+ { "click": "main button:has-text('Save material issue')", "wait": 5000 },
+ { "texts": "over", "of": "main p, [role=alert], li[role=status], ol li" },
+ { "fullshot": "proto17-over" },
+ { "type": "main table tbody tr >> nth=0 >> input >> nth=0", "text": "5" },
+ { "click": "main button:has-text('Save material issue')", "wait": 5000 },
+ { "texts": "saved", "of": "main label, main button, main input[disabled], main td, main p, main select >> nth=0 >> option" },
+ { "fullshot": "proto17-saved" },
+ { "click": "main button:has-text('Records') >> nth=0", "wait": 3000 },
+ { "texts": "list", "of": "main td" }
+]

@@ -1,0 +1,112 @@
+[
+ {
+  "goto": "/m/merchandising/style-registration"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main [role=tab]:has-text('Registration') >> nth=0",
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr:first-child button:has-text('Open'), main table tbody tr:first-child a:has-text('Open')",
+  "wait": 3500
+ },
+ {
+  "click": "[role=dialog] button:has-text('1. Style Profile'), [role=dialog] li:has-text('1. Style Profile')",
+  "wait": 2500
+ },
+ {
+  "texts": "t0",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d0",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('2. Garment Items'), [role=dialog] li:has-text('2. Garment Items')",
+  "wait": 2500
+ },
+ {
+  "texts": "t1",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d1",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('3. Fabric'), [role=dialog] li:has-text('3. Fabric')",
+  "wait": 2500
+ },
+ {
+  "texts": "t2",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d2",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('4. Colour'), [role=dialog] li:has-text('4. Colour')",
+  "wait": 2500
+ },
+ {
+  "texts": "t3",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d3",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('5. Process & Services'), [role=dialog] li:has-text('5. Process & Services')",
+  "wait": 2500
+ },
+ {
+  "texts": "t4",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d4",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('6. Material / BOM'), [role=dialog] li:has-text('6. Material / BOM')",
+  "wait": 2500
+ },
+ {
+  "texts": "t5",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d5",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('7. Development & Documents'), [role=dialog] li:has-text('7. Development & Documents')",
+  "wait": 2500
+ },
+ {
+  "texts": "t6",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d6",
+  "root": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button:has-text('8. Review & Submit'), [role=dialog] li:has-text('8. Review & Submit')",
+  "wait": 2500
+ },
+ {
+  "texts": "t7",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "d7",
+  "root": "[role=dialog]"
+ }
+]

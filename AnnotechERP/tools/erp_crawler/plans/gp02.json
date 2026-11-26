@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/gate-pass/gp-locations" }, { "wait": 5000 },
+ { "click": "main button:has-text('New')", "wait": 2000 },
+ { "html": "loc_dialog", "of": "[role=dialog] input, [role=dialog] select, [role=dialog] button, [role=dialog] textarea" },
+ { "escape": true },
+ { "goto": "/m/gate-pass/gp-items" }, { "wait": 5000 },
+ { "click": "main button:has-text('New')", "wait": 2000 },
+ { "html": "item_dialog", "of": "[role=dialog] input, [role=dialog] select, [role=dialog] button" }
+]

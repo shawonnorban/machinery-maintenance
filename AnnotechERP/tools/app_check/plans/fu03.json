@@ -1,0 +1,21 @@
+[
+ {"goto": "/fabric-requirement/dyeing-machine-capacity-dashboard?tab=machines&group=2026-10-24"},
+ {"wait": 3000},
+ {"texts": "cap_week", "of": "main tbody tr"},
+ {"shot": "cap-week"},
+ {"goto": "/fabric-requirement/batch-scheduling?tab=board&group=SP-00001"},
+ {"wait": 3000},
+ {"texts": "sb_groups", "of": "main ul li"},
+ {"html": "sb_machine", "of": "main tbody select"},
+ {"shot": "sb-board"},
+ {"goto": "/fabric-requirement/factory-holiday-model?tab=sections&group=DYE"},
+ {"wait": 3000},
+ {"texts": "hol_group", "of": "main ul li:has-text('Dyeing')"},
+ {"texts": "hol_days", "of": "main tbody tr"},
+ {"goto": "/fabric-requirement/batch-planning?tab=planning&bp=BP-00001"},
+ {"wait": 3000},
+ {"shot": "bp-open"},
+ {"goto": "/fabric-requirement/planning-constraints-rules?tab=areas&group=2"},
+ {"wait": 2000},
+ {"texts": "groups", "of": "main ul li"}
+]

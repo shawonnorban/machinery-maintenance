@@ -1,0 +1,64 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('Fabrication')",
+  "wait": 2000
+ },
+ {
+  "type": "input[placeholder='Search\u2026'] >> nth=0",
+  "text": ""
+ },
+ {
+  "click": "text=HOODIE >> nth=-1",
+  "wait": 800
+ },
+ {
+  "choose": "select:has(option:text-is('--Fibre Content--'))",
+  "label": "100% Cotton"
+ },
+ {
+  "choose": "select:has(option:text-is('--Spin Finish--'))",
+  "label": "Combed"
+ },
+ {
+  "choose": "select:has(option:text-is('--Fabric Type--'))",
+  "label": "Single Jersey"
+ },
+ {
+  "fillsel": "input[type=number] >> nth=0",
+  "text": "180"
+ },
+ {
+  "click": "[data-panel] button:has-text('Add') >> nth=-1",
+  "wait": 2000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "f_before",
+  "root": "[data-panel]"
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "f_added",
+  "root": "[data-panel]"
+ },
+ {
+  "click": "[data-panel] button:text-is('Save') >> nth=-1",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)",
+  "dump": "f_saved",
+  "root": "[data-panel]"
+ }
+]

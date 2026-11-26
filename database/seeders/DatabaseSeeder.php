@@ -9,6 +9,8 @@ use App\Modules\Asset\Database\Seeders\AssetTaxonomySeeder;
 use App\Modules\Breakdown\Database\Seeders\FailureTaxonomySeeder;
 use App\Modules\Costing\Database\Seeders\CostCategorySeeder;
 use App\Modules\Finance\Database\Seeders\PaymentTypeSeeder;
+use App\Modules\Identity\Database\Seeders\LookupSeeder;
+use App\Modules\Identity\Database\Seeders\MenuSeeder;
 use App\Modules\Identity\Database\Seeders\PermissionSeeder;
 use App\Modules\Identity\Database\Seeders\RoleSeeder;
 use App\Modules\Inventory\Database\Seeders\SparePartCategorySeeder;
@@ -35,6 +37,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RoleSeeder::class,
+            MenuSeeder::class,
+            LookupSeeder::class,
             SettingDefinitionSeeder::class,
             AssetTaxonomySeeder::class,
             // After the taxonomy: every model hangs off a manufacturer and an

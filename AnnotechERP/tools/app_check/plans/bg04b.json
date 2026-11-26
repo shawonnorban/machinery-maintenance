@@ -1,0 +1,11 @@
+[
+ {"goto": "/buyer-gateway/support-tickets"},
+ {"wait": 15000},
+ {"shot": "t4-tiles"},
+ {"goto": "/buyer-gateway/feedback-survey"},
+ {"wait": 12000},
+ {"click": "main tbody tr:has-text(\"Winter 26\") button:has-text(\"Edit\")", "after": 2000},
+ {"fill": "Recipients", "exact": true, "text": "10"},
+ {"click": "[role=dialog] button[type=submit]", "after": 8000},
+ {"shot": "f3-recipients"}
+]

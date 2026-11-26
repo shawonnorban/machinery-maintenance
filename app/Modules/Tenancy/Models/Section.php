@@ -13,5 +13,5 @@ class Section extends BaseModel
 
     protected $table = 'sections';
 
-    protected $fillable = ['company_id', 'department_id', 'name', 'code'];
+    protected $fillable = ['company_id', 'department_id', 'floor_id', 'name', 'code', 'status'];
 }

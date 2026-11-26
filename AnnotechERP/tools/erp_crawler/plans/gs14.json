@@ -1,0 +1,142 @@
+[
+ {
+  "goto": "/m/general-store/gs-rpt-stock"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "stock",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-receive"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "receive",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-issue"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "issue",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-return"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "return",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-adjustment"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "adjustment",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-transfer"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "transfer",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-department"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "department",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-consumption"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "consumption",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-category"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "category",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-valuation"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "valuation",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-low-stock"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "low-stock",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-monthly"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "monthly",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-history"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "texts": "history",
+  "of": "main thead th"
+ },
+ {
+  "goto": "/m/general-store/gs-rpt-receive"
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "html": "receive_filters",
+  "of": "main form, main [class*=grid] label"
+ }
+]

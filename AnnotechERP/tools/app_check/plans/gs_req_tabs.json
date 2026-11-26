@@ -1,0 +1,5 @@
+[
+ {"goto": "/general-store/gs-req-new"}, {"wait": 15000}, {"shot": "r01-new-tab"},
+ {"click": "button[role=tab]:has-text('My Requisitions')", "after": 2000}, {"shot": "r02-mine-tab"},
+ {"see": "REQ-2026-000001", "as": "list_shows_requisitions"}
+]

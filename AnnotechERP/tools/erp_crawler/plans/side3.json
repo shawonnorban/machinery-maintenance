@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/merchandising/order-register" },
+ { "wait": 3000 },
+ { "click": "header button >> nth=3", "wait": 1500 },
+ { "click": "aside button:has-text('OPERATION')", "wait": 1200 },
+ { "click": "aside button:has-text('Style & Order')", "wait": 1200 },
+ { "click": "aside button:has-text('TRIMS & ACCESSORIES')", "wait": 1200 },
+ { "fullshot": "side-light" },
+ { "html": "leaf", "of": "aside a:has-text('Order Register')" },
+ { "html": "leaf2", "of": "aside a:has-text('Accessories Supplier Return Challan')" },
+ { "html": "op_btn", "of": "aside button:has-text('OPERATION')" }
+]

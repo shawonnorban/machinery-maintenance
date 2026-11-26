@@ -28,8 +28,8 @@ class AttemptLogin
 
     private const ACCOUNT_DECAY_SECONDS = 60;
 
-    /** Per-IP limit, higher because a factory shares one outbound address. */
-    private const IP_ATTEMPTS = 20;
+    /** Per-IP limit of WRONG passwords, higher because a factory shares one outbound address (raised 2026-11-26). */
+    private const IP_ATTEMPTS = 100;
 
     private const IP_DECAY_SECONDS = 60;
 
@@ -50,7 +50,8 @@ class AttemptLogin
 
         $this->ensureNotRateLimited($email, $ip);
 
-        $user = User::where('email', $email)->first();
+        // The email, or Brickland's User ID (AnnotechERP 02/01).
+        $user = User::where('email', $email)->orWhere('username', $email)->first();
 
         if ($user === null || ! Auth::getProvider()->validateCredentials($user, ['password' => $password])) {
             $this->recordFailure($email, $user?->id, $ip, $user === null ? 'UNKNOWN_EMAIL' : 'BAD_PASSWORD');

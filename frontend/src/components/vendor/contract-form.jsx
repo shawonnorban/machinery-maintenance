@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -35,7 +37,8 @@ function ContractForm({ vendors, assets, factories, action }) {
 
   return (
     <form action={dispatch} className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <FormSection>
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("vendor")} required error={state?.errors?.vendor_id?.[0]}>
           {(fieldProps) => <Select {...fieldProps} name="vendor_id" options={vendors.map((v) => ({ value: v.id, label: v.name }))} />}
         </FormField>
@@ -83,7 +86,7 @@ function ContractForm({ vendors, assets, factories, action }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("start_date")} required error={state?.errors?.start_date?.[0]}>
           {(fieldProps) => <Input {...fieldProps} type="date" name="start_date" required />}
         </FormField>
@@ -95,7 +98,7 @@ function ContractForm({ vendors, assets, factories, action }) {
         </FormField>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("value")}>
           {(fieldProps) => <Input {...fieldProps} type="number" step="0.01" min="0" name="value" />}
         </FormField>
@@ -112,15 +115,16 @@ function ContractForm({ vendors, assets, factories, action }) {
       </FormField>
 
       {state?.status === "error" && !state.errors ? <p className="text-sm text-danger">{state.message}</p> : null}
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {tc("save")}
+          <Save /> {tc("save")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

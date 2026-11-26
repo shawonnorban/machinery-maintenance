@@ -1,0 +1,8 @@
+[
+ {"goto": "/m/production-tracking/daily-plan"}, {"wait": 5000},
+ {"clickSel": "main button:has-text('New Plan')"}, {"wait": 3000}, {"shot": "pt_new_plan"}, {"escape": true},
+ {"goto": "/m/production-tracking/production-data"}, {"wait": 5000},
+ {"clickSel": "main button:has-text('Add Sewing')"}, {"wait": 3000}, {"shot": "pt_add_sewing"}, {"escape": true},
+ {"goto": "/m/production-tracking/production-data"}, {"wait": 5000},
+ {"clickSel": "main button:has-text('Add Finishing')"}, {"wait": 3000}, {"shot": "pt_add_finishing"}, {"escape": true}
+]

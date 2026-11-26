@@ -35,13 +35,28 @@ class User extends Authenticatable
 
     protected $keyType = 'string';
 
+    /**
+     * Brickland's account states (AnnotechERP 02/01). The first three may sign
+     * in; READ_ONLY only ever holds View permissions (ApiCaller); the rest are
+     * shut out until an administrator changes them.
+     */
+    public const STATUSES = ['ACTIVE', 'READ_ONLY', 'PASSWORD_EXPIRING', 'DORMANT', 'LOCKED', 'SEPARATED'];
+
+    public const SIGN_IN_STATUSES = ['ACTIVE', 'READ_ONLY', 'PASSWORD_EXPIRING'];
+
+    public const USER_TYPES = ['INTERNAL', 'EXTERNAL', 'GUEST'];
+
+    public const TWO_FACTOR_METHODS = ['DISABLED', 'AUTHENTICATOR', 'SMS_OTP', 'EMAIL_OTP'];
+
     protected $fillable = [
         'name', 'email', 'phone', 'password', 'status',
         'timezone', 'locale', 'is_platform_admin',
         'department_id', 'production_line_id',
+        'username', 'user_type', 'employee_code', 'account_expires_at', 'must_change_password', 'cannot_change_password',
+        'password_never_expires', 'two_factor_method', 'memorable_word', 'justification',
     ];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'memorable_word'];
 
     protected function casts(): array
     {
@@ -50,6 +65,11 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'password' => 'hashed',
             'is_platform_admin' => 'boolean',
+            'account_expires_at' => 'datetime',
+            'must_change_password' => 'boolean',
+            'cannot_change_password' => 'boolean',
+            'password_never_expires' => 'boolean',
+            'memorable_word' => 'hashed',
         ];
     }
 
@@ -87,9 +107,26 @@ class User extends Authenticatable
         return $this->hasOne(Technician::class);
     }
 
+    /**
+     * May this account sign in at all: a status that allows it, and an
+     * account expiry date not yet passed.
+     */
     public function isActive(): bool
     {
-        return $this->status === 'ACTIVE';
+        return in_array($this->status, self::SIGN_IN_STATUSES, true)
+            && ($this->account_expires_at === null || $this->account_expires_at->isFuture());
+    }
+
+    /** READ_ONLY: signed in, but nothing beyond View (enforced in ApiCaller). */
+    public function isReadOnly(): bool
+    {
+        return $this->status === 'READ_ONLY';
+    }
+
+    /** Must the next screen be the password change (forced, or expiring)? */
+    public function mustChangePassword(): bool
+    {
+        return $this->must_change_password || $this->status === 'PASSWORD_EXPIRING';
     }
 
     /**

@@ -1,0 +1,17 @@
+[
+ {"goto": "/m/ie/man-minutes-adjustment"},
+ {"click": "main button[role=tab]:has-text('Man Minutes Adjustment')", "wait": 2500},
+ {"choose": "main select[name=floorId]", "label": "SWEING — BCL"},
+ {"wait": 3000},
+ {"html": "mm_line_sel", "of": "main select[name=lineId]"},
+ {"type": "main input[name=adjustDate]", "text": "2026-10-25"},
+ {"wait": 3000},
+ {"html": "mm_line_sel2", "of": "main select[name=lineId]"},
+ {"choose": "main select[name=lineId]", "index": 1},
+ {"click": "main button:has-text('Refresh')", "wait": 6000},
+ {"fullshot": "mm-refresh"},
+ {"dump": "mm_refresh", "root": "main"},
+ {"html": "mm_rows", "of": "main table tbody tr"},
+ {"html": "mm_head", "of": "main table thead"},
+ {"texts": "mm_p2", "of": "main p"}
+]

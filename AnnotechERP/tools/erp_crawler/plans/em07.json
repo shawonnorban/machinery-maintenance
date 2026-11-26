@@ -1,0 +1,14 @@
+[
+ { "goto": "/m/hr-payroll/employee-transfer" }, { "wait": 8000 }, { "shot": "t1_records" },
+ { "peek": "main button:has-text('New transfer')" }, { "wait": 1500 }, { "shot": "t2_new" },
+ { "goto": "/m/hr-payroll/employee-promotion" }, { "wait": 8000 }, { "shot": "p1_initial" },
+ { "fill": "main input[placeholder='Code, name, card or NID']", "value": "50000554" },
+ { "clickSel": "main button[aria-label='Search employees']" }, { "wait": 4000 }, { "shot": "p2_search" },
+ { "peek": "main ul li button" }, { "wait": 1500 }, { "shot": "p3_picked" },
+ { "goto": "/m/hr-payroll/employee-increment" }, { "wait": 8000 }, { "shot": "i1_initial" },
+ { "fill": "main input[placeholder='Code, name, card or NID']", "value": "50000554" },
+ { "clickSel": "main button[aria-label='Search employees']" }, { "wait": 4000 },
+ { "peek": "main ul li button" }, { "wait": 1500 }, { "shot": "i2_picked" },
+ { "goto": "/m/hr-payroll/employee-re-join" }, { "wait": 8000 }, { "shot": "r1_records" },
+ { "peek": "main button:has-text('New re-join')" }, { "wait": 1500 }, { "shot": "r2_new" }
+]

@@ -1,0 +1,131 @@
+[
+{
+"goto": "/trade-export/import-lc-pi"
+},
+{
+"wait": 18000
+},
+{
+"click": "main button:has-text('Add New')",
+"after": 2500
+},
+{
+"pick": "Supplier",
+"exact": true,
+"option": "KOYO TRIMS"
+},
+{
+"wait": 8000
+},
+{
+"click": "main button:has-text('PO-ACC-2026100001')",
+"after": 8000
+},
+{
+"fill": "PI No",
+"exact": true,
+"text": "KOYO-PI-2201"
+},
+{
+"fill": "PI Amount",
+"exact": true,
+"text": "13878"
+},
+{
+"shot": "before-save"
+},
+{
+"click": "main button:has-text('Save')",
+"after": 3000
+},
+{
+"shot": "s0"
+},
+{
+"texts": "t0",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s1"
+},
+{
+"texts": "t1",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s2"
+},
+{
+"texts": "t2",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s3"
+},
+{
+"texts": "t3",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s4"
+},
+{
+"texts": "t4",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s5"
+},
+{
+"texts": "t5",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s6"
+},
+{
+"texts": "t6",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s7"
+},
+{
+"texts": "t7",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+},
+{
+"shot": "s8"
+},
+{
+"texts": "t8",
+"of": "body [data-state], body [role=region] li, body [role=status], body [aria-live]"
+},
+{
+"wait": 1500
+}
+]

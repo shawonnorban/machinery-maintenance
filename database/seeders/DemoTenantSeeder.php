@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Modules\Inventory\Support\SparePartCategories;
 use App\Modules\Approval\Models\ApprovalRule;
 use App\Modules\Approval\Models\ApprovalWorkflow;
 use App\Modules\Asset\Actions\ChangeAssetStatus;
@@ -24,11 +25,8 @@ use App\Modules\Breakdown\Actions\TransitionBreakdown;
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\FailureCode;
 use App\Modules\Breakdown\Models\RootCause;
-use App\Modules\Calendar\Models\FactoryCalendar;
-use App\Modules\Calendar\Models\FactoryHoliday;
-use App\Modules\Calendar\Models\Shift;
-use App\Modules\Calendar\Models\ShiftBreak;
 use App\Modules\Costing\Models\CostCategory;
+use App\Modules\HrPayroll\Support\FactoryCalendarSetup;
 use App\Modules\Costing\Models\CostEntry;
 use App\Modules\Costing\Services\CostPoster;
 use App\Modules\Identity\Models\CompanyUser;
@@ -487,41 +485,21 @@ class DemoTenantSeeder extends Seeder
     }
 
     /**
-     * One 08:00-22:00 shift, Saturday to Thursday, Friday off, with an unpaid
-     * lunch hour. This is the pattern the ADR-048 overnight case assumes.
+     * One 08:00-22:00 shift with an unpaid lunch hour, Saturday to Thursday
+     * (Friday off — the default working week), on HR & Payroll's calendar.
+     * This is the pattern the ADR-048 overnight case assumes.
      */
     private function calendar(Company $company, Factory $factory): void
     {
-        FactoryCalendar::updateOrCreate(
-            ['company_id' => $company->id, 'factory_id' => $factory->id, 'effective_from' => '2026-01-01'],
-            ['operating_mode' => 'SHIFT_BASED', 'weekly_off_days' => [5]],
-        );
-
-        $shift = Shift::updateOrCreate(
-            ['company_id' => $company->id, 'factory_id' => $factory->id, 'code' => 'DAY', 'effective_from' => '2026-01-01'],
-            [
-                'name' => 'Day shift',
-                'start_time' => '08:00:00',
-                'end_time' => '22:00:00',
-                'days_of_week' => [1, 2, 3, 4, 6, 7],
-                'status' => 'ACTIVE',
-            ],
-        );
-
-        ShiftBreak::updateOrCreate(
-            ['company_id' => $company->id, 'shift_id' => $shift->id, 'name' => 'Lunch break'],
-            ['start_time' => '13:00:00', 'end_time' => '14:00:00', 'counts_as_operating_time' => false],
-        );
+        FactoryCalendarSetup::factory($company->id, $factory->id, 'SHIFT_BASED');
+        FactoryCalendarSetup::shift($company->id, 'DAY', 'Day shift', '08:00', '22:00', 60);
 
         foreach ([
             '2026-02-21' => 'Language Martyrs Day',
             '2026-03-26' => 'Independence Day',
             '2026-12-16' => 'Victory Day',
         ] as $date => $name) {
-            FactoryHoliday::updateOrCreate(
-                ['company_id' => $company->id, 'factory_id' => $factory->id, 'date' => $date],
-                ['name' => $name, 'is_working_day' => false],
-            );
+            FactoryCalendarSetup::holiday($company->id, $date, $name);
         }
     }
 
@@ -1303,7 +1281,8 @@ class DemoTenantSeeder extends Seeder
             );
         }
 
-        $categories = SparePartCategory::whereNull('company_id')->get()->keyBy('code');
+        SparePartCategories::ensure($company->id);
+        $categories = SparePartCategory::query()->where('company_id', $company->id)->get()->keyBy('code');
         $receive = app(ReceiveStock::class);
 
         // Part number, name, category, unit, reorder level, critical, bin, qty, cost.

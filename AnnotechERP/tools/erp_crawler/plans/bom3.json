@@ -1,0 +1,88 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "click": "button:text-is('BOM')",
+  "wait": 3000
+ },
+ {
+  "mark": "Item/Combo/Model (Fresh)"
+ },
+ {
+  "texts": "a0",
+  "of": "[data-panel] table tbody tr:first-child td:nth-child(14)"
+ },
+ {
+  "type": "[data-panel] table tbody tr:first-child td:nth-child(3) input",
+  "text": "2"
+ },
+ {
+  "texts": "a_cons2",
+  "of": "[data-panel] table tbody tr:first-child td:nth-child(14)"
+ },
+ {
+  "type": "[data-panel] table tbody tr:first-child td:nth-child(5) input",
+  "text": "12"
+ },
+ {
+  "texts": "a_gmt12",
+  "of": "[data-panel] table tbody tr:first-child td:nth-child(14)"
+ },
+ {
+  "type": "[data-panel] table tbody tr:first-child td:nth-child(7) input",
+  "text": "4"
+ },
+ {
+  "texts": "a_conv4",
+  "of": "[data-panel] table tbody tr:first-child td:nth-child(14)"
+ },
+ {
+  "type": "[data-panel] table tbody tr:first-child td:nth-child(13) input",
+  "text": "10"
+ },
+ {
+  "texts": "a_allow10",
+  "of": "[data-panel] table tbody tr:first-child td:nth-child(14)"
+ },
+ {
+  "click": "[data-panel] table tbody tr:first-child td:nth-child(8) input",
+  "wait": 800
+ },
+ {
+  "texts": "a_addi",
+  "of": "[data-panel] table tbody tr:first-child td:nth-child(14)"
+ },
+ {
+  "type": "[data-panel] input >> nth=-1",
+  "text": "5"
+ },
+ {
+  "texts": "a_footer_addl",
+  "of": "[data-panel] table tbody tr:first-child td:nth-child(14)"
+ },
+ {
+  "texts": "footer",
+  "of": "[data-panel] > div:last-child"
+ },
+ {
+  "click": "[data-panel] button:has-text('Print BOM') >> nth=-1",
+  "wait": 3000
+ },
+ {
+  "texts": "print",
+  "of": "body"
+ },
+ {
+  "dump": "print",
+  "root": "body"
+ }
+]

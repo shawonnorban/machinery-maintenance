@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { LifeBuoy, LogIn } from "lucide-react";
+import { PanelHead } from "@/components/platform/ui";
 import { Card, CardHeader, CardTitle, CardBody, CardFooter } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
@@ -29,9 +30,7 @@ function SupportPanel({ grants, members, openAction, closeAction, enterAction })
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Support access</CardTitle>
-      </CardHeader>
+      <PanelHead title="Support access" subtitle="Audited, time-boxed access to this customer's data, never standing access" icon={LifeBuoy} />
       <CardBody className="flex flex-col gap-3 p-0">
         {grants.length === 0 ? (
           <p className="p-5 text-sm text-foreground-muted">No support access has been opened for this customer.</p>

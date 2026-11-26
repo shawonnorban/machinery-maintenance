@@ -1,0 +1,256 @@
+[
+ {
+  "goto": "/m/ie/style-feeding-sco"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New style change-over')",
+  "wait": 2500
+ },
+ {
+  "html": "sco_form",
+  "of": "main form"
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1200
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "[role=option]:has-text('LN-001')",
+  "wait": 600
+ },
+ {
+  "type": "main input[name=changeoverDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "choose": "main select[name=newBuyerId]",
+  "index": 1
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "peek": "main div:has(> label:has-text('New W.Style')) button",
+  "wait": 1200
+ },
+ {
+  "popup": "sco_styles"
+ },
+ {
+  "click": "[role=option] >> nth=1",
+  "wait": 800
+ },
+ {
+  "html": "sco_gmt",
+  "of": "main input[name=newGmtItem]"
+ },
+ {
+  "choose": "main select[name=prevBuyerId]",
+  "index": 1
+ },
+ {
+  "wait": 1500
+ },
+ {
+  "peek": "main div:has(> label:has-text('Previous W.Style')) button",
+  "wait": 1200
+ },
+ {
+  "click": "[role=option] >> nth=2",
+  "wait": 800
+ },
+ {
+  "type": "main input[name=prevOutputOn]",
+  "text": "2026-10-24"
+ },
+ {
+  "type": "main input[name=scoMinutes]",
+  "text": "45"
+ },
+ {
+  "type": "main input[name=feedingTime]",
+  "text": "2"
+ },
+ {
+  "type": "main textarea[name=remarks]",
+  "text": "Annotech probe change-over"
+ },
+ {
+  "fullshot": "sco-new-filled"
+ },
+ {
+  "click": "main button:has-text('Save style change-over')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "sco-saved"
+ },
+ {
+  "goto": "/m/ie/style-feeding-sco"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "sco_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Style Changeover Dashboard')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=fromDate]",
+  "text": "2026-10-01"
+ },
+ {
+  "type": "main input[name=toDate]",
+  "text": "2026-10-31"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 4000
+ },
+ {
+  "fullshot": "sco-dash"
+ },
+ {
+  "dump": "sco_dash",
+  "root": "main"
+ },
+ {
+  "texts": "sco_notes",
+  "of": "main p"
+ },
+ {
+  "goto": "/m/ie/gmt-target-setting"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Sewing Target Setting')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=targetDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "html": "sts_head",
+  "of": "main table thead th"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "popup": "pe_lines"
+ },
+ {
+  "click": "[role=option]:has-text('LN-001')",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-pe"
+ },
+ {
+  "dump": "gt_pe",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Plans')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "[role=option]:has-text('LN-001')",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-pp"
+ },
+ {
+  "dump": "gt_pp",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('NPT Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=nptDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "[role=option]:has-text('LN-001')",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-npt"
+ },
+ {
+  "dump": "gt_npt",
+  "root": "main"
+ }
+]

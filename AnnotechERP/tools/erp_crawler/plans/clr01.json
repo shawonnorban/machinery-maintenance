@@ -1,0 +1,10 @@
+[
+ {"goto": "/m/dyeing-lab/dyeing-lab-reports"},
+ {"fullshot": "rep"},
+ {"html": "params", "of": "main select, main input, main button"},
+ {"texts": "ptexts", "of": "main p, main h1, main h2, main label"},
+ {"netclick": "main button:has-text('Preview')", "as": "net", "wait": 8000},
+ {"fullshot": "rep-after"},
+ {"texts": "after", "of": "main"},
+ {"texts": "heads", "of": "main thead th"}
+]

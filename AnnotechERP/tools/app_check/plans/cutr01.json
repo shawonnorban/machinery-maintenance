@@ -1,0 +1,92 @@
+[
+ {
+  "goto": "/cutting-floor/bundle-report"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "bundle_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "bundle_total",
+  "of": "main p.text-right"
+ },
+ {
+  "shot": "bundle"
+ },
+ {
+  "goto": "/cutting-floor/po-wise-bundle-report"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "po_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "po_total",
+  "of": "main p.text-right"
+ },
+ {
+  "shot": "po"
+ },
+ {
+  "goto": "/cutting-floor/style-wise-bundle-report"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "style_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "style_total",
+  "of": "main p.text-right"
+ },
+ {
+  "shot": "style"
+ },
+ {
+  "goto": "/cutting-floor/size-wise-bundle-report"
+ },
+ {
+  "wait": 12000
+ },
+ {
+  "texts": "size_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "size_total",
+  "of": "main p.text-right"
+ },
+ {
+  "shot": "size"
+ },
+ {
+  "goto": "/cutting-floor/bundle-report"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "choose": "main select[aria-label='Status']",
+  "option": "Printed"
+ },
+ {
+  "click": "main button:has-text('Show')",
+  "after": 8000
+ },
+ {
+  "texts": "printed_rows",
+  "of": "main tbody tr"
+ },
+ {
+  "texts": "printed_total",
+  "of": "main p.text-right"
+ }
+]

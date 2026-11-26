@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00006') >> nth=0", "wait": 2500 },
+ { "click": "main a:has-text('Edit draft'), main button:has-text('Edit draft')", "wait": 4000 },
+ { "url": "edit_url" },
+ { "texts": "edit_form", "of": "main h2, main h3, main p, main label, main button" },
+ { "dump": "edit_dump", "root": "main" },
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00006') >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Delete draft')", "wait": 2000 },
+ { "texts": "delete_dialog", "of": "[role=dialog] *, [role=alertdialog] *" },
+ { "escape": true },
+ { "click": "main button:has-text('Submit to all suppliers')", "wait": 2000 },
+ { "texts": "submit_dialog", "of": "[role=dialog] *, [role=alertdialog] *" },
+ { "fullshot": "mp7-submit-dialog" },
+ 
+ { "texts": "after_submit", "of": "main h3, main p, main th, main td, main button, main span, li[data-sonner-toast]" },
+ { "fullshot": "mp7-after-submit" }
+]

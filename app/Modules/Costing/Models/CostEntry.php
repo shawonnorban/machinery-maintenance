@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Costing\Models;
 
+use App\Modules\Accounting\Services\LedgerPoster;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\WorkOrder\Models\WorkOrder;
@@ -46,6 +47,31 @@ class CostEntry extends BaseModel
         'vendor_id', 'invoice_reference', 'posted_at', 'posted_by',
         'reverses_cost_entry_id', 'is_reversal',
     ];
+
+    /**
+     * Every posted cost reaches Finance & Ledger as a draft voucher through
+     * Ledger Integration Setup (the user's decision of 2026-11-15); a changed
+     * or removed cost posts its difference. A ledger that cannot take it never
+     * stops the cost itself from being recorded.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (self $entry): void {
+            if ($entry->wasRecentlyCreated || $entry->wasChanged(['base_amount', 'amount'])) {
+                self::toLedger($entry, false);
+            }
+        });
+        static::deleted(fn (self $entry) => self::toLedger($entry, true));
+    }
+
+    private static function toLedger(self $entry, bool $gone): void
+    {
+        try {
+            app(LedgerPoster::class)->syncCostEntry($entry, $gone);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+    }
 
     protected function casts(): array
     {

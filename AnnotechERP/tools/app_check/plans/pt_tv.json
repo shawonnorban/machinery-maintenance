@@ -1,0 +1,57 @@
+[
+ {
+  "goto": "/production-tracking/tv-dashboard"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "click": "section:has-text('Sewing Floor 1 \u2014 TV A') >> role=button[name='Preview']",
+  "after": 15000
+ },
+ {
+  "shot": "tv-preview"
+ },
+ {
+  "press": "Escape"
+ },
+ {
+  "wait": 800
+ },
+ {
+  "click": "role=button[name='New TV screen']",
+  "after": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] input >> nth=0",
+  "text": "Sewing Floor 1 \u2014 TV B"
+ },
+ {
+  "click": "[role=dialog] >> text=LINE01",
+  "after": 300
+ },
+ {
+  "click": "[role=dialog] >> text=LINE02",
+  "after": 300
+ },
+ {
+  "choose": "[role=dialog] select",
+  "option": "2 columns"
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Save screen']",
+  "after": 20000
+ },
+ {
+  "click": "section:has-text('TV B') >> role=button[name='Issue link']",
+  "after": 20000
+ },
+ {
+  "texts": "tvurl",
+  "of": "[role=dialog] .font-mono"
+ },
+ {
+  "shot": "tv-b-link"
+ }
+]

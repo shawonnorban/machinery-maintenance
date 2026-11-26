@@ -1,0 +1,6 @@
+[
+ {"goto": "/knit-production/roll-production-manual?tab=entry"},
+ {"pick": "Job Card No", "exact": true, "option": "KC-2026100001"},
+ {"click": "main button:has-text('Add Roll')", "after": 600},
+ {"html": "labels", "of": "main table [aria-label]"}
+]

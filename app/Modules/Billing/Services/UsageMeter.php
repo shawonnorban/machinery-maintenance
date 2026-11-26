@@ -60,11 +60,8 @@ class UsageMeter
                 ->whereNotIn('status', ['RETIRED', 'SCRAPPED', 'LOST', 'DRAFT'])
                 ->count(),
 
-            'ACTIVE_USERS' => CompanyUser::withoutGlobalScope(TenantScope::class)
-                ->where('company_id', $companyId)
-                ->where('status', 'ACTIVE')
-                ->distinct()
-                ->count('user_id'),
+            // A supplier's portal login is no seat (CompanyUser::seatCount).
+            'ACTIVE_USERS' => CompanyUser::seatCount($companyId),
 
             // A period figure rather than a headcount: how much work the system
             // carried this month.

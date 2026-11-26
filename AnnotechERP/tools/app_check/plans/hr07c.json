@@ -1,0 +1,8 @@
+[
+ {"goto": "/hr-payroll/employee-increment"},
+ {"wait": 30000},
+ {"shot": "c1-increment"},
+ {"goto": "/hr-payroll/employee-transfer"},
+ {"wait": 20000},
+ {"shot": "c2-transfer"}
+]

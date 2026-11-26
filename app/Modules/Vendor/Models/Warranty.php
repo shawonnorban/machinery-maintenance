@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\Vendor\Models;
 
 use App\Modules\Asset\Models\Asset;
+use App\Shared\Concerns\AssignsDocumentNumber;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,6 +25,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Warranty extends BaseModel
 {
     use BelongsToTenant;
+    use AssignsDocumentNumber;
+    use ResolvesByReference;
+
+    /** Pages address it by this number (WTY-00001), never the ULID. */
+    public const ROUTE_REFERENCE = 'warranty_number';
+
+    public const NUMBER_SERIES = 'WARRANTY';
 
     public const TYPES = ['MANUFACTURER', 'EXTENDED', 'SERVICE'];
 
@@ -31,7 +40,7 @@ class Warranty extends BaseModel
     protected $table = 'warranties';
 
     protected $fillable = [
-        'company_id', 'asset_id', 'vendor_id', 'warranty_type', 'reference',
+        'company_id', 'warranty_number', 'asset_id', 'vendor_id', 'warranty_type', 'reference',
         'start_date', 'end_date', 'coverage', 'exclusions', 'status',
     ];
 

@@ -1,0 +1,12 @@
+[
+ {"goto": "/m/dyeing/dosing-template"},
+ {"click": "main button:has-text('CONVENTIONAL FOR REACTIVE')", "wait": 3000},
+ {"scroll": 900},
+ {"fullshot": "tpl-agents"},
+ {"html": "agent_tr1", "of": "main tbody tr >> nth=16"},
+ {"goto": "/m/dyeing/dosing-template"},
+ {"click": "main button[role=tab]:has-text('Records')", "wait": 3000},
+ {"fullshot": "tpl-records"},
+ {"texts": "rec_th", "of": "main thead th"},
+ {"texts": "rec_tr", "of": "main tbody tr"}
+]

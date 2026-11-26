@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { PackagePlus } from "lucide-react";
 
 function SubmitButton() {
   const t = useT("inventory");
@@ -51,7 +52,7 @@ function ReceiveStockModal({ bins, action }) {
   return (
     <>
       <Button size="sm" onClick={() => setOpen(true)}>
-        {t("receive_stock")}
+        <PackagePlus /> {t("receive_stock")}
       </Button>
 
       <Modal open={open} onOpenChange={setOpen} title={t("receive_stock")} description={t("receive_stock_hint")}>

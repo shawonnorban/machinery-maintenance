@@ -29,6 +29,10 @@ class Field
         public readonly bool $inList = true,
         /** @var class-string|null for BELONGS_TO, the model behind it */
         public readonly ?string $model = null,
+        /** Used when the form sends nothing — a new row starts ACTIVE, say. */
+        public readonly mixed $default = null,
+        /** CODE only: issued by the system when left blank (BLD-001, BLD-002 …). */
+        public readonly bool $auto = false,
     ) {}
 
     public const TEXT = 'TEXT';
@@ -46,6 +50,11 @@ class Field
     /** A pointer at a model that has its own screen rather than a list here. */
     public const BELONGS_TO = 'BELONGS_TO';
 
+    public const DATE = 'DATE';
+
+    /** Free text longer than a line — remarks, notes. */
+    public const TEXTAREA = 'TEXTAREA';
+
     public static function text(string $name, bool $required = true, int $max = 255, bool $inList = true): self
     {
         return new self(
@@ -61,22 +70,47 @@ class Field
      * integration. Uppercase and punctuation-free so the same part cannot
      * arrive as "sew-01" one day and "SEW_01" the next.
      */
-    public static function code(int $max = 48): self
+    public static function code(int $max = 48, bool $auto = false): self
     {
-        return new self('code', self::CODE, ['required', 'string', 'max:'.$max, 'regex:/^[A-Z0-9][A-Z0-9._-]*$/']);
+        // An auto code may be left blank; MasterDataType::autoCodePrefix()
+        // supplies it before validation, so the stored value is never empty.
+        return new self(
+            'code',
+            self::CODE,
+            [$auto ? 'nullable' : 'required', 'string', 'max:'.$max, 'regex:/^[A-Z0-9][A-Z0-9._-]*$/'],
+            auto: $auto,
+        );
     }
 
     /**
      * @param  list<string>  $options
      */
-    public static function enum(string $name, array $options, bool $required = true): self
+    public static function enum(string $name, array $options, bool $required = true, ?string $default = null, bool $inList = true): self
     {
         return new self(
             $name,
             self::ENUM,
             [$required ? 'required' : 'nullable', 'string'],
             options: $options,
+            inList: $inList,
+            default: $default,
         );
+    }
+
+    /** Active/Inactive, defaulting to Active — the organisation screens' Status column. */
+    public static function status(): self
+    {
+        return self::enum('status', ['ACTIVE', 'INACTIVE'], required: false, default: 'ACTIVE');
+    }
+
+    public static function date(string $name, bool $required = false, bool $inList = true): self
+    {
+        return new self($name, self::DATE, [$required ? 'required' : 'nullable', 'date'], inList: $inList);
+    }
+
+    public static function textarea(string $name, bool $required = false, int $max = 2000, bool $inList = true): self
+    {
+        return new self($name, self::TEXTAREA, [$required ? 'required' : 'nullable', 'string', 'max:'.$max], inList: $inList);
     }
 
     public static function boolean(string $name): self
@@ -130,6 +164,26 @@ class Field
     public function label(): string
     {
         return __('masterdata.fields.'.$this->name);
+    }
+
+    /**
+     * How an ENUM option reads on screen — `masterdata.values.active` when a
+     * translation exists (the convention the existing lists already use),
+     * otherwise the value itself made readable.
+     *
+     * @return array<string, string>
+     */
+    public function optionLabels(): array
+    {
+        $labels = [];
+
+        foreach ($this->options as $option) {
+            $key = 'masterdata.values.'.strtolower($option);
+            $translated = __($key);
+            $labels[$option] = $translated === $key ? ucwords(strtolower(str_replace('_', ' ', $option))) : $translated;
+        }
+
+        return $labels;
     }
 
     public function isRequired(): bool

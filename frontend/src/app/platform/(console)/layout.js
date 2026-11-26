@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Building2, LifeBuoy, Ticket, Wallet, Bell } from "lucide-react";
+import { Building2, LifeBuoy, Ticket, Wallet, Bell, UserPlus } from "lucide-react";
 import { platformApiFetch } from "@/lib/platform-api-server";
 import { ApiError } from "@/lib/api-error";
 import { PlatformShell } from "@/components/layout/platform-shell";
@@ -26,26 +26,29 @@ export default async function PlatformConsoleLayout({ children }) {
     throw error;
   }
 
+  // The ERP sidebar's shape: sections in brand capitals, each entry with its count.
   const navGroups = [
     {
       label: "Customers",
-      items: [{ label: "Customers", href: "/platform", icon: <Building2 /> }],
+      items: [
+        { label: "Customers", href: "/platform", icon: <Building2 />, tone: "brand", match: ["/platform/tenants"] },
+        { label: "New customer", href: "/platform/tenants/new", icon: <UserPlus />, tone: "success" },
+      ],
     },
     {
-      label: "Tickets",
-      items: [{ label: "Tickets", href: "/platform/tickets", icon: <Ticket />, badge: openTickets.meta.total }],
+      label: "Service",
+      items: [
+        { label: "Tickets", href: "/platform/tickets", icon: <Ticket />, tone: "warning", badge: openTickets.meta.total },
+        { label: "Support access", href: "/platform/support", icon: <LifeBuoy />, tone: "info", badge: activeGrants.length },
+      ],
     },
     {
-      label: "Support",
-      items: [{ label: "Support access", href: "/platform/support", icon: <LifeBuoy />, badge: activeGrants.length }],
+      label: "Business",
+      items: [{ label: "Finance", href: "/platform/finance", icon: <Wallet />, tone: "success", badge: overdueInvoices.meta.total, badgeTone: "danger" }],
     },
     {
-      label: "Finance",
-      items: [{ label: "Finance", href: "/platform/finance", icon: <Wallet />, badge: overdueInvoices.meta.total }],
-    },
-    {
-      label: "Notifications",
-      items: [{ label: "Notifications", href: "/platform/notifications", icon: <Bell />, badge: notifications.meta.unread_count }],
+      label: "System",
+      items: [{ label: "Notifications", href: "/platform/notifications", icon: <Bell />, tone: "brand", badge: notifications.meta.unread_count }],
     },
   ];
 

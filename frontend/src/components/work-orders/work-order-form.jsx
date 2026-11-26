@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeft, Save } from "lucide-react";
 import { startTransition, useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FormActions, FormSection } from "@/components/ui/form-section";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,14 +59,15 @@ function WorkOrderForm({ options, action }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {state?.status === "error" && !state.errors ? <Alert variant="danger">{state.message}</Alert> : null}
 
+      <FormSection>
       <FormField label={t("title")} required error={state?.errors?.title?.[0]}>
         {(fieldProps) => <Input {...fieldProps} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={255} required />}
       </FormField>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid gap-x-8 gap-y-3 lg:grid-cols-2">
         <FormField label={t("asset")} required error={state?.errors?.asset_id?.[0]}>
           {(fieldProps) => (
             <Select
@@ -131,18 +134,19 @@ function WorkOrderForm({ options, action }) {
         {(fieldProps) => <Textarea {...fieldProps} value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={5000} />}
       </FormField>
 
-      <label className="flex items-center gap-2 text-sm text-foreground">
+      <label className="flex items-center gap-2 sm:ml-[11.25rem] text-sm text-foreground">
         <Checkbox checked={requiresShutdown} onCheckedChange={setRequiresShutdown} /> {t("requires_shutdown_checkbox")}
       </label>
+      </FormSection>
 
-      <div className="flex justify-end gap-2">
+      <FormActions>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          {tc("cancel")}
+          <ArrowLeft /> {tc("cancel")}
         </Button>
         <Button type="submit" loading={pending}>
-          {t("create_work_order")}
+          <Save /> {t("create_work_order")}
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

@@ -1,0 +1,21 @@
+[
+ {"goto": "/m/cutting/cut-dashboard"},
+ {"fullshot": "d"},
+ {"texts": "d_p", "of": "main p, main h1, main h2, main h3, main thead th, main tbody tr"},
+ {"goto": "/m/cutting/new-cutting"},
+ {"fullshot": "n"},
+ {"texts": "n_p", "of": "main p, main h2, main h3, main legend, main label, main span.text-xs"},
+ {"html": "n_po", "of": "main input[placeholder='Search PO']"},
+ {"type": "main input[placeholder='Search PO']", "text": "LPP"},
+ {"popup": "n_po_list"},
+ {"fullshot": "n-po"},
+ {"goto": "/m/cutting/cutting-list"},
+ {"fullshot": "l"},
+ {"texts": "l_p", "of": "main p, main h2, main h3, main thead th, main tbody tr"},
+ {"goto": "/m/cutting/bundle-card-list"},
+ {"fullshot": "b"},
+ {"texts": "b_p", "of": "main p, main h2, main h3, main thead th, main tbody tr"},
+ {"goto": "/m/cutting/create-bundle-card"},
+ {"url": "bundle_url"},
+ {"texts": "e_p", "of": "main h1, main h2, main h3"}
+]

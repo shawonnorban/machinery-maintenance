@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/material-procurement/price-review" },
+ { "wait": 4000 },
+ { "texts": "before", "of": "main span, main p" },
+ { "click": "main button:has-text('Approve & Handover') >> visible=true >> nth=0", "wait": 2000 },
+ { "peek": "[role=dialog] button:has-text('Select merchandiser')", "wait": 1200 },
+ { "peek": "[role=option]:has-text('Merchandising Desk') >> nth=-1", "wait": 1200 },
+ { "click": "[role=dialog] button:has-text('Confirm Approval & Handover')", "wait": 4000 },
+ { "texts": "after_approve", "of": "main p, main span, li[data-sonner-toast] *" },
+ { "click": "main button:has-text('Approved') >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "approved_tab", "of": "main h3, main p, main td, main span" },
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00006') >> visible=true >> nth=0", "wait": 2500 },
+ { "texts": "pr6", "of": "main span, main td" },
+ { "goto": "/m/material-procurement/assigned-materials" },
+ { "wait": 4000 },
+ { "texts": "assigned", "of": "main h2, main h3, main p, main th, main td, main button, main span" },
+ { "fullshot": "mp22-assigned" }
+]

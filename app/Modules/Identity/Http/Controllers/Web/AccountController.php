@@ -13,6 +13,7 @@ use App\Shared\Scopes\TenantScope;
 use App\Shared\Support\UserAgent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -51,7 +52,7 @@ class AccountController extends Controller
      * Sanctum's, but one minted before it keeps working (and showing up
      * here) until it expires or is revoked.
      *
-     * @return Collection<int, object{source: string, id: string, name: string, last_four: ?string, last_used_at: ?\Illuminate\Support\Carbon, expires_at: ?\Illuminate\Support\Carbon}>
+     * @return Collection<int, object{source: string, id: string, name: string, last_four: ?string, last_used_at: ?Carbon, expires_at: ?Carbon}>
      */
     private function tokens(User $user): Collection
     {

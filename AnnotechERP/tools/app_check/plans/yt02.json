@@ -1,0 +1,20 @@
+[
+ {"goto": "/knit-production/test-for-production"},
+ {"shot": "test-empty"},
+ {"click": "main tr:has-text('YTO-2026100001')", "after": 8000},
+ {"texts": "grid", "of": "main section:has-text('Details Data') tbody tr"},
+ {"pick": "Test By", "exact": true, "option": "Mohammad Sayem"},
+ {"fill": "Color 1", "exact": true, "text": "Natural"},
+ {"pick": "Result 1", "exact": true, "option": "Passed"},
+ {"pick": "Result 2", "exact": true, "option": "Conditional"},
+ {"fill": "Note 2", "exact": true, "text": "Hairiness slightly high — knit on 28GG only"},
+ {"shot": "test-filled"},
+ {"click": "main button:has-text('Save test')", "after": 15000},
+ {"texts": "err", "of": "[role=alert]"},
+ {"texts": "head", "of": "main h2"},
+ {"goto": "/knit-production/test-for-production?tab=records"},
+ {"texts": "rows", "of": "main tbody tr"},
+ {"shot": "test-list"},
+ {"goto": "/knit-production/knit-plan-requisition-for-yarn-test"},
+ {"texts": "orders", "of": "main tbody tr"}
+]

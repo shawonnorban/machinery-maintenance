@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { KeyRound, Pause, Pencil, Play } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { useToastManager } from "@/components/ui/toast";
@@ -10,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 
 /** Mirrors `WebhookController::show`'s own header actions. */
-function WebhookHeaderActions({ endpoint, actions }) {
+function WebhookHeaderActions({ endpoint, actions, editHref }) {
   const t = useT("webhook");
   const tc = useT("common");
   const router = useRouter();
@@ -36,14 +37,14 @@ function WebhookHeaderActions({ endpoint, actions }) {
 
   return (
     <div className="flex gap-2">
-      <Link href={`/settings/webhooks/${endpoint.id}/edit`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-        {tc("edit")}
+      <Link href={editHref} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+        <Pencil /> {tc("edit")}
       </Link>
       <Button size="sm" variant="outline" loading={pending} onClick={runRotate}>
-        {t("rotate_secret")}
+        <KeyRound /> {t("rotate_secret")}
       </Button>
       <Button size="sm" variant={endpoint.status === "ACTIVE" ? "outline" : "primary"} loading={pending} onClick={runToggle}>
-        {endpoint.status === "ACTIVE" ? t("pause") : t("enable")}
+        {endpoint.status === "ACTIVE" ? <Pause /> : <Play />} {endpoint.status === "ACTIVE" ? t("pause") : t("enable")}
       </Button>
 
       <Modal open={Boolean(newSecret)} onOpenChange={() => setNewSecret(null)} title={t("new_signing_secret")}>

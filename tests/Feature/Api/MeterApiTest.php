@@ -220,6 +220,23 @@ class MeterApiTest extends TestCase
         ]);
     }
 
+    public function test_a_meter_is_numbered_and_its_page_can_address_it_by_that_number(): void
+    {
+        $meter = AssetMeter::create([
+            'asset_id' => $this->asset->id,
+            'meter_type_id' => $this->hours()->id,
+            'current_value' => '10',
+            'status' => 'ACTIVE',
+        ]);
+
+        $this->assertMatchesRegularExpression('/^MTR-\d{5}$/', (string) $meter->meter_number);
+
+        $this->asEngineer()->getJson("/api/v1/meters/{$meter->meter_number}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $meter->id)
+            ->assertJsonPath('data.meter_number', $meter->meter_number);
+    }
+
     public function test_show_404s_for_a_meter_outside_reachable_factories(): void
     {
         $omega = TenantFixture::company('Omega Textiles', 'OMT');

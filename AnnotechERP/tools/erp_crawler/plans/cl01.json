@@ -1,0 +1,22 @@
+[
+ {"goto": "/m/dyeing-lab"},
+ {"fullshot": "home"},
+ {"hrefs": "home_links", "of": "main a"},
+ {"goto": "/m/dyeing-lab/certificate-list"},
+ {"fullshot": "cert-list"},
+ {"dump": "cert_list", "root": "main"},
+ {"html": "cert_btns", "of": "main button"},
+ {"goto": "/m/dyeing-lab/chemical-trial-lab"},
+ {"fullshot": "trial"},
+ {"dump": "trial", "root": "main"},
+ {"html": "trial_btns", "of": "main button, main a"},
+ {"goto": "/m/dyeing-lab/certificate-register"},
+ {"fullshot": "register"},
+ {"dump": "register", "root": "main"},
+ {"goto": "/m/dyeing-lab/inh-fab-test"},
+ {"fullshot": "inh"},
+ {"dump": "inh", "root": "main"},
+ {"html": "inh_btns", "of": "main button, main a"},
+ {"goto": "/m/dyeing-lab/dyeing-lab-reports"},
+ {"fullshot": "reports"}
+]

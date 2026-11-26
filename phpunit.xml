@@ -67,5 +67,6 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="COLUMN_SETUP_SNAPSHOTS" value="false"/>
     </php>
 </phpunit>

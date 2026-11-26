@@ -1,0 +1,19 @@
+[
+ { "goto": "/m/merchandising/accessories-po" },
+ { "click": "button:has-text('Purchase Order Entry')", "wait": 2500 },
+ { "peek": "label:has-text('Supplier/Spinner') ~ * button, div:has(> label:has-text('Supplier/Spinner')) button", "wait": 1500 },
+ { "popup": "supplier_options" },
+ { "escape": true },
+ { "peek": "div:has(> label:has-text('Delivery To')) button", "wait": 1500 },
+ { "popup": "delivery_options" },
+ { "escape": true },
+ { "choose": "select[name=requisitionId]", "index": 1 },
+ { "click": "button:has-text('Add to PO')", "wait": 3000 },
+ { "texts": "details_head", "of": "table thead th" },
+ { "texts": "details_rows", "of": "table tbody tr" },
+ { "html": "details_inputs", "of": "table tbody tr:first-child td" },
+ { "fullshot": "apo-added" },
+ { "click": "button:has-text('Requisition List')", "wait": 2500 },
+ { "texts": "buyers", "of": "main li, main button" },
+ { "fullshot": "apo-reqlist2" }
+]

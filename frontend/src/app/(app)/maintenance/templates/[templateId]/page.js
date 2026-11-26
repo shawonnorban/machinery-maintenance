@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardBody } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -23,8 +23,8 @@ export default async function MaintenanceTemplateDetailPage({ params, searchPara
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("maintenance") }, { label: t("templates_page_title"), href: "/maintenance/templates" }, { label: template.name }]}
+      <ScreenHeader
+        parentUrl="/maintenance/templates"
         title={template.name}
         description={template.code}
         actions={<TemplateHeaderActions template={template} actions={{ startDraft, publishVersion }} />}

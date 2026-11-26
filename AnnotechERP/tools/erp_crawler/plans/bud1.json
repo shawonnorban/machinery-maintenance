@@ -1,0 +1,20 @@
+[
+ {
+  "goto": "/m/merchandising/budget-sheet"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "hrefs": "links",
+  "of": "main a"
+ },
+ {
+  "texts": "page",
+  "of": "main"
+ },
+ {
+  "dump": "d0",
+  "root": "main"
+ }
+]

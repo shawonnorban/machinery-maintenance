@@ -1,17 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardBody } from "@/components/ui/card";
 import { useT } from "@/lib/i18n";
+import { formatNumber, formatQuantity } from "@/lib/format";
+import { refOf } from "@/lib/ref-path";
 
-function SparePartsTable({ parts, meta, page, search, active, sort, direction }) {
+function SparePartsTable({ parts, meta, page, search, active, sort, direction, addHref }) {
   const t = useT("inventory");
   const tc = useT("common");
   const router = useRouter();
@@ -21,16 +19,7 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
     { value: "1", label: t("active_only") },
     { value: "0", label: t("inactive_only") },
   ];
-  const [searchInput, setSearchInput] = useState(search);
 
-  useEffect(() => {
-    if (searchInput === search) {
-      return undefined;
-    }
-    const timeout = setTimeout(() => navigate({ search: searchInput, page: 1 }), 350);
-    return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchInput]);
 
   function navigate(next) {
     const params = new URLSearchParams({
@@ -52,22 +41,15 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
 
   return (
     <div className="flex flex-col gap-4">
-      <Card>
-        <CardBody className="flex flex-wrap items-center gap-3 py-3">
-          <div className="relative w-full flex-1 min-w-[200px]">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-subtle" />
-            <Input
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder={t("search_part_placeholder")}
-              className="pl-9"
-            />
-          </div>
-          <div className="w-full max-w-[200px]">
-            <Select options={activeOptions} value={active} onValueChange={(value) => navigate({ active: value, page: 1 })} />
-          </div>
-        </CardBody>
-      </Card>
+      <SearchingData
+        fields={[
+          { name: "search", label: t("part"), placeholder: t("search_part_placeholder") },
+          { name: "active", label: t("status"), type: "select", options: activeOptions },
+        ]}
+        values={{ search, active }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+        addHref={addHref}
+      />
 
       <DataTable
         columns={[
@@ -77,7 +59,7 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
             sortable: true,
             render: (part) => (
               <div>
-                <Link href={`/inventory/parts/${part.id}`} className="font-medium text-brand hover:underline">
+                <Link href={`/inventory/parts/${refOf(part, "part_number")}`} className="font-medium text-brand hover:underline">
                   {part.part_number}
                 </Link>
                 <div className="text-xs text-foreground-muted">{part.name}</div>
@@ -87,14 +69,25 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
           { key: "category", header: t("category"), render: (part) => part.category?.name ?? "—" },
           { key: "unit", header: t("unit") },
           {
+            key: "on_hand",
+            header: t("on_hand"),
+            align: "right",
+            // Red at or below the reorder level: the same line Low Stock draws.
+            render: (part) => (
+              <span className={part.reorder_level !== null && Number(part.on_hand ?? 0) <= Number(part.reorder_level) ? "font-semibold text-danger" : undefined}>
+                {formatQuantity(part.on_hand ?? 0, part.unit)}
+              </span>
+            ),
+          },
+          {
             key: "reorder_level",
             header: t("reorder_level"),
             align: "right",
-            render: (part) => `${part.reorder_level ?? "—"}`,
+            render: (part) => formatNumber(part.reorder_level),
           },
           {
             key: "flags",
-            header: "",
+            header: t("flags"),
             render: (part) => (
               <div className="flex gap-1">
                 {part.is_critical_spare ? <Badge variant="danger">{t("critical")}</Badge> : null}
@@ -109,8 +102,9 @@ function SparePartsTable({ parts, meta, page, search, active, sort, direction })
         onSortChange={toggleSort}
         emptyTitle={t("no_parts")}
         emptyDescription={t("try_different_filter")}
-        rowActions={(part) => [{ label: tc("view"), onSelect: () => router.push(`/inventory/parts/${part.id}`) }]}
+        rowActions={(part) => [{ icon: "view", label: tc("view"), onSelect: () => router.push(`/inventory/parts/${refOf(part, "part_number")}`) }]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
     </div>

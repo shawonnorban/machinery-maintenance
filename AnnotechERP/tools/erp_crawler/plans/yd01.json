@@ -1,0 +1,18 @@
+[
+ {"goto": "/m/knitting/yd-program-list"},
+ {"texts": "reg_rows", "of": "main tbody tr"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"options": "rev_prog", "of": "main select[name=programId]"},
+ {"goto": "/m/knitting/dyed-yarn-receive-in-house"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"texts": "dy_side", "of": "main table"},
+ {"html": "dy_selects", "of": "main select"},
+ {"goto": "/m/knitting/process-loss-adjustment-yd"},
+ {"html": "pl_selects", "of": "main select, main button[aria-haspopup]"},
+ {"goto": "/m/knitting/issue-sc-knitting-program-party-yd"},
+ {"texts": "ydsc_rows", "of": "main tbody tr"},
+ {"goto": "/m/knitting/grey-yarn-transfer-for-dyeing"},
+ {"texts": "gyt_tabs", "of": "main [role=tab]"},
+ {"texts": "gyt_tables", "of": "main table"},
+ {"texts": "gyt_p", "of": "main p"}
+]

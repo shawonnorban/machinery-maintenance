@@ -11,6 +11,7 @@ use App\Modules\Maintenance\Models\MaintenanceType;
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Casts\MoneyCast;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +22,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WorkOrder extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'work_order_number';
 
     public const STATUSES = [
         'DRAFT', 'PENDING_APPROVAL', 'SCHEDULED', 'ASSIGNED', 'IN_PROGRESS',

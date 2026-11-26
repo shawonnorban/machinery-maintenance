@@ -1,0 +1,11 @@
+[
+ { "goto": "/m/planning/smv-sam-master" }, { "wait": 4000 },
+ { "click": "main [role=tab]:has-text('New style SMV')", "wait": 2000 },
+ { "fillsel": "main input[name=styleNo]", "text": "529" },
+ { "fillsel": "main input[name=smv]", "text": "8.5" },
+ { "fillsel": "main input[name=remarks]", "text": "Annotech probe" },
+ { "click": "main button:has-text('Save style SMV')", "wait": 4000 },
+ { "goto": "/m/planning/master-plan?order=19" }, { "wait": 6000 },
+ { "fullshot": "plan-create" }, { "texts": "plan_create", "of": "main" },
+ { "html": "create_ctl", "of": "main select, main input, main button[aria-haspopup], main textarea, main button" }
+]

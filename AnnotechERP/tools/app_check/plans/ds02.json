@@ -1,0 +1,22 @@
+[
+ {"goto": "/dye-house/grey-fabric-requisition-sample?tab=lists"},
+ {"wait": 10000},
+ {"fill": "From Date", "sel": "main input[aria-label='From Date']", "text": "2026-11-01"},
+ {"fill": "To Date", "sel": "main input[aria-label='To Date']", "text": "2026-11-30"},
+ {"click": "main label:has-text('Pending Labdips Recipe')", "after": 500},
+ {"click": "main button:has-text('Preview')", "after": 10000},
+ {"texts": "list_pending", "of": "[role=dialog] tbody tr, [role=dialog] p"},
+ {"press": "Escape"},
+ {"goto": "/dye-house/grey-fabric-requisition-issue-list-sample"},
+ {"wait": 10000},
+ {"click": "main tbody tr >> nth=0 >> button:has-text('Issue')", "after": 12000},
+ {"texts": "sissue_sheet", "of": "[role=dialog] p, [role=dialog] h3"},
+ {"press": "Escape"},
+ {"goto": "/dye-house/batch-production-sample"},
+ {"wait": 10000},
+ {"click": "main button:has-text('S-26110001')", "after": 8000},
+ {"pick": "Existing production", "exact": true, "option": "2026-11-04"},
+ {"wait": 1000},
+ {"shot": "ds-prod-existing"},
+ {"texts": "loads", "of": "main tbody tr"}
+]

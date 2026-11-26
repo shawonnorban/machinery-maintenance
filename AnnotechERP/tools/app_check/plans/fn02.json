@@ -1,0 +1,10 @@
+[
+ {"goto": "/assembly-floor/bundle-out"},
+ {"wait": 15000},
+ {"choose": "main select[aria-label='Receive Date']", "option": "06 Nov 2026"},
+ {"wait": 12000},
+ {"texts": "rows", "of": "main tbody tr"},
+ {"texts": "go", "of": "main a:has-text('Finishing Bundle IN')"},
+ {"click": "main a:has-text('Finishing Bundle IN')", "after": 12000},
+ {"texts": "landed", "of": "main h2"}
+]

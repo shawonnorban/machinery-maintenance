@@ -1,0 +1,86 @@
+[
+ {"goto": "/m/hr-payroll/employee-type", "shot": "et_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "et_edit"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/employee-type"},
+ {"click": "Employee Type Information", "shot": "et_tree0"},
+ {"click": "Staff", "exact": true, "shot": "et_tree_staff", "rows": 10},
+ {"peek": "button:text-is('New')", "shot": "et_tree_new"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/employee-type"},
+ {"click": "New employee type", "shot": "et_newtab"},
+
+ {"goto": "/m/hr-payroll/designation-group", "shot": "dg_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "dg_edit"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/designation-group"},
+ {"click": "New designation group", "shot": "dg_newtab"},
+
+ {"goto": "/m/hr-payroll/grade", "shot": "gr_records"},
+ {"peek": "main table tbody tr:nth-child(2) button:has-text('Edit')", "shot": "gr_edit"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/grade"},
+ {"click": "New grade", "shot": "gr_newtab"},
+
+ {"goto": "/m/hr-payroll/pay-element", "shot": "pe_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "pe_edit"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/pay-element"},
+ {"click": "New pay element", "shot": "pe_newtab"},
+
+ {"goto": "/m/hr-payroll/allowance-entry", "shot": "al_records"},
+ {"click": "Excel Upload", "exact": true, "shot": "al_upload"},
+ {"click": "Manual Entry", "exact": true, "shot": "al_manual2"},
+ {"clickSel": "main label:has-text('Excel Upload')", "shot": "al_manual_excelmode"},
+
+ {"goto": "/m/hr-payroll/head-wise-deduction", "shot": "de_records"},
+ {"click": "Upload", "exact": true, "shot": "de_upload"},
+ {"click": "New Deduction", "exact": true, "shot": "de_newtab"},
+ {"peek": "main button:has-text('Search')", "shot": "de_search"},
+ {"escape": true},
+
+ {"goto": "/m/hr-payroll/shift-master", "shot": "sh_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "sh_edit"},
+ {"escape": true},
+
+ {"goto": "/m/hr-payroll/leave-type", "shot": "lt_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "lt_edit"},
+ {"escape": true},
+
+ {"goto": "/m/hr-payroll/ot-rule", "shot": "ot_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "ot_edit"},
+ {"escape": true},
+
+ {"goto": "/m/hr-payroll/bonus-rules-setup", "shot": "bo_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "bo_edit"},
+ {"escape": true},
+
+ {"goto": "/m/hr-payroll/salary-policy-and-rules", "shot": "wg_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "wg_edit"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/salary-policy-and-rules"},
+ {"click": "New salary structure line", "shot": "wg_newtab"},
+
+ {"goto": "/m/hr-payroll/gazette-grade-wage", "shot": "gg_records"},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "gg_edit"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/gazette-grade-wage"},
+ {"click": "New gazette grade wage", "shot": "gg_newtab"},
+
+ {"goto": "/m/hr-payroll/festival-calendar", "shot": "fe_festivals", "rows": 10},
+ {"click": "Holidays", "shot": "fe_holidays2", "rows": 10},
+ {"peek": "main table tbody tr:first-child button", "shot": "fe_holiday_rowbtn"},
+ {"escape": true},
+
+ {"goto": "/m/hr-payroll/company-pay-period", "shot": "pp_records", "rows": 5},
+ {"peek": "main table tbody tr:first-child button:has-text('Edit')", "shot": "pp_edit"},
+ {"escape": true},
+ {"goto": "/m/hr-payroll/company-pay-period"},
+ {"click": "Pay Period Actions", "shot": "pp_actions0"},
+ {"click": "Brickland Composite Ltd.", "exact": true, "shot": "pp_actions_company", "rows": 10},
+ {"goto": "/m/hr-payroll/company-pay-period"},
+ {"click": "New Fiscal Year", "shot": "pp_fy0"},
+ {"clickSel": "main li:has-text('Fiscal Year'), main button:has-text('year(s) on the register')", "shot": "pp_fy_register", "rows": 10},
+ {"peek": "button:text-is('New')", "shot": "pp_fy_new"},
+ {"escape": true}
+]

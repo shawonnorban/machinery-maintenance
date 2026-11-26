@@ -165,6 +165,7 @@
     "generate_sheet": "Generate sheet",
     "no_matching_assets": "No matching assets",
     "no_matching_assets_hint": "Adjust the factory/status filters, or select assets from the list and print from there.",
+    "labels_title": "Asset QR Labels",
     "label_count": ":count label(s)",
     "print": "Print",
     "showing_first_200": "Showing the first 200 assets — narrow the filters to print the rest separately.",

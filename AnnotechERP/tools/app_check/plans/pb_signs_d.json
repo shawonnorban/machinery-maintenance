@@ -1,0 +1,5 @@
+[
+ {"goto": "/print/pre-budget/budget?budget=PB-TMCLOTHINGGM-1126-0004&noprint=1"},
+ {"see": "Prepared By"},
+ {"eval": "document.querySelector('.signs').innerText"}
+]

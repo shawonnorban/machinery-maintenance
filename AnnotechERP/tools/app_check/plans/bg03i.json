@@ -1,0 +1,83 @@
+[
+ {
+  "goto": "/buyer-gateway/invoice-view"
+ },
+ {
+  "wait": 15000
+ },
+ {
+  "click": "main button:has-text('Publish invoice')",
+  "after": 2000
+ },
+ {
+  "fill": "Invoice number",
+  "exact": true,
+  "text": "INV-20261184"
+ },
+ {
+  "pick": "Buyer",
+  "exact": true,
+  "option": "H&M",
+  "exactOption": true
+ },
+ {
+  "fill": "Against order",
+  "exact": true,
+  "text": "SO-4402"
+ },
+ {
+  "fill": "Amount (USD)",
+  "exact": true,
+  "text": "1840000"
+ },
+ {
+  "fill": "Due",
+  "exact": true,
+  "text": "2026-12-13"
+ },
+ {
+  "click": "[role=dialog] button[type=submit]",
+  "after": 20000
+ },
+ {
+  "click": "main button:has-text('Publish invoice')",
+  "after": 2000
+ },
+ {
+  "fill": "Invoice number",
+  "exact": true,
+  "text": "INV-20261108"
+ },
+ {
+  "pick": "Buyer",
+  "exact": true,
+  "option": "KIABI"
+ },
+ {
+  "fill": "Against order",
+  "exact": true,
+  "text": "SO-4318"
+ },
+ {
+  "fill": "Amount (USD)",
+  "exact": true,
+  "text": "486000"
+ },
+ {
+  "fill": "Issued",
+  "exact": true,
+  "text": "2026-06-24"
+ },
+ {
+  "fill": "Due",
+  "exact": true,
+  "text": "2026-08-23"
+ },
+ {
+  "click": "[role=dialog] button[type=submit]",
+  "after": 20000
+ },
+ {
+  "shot": "i0-list"
+ }
+]

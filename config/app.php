@@ -70,6 +70,14 @@ return [
     'timezone' => 'UTC',
 
     /*
+    | Column Setup snapshots: a new company's Order Summary, Requisition and
+    | Acc Budget sheets start from the setup saved by `erp:save-column-setup`
+    | (the modules' Database/Data/*column_setup.json) rather than the code's
+    | catalog. The test suite turns them off so its sheets stay the catalog's.
+    */
+    'column_setup_snapshots' => (bool) env('COLUMN_SETUP_SNAPSHOTS', true),
+
+    /*
      * The clock the interface speaks in when nothing more specific is known.
      * Storage is always UTC; this is only for reading and typing times.
      * A user, factory or company setting overrides it (SRS 47.2).

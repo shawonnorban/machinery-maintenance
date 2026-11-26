@@ -1,0 +1,13 @@
+[
+ { "goto": "/m/material-procurement/create-requisition?draft=7" },
+ { "wait": 5000 },
+ { "texts": "edit_texts", "of": "main h2, main h3, main p, main label, main button, main dt, main dd, main span" },
+ { "dump": "edit_dump", "root": "main" },
+ { "fullshot": "mp9-edit" },
+ { "goto": "/m/material-procurement/my-requisitions" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('PR-2026-00007') >> nth=0", "wait": 2500 },
+ { "click": "main button:has-text('Delete draft')", "wait": 2000 },
+ { "click": "[role=dialog] button:has-text('Delete draft'), [role=alertdialog] button:has-text('Delete draft')", "wait": 3000 },
+ { "texts": "after_delete", "of": "main button, li[data-sonner-toast] *" }
+]

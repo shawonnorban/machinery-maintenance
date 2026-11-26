@@ -6,6 +6,7 @@ import { Popover } from "@base-ui/react/popover";
 import Link from "next/link";
 import { LogOut, User as UserIcon, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { pushOff } from "@/components/chat/chat-push";
 
 /**
  * The account identity block pinned to the bottom of the sidebar — where
@@ -19,6 +20,7 @@ function SidebarProfile({ name, email, collapsed = false }) {
 
   function signOut() {
     startTransition(async () => {
+      await pushOff(); // this browser stops taking the chat notifications of whoever signs out
       await fetch("/api/auth/logout", { method: "POST" });
       router.push("/login");
       router.refresh();

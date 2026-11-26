@@ -1,0 +1,13 @@
+[
+ {"goto": "/m/knitting/yarn-receive-challan-sc-in-house"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"fullshot": "sc-form"},
+ {"texts": "scf_p", "of": "main p, main legend, main h3, main h2"},
+ {"texts": "scf_labels", "of": "main label"},
+ {"texts": "scf_buttons", "of": "main button"},
+ {"texts": "scf_tables", "of": "main table"},
+ {"click": "main button:has-text('Add')", "wait": 1200},
+ {"texts": "scf_tables2", "of": "main table"},
+ {"click": "main button:has-text('Save')", "wait": 1500},
+ {"texts": "save_empty", "of": "[data-sonner-toast], [role=alert]"}
+]

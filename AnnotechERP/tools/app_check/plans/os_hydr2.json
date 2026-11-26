@@ -1,0 +1,1 @@
+[{"goto": "/order-summary/list"}, {"see": "Export Excel"}, {"wait": 3000}, {"as": "ac", "eval": "[...document.querySelectorAll('button[data-slot=button]')].filter(b=>/Bulk Edit|Copy Row|Delete/.test(b.textContent)).map(b=>b.textContent.trim()+':'+b.disabled+':'+b.getAttribute('autocomplete')).join(' | ')"}]

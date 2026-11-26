@@ -1,0 +1,4 @@
+[
+ {"goto": "/m/commercial/loc-exchng-rates"},
+ {"peek": "text=Add New CM Local Exchange Rate", "shot": "ex_add", "escape": true}
+]

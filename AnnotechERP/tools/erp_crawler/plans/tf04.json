@@ -1,0 +1,111 @@
+[
+ {
+  "goto": "/m/ie/gmt-target-setting"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "xpath=(//li[normalize-space(.)='1'] | //*[@role='option'][normalize-space(.)='1'])[1]",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-pe"
+ },
+ {
+  "dump": "gt_pe",
+  "root": "main"
+ },
+ {
+  "texts": "gt_pe_notes",
+  "of": "main p"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Plans')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "xpath=(//li[normalize-space(.)='1'] | //*[@role='option'][normalize-space(.)='1'])[1]",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-pp"
+ },
+ {
+  "dump": "gt_pp",
+  "root": "main"
+ },
+ {
+  "texts": "gt_pp_notes",
+  "of": "main p"
+ },
+ {
+  "click": "main button[role=tab]:has-text('NPT Entry')",
+  "wait": 2500
+ },
+ {
+  "choose": "main select[name=floorId]",
+  "label": "SWEING \u2014 BCL"
+ },
+ {
+  "type": "main input[name=nptDate]",
+  "text": "2026-10-25"
+ },
+ {
+  "wait": 1000
+ },
+ {
+  "peek": "main div:has(> label:has-text('Line')) button",
+  "wait": 1000
+ },
+ {
+  "click": "xpath=(//li[normalize-space(.)='1'] | //*[@role='option'][normalize-space(.)='1'])[1]",
+  "wait": 600
+ },
+ {
+  "click": "main button:has-text('Refresh')",
+  "wait": 5000
+ },
+ {
+  "fullshot": "gt-npt"
+ },
+ {
+  "dump": "gt_npt",
+  "root": "main"
+ },
+ {
+  "texts": "gt_npt_notes",
+  "of": "main p"
+ }
+]

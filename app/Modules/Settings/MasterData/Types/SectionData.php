@@ -10,6 +10,10 @@ use App\Modules\Settings\MasterData\MasterDataType;
 use App\Modules\Tenancy\Models\ProductionLine;
 use App\Modules\Tenancy\Models\Section;
 
+/**
+ * Company Management's Section tab (AnnotechERP 01/03). A section belongs to
+ * a department ("Department is required.") and may sit on one floor.
+ */
 class SectionData extends MasterDataType
 {
     public function key(): string
@@ -41,9 +45,16 @@ class SectionData extends MasterDataType
     {
         return [
             Field::reference('department_id', 'departments'),
+            Field::code(auto: true),
             Field::text('name'),
-            Field::code(),
+            Field::reference('floor_id', 'floors', required: false),
+            Field::status(),
         ];
+    }
+
+    public function autoCodePrefix(): ?string
+    {
+        return 'SEC';
     }
 
     public function usedBy(): array

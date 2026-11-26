@@ -1,0 +1,21 @@
+[
+ { "goto": "/m/merchandising/purchase-fabric-opening-balance" },
+ { "dump": "records", "root": "main" },
+ { "click": "button:has-text('Opening Balance Entry')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "fullshot": "fob-entry" },
+ { "peek": "div:has(> label:has-text('Receiving Store')) button", "wait": 1200 },
+ { "popup": "stores" },
+ { "escape": true },
+ { "choose": "select[name=fabricCategory], div:has(> label:has-text('Fabric Category')) select", "index": 1 },
+ { "fillsel": "div:has(> label:has-text('Description')) input", "text": "Probe fabric" },
+ { "fillsel": "div:has(> label:has-text('OB Qty')) input", "text": "10" },
+ { "fillsel": "div:has(> label:has-text('OB Rate')) input", "text": "2" },
+ { "click": "button:has-text('Add Row')", "wait": 1500 },
+ { "dump": "after_add", "root": "main" },
+ { "click": "button:has-text('Save opening balance')", "wait": 2500 },
+ { "texts": "msgs", "of": "main p, [role=alert]" },
+ { "click": "button:has-text('Approval History')", "wait": 2500 },
+ { "dump": "approval", "root": "main" },
+ { "fullshot": "fob-approval" }
+]

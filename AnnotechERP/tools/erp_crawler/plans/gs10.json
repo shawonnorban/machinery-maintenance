@@ -1,0 +1,9 @@
+[
+ { "goto": "/m/general-store/gs-req-pending" }, { "wait": 5000 },
+ { "html": "row_btns", "of": "main tbody tr:first-child td:last-child button, main tbody tr:first-child td:last-child a" },
+ { "goto": "/m/general-store/gs-req-approved" }, { "wait": 5000 },
+ { "html": "appr_btns", "of": "main tbody tr:first-child td:last-child button, main tbody tr:first-child td:last-child a" },
+ { "click": "main tbody tr:first-child td:last-child >> text=Issue", "wait": 6000 },
+ { "url": "after_issue" },
+ { "fullshot": "gs10-issue" }
+]

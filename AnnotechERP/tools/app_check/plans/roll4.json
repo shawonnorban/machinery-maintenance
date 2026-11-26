@@ -1,0 +1,14 @@
+[
+ { "goto": "/store-material/store-reports" },
+ { "click": "main button:has-text('Fabric Roll Report')", "after": 6000 },
+ { "texts": "fabric_roll", "of": "main tbody tr" },
+ { "shot": "roll4-fabric-roll" },
+ { "click": "main button:has-text('Material Out Report')", "after": 6000 },
+ { "texts": "mo", "of": "main tbody tr" },
+ { "goto": "/store-material/traceability" },
+ { "click": "role=tab[name='Trace by Roll No']" },
+ { "fill": "q", "sel": "[aria-label='Roll No']", "text": "dl-r003" },
+ { "click": "main form button[type=submit]", "after": 6000 },
+ { "texts": "trace", "of": "main section li, main section div.bg-surface-muted" },
+ { "shot": "roll4-trace" }
+]

@@ -1,0 +1,18 @@
+[
+ {"goto": "/teams"}, {"wait": 12000},
+ {"click": "main button:has-text('New team')"}, {"wait": 2000},
+ {"fill": "Name", "text": "Sewing floor mechanics"},
+ {"fill": "Code", "text": "SEW-MECH"},
+ {"pick": "Factory", "option": "Dhaka Unit 1"},
+ {"fill": "Specialisation", "text": "Lockstitch and overlock machines"},
+ {"click": "role=button[name='Create team']", "after": 15000},
+ {"shot": "t01-team-created"},
+ {"goto": "/inventory/issue"}, {"wait": 12000},
+ {"pick": "Spare part", "option": "OIL-WHITE-5L — White sewing machine oil, 5L"},
+ {"pick": "Bin", "option": "Rack B1", "exact": false},
+ {"fill": "Quantity", "text": "1"},
+ {"fill": "Notes", "text": "One can of oil to sewing line 3"},
+ {"click": "main form button:has-text('Issue')", "after": 15000},
+ {"wait": 5000},
+ {"shot": "t02-issue-history"}
+]

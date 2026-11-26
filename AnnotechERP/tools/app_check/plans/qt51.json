@@ -1,0 +1,21 @@
+[
+ {"goto": "/quality-tally/cutting-input"},
+ {"wait": 30000},
+ {"fill": "Scan bundle card", "text": "BND202611250006"},
+ {"press": "Enter"},
+ {"wait": 15000},
+ {"shot": "qt180-card"},
+ {"press": "Enter"},
+ {"wait": 7000},
+ {"shot": "qt181-given"},
+ {"click": "main button:has-text('Manual entry')", "after": 1500},
+ {"shot": "qt182-manual"},
+ {"choose": "[role=dialog] label:has-text('Job') select", "option": "26DAL00103", "after": 800},
+ {"fill": "Bundle No", "text": "M-103"},
+ {"fill": "Size", "text": "M", "exact": true},
+ {"fill": "Bundle Qty", "text": "1"},
+ {"click": "[role=dialog] button:has-text('Sleeve')", "after": 500},
+ {"shot": "qt183-manual-filled"},
+ {"click": "[role=dialog] button:has-text('Give to QC')", "after": 4000},
+ {"shot": "qt184-manual-given"}
+]

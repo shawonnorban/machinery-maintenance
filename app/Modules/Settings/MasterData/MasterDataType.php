@@ -71,6 +71,61 @@ abstract class MasterDataType
      */
     public function validateRow(array $data, ?Model $existing): void {}
 
+    /**
+     * The prefix for a code the system issues when the form leaves it blank
+     * (BLD → BLD-001). Null where a person must always choose the code.
+     */
+    public function autoCodePrefix(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Read-only columns worked out from other tables — "Floors Registered" on
+     * a building, "Sections" on a department. Name => label.
+     *
+     * @return array<string, string>
+     */
+    public function computedColumns(): array
+    {
+        return [];
+    }
+
+    /**
+     * Values for computedColumns(), for the rows of one page in one go so a
+     * list of fifty buildings is one count query, not fifty.
+     *
+     * @param  iterable<Model>  $rows
+     * @return array<string, array<string, mixed>> row id => [column => value]
+     */
+    public function computedValues(iterable $rows): array
+    {
+        return [];
+    }
+
+    /**
+     * Count rows of $model grouped by $column for the given ids — the shape
+     * most computed columns take.
+     *
+     * @param  class-string<Model>  $model
+     * @param  list<string>  $ids
+     * @return array<string, int>
+     */
+    protected function countBy(string $model, string $column, array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return $model::query()
+            ->whereIn($column, $ids)
+            ->selectRaw($column.' as k, count(*) as n')
+            ->groupBy($column)
+            ->pluck('n', 'k')
+            ->map(fn ($n): int => (int) $n)
+            ->all();
+    }
+
     public function title(): string
     {
         return __('masterdata.types.'.$this->key());

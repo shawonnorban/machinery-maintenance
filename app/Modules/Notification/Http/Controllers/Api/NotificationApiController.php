@@ -6,6 +6,7 @@ namespace App\Modules\Notification\Http\Controllers\Api;
 
 use App\Modules\Identity\Models\User;
 use App\Modules\Notification\Models\Notification;
+use App\Modules\Notification\Models\NotificationEventDefault;
 use App\Modules\Notification\Models\NotificationPreference;
 use App\Modules\Notification\Services\NotificationDispatcher;
 use App\Shared\Http\Api\ApiController;
@@ -91,14 +92,7 @@ class NotificationApiController extends ApiController
     {
         $user = $this->person();
 
-        $existing = NotificationPreference::where('user_id', $user->id)->get()->keyBy('event_type');
-
-        $preferences = collect(Notification::EVENT_TYPES)
-            ->mapWithKeys(fn (string $event) => [
-                $event => $this->preferenceSummary($existing->get($event) ?? $this->dispatcher->preferenceFor($user, $event)),
-            ]);
-
-        return ApiResponse::ok($preferences->all());
+        return ApiResponse::ok($this->preferencesOf($user));
     }
 
     public function savePreferences(Request $request): JsonResponse
@@ -112,8 +106,12 @@ class NotificationApiController extends ApiController
             'preferences.*.whatsapp' => ['sometimes', 'boolean'],
         ]);
 
+        $locked = $this->lockedEvents();
+
         foreach ($data['preferences'] as $eventType => $channels) {
-            if (! in_array($eventType, Notification::EVENT_TYPES, true)) {
+            // A locked company default (Settings → Notification Preferences)
+            // is not the person's to change.
+            if (! in_array($eventType, Notification::EVENT_TYPES, true) || isset($locked[$eventType])) {
                 continue;
             }
 
@@ -131,14 +129,7 @@ class NotificationApiController extends ApiController
             );
         }
 
-        $existing = NotificationPreference::where('user_id', $user->id)->get()->keyBy('event_type');
-
-        $preferences = collect(Notification::EVENT_TYPES)
-            ->mapWithKeys(fn (string $event) => [
-                $event => $this->preferenceSummary($existing->get($event) ?? $this->dispatcher->preferenceFor($user, $event)),
-            ]);
-
-        return ApiResponse::ok($preferences->all());
+        return ApiResponse::ok($this->preferencesOf($user));
     }
 
     /**
@@ -192,6 +183,31 @@ class NotificationApiController extends ApiController
     /**
      * @return array<string, bool>
      */
+    /**
+     * Every event with the channels that would actually be used, and whether
+     * the company has locked it.
+     *
+     * @return array<string, array<string, bool>>
+     */
+    private function preferencesOf(User $user): array
+    {
+        $locked = $this->lockedEvents();
+
+        return collect(Notification::EVENT_TYPES)
+            ->mapWithKeys(fn (string $event) => [
+                $event => $this->preferenceSummary($this->dispatcher->preferenceFor($user, $event)) + ['locked' => isset($locked[$event])],
+            ])
+            ->all();
+    }
+
+    /**
+     * @return array<string, true>
+     */
+    private function lockedEvents(): array
+    {
+        return NotificationEventDefault::query()->where('locked', true)->pluck('event_type')->mapWithKeys(fn (string $e) => [$e => true])->all();
+    }
+
     private function preferenceSummary(NotificationPreference $preference): array
     {
         return [

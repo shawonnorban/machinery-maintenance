@@ -1,0 +1,7 @@
+[
+ {"goto": "/quality-tally/cutting-input"},
+ {"wait": 25000},
+ {"click": "main button:has-text('Manual entry')", "after": 2000},
+ {"click": "[role=dialog] button:has-text('Give to QC')", "after": 6500},
+ {"shot": "qt201-danger"}
+]

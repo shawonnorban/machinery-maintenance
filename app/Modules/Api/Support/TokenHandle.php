@@ -42,6 +42,9 @@ interface TokenHandle
      */
     public function impersonatedBy(): ?string;
 
+    /** The QC session of a PIN sign-in (AnnotechERP 37), null for every other token. */
+    public function pinSessionId(): ?string;
+
     public function expiresAt(): ?Carbon;
 
     public function isUsable(): bool;

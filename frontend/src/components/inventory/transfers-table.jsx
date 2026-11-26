@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Select } from "@/components/ui/select";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
-function TransfersTable({ transfers, meta, page, status }) {
+function TransfersTable({ transfers, meta, page, status, addHref }) {
   const t = useT("inventory");
   const tc = useT("common");
   const router = useRouter();
@@ -30,9 +31,12 @@ function TransfersTable({ transfers, meta, page, status }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full max-w-[200px]">
-        <Select options={statusOptions} value={status} onValueChange={(value) => navigate({ status: value, page: 1 })} />
-      </div>
+      <SearchingData
+        fields={[{ name: "status", label: t("status"), type: "select", options: statusOptions }]}
+        values={{ status }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+        addHref={addHref}
+      />
 
       <DataTable
         columns={[
@@ -40,7 +44,7 @@ function TransfersTable({ transfers, meta, page, status }) {
             key: "transfer_number",
             header: t("transfer"),
             render: (row) => (
-              <Link href={`/inventory/transfers/${row.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/inventory/transfers/${refOf(row, "transfer_number")}`} className="font-medium text-brand hover:underline">
                 {row.transfer_number}
               </Link>
             ),
@@ -71,8 +75,9 @@ function TransfersTable({ transfers, meta, page, status }) {
         rows={transfers}
         rowKey={(row) => row.id}
         emptyTitle={t("no_transfers_found")}
-        rowActions={(row) => [{ label: tc("view"), onSelect: () => router.push(`/inventory/transfers/${row.id}`) }]}
+        rowActions={(row) => [{ icon: "view", label: tc("view"), onSelect: () => router.push(`/inventory/transfers/${refOf(row, "transfer_number")}`) }]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
     </div>

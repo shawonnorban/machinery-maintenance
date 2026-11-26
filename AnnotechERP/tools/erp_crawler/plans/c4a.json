@@ -1,0 +1,30 @@
+[
+ {
+  "goto": "/m/merchandising/pms-buyer-wise-style-and-order-followup-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "fu",
+  "root": "main"
+ },
+ {
+  "texts": "fu_text",
+  "of": "main"
+ },
+ {
+  "goto": "/m/merchandising/projection-call-off-order"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "pc",
+  "root": "main"
+ },
+ {
+  "texts": "pc_text",
+  "of": "main"
+ }
+]

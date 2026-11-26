@@ -1,0 +1,45 @@
+[
+ {
+  "goto": "/m/merchandising/style-development"
+ },
+ {
+  "click": "main table tbody tr:has-text('637PK') button:has-text('Sheet')",
+  "wait": 3000
+ },
+ {
+  "click": "button:has-text('Item/Combo/Model(Fresh)')",
+  "wait": 3000
+ },
+ {
+  "choose": "select:has(option:text-is('Knit Top'))",
+  "label": "Knit Bottom"
+ },
+ {
+  "options": "Knit Bottom",
+  "of": "select:has(option:text-is('-- Item Type--'))"
+ },
+ {
+  "choose": "select:has(option:text-is('Knit Top'))",
+  "label": "Woven Top"
+ },
+ {
+  "options": "Woven Top",
+  "of": "select:has(option:text-is('-- Item Type--'))"
+ },
+ {
+  "choose": "select:has(option:text-is('Knit Top'))",
+  "label": "Woven Bottom"
+ },
+ {
+  "options": "Woven Bottom",
+  "of": "select:has(option:text-is('-- Item Type--'))"
+ },
+ {
+  "choose": "select:has(option:text-is('Knit Top'))",
+  "label": "Other"
+ },
+ {
+  "options": "Other",
+  "of": "select:has(option:text-is('-- Item Type--'))"
+ }
+]

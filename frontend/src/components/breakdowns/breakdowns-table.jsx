@@ -2,16 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
-import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDateTime } from "@/components/ui/formatted-date-time";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 const PRIORITY_TONE = { CRITICAL: "danger", HIGH: "warning", MEDIUM: "info", LOW: "neutral" };
 
-function BreakdownsTable({ breakdowns, meta, page, open, priority }) {
+function BreakdownsTable({ breakdowns, meta, page, open, priority, addHref }) {
   const t = useT("breakdown");
   const tc = useT("common");
   const router = useRouter();
@@ -42,14 +43,15 @@ function BreakdownsTable({ breakdowns, meta, page, open, priority }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-3">
-        <div className="w-full max-w-[180px]">
-          <Select options={openOptions} value={open} onValueChange={(value) => navigate({ open: value, page: 1 })} />
-        </div>
-        <div className="w-full max-w-[180px]">
-          <Select options={priorityOptions} value={priority} onValueChange={(value) => navigate({ priority: value, page: 1 })} placeholder={t("all_priorities")} />
-        </div>
-      </div>
+      <SearchingData
+        fields={[
+          { name: "open", label: t("status"), type: "select", all: false, options: openOptions },
+          { name: "priority", label: t("priority"), type: "select", options: priorityOptions },
+        ]}
+        values={{ open, priority }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+        addHref={addHref}
+      />
 
       <DataTable
         columns={[
@@ -57,7 +59,7 @@ function BreakdownsTable({ breakdowns, meta, page, open, priority }) {
             key: "breakdown_number",
             header: t("breakdown"),
             render: (row) => (
-              <Link href={`/breakdowns/${row.id}`} className="font-medium text-brand hover:underline">
+              <Link href={`/breakdowns/${refOf(row, "breakdown_number")}`} className="font-medium text-brand hover:underline">
                 {row.breakdown_number}
               </Link>
             ),
@@ -99,8 +101,9 @@ function BreakdownsTable({ breakdowns, meta, page, open, priority }) {
         rowKey={(row) => row.id}
         emptyTitle={t("no_breakdowns")}
         emptyDescription={open === "true" ? t("no_breakdowns_hint") : undefined}
-        rowActions={(row) => [{ label: tc("view"), onSelect: () => router.push(`/breakdowns/${row.id}`) }]}
+        rowActions={(row) => [{ icon: "view", label: tc("view"), onSelect: () => router.push(`/breakdowns/${refOf(row, "breakdown_number")}`) }]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
     </div>

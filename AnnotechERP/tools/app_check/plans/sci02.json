@@ -1,0 +1,11 @@
+[
+ {"goto": "/dye-house/sc-order-list?tab=new"}, {"wait": 9000},
+ {"pick": "Party", "exact": true, "option": "Square Textiles"},
+ {"pick": "Order No", "exact": true, "option": "SS27-TEE01"},
+ {"click": "main label:has-text('Dyeing Finishing') [role=checkbox]", "after": 300},
+ {"pick": "Status", "exact": true, "option": "S/C OH Submitted"},
+ {"shot": "sci-prog-filled"},
+ {"click": "main button[type=submit] >> nth=-1", "after": 12000},
+ {"texts": "msg", "of": "[data-slot=toast-title], main [role=alert], main .text-danger"},
+ {"shot": "sci-prog-after"}
+]

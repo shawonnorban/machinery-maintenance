@@ -1,0 +1,167 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * Inventory & Stores → Store & Material (AnnotechERP 09), in Brickland's words.
+ */
+return [
+    'screens' => [
+        'store-dashboard' => 'Dashboard',
+        'in-house-grn' => 'In-House / GRN',
+        'fabric-warehouse' => 'Fabric Warehouse',
+        'trims-warehouse' => 'Trims & Accessories',
+        'material-out' => 'Material Out',
+        'material-return' => 'Material Return',
+        'stock-adjustment' => 'Stock Adjustment',
+        'stock-ledger' => 'Stock Ledger',
+        'traceability' => 'Traceability',
+        'store-reports' => 'Reports',
+    ],
+    'descriptions' => [
+        'store-dashboard' => 'PR quantity, in-house, pending, material out, return and current stock — filtered by Buyer → PO → Style → Material.',
+        'in-house-grn' => 'Enter a PR Number — buyer, PO, style, order and every PR item are fetched — then the actual receive quantity, and confirm the GRN.',
+        'fabric-warehouse' => 'Fabric stock by buyer and style, roll-wise, colour-wise and dye-lot-wise, with every movement.',
+        'trims-warehouse' => 'Labels, buttons, zippers, poly bags and every other trim: received, out, returned and available.',
+        'material-out' => 'Issue material to a floor, section and line for a purpose, handed to an employee — never more than is in stock.',
+        'material-return' => 'Take unused material back from the floor against its Material Out, up to the eligible quantity.',
+        'stock-adjustment' => 'Physical count against system stock; the difference reaches the books only when the Store Manager approves.',
+        'stock-ledger' => 'Every GRN, Material Out, Return, Adjustment and Reversal, in order, with the running balance.',
+        'traceability' => 'PR → GRN → Warehouse → Material Out → Floor / Line → Receiver → Return → Current Stock, from any document or roll.',
+        'store-reports' => 'Stock, GRN, Material Out, Return, Ledger, Traceability and Roll reports — view, export to Excel or PDF, print.',
+    ],
+    'kind' => ['FABRIC' => 'Fabric', 'TRIMS' => 'Trims & Accessories'],
+    'warehouse' => ['FABRIC' => 'Fabric Warehouse', 'TRIMS' => 'Trims & Accessories Warehouse', 'FABRIC_short' => 'Fabric WH', 'TRIMS_short' => 'Trims WH'],
+    'type' => ['GRN' => 'GRN', 'MATERIAL_OUT' => 'Material Out', 'MATERIAL_RETURN' => 'Material Return', 'ADJUSTMENT' => 'Adjustment', 'REVERSAL' => 'Reversal'],
+    'f' => [
+        'buyer' => 'Buyer', 'po' => 'PO Number', 'style' => 'Style', 'material' => 'Material', 'from' => 'Date From', 'to' => 'Date To', 'all' => 'All',
+        'category' => 'Category', 'item' => 'Item', 'search' => 'Search', 'reset' => 'Reset', 'select' => 'Select…',
+    ],
+    'no_employee' => 'No employee with ID or card no. :id was found.',
+    'employee_required' => 'Enter an employee ID or card no.',
+    'employee_ph' => 'Employee ID / Card / Proxy No.',
+    'find_employee' => 'Find employee',
+    // Dashboard.
+    'dash' => [
+        'tile' => ['pr_qty' => 'PR Quantity', 'in_house' => 'Total In-House', 'pending' => 'Pending', 'out' => 'Material Out', 'returned' => 'Material Return', 'stock' => 'Current Stock'],
+        'mixed' => 'Mixed units — pick a material for one unit',
+        'movement' => 'Material Movement', 'by_kind' => 'Stock by Material Type', 'total_stock' => 'Total Stock', 'no_movement' => 'No movement for this filter.',
+        'col' => ['date' => 'Date', 'pr_no' => 'PR No', 'grn_no' => 'GRN No', 'reference' => 'Reference', 'in' => 'In Qty', 'out' => 'Out Qty', 'returned' => 'Return Qty', 'balance' => 'Balance'],
+    ],
+    // In-House / GRN.
+    'grn' => [
+        'against_pr' => 'Against PR', 'direct' => 'Direct Receive (Fabric / Accessories)',
+        'title' => 'In-House / Goods Receive Note (GRN)', 'pr_no' => 'Purchase Requisition No', 'pr_ph' => 'PR-2026-00025', 'search' => 'Search',
+        'download' => 'Download', 'pr_state' => ['APPROVED' => 'Approved', 'SUBMITTED' => 'Submitted', 'DRAFT' => 'Draft', 'REJECTED' => 'Rejected'],
+        'pr_status' => 'PR Status:', 'pr_info' => 'PR Information', 'auto_fetch' => '(Auto Fetch from Merchandising)',
+        'info' => ['merchandiser' => 'Merchandiser', 'buyer' => 'Buyer', 'po_number' => 'PO Number', 'style' => 'Style', 'order_no' => 'Order No', 'pr_date' => 'PR Date', 'supplier' => 'Supplier', 'department' => 'Department', 'required_date' => 'Required Date', 'purchase_ref' => 'Purchase Ref'],
+        'items' => 'PR Items', 'enter_qty' => '(Enter Actual Receive Quantity)',
+        'col' => ['sl' => 'SL', 'type' => 'Type', 'category' => 'Category', 'material' => 'Material', 'unit' => 'Unit', 'pr_qty' => 'PR Qty', 'received' => 'Received', 'pending' => 'Pending', 'receive_qty' => 'Receive Qty', 'prev' => 'Prev Recv', 'current' => 'Current Recv', 'total' => 'Total Recv', 'warehouse' => 'Warehouse', 'unit_price' => 'Unit Price'],
+        'max' => 'Max :n', 'received_by' => 'Received By', 'remarks' => 'Remarks', 'confirm' => 'Confirm In-House', 'reset' => 'Reset', 'cancel' => 'Cancel',
+        'confirm_title' => 'Confirm In-House?',
+        'confirm_body' => "This creates a GRN for :n line(s) on :pr, adds the quantities to warehouse stock and updates the PR's pending quantity. A confirmed GRN can only be reversed by the Store Manager, never deleted.",
+        'direct_title' => 'Direct Receive — Fabric / Trims & Accessories',
+        'direct_hint' => 'Stock material that arrived without a PR — opening stock, buyer-supplied goods, samples or local purchases. Pick each item from the Fabric / Accessories master.',
+        'stock_for' => 'Stock For', 'stock_for_hint' => '(optional — leave blank for general stock)', 'supplier' => 'Supplier', 'currency' => 'Price Currency',
+        'materials' => 'Materials', 'ready' => '(:n ready to stock)', 'line_type' => '#:n Type', 'material' => 'Material', 'select_material' => 'Select material…',
+        'receive_qty' => 'Receive Qty', 'unit_price' => 'Unit Price (:currency)', 'optional' => 'Optional', 'add_fabric' => 'Add Fabric', 'add_trims' => 'Add Trims / Accessories',
+        'confirm_receive' => 'Confirm Receive', 'direct_confirm_body' => 'This creates a GRN for :n line(s) and adds the quantities to warehouse stock. A confirmed GRN can only be reversed by the Store Manager, never deleted.',
+        'note' => 'Goods Receive Note (GRN)', 'status' => ['CONFIRMED' => 'Confirmed', 'REVERSED' => 'Reversed'],
+        'd' => ['grn_no' => 'GRN No', 'grn_date' => 'GRN Date', 'pr_no' => 'PR No', 'merchandiser' => 'Merchandiser', 'buyer' => 'Buyer', 'po_number' => 'PO Number', 'style' => 'Style', 'order_no' => 'Order No', 'supplier' => 'Supplier', 'warehouse' => 'Warehouse', 'received_by' => 'Received By', 'confirmed_by' => 'Confirmed By', 'remarks' => 'Remarks', 'reversed' => 'Reversed', 'currency' => 'Currency'],
+        'print' => 'Print', 'reverse' => 'Reverse', 'tab_items' => 'GRN Items', 'tab_attachments' => 'Attachments', 'new' => 'New GRN',
+        'reverse_title' => 'Reverse :no?', 'reverse_body' => "Takes this GRN's quantities back out of stock and restores the PR's pending quantity. Refused if any of it has already been issued.",
+        'reason' => 'Reason', 'reverse_confirm' => 'Reverse GRN', 'reversed_msg' => ':no reversed.', 'created_msg' => ':no confirmed.',
+        'no_attachments' => 'No attachments on this GRN.', 'doc_name' => 'Document Name', 'file' => 'File (PDF or image, max 5 MB)', 'attach' => 'Attach', 'attached' => 'Attached.',
+        // Validation, as Brickland words it.
+        'pr_missing' => 'No Purchase Requisition :pr was found.',
+        'pr_not_approved' => ':pr is :status — the store can receive only against an approved PR.',
+        'nothing' => 'Enter the receive quantity of at least one item.',
+        'over' => ':item: no more than the pending :pending :uom can be received.',
+        'no_lines' => 'Add at least one material.', 'material_required' => 'Material is required.', 'qty_required' => 'Receive Qty is required.',
+        'reason_required' => 'Reason is required.', 'already_reversed' => ':no is already reversed.',
+        'issued' => ':no cannot be reversed — some of it has already been issued.',
+        'file_required' => 'Choose a file to attach.', 'file_size' => 'The file must be 5 MB or smaller.', 'file_type' => 'Attach a PDF or an image.',
+    ],
+    // Warehouses and ledger.
+    'wh' => [
+        'fabric_title' => 'Fabric Warehouse — Stock View', 'trims_title' => 'Trims & Accessories Warehouse — Stock View',
+        'view' => ['stock' => 'Stock List', 'roll' => 'Roll Wise', 'color' => 'Color Wise', 'lot' => 'Dye Lot Wise', 'movement' => 'Movement'],
+        'col' => ['roll_no' => 'Roll No', 'material' => 'Material', 'color' => 'Color', 'dye_lot' => 'Dye Lot', 'gsm' => 'GSM', 'width' => 'Width', 'unit' => 'Unit', 'recv' => 'Recv Qty', 'out' => 'Out Qty', 'returned' => 'Return Qty', 'available' => 'Available', 'rolls' => 'Rolls', 'item' => 'Item', 'category' => 'Category', 'size' => 'Size', 'date' => 'Date', 'reference' => 'Reference', 'type' => 'Type', 'in' => 'In Qty', 'balance' => 'Balance', 'buyer_style' => 'Buyer / Style'],
+        'no_rolls' => 'No rolls recorded for this filter.', 'no_lots' => 'No rolls for this filter.', 'no_stock' => 'No fabric in the warehouse for this filter.',
+        'no_trims' => 'No trims in the warehouse for this filter.', 'no_movement' => 'No movement for this filter.',
+    ],
+    'ledger' => ['title' => 'Stock Ledger', 'opening' => 'Opening balance', 'no_rows' => 'No movement for this filter.'],
+    'purpose' => ['PRODUCTION' => 'Production', 'CUTTING' => 'Cutting', 'SEWING' => 'Sewing', 'FINISHING' => 'Finishing', 'PRINTING' => 'Printing', 'EMBROIDERY' => 'Embroidery', 'PACKING' => 'Packing', 'SAMPLE' => 'Sample', 'REPLACEMENT' => 'Replacement', 'MAINTENANCE' => 'Maintenance', 'OTHER' => 'Other'],
+    'return_reason' => ['EXCESS' => 'Excess Material', 'COMPLETED' => 'Production Completed', 'WRONG_ISSUE' => 'Wrong Issue', 'LINE_CANCELLED' => 'Line Cancelled', 'REPLACEMENT' => 'Replacement', 'DAMAGED' => 'Damaged Return', 'OTHER' => 'Other'],
+    'adjust_reason' => ['COUNT_DIFFERENCE' => 'Physical Count Difference', 'DAMAGED' => 'Damaged / Spoiled', 'LOST' => 'Lost / Missing', 'FOUND' => 'Found in Count', 'MEASUREMENT' => 'Measurement Difference', 'OTHER' => 'Other'],
+    // Material Out.
+    'mo' => [
+        'title' => 'Material Out :no', 'date' => 'Date:', 'type' => 'Material Type', 'material' => 'Material', 'available' => 'Available Stock', 'purpose' => 'Purpose',
+        'qty' => 'Out Qty', 'unit' => 'Unit', 'floor' => 'Floor', 'section' => 'Section', 'line' => 'Line', 'receiver' => 'Receiver', 'remarks' => 'Remarks',
+        'confirm' => 'Confirm Material Out', 'reset' => 'Reset', 'no_records' => 'No records to choose from yet.', 'done' => ':no issued.',
+        'material_required' => 'Material is required.', 'purpose_required' => 'Purpose is required.', 'qty_required' => 'Out Qty is required.',
+        'floor_required' => 'Floor is required.', 'section_required' => 'Section is required.', 'line_required' => 'Line is required.', 'receiver_required' => 'Receiver is required.',
+        'over' => 'No more than the :available :uom in stock can go out.',
+    ],
+    // Rolls: fabric received roll by roll, taken out and returned by roll.
+    'roll' => [
+        'title' => 'Roll-wise', 'hint' => '(optional — each roll\'s number, dye lot, GSM, width and quantity)', 'add' => 'Add Roll', 'remove' => 'Remove roll',
+        'col' => ['roll_no' => 'Roll No', 'dye_lot' => 'Dye Lot', 'gsm' => 'GSM', 'width' => 'Width', 'qty' => 'Qty', 'available' => 'Available', 'out' => 'Out Qty'],
+        'total' => ':n roll(s) · :total of :line :uom', 'on_line' => 'Rolls (:n)', 'lot' => 'Lot',
+        'pick_title' => 'Rolls in this stock', 'pick_hint' => '(optional — enter what goes out from each roll; the Out Qty is their total)',
+        'fabric_only' => 'Rolls are kept for fabric only.', 'no_required' => 'Roll :n: enter the roll number.', 'qty_required' => 'Roll :roll: enter its quantity.',
+        'duplicate' => 'Roll :roll is entered twice.', 'exists' => 'Roll :roll is already in stock on :grn.',
+        'sum_mismatch' => 'The rolls add up to :total :uom; the line receives :qty :uom.',
+        'not_here' => 'A roll picked is not in this stock.', 'over' => 'Roll :roll has only :available :uom.',
+        'out_total' => 'The rolls add up to :total :uom; :qty :uom is going out.',
+    ],
+    // Material Return.
+    'mr' => [
+        'title' => 'Material Return :no', 'mo_no' => 'Material Out No', 'mo_ph' => 'MO-2026-00015', 'original' => 'Original Out Qty', 'previous' => 'Previously Returned',
+        'eligible' => 'Eligible Return Qty', 'qty' => 'Return Qty', 'reason' => 'Return Reason', 'floor' => 'Floor', 'section' => 'Section', 'line' => 'Line',
+        'returned_by' => 'Returned By', 'received_by' => 'Received By', 'remarks' => 'Remarks', 'confirm' => 'Confirm Return', 'reset' => 'Reset', 'material' => 'Material',
+        'receiver' => 'Issued to', 'done' => ':no received back.',
+        'mo_required' => 'Material Out No is required.', 'mo_missing' => 'No Material Out :mo was found.', 'qty_required' => 'Return Qty is required.',
+        'reason_required' => 'Return Reason is required.', 'line_required' => 'Line is required.', 'over' => 'No more than the eligible :eligible :uom can come back.',
+        'roll' => 'Roll', 'roll_option' => ':roll · Lot :lot · may return :n :uom', 'roll_required' => 'Pick the roll it comes back on.',
+        'roll_over' => 'Roll :roll may take back no more than :eligible :uom.',
+    ],
+    // Stock Adjustment.
+    'sa' => [
+        'title' => 'Stock Adjustment :no', 'material' => 'Material', 'system' => 'System Qty', 'physical' => 'Physical Qty', 'difference' => 'Difference', 'reason' => 'Reason',
+        'remarks' => 'Remarks', 'reset' => 'Reset', 'submit' => 'Submit for Approval', 'list' => 'Adjustments', 'no_rows' => 'No adjustment yet.',
+        'col' => ['sa_no' => 'Adj No', 'date' => 'Date', 'material' => 'Material', 'buyer_style' => 'Buyer / Style', 'system' => 'System', 'physical' => 'Physical', 'difference' => 'Difference', 'reason' => 'Reason', 'people' => 'Requested / Approved', 'status' => 'Status'],
+        'status' => ['PENDING' => 'Pending', 'APPROVED' => 'Approved', 'REJECTED' => 'Rejected'],
+        'approve' => 'Approve', 'reject' => 'Reject', 'submitted' => 'Sent to the Store Manager for approval.', 'decided_msg' => ':no :status.',
+        'min_title' => 'Minimum Stock Level', 'min_qty' => 'Minimum Qty', 'save' => 'Save', 'saved' => 'Minimum stock saved.',
+        'material_required' => 'Material is required.', 'physical_required' => 'Physical Qty is required.', 'reason_required' => 'Reason is required.',
+        'no_difference' => 'The physical count matches the system — there is nothing to adjust.', 'decided' => ':no is already decided.',
+        'short' => ':no cannot be approved — the stock has since gone below the count.', 'min_required' => 'Minimum Qty is required.',
+    ],
+    // Traceability.
+    'tr' => [
+        'title' => 'Material Traceability (Full Chain)', 'by' => ['PR' => 'Trace by PR', 'GRN' => 'Trace by GRN', 'MO' => 'Trace by Material Out', 'ROLL' => 'Trace by Roll No'],
+        'label' => ['PR' => 'PR', 'GRN' => 'GRN', 'MO' => 'Material Out', 'ROLL' => 'Roll No'], 'ph' => ['PR' => 'PR-2026-00025', 'GRN' => 'GRN-2026-00005', 'MO' => 'MO-2026-00015', 'ROLL' => 'Roll No'],
+        'search' => 'Search', 'merchandiser' => 'Merchandiser', 'buyer' => 'Buyer', 'po' => 'PO', 'style' => 'Style', 'order' => 'Order', 'date' => 'Date', 'supplier' => 'Supplier',
+        'step' => ['pr' => 'PR', 'grn' => 'GRN', 'warehouse' => 'Warehouse', 'out' => 'Material Out', 'floor' => 'Floor / Line', 'receiver' => 'Receiver', 'return' => 'Return', 'stock' => 'Current Stock'],
+        'material' => 'Material', 'qty' => 'Qty', 'purpose' => 'Purpose', 'section' => 'Section', 'line' => 'Line', 'reason' => 'Reason', 'available' => 'Available Qty',
+        'q_required' => 'Enter a number to trace.', 'grn_missing' => 'No GRN :grn was found.', 'no_roll' => 'No roll :roll is recorded.', 'roll' => 'Roll',
+        'nothing_received' => 'Nothing has been received in-house against :ref yet.',
+    ],
+    // Reports.
+    'rp' => [
+            'all' => 'All',
+        'title' => 'Reports', 'view' => 'View', 'excel' => 'Export Excel', 'pdf' => 'Export PDF', 'print' => 'Print', 'empty' => 'Nothing matches this filter.', 'total' => 'Total',
+        'report' => ['stock-summary' => 'Stock Summary', 'grn' => 'GRN Report', 'material-out' => 'Material Out Report', 'material-return' => 'Material Return Report', 'stock-ledger' => 'Stock Ledger Report', 'traceability' => 'Traceability Report', 'fabric-roll' => 'Fabric Roll Report', 'low-stock' => 'Low Stock Report'],
+        'heading' => ['stock-summary' => 'Stock Summary Report', 'grn' => 'GRN Report', 'material-out' => 'Material Out Report', 'material-return' => 'Material Return Report', 'stock-ledger' => 'Stock Ledger Report', 'traceability' => 'Traceability Report', 'fabric-roll' => 'Fabric Roll Report', 'low-stock' => 'Low Stock Report'],
+        'col' => [
+            'material' => 'Material', 'unit' => 'Unit', 'pr_qty' => 'PR Qty', 'in_house' => 'In-House', 'out' => 'Out Qty', 'returned' => 'Return Qty', 'current' => 'Current Stock',
+            'grn_no' => 'GRN No', 'date' => 'Date', 'pr_no' => 'PR No', 'merchandiser' => 'Merchandiser', 'buyer' => 'Buyer', 'po' => 'PO', 'style' => 'Style', 'supplier' => 'Supplier',
+            'warehouse' => 'Warehouse', 'received' => 'Received', 'pending' => 'Pending', 'status' => 'Status', 'mo_no' => 'MO No', 'purpose' => 'Purpose', 'roll' => 'Roll',
+            'floor' => 'Floor', 'section' => 'Section', 'line' => 'Line', 'receiver' => 'Receiver', 'mr_no' => 'MR No', 'reason' => 'Reason', 'returned_by' => 'Returned By',
+            'received_by' => 'Received By', 'reference' => 'Reference', 'type' => 'Type', 'in' => 'In', 'adj' => 'Adj', 'balance' => 'Balance', 'roll_no' => 'Roll No',
+            'fabric' => 'Fabric', 'colour' => 'Colour', 'dye_lot' => 'Dye Lot', 'gsm' => 'GSM', 'width' => 'Width', 'available' => 'Available', 'minimum' => 'Minimum', 'shortfall' => 'Shortfall',
+        ],
+        'status' => ['CONFIRMED' => 'Confirmed', 'REVERSED' => 'Reversed', 'LOW' => 'Low', 'OUT' => 'Out of stock', 'IN_STOCK' => 'In stock', 'PARTLY_OUT' => 'Partly out', 'ALL_OUT' => 'All out'],
+    ],
+];

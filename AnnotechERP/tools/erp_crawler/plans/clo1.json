@@ -1,0 +1,16 @@
+[
+ { "goto": "/m/merchandising/purchase-fabric-closing" },
+ { "wait": 2500 },
+ { "dump": "records", "root": "main" },
+ { "texts": "rec_texts", "of": "main p, main h2, main h3, main th, main td" },
+ { "fullshot": "clo-records" },
+ { "click": "button:has-text('Month Close')", "wait": 2000 },
+ { "texts": "mc_dialog", "of": "[role=dialog] *, [role=alertdialog] *" },
+ { "dump": "mc", "root": "[role=dialog]" },
+ { "fullshot": "clo-monthclose" },
+ { "escape": true },
+ { "click": "button:has-text('Show Exception')", "wait": 2000 },
+ { "dump": "exc", "root": "main" },
+ { "texts": "exc_texts", "of": "main p, main h2, main h3, main th, main td, main li" },
+ { "fullshot": "clo-exception" }
+]

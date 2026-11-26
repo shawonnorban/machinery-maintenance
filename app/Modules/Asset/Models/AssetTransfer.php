@@ -6,6 +6,7 @@ namespace App\Modules\Asset\Models;
 
 use App\Modules\Tenancy\Models\Factory;
 use App\Shared\Concerns\BelongsToTenant;
+use App\Shared\Concerns\ResolvesByReference;
 use App\Shared\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -16,6 +17,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AssetTransfer extends BaseModel
 {
     use BelongsToTenant;
+    use ResolvesByReference;
+
+    /** Pages address it by this number, never the ULID (see ResolvesByReference). */
+    public const ROUTE_REFERENCE = 'transfer_number';
 
     public const UPDATED_AT = null;
 

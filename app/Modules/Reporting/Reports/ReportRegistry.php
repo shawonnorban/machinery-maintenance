@@ -122,6 +122,11 @@ class ReportRegistry
         TechnicianPerformanceReport::class,
         VendorPerformanceReport::class,
         CoverageExpiryReport::class,
+        // Quality Tally (AnnotechERP 36): refused with the module while the platform has not given it.
+        \App\Modules\QualityTally\Reports\QtDailySummaryReport::class,
+        \App\Modules\QualityTally\Reports\QtDefectAnalysisReport::class,
+        \App\Modules\QualityTally\Reports\QtInspectorPerformanceReport::class,
+        \App\Modules\QualityTally\Reports\QtHourlyTallyReport::class,
     ];
 
     /** The order groups appear on the index. */

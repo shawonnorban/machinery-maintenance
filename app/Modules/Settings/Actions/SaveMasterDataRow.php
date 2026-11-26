@@ -112,6 +112,10 @@ class SaveMasterDataRow
         foreach ($type->fields() as $field) {
             $rules[$field->name] = $this->rulesFor($type, $field, $existing);
             $data[$field->name] = $this->valueFor($field, $input, $existing);
+
+            if ($field->type === Field::CODE && $field->auto && $data[$field->name] === null && $type->autoCodePrefix() !== null) {
+                $data[$field->name] = $this->nextCode($type, (string) $type->autoCodePrefix());
+            }
         }
 
         $validated = Validator::make($data, $rules, [], $this->attributeNames($type))->validate();
@@ -202,7 +206,11 @@ class SaveMasterDataRow
 
             $model = (string) $field->model;
 
-            $exists = $model::query()->whereKey($value)->exists();
+            // A shared list (units: the platform's plus this company's) says which rows a company may use.
+            $query = method_exists($model, 'scopeAvailableTo')
+                ? $model::query()->availableTo($this->context->companyId())
+                : $model::query();
+            $exists = $query->whereKey($value)->exists();
 
             if ($model === Factory::class) {
                 $exists = $exists && $this->context->canAccessFactory((string) $value);
@@ -230,7 +238,7 @@ class SaveMasterDataRow
         $value = $input[$field->name] ?? $existing?->getAttribute($field->name);
 
         if ($value === '' || $value === null) {
-            return null;
+            return $field->default;
         }
 
         // Normalised before validation, not after: the rule is that a code is
@@ -247,6 +255,24 @@ class SaveMasterDataRow
     /**
      * @return array<string, string>
      */
+    /**
+     * The next free PREFIX-NNN among the codes this company can see. Numbered
+     * from the highest existing suffix rather than a count, so deleting
+     * BLD-002 does not make the next building reuse it.
+     */
+    private function nextCode(MasterDataType $type, string $prefix): string
+    {
+        $highest = 0;
+
+        foreach ($type->query()->where('code', 'like', $prefix.'-%')->pluck('code') as $code) {
+            if (preg_match('/^'.preg_quote($prefix, '/').'-(\d+)$/', (string) $code, $m) === 1) {
+                $highest = max($highest, (int) $m[1]);
+            }
+        }
+
+        return sprintf('%s-%03d', $prefix, $highest + 1);
+    }
+
     private function attributeNames(MasterDataType $type): array
     {
         $names = [];

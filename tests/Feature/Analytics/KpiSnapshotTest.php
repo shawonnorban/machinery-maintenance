@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Analytics;
 
+use App\Modules\HrPayroll\Support\FactoryCalendarSetup;
 use App\Modules\Analytics\Models\KpiSnapshot;
 use App\Modules\Analytics\Services\KpiCalculator;
 use App\Modules\Analytics\Services\KpiSnapshotter;
@@ -12,7 +13,6 @@ use App\Modules\Breakdown\Actions\ReportBreakdown;
 use App\Modules\Breakdown\Actions\TransitionBreakdown;
 use App\Modules\Breakdown\Models\FailureCode;
 use App\Modules\Breakdown\Models\RootCause;
-use App\Modules\Calendar\Models\FactoryCalendar;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
 use Carbon\CarbonImmutable;
@@ -56,12 +56,7 @@ class KpiSnapshotTest extends TestCase
 
         $this->asset = WorkOrderFixture::runningAsset($this->delta, $this->dhaka);
 
-        FactoryCalendar::create([
-            'factory_id' => $this->dhaka->id,
-            'operating_mode' => 'CONTINUOUS',
-            'weekly_off_days' => [],
-            'effective_from' => '2026-01-01',
-        ]);
+        FactoryCalendarSetup::factory($this->delta->id, $this->dhaka->id, 'CONTINUOUS');
 
         $this->snapshotter = app(KpiSnapshotter::class);
         $this->calculator = app(KpiCalculator::class);

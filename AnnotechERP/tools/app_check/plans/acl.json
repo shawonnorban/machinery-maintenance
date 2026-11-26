@@ -1,0 +1,187 @@
+[
+ {
+  "goto": "/cutting-floor/new-cutting"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='PO No']",
+  "text": "PO-1001"
+ },
+ {
+  "wait": 800
+ },
+ {
+  "choose": "select[aria-label='Style']",
+  "option": "FLOW STYLE-01"
+ },
+ {
+  "wait": 800
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Color']",
+  "text": "White"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Cutting Number']",
+  "text": "1"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Size']",
+  "text": "M"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial From']",
+  "text": "1"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial To']",
+  "text": "500"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Parts Name']",
+  "text": "Front Panel"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Batch Number']",
+  "text": "B-101"
+ },
+ {
+  "click": "role=button[name='Add to List']",
+  "after": 15000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Cutting Number']",
+  "text": "1"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Size']",
+  "text": "M"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial From']",
+  "text": "501"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial To']",
+  "text": "980"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Parts Name']",
+  "text": "Front Panel"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Batch Number']",
+  "text": "B-101"
+ },
+ {
+  "click": "role=button[name='Add to List']",
+  "after": 15000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Cutting Number']",
+  "text": "1"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Size']",
+  "text": "M"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial From']",
+  "text": "981"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial To']",
+  "text": "1020"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Parts Name']",
+  "text": "Front Panel"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Batch Number']",
+  "text": "B-101"
+ },
+ {
+  "click": "role=button[name='Add to List']",
+  "after": 15000
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Cutting Number']",
+  "text": "1"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Size']",
+  "text": "M"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial From']",
+  "text": "1021"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Serial To']",
+  "text": "1050"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Parts Name']",
+  "text": "Front Panel"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='Batch Number']",
+  "text": "B-101"
+ },
+ {
+  "click": "role=button[name='Add to List']",
+  "after": 15000
+ },
+ {
+  "shot": "bench-after"
+ },
+ {
+  "goto": "/cutting-floor/additional-cutting-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "shot": "acl"
+ },
+ {
+  "choose": "select[aria-label='Cutting Status']",
+  "option": "Partial Additional"
+ },
+ {
+  "click": "role=button[name='Show']",
+  "after": 12000
+ },
+ {
+  "shot": "acl-partial"
+ }
+]

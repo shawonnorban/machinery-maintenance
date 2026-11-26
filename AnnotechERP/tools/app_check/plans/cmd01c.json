@@ -1,0 +1,13 @@
+[
+ {"goto": "/command-center/department-dashboards"},
+ {"wait": 20000},
+ {"click": "main tbody tr:has-text('Spares') button:has-text('Publish')", "after": 12000},
+ {"shot": "b10-row-publish-empty"},
+ {"click": "main tbody tr:has-text('Spares') button:has-text('Edit')", "after": 2000},
+ {"click": "[role=dialog] label:has-text('Published')", "after": 800},
+ {"fill": "Tiles", "exact": true, "text": "6"},
+ {"click": "[role=dialog] button[type=submit]", "after": 20000},
+ {"goto": "/command-center/department-dashboards"},
+ {"wait": 15000},
+ {"shot": "b11-list"}
+]

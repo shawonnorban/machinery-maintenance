@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/gate-pass/gp-in" }, { "wait": 5000 },
+ { "fillsel": "main input >> nth=0", "text": "GP-2026-000001" },
+ { "click": "main button:has-text('Search')", "wait": 3000 },
+ { "fillsel": "main [aria-label^='Return quantity for']", "text": "2" },
+ { "wait": 800 },
+ { "texts": "in_summary", "of": "main p, main span" },
+ { "click": "main label:has-text('Final return')", "wait": 800 },
+ { "texts": "in_summary_final", "of": "main p" },
+ { "fullshot": "gp07-in-filled" },
+ { "click": "main button:has-text('CONFIRM IN')", "wait": 2500 },
+ { "texts": "in_dialog", "of": "[role=dialog]" },
+ { "click": "[role=dialog] button:has-text('Confirm')", "wait": 4000 },
+ { "texts": "in_after", "of": "main tbody tr" },
+ { "goto": "/m/gate-pass/gp-reconciliation" }, { "wait": 5000 },
+ { "texts": "recon_rows", "of": "main tbody tr" },
+ { "click": "main tbody tr >> nth=0", "wait": 2500 },
+ { "texts": "recon_detail", "of": "main h3, main th, main td, main button, main p, main label" },
+ { "fullshot": "gp07-recon" }
+]

@@ -1,0 +1,56 @@
+[
+ {
+  "goto": "/dashboard"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "wait": 4000
+ },
+ {
+  "goto": "/merchandise-desk/style-development"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": ":nth-match(main :text-is('Sheet'), 2)"
+ },
+ {
+  "wait": 10000
+ },
+ {
+  "click": "main button:has-text('Item/Combo/Model(Fresh)')"
+ },
+ {
+  "wait": 5000
+ },
+ {
+  "click": "role=tab[name=/BOM/i]"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "shot": "p25-pre"
+ },
+ {
+  "printpdf": "main button:has(svg.lucide-printer)",
+  "as": "p25-bom"
+ },
+ {
+  "goto": "/merchandise-desk/style-registration?tab=registration&open=SRQ-2026-000001",
+  "timeout": 180000
+ },
+ {
+  "wait": 15000
+ },
+ {
+  "printpdf": "[role=dialog] button:has(svg.lucide-printer)",
+  "as": "p29-registration"
+ }
+]

@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { WorkOrderForm } from "@/components/work-orders/work-order-form";
 import { getT } from "@/lib/i18n-server";
 import { createWorkOrder } from "./actions";
@@ -14,16 +13,12 @@ export default async function CreateWorkOrderPage() {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("work_orders"), href: "/work-orders" }, { label: tc("new") }]}
+      <ScreenHeader
+        parentUrl="/work-orders"
         title={t("new_work_order")}
       />
 
-      <Card>
-        <CardBody>
-          <WorkOrderForm options={options} action={createWorkOrder} />
-        </CardBody>
-      </Card>
+      <WorkOrderForm options={options} action={createWorkOrder} />
     </>
   );
 }

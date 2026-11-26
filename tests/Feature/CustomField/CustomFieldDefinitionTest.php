@@ -47,10 +47,10 @@ class CustomFieldDefinitionTest extends TestCase
 
         // Holds custom_field.definition.manage (granted starting at the
         // FACTORY_MANAGER tier).
-        $this->manager = TenantFixture::user($this->delta, 'FACTORY_MANAGER', 'manager@delta.test');
+        $this->manager = TenantFixture::user($this->delta, 'FACTORY_ADMIN', 'manager@delta.test');
         $this->managerToken = app(IssueApiToken::class)->forUser($this->manager, $this->delta->id, 'x')['plain'];
 
-        // Does not — a tier below FACTORY_MANAGER.
+        // Does not — custom fields are an admin-only setup.
         $this->engineer = TenantFixture::user($this->delta, 'MAINTENANCE_ENGINEER', 'engineer@delta.test');
         $this->engineerToken = app(IssueApiToken::class)->forUser($this->engineer, $this->delta->id, 'x')['plain'];
     }

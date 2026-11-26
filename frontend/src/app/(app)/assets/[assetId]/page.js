@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -48,8 +48,8 @@ export default async function AssetDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: asset.asset_code }]}
+      <ScreenHeader
+        parentUrl="/assets"
         title={asset.asset_code}
         description={asset.name}
         actions={
@@ -102,7 +102,7 @@ export default async function AssetDetailPage({ params }) {
             }}
             meteringActions={{ recordReading: recordReading.bind(null, assetId) }}
             costActions={{
-              postAction: postCost.bind(null, assetId),
+              postAction: postCost.bind(null, asset.id),
               reverseAction: reverseCost.bind(null, assetId),
             }}
             documentActions={{
@@ -113,7 +113,7 @@ export default async function AssetDetailPage({ params }) {
         </div>
 
         <div className="lg:col-span-4">
-          <QrCard assetId={assetId} qr={qr} regenerateAction={regenerateQr.bind(null, assetId)} />
+          <QrCard assetId={asset.id} qr={qr} regenerateAction={regenerateQr.bind(null, assetId)} />
         </div>
       </div>
     </>

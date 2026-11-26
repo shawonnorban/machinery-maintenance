@@ -1,6 +1,9 @@
 {
+    "uom_unknown": "Pick :uom from the units of measure (Settings → Master Data), or add it there first.",
     "issue_return": "Issue and return",
     "issue_return_intro": "Consumables leaving the store without a work order: a box of gloves to the dye house, a roll of tape to the sewing floor.",
+    "issue_and_return_all": "Issues and returns",
+    "no_issue_return_yet": "Nothing issued or returned yet.",
     "issue_no_asset_warning": "Nothing issued here is charged to a machine. Anything fitted to one should go through its work order instead, which is where the cost belongs and where the failure history can find it.",
     "movement": "Movement",
     "issue_out": "Issue out",

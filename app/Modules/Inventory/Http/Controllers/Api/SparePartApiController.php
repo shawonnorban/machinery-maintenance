@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Http\Controllers\Api;
 
+use App\Modules\Inventory\Support\SparePartCategories;
 use App\Modules\Asset\Models\AssetModel;
 use App\Modules\Asset\Models\Manufacturer;
 use App\Modules\Inventory\Actions\DeleteSparePart;
@@ -163,6 +164,7 @@ class SparePartApiController extends ApiController
         $this->allow('inventory.part.view_any');
 
         $companyId = $this->context->companyId();
+        SparePartCategories::ensure($companyId);
 
         return ApiResponse::ok([
             'categories' => SparePartCategory::availableTo($companyId)->where('active', true)
@@ -236,7 +238,10 @@ class SparePartApiController extends ApiController
     {
         $this->allow('inventory.part.view_any');
 
-        $query = SparePart::query()->with('category:id,name');
+        // On hand across every bin, so the catalogue answers "do we have it?"
+        // without opening each part (Low Stock reads the same sum).
+        $query = SparePart::query()->with('category:id,name')
+            ->withSum('balances as on_hand', 'quantity_on_hand');
 
         if (is_string($search = $request->query('search')) && $search !== '') {
             // LOWER() on both sides: Postgres LIKE is case-sensitive, and a
@@ -466,6 +471,45 @@ class SparePartApiController extends ApiController
     }
 
     /**
+     * The Issue & Return screen's history: every issue and return across
+     * parts, newest first, so the storekeeper sees what left and came back
+     * without opening each part's ledger. `type` narrows to one direction.
+     */
+    public function issueReturnHistory(Request $request): JsonResponse
+    {
+        $this->allow('inventory.stock.view');
+
+        $types = in_array($request->query('type'), ['ISSUE', 'RETURN'], true) ? [$request->query('type')] : ['ISSUE', 'RETURN'];
+
+        $rows = InventoryTransaction::query()
+            ->whereIn('transaction_type', $types)
+            ->with(['sparePart:id,part_number,name,unit', 'bin:id,code', 'workOrder:id,work_order_number', 'performer:id,name'])
+            ->orderByDesc('transaction_at')
+            ->orderByDesc('id')
+            ->paginate($this->perPage($request))
+            ->withQueryString();
+
+        return ApiResponse::paginated($rows, fn (InventoryTransaction $row): array => [
+            'id' => $row->id,
+            'transaction_type' => $row->transaction_type,
+            'part' => $row->sparePart === null ? null : [
+                'id' => $row->spare_part_id,
+                'part_number' => $row->sparePart->part_number,
+                'name' => $row->sparePart->name,
+                'unit' => $row->sparePart->unit,
+            ],
+            'quantity' => $row->quantity,
+            'balance_after' => $row->balance_after,
+            'bin' => $row->bin?->code,
+            'work_order' => $row->workOrder?->work_order_number,
+            'performed_by' => $row->performer?->name,
+            'transaction_at' => $row->transaction_at?->toIso8601String(),
+            'reverses' => $row->reverses_transaction_id,
+            'notes' => $row->notes,
+        ]);
+    }
+
+    /**
      * Promise stock to a work order without moving anything yet (mirrors
      * `WorkOrderPartsController::reserve`). Reached from the part rather
      * than the work order, so the body carries `work_order_id` — the same
@@ -675,6 +719,8 @@ class SparePartApiController extends ApiController
             'reorder_level' => $part->reorder_level,
             'is_critical_spare' => (bool) $part->is_critical_spare,
             'active' => (bool) $part->active,
+            // Only where the list loaded the sum; a detail read has its own stock tab.
+            ...(array_key_exists('on_hand', $part->getAttributes()) ? ['on_hand' => (string) ($part->on_hand ?? '0')] : []),
         ];
     }
 

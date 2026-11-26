@@ -1,0 +1,22 @@
+[
+ { "goto": "/store-material/material-return" },
+ { "fill": "m", "sel": "[aria-label='Material Out No']", "text": "MO-2026-00002" },
+ { "click": "[aria-label='Return Qty']", "after": 6000 },
+ { "pick": "r", "sel": "[aria-label='Roll']", "option": "DL-R003" },
+ { "fill": "q", "sel": "[aria-label='Return Qty']", "text": "1" },
+ { "pick": "x", "sel": "[aria-label='Return Reason']", "option": "Excess" },
+ { "shot": "roll3-return-filled" },
+ { "click": "role=button[name='Confirm Return']", "after": 15000 },
+ { "shot": "roll3-return-done" },
+ { "goto": "/store-material/traceability" },
+ { "click": "role=tab[name='Trace by Roll No']" },
+ { "fill": "q", "sel": "[aria-label='Roll No']", "text": "dl-r003" },
+ { "click": "role=button[name='Search']", "after": 6000 },
+ { "texts": "trace", "of": "main section li, main section .rounded-lg.bg-surface-muted" },
+ { "shot": "roll3-trace" },
+ { "goto": "/store-material/reports" },
+ { "click": "text=Fabric Roll Report", "after": 3000 },
+ { "click": "role=button[name='View']", "after": 6000 },
+ { "texts": "fabric_roll", "of": "main tbody tr" },
+ { "shot": "roll3-report" }
+]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Analytics;
 
+use App\Modules\HrPayroll\Support\FactoryCalendarSetup;
 use App\Modules\Analytics\Services\KpiCalculator;
 use App\Modules\Asset\Actions\ChangeAssetStatus;
 use App\Modules\Asset\Models\Asset;
@@ -13,8 +14,6 @@ use App\Modules\Breakdown\Models\Breakdown;
 use App\Modules\Breakdown\Models\DowntimeReasonCode;
 use App\Modules\Breakdown\Models\FailureCode;
 use App\Modules\Breakdown\Models\RootCause;
-use App\Modules\Calendar\Models\FactoryCalendar;
-use App\Modules\Calendar\Models\Shift;
 use App\Modules\Settings\Actions\SetSetting;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Tenancy\Models\Factory;
@@ -71,12 +70,7 @@ class KpiCalculatorTest extends TestCase
     /** Runs around the clock, so scheduled time is simply elapsed time. */
     private function continuousCalendar(): void
     {
-        FactoryCalendar::create([
-            'factory_id' => $this->dhaka->id,
-            'operating_mode' => 'CONTINUOUS',
-            'weekly_off_days' => [],
-            'effective_from' => '2026-01-01',
-        ]);
+        FactoryCalendarSetup::factory($this->delta->id, $this->dhaka->id, 'CONTINUOUS');
     }
 
     private function period(): array
@@ -392,24 +386,9 @@ class KpiCalculatorTest extends TestCase
 
     public function test_availability_follows_the_shift_calendar_not_the_wall_clock(): void
     {
-        // Replace the continuous calendar with a single day shift.
-        FactoryCalendar::query()->delete();
-
-        FactoryCalendar::create([
-            'factory_id' => $this->dhaka->id,
-            'operating_mode' => 'SHIFT_BASED',
-            'weekly_off_days' => [5],
-            'effective_from' => '2026-01-01',
-        ]);
-
-        Shift::create([
-            'factory_id' => $this->dhaka->id,
-            'name' => 'Day', 'code' => 'DAY',
-            'start_time' => '08:00:00', 'end_time' => '22:00:00',
-            'days_of_week' => [1, 2, 3, 4, 6, 7],
-            'effective_from' => '2026-01-01',
-            'status' => 'ACTIVE',
-        ]);
+        // Replace the continuous calendar with a single day shift (Friday off).
+        FactoryCalendarSetup::factory($this->delta->id, $this->dhaka->id, 'SHIFT_BASED');
+        FactoryCalendarSetup::shift($this->delta->id, 'DAY', 'Day', '08:00', '22:00');
 
         [$from, $to] = $this->period();
 

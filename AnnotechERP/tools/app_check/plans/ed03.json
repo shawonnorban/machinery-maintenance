@@ -1,0 +1,7 @@
+[
+ {"goto": "/sales-shipment/document-handover"},
+ {"wait": 15000},
+ {"click": "main [role=tab]:has-text('Document Handover Entry')", "after": 2500},
+ {"texts": "status", "of": "main input[aria-label='Status']", "attr": "placeholder"},
+ {"shot": "fh-entry"}
+]

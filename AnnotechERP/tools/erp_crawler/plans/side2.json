@@ -1,0 +1,12 @@
+[
+ { "goto": "/m/merchandising/order-register" },
+ { "wait": 3000 },
+ { "texts": "hdr_buttons", "of": "header button" },
+ { "click": "header button[aria-label*='theme' i], header button[title*='theme' i], header button[aria-label*='light' i], header button[aria-label*='mode' i]", "wait": 1500 },
+ { "click": "aside button:has-text('OPERATION')", "wait": 1200 },
+ { "click": "aside button:has-text('Costing & Budget')", "wait": 1200 },
+ { "fullshot": "side-light" },
+ { "html": "folder_btn", "of": "aside button:has-text('Style & Order')" },
+ { "html": "op_btn", "of": "aside button:has-text('OPERATION')" },
+ { "html": "leaf", "of": "aside a:has-text('Order Register')" }
+]

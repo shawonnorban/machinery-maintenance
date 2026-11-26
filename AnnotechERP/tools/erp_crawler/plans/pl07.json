@@ -1,0 +1,17 @@
+[
+ { "goto": "/m/planning/master-plan?order=53" }, { "wait": 6000 },
+ { "click": "main input[aria-label='Select 13']", "wait": 1500 },
+ { "click": "main input[aria-label='Select LINE01']", "wait": 1500 },
+ { "click": "main button:has-text('Calculate Plan') >> nth=0", "wait": 4000 },
+ { "click": "main [role=tab]:has-text('Daily Target Plan'), main button:has-text('Daily Target Plan')", "wait": 2000 },
+ { "fullshot": "d-target" }, { "texts": "daily_target", "of": "main" },
+ { "click": "main [role=tab]:has-text('Gantt'), main button:has-text('Gantt') >> nth=0", "wait": 2000 },
+ { "fullshot": "d-gantt" },
+ { "click": "main button:has-text('Lead times')", "wait": 2000 },
+ { "fullshot": "d-lead" }, { "texts": "lead", "of": "[role=dialog], main" }, { "escape": true },
+ { "fillsel": "main textarea", "text": "Annotech probe plan" },
+ { "click": "main button:has-text('Save as Draft')", "wait": 5000 },
+ { "url": "saved_url" }, { "fullshot": "d-saved" }, { "texts": "saved", "of": "main" },
+ { "click": "main button:has-text('Confirm Master Plan')", "wait": 3000 },
+ { "fullshot": "d-confirm" }, { "texts": "confirm_dialog", "of": "[role=dialog], [role=alertdialog]" }
+]

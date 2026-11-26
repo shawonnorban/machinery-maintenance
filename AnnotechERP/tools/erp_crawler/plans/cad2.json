@@ -1,0 +1,28 @@
+[
+ {
+  "goto": "/m/merchandising/cad-consumption-list"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "click": "main a:has-text('Consumption'), main [role=tab]:has-text('Consumption')",
+  "wait": 2500
+ },
+ {
+  "click": "role=button[name=/8797098/]",
+  "wait": 3000
+ },
+ {
+  "click": "main button:has-text('Add size')",
+  "wait": 2000
+ },
+ {
+  "texts": "dlg",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "dlg_d",
+  "root": "[role=dialog]"
+ }
+]

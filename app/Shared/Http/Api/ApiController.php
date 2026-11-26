@@ -38,6 +38,18 @@ abstract class ApiController extends Controller
         }
     }
 
+    /** Any one of the permissions will do (a screen two departments share). */
+    protected function allowEither(string ...$permissions): void
+    {
+        $caller = app(ApiCaller::class);
+        foreach ($permissions as $permission) {
+            if ($caller->can($permission)) {
+                return;
+            }
+        }
+        throw ApiException::of(ErrorCode::FORBIDDEN);
+    }
+
     protected function caller(): ApiCaller
     {
         return app(ApiCaller::class);

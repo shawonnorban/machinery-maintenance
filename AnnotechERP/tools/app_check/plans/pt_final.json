@@ -1,0 +1,1 @@
+[{"goto":"/production-tracking/daily-plan"},{"wait":3000},{"shot":"plans-final"},{"click":"tr:has-text(\"DPP-20261115-002\") >> role=button[name=\"History\"]","after":10000},{"shot":"history-final"},{"press":"Escape"},{"goto":"/production-tracking/cutting-dashboard"},{"wait":2500},{"shot":"cutting-final"}]

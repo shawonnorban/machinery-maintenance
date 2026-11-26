@@ -1,0 +1,19 @@
+[
+ { "goto": "/m/merchandising/accessories-pr-dummy-ord" },
+ { "dump": "records", "root": "main" },
+ { "click": "table tbody tr:first-child button:has-text('View BOM'), table tbody tr:first-child a:has-text('View BOM')", "wait": 3000 },
+ { "url": "after_view_bom" },
+ { "dump": "view_bom", "root": "main" },
+ { "goto": "/m/merchandising/accessories-pr-dummy-ord" },
+ { "click": "button:has-text('Requisition Entry (Dummy Order)')", "wait": 2500 },
+ { "dump": "entry", "root": "main" },
+ { "click": "button:has-text('PR List')", "wait": 2500 },
+ { "dump": "prlist", "root": "main" },
+ { "click": "button:has-text('Show')", "wait": 2500 },
+ { "dump": "prlist_shown", "root": "main" },
+ { "click": "button:has-text('Order BOM')", "wait": 2500 },
+ { "dump": "orderbom", "root": "main" },
+ { "click": "main li button, main ul button >> nth=0", "wait": 2500 },
+ { "dump": "orderbom_picked", "root": "main" },
+ { "fullshot": "dum-orderbom" }
+]

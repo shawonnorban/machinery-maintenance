@@ -1,0 +1,120 @@
+[
+ {
+  "goto": "/m/knitting/mc-oil-receive"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> button:has-text('Finalize')",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_fd",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_f1",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d1",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_s1",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d2",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_s2",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button >> nth=0",
+  "wait": 1500
+ },
+ {
+  "texts": "rc_d3",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "rc_s3",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "html": "rc_btns",
+  "of": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button"
+ },
+ {
+  "goto": "/m/knitting/requisition-for-knitting-mc-oil"
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> button[aria-label^='View']",
+  "wait": 3000
+ },
+ {
+  "dump": "ind_view",
+  "root": "main"
+ },
+ {
+  "click": "main [role=tab] >> nth=0",
+  "wait": 2000
+ },
+ {
+  "click": "main button:has-text('Search')",
+  "wait": 3000
+ },
+ {
+  "click": "main table tbody tr >> nth=0 >> button:has-text('Issue in Full')",
+  "wait": 1500
+ },
+ {
+  "texts": "ind_d",
+  "of": "[role=dialog]"
+ },
+ {
+  "click": "[role=dialog] button >> nth=-1",
+  "wait": 4000
+ },
+ {
+  "texts": "ind_s3",
+  "of": "main table tbody tr >> nth=0"
+ },
+ {
+  "html": "ind_btns",
+  "of": "main table tbody tr >> nth=0 >> td >> nth=-1 >> button"
+ }
+]

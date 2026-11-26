@@ -1,0 +1,80 @@
+[
+ {
+  "goto": "/m/merchandising/budget-sheet"
+ },
+ {
+  "wait": 3500
+ },
+ {
+  "choose": "main select >> nth=1",
+  "label": "529 \u00b7 T-SHIRT"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "texts": "after_style",
+  "of": "main"
+ },
+ {
+  "choose": "main select >> nth=2",
+  "label": "LPP-2026-000008 \u00b7 529 (529)"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "texts": "after_order",
+  "of": "main"
+ },
+ {
+  "dump": "filled",
+  "root": "main"
+ },
+ {
+  "click": "main button:has-text('Add') >> nth=0",
+  "wait": 2000
+ },
+ {
+  "texts": "add_dlg",
+  "of": "[role=dialog]"
+ },
+ {
+  "dump": "add_d",
+  "root": "[role=dialog]"
+ },
+ {
+  "escape": true
+ },
+ {
+  "click": "main button:has-text('Fabric Process Cost')",
+  "wait": 2500
+ },
+ {
+  "texts": "fpc",
+  "of": "main"
+ },
+ {
+  "click": "main button:has-text('Overall Cost')",
+  "wait": 2500
+ },
+ {
+  "texts": "oc",
+  "of": "main"
+ },
+ {
+  "dump": "oc_d",
+  "root": "main"
+ },
+ {
+  "click": "main button:has-text('Back to List'), main a:has-text('Back to List')",
+  "wait": 3000
+ },
+ {
+  "url": "back_url"
+ },
+ {
+  "texts": "back_t",
+  "of": "main h1"
+ }
+]

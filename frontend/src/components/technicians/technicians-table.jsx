@@ -3,32 +3,23 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { SearchingData } from "@/components/erp/searching-data";
 import { DataTable } from "@/components/ui/data-table";
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Card, CardBody } from "@/components/ui/card";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { refOf } from "@/lib/ref-path";
 
 /** Mirrors `TechnicianController::index` (SRS 25) — who works here and what they look after, carrying no money of any kind. */
-function TechniciansTable({ technicians, meta, page, search, factoryId, departmentId, factories, departments, actions }) {
+function TechniciansTable({ technicians, meta, page, search, factoryId, departmentId, factories, departments, actions, addHref }) {
   const t = useT("technician");
   const tc = useT("common");
   const router = useRouter();
-  const [searchInput, setSearchInput] = useState(search);
   const [deleting, setDeleting] = useState(null);
   const [pending, startTransition] = useTransition();
   const toastManager = useToastManager();
 
-  useEffect(() => {
-    if (searchInput === search) return undefined;
-    const timeout = setTimeout(() => navigate({ search: searchInput, page: 1 }), 350);
-    return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchInput]);
 
   function navigate(next) {
     const params = new URLSearchParams({
@@ -66,33 +57,16 @@ function TechniciansTable({ technicians, meta, page, search, factoryId, departme
 
   return (
     <div className="flex flex-col gap-4">
-      <Card>
-        <CardBody className="flex flex-wrap items-center gap-3 py-3">
-          <div className="relative w-full flex-1 min-w-[200px]">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-subtle" />
-            <Input
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder={t("search")}
-              className="pl-9"
-            />
-          </div>
-          <div className="w-full max-w-[220px]">
-            <Select
-              options={[{ value: "", label: t("all_factories") }, ...factories.map((f) => ({ value: f.id, label: f.name }))]}
-              value={factoryId}
-              onValueChange={(value) => navigate({ factory_id: value, page: 1 })}
-            />
-          </div>
-          <div className="w-full max-w-[220px]">
-            <Select
-              options={[{ value: "", label: t("all_departments") }, ...departments.map((d) => ({ value: d.id, label: d.name }))]}
-              value={departmentId}
-              onValueChange={(value) => navigate({ department_id: value, page: 1 })}
-            />
-          </div>
-        </CardBody>
-      </Card>
+      <SearchingData
+        fields={[
+          { name: "search", label: t("technician"), placeholder: t("search") },
+          { name: "factory_id", label: t("factory"), type: "select", options: factories.map((f) => ({ value: f.id, label: f.name })) },
+          { name: "department_id", label: t("department"), type: "select", options: departments.map((d) => ({ value: d.id, label: d.name })) },
+        ]}
+        values={{ search, factory_id: factoryId, department_id: departmentId }}
+        onSearch={(values) => navigate({ ...values, page: 1 })}
+        addHref={addHref}
+      />
 
       <DataTable
         columns={[
@@ -101,7 +75,7 @@ function TechniciansTable({ technicians, meta, page, search, factoryId, departme
             header: t("technician"),
             render: (row) => (
               <div>
-                <Link href={`/technicians/${row.id}/edit`} className="font-medium text-brand hover:underline">
+                <Link href={`/technicians/${refOf(row, "employee_id")}/edit`} className="font-medium text-brand hover:underline">
                   {row.name}
                 </Link>
                 <div className="text-xs text-foreground-muted">{row.employee_id}</div>
@@ -137,11 +111,12 @@ function TechniciansTable({ technicians, meta, page, search, factoryId, departme
         rowKey={(row) => row.id}
         emptyTitle={t("no_technicians_found")}
         rowActions={(row) => [
-          { label: tc("edit"), onSelect: () => router.push(`/technicians/${row.id}/edit`) },
-          { label: row.status === "ACTIVE" ? t("deactivate") : t("activate"), onSelect: () => runToggle(row) },
-          { label: tc("delete"), destructive: true, onSelect: () => setDeleting(row) },
+          { icon: "edit", label: tc("edit"), onSelect: () => router.push(`/technicians/${refOf(row, "employee_id")}/edit`) },
+          { icon: "toggle", label: row.status === "ACTIVE" ? t("deactivate") : t("activate"), onSelect: () => runToggle(row) },
+          { icon: "delete", label: tc("delete"), destructive: true, onSelect: () => setDeleting(row) },
         ]}
         pagination={{ page: meta.current_page, perPage: meta.per_page, total: meta.total }}
+        perPageSelect
         onPageChange={(nextPage) => navigate({ page: nextPage })}
       />
 

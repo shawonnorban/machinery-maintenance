@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/material-procurement/create-requisition" },
+ { "wait": 4000 },
+ { "click": "main button:has-text('Select Order & Create')", "wait": 3000 },
+ { "peek": "main button:has-text('Select a confirmed order')", "wait": 1500 },
+ { "popup": "orders" },
+ { "peek": "[role=option] >> nth=0", "wait": 3000 },
+ { "texts": "order_loaded", "of": "main h2, main h3, main p, main label, main span, main dt, main dd, main div.text-sm" },
+ { "fullshot": "mp3-order-loaded" },
+ { "peek": "main button:has-text('Select…') >> nth=0", "wait": 1500 },
+ { "popup": "fabric_items" },
+ { "peek": "[role=option] >> nth=0", "wait": 2000 },
+ { "dump": "fabric_line", "root": "main" },
+ { "click": "main button:has-text('Accessories')", "wait": 2000 },
+ { "dump": "acc_line", "root": "main" },
+ { "peek": "main button:has-text('Select…') >> nth=0", "wait": 1500 },
+ { "popup": "acc_items" },
+ { "escape": true },
+ { "texts": "acc_texts", "of": "main label, main button, main p" }
+]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Settings;
 
+use App\Modules\Inventory\Support\SparePartCategories;
 use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetType;
 use App\Modules\Asset\Models\Manufacturer;
@@ -138,9 +139,12 @@ class IndustrySeedTest extends TestCase
 
     public function test_the_store_can_separate_knitting_dyeing_and_finishing_spend(): void
     {
+        // A company's starter categories (its own rows in the one category list).
+        $company = \Tests\Support\TenantFixture::company('Delta Apparels Ltd', 'DAL');
+        SparePartCategories::ensure($company->id);
         foreach (['KNITTING_PARTS', 'DYEING_PARTS', 'FINISHING_PARTS', 'INSTRUMENTATION'] as $code) {
             $this->assertNotNull(
-                SparePartCategory::whereNull('company_id')->where('code', $code)->first(),
+                SparePartCategory::withoutGlobalScopes()->where('company_id', $company->id)->where('code', $code)->first(),
                 "Spare part category {$code} is not seeded.",
             );
         }

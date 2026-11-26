@@ -1,13 +1,23 @@
 import { apiFetch } from "@/lib/api-server";
 import { ApiError } from "@/lib/api-error";
 import { getT } from "@/lib/i18n-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LayoutDashboard } from "lucide-react";
 import { DaysPicker } from "@/components/dashboard/days-picker";
-import { ManagementPanel } from "@/components/dashboard/management-panel";
-import { MaintenancePanel } from "@/components/dashboard/maintenance-panel";
-import { StorePanel } from "@/components/dashboard/store-panel";
+import {
+  AttentionStrip,
+  KpiRow,
+  TrendCard,
+  MachineStatusCard,
+  OpenBreakdownsCard,
+  PmCard,
+  WorkloadCard,
+  TopFailingCard,
+  CostDowntimeCard,
+  StockOverviewCard,
+  ReorderCard,
+} from "@/components/dashboard/cards";
 
 const PERIODS = [7, 30, 90];
 
@@ -22,10 +32,33 @@ async function fetchPanel(path) {
 }
 
 /**
- * The three dashboards (SRS 30) — mirrors `DashboardController`/`dashboard.
- * index.blade.php`. Which panels a person sees is decided by what they can
- * act on, not a setting: a storekeeper lands on stock, not a fleet
- * availability figure they can't influence.
+ * One row of cards. Cards a role can't see are passed as null and dropped,
+ * and the rest share the row by their `grow` weight, so a storekeeper's
+ * dashboard closes up instead of leaving holes where the fleet cards were.
+ */
+function Row({ items }) {
+  const visible = items.filter((item) => item && item.node);
+  if (visible.length === 0) return null;
+
+  return (
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch">
+      {visible.map((item) => (
+        <div key={item.key} className="flex min-w-0 flex-col [&>*]:flex-1" style={{ flex: `${item.grow ?? 1} 1 0%` }}>
+          {item.node}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * The Machinery dashboard (SRS 30). Which cards a person sees is decided by
+ * which panel endpoints answer for them (management / maintenance / store,
+ * each on its own permission), not a setting.
+ *
+ * Order, top to bottom: what needs someone now, the period's headline
+ * figures, how the period moved, the live lists behind the counts, then
+ * people, machines, money, and the store.
  */
 export default async function DashboardPage({ searchParams }) {
   const params = await searchParams;
@@ -35,8 +68,6 @@ export default async function DashboardPage({ searchParams }) {
     fetchPanel(`/dashboard/management?days=${days}`),
     fetchPanel(`/dashboard/maintenance?days=${days}`),
     fetchPanel(`/dashboard/store?days=${days}`),
-    // Shared by whichever panel wants it — fetched once here rather than
-    // once per panel, since it's the same series regardless of audience.
     fetchPanel(`/dashboard/trend?days=${days}`),
     getT("dashboard"),
   ]);
@@ -45,28 +76,44 @@ export default async function DashboardPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("dashboard") }]}
-        title={t("dashboard")}
-        description={t("period_note")}
-        actions={<DaysPicker periods={PERIODS} value={days} />}
-      />
+      <ScreenHeader url="/" title={t("dashboard")} description={t("period_note")} actions={<DaysPicker periods={PERIODS} value={days} />} />
 
       {nothingToShow ? (
         <EmptyState icon={<LayoutDashboard />} title={t("no_panels")} description={t("no_panels_hint")} />
       ) : (
-        <div className="flex flex-col gap-8">
-          {[
-            management ? { key: "management", node: <ManagementPanel data={management} /> } : null,
-            maintenance ? { key: "maintenance", node: <MaintenancePanel data={maintenance} trend={trend} /> } : null,
-            store ? { key: "store", node: <StorePanel data={store} /> } : null,
-          ]
-            .filter(Boolean)
-            .map((panel, index) => (
-              <div key={panel.key} className={index > 0 ? "border-t border-border pt-8" : undefined}>
-                {panel.node}
-              </div>
-            ))}
+        <div className="flex flex-col gap-4">
+          {maintenance || store ? <AttentionStrip maintenance={maintenance} store={store} /> : null}
+
+          <KpiRow management={management} maintenance={maintenance} />
+
+          <Row
+            items={[
+              trend && (maintenance || management) ? { key: "trend", grow: 2, node: <TrendCard trend={trend} /> } : null,
+              management ? { key: "machines", grow: 1, node: <MachineStatusCard management={management} /> } : null,
+            ]}
+          />
+
+          <Row
+            items={[
+              maintenance ? { key: "breakdowns", node: <OpenBreakdownsCard maintenance={maintenance} /> } : null,
+              maintenance ? { key: "pm", node: <PmCard maintenance={maintenance} /> } : null,
+            ]}
+          />
+
+          <Row
+            items={[
+              maintenance ? { key: "workload", node: <WorkloadCard maintenance={maintenance} /> } : null,
+              management ? { key: "failing", node: <TopFailingCard management={management} /> } : null,
+              management ? { key: "cost", node: <CostDowntimeCard management={management} /> } : null,
+            ]}
+          />
+
+          <Row
+            items={[
+              store ? { key: "stock", grow: 1, node: <StockOverviewCard store={store} /> } : null,
+              store ? { key: "reorder", grow: 2, node: <ReorderCard store={store} /> } : null,
+            ]}
+          />
         </div>
       )}
     </>

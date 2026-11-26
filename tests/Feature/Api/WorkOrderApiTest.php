@@ -8,8 +8,6 @@ use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Identity\Models\User;
 use App\Modules\Inventory\Actions\ReceiveStock;
-use App\Modules\Inventory\Models\Bin;
-use App\Modules\Inventory\Models\SparePart;
 use App\Modules\Maintenance\Actions\CreateTemplateVersion;
 use App\Modules\Maintenance\Models\MaintenanceTemplate;
 use App\Modules\Maintenance\Models\MaintenanceType;
@@ -478,6 +476,12 @@ class WorkOrderApiTest extends TestCase
         $this->assertSame(1, $response->json('data.in_progress'));
         $this->assertSame(1, $response->json('data.on_hold'));
         $this->assertSame(1, $response->json('data.awaiting_verification'));
+
+        // "Open only" lists exactly what the Open tile counts: no completed order.
+        $open = $this->asManager()->getJson('/api/v1/work-orders?open=true')->assertOk();
+        $numbers = array_column($open->json('data'), 'work_order_number');
+        sort($numbers);
+        $this->assertSame(['WO-1', 'WO-2', 'WO-3'], $numbers);
     }
 
     public function test_assignable_technicians_are_reachable_by_a_caller_who_can_assign_but_not_manage_the_roster(): void
@@ -549,6 +553,20 @@ class WorkOrderApiTest extends TestCase
         $this->assertSame('Corrective maintenance', $response->json('data.maintenance_type'));
         $this->assertCount(1, $response->json('data.assignments'));
         $this->assertSame($technician->id, $response->json('data.assignments.0.technician_id'));
+    }
+
+    public function test_records_are_reachable_by_their_readable_number_as_well_as_their_id(): void
+    {
+        $workOrder = $this->createWorkOrder(['work_order_number' => 'WO-DHK-202611-00042']);
+
+        // Pages address records by number (no ULIDs in page URLs); API calls that send the id keep working.
+        $this->asManager()->getJson('/api/v1/work-orders/WO-DHK-202611-00042')->assertOk()
+            ->assertJsonPath('data.id', $workOrder->id);
+        $this->asManager()->getJson("/api/v1/work-orders/{$workOrder->id}")->assertOk()
+            ->assertJsonPath('data.work_order_number', 'WO-DHK-202611-00042');
+        $this->asManager()->getJson('/api/v1/assets/'.$this->asset->asset_code)->assertOk()
+            ->assertJsonPath('data.id', $this->asset->id);
+        $this->asManager()->getJson('/api/v1/work-orders/WO-NO-SUCH')->assertNotFound();
     }
 
     private function createWorkOrder(array $overrides = []): WorkOrder

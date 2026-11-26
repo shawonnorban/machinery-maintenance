@@ -1,0 +1,85 @@
+[
+ {
+  "goto": "/capacity-planning/master-plan?order=LPP-2026-000001"
+ },
+ {
+  "goto": "/capacity-planning/projections"
+ },
+ {
+  "click": "aside button:has-text('December')",
+  "after": 6000
+ },
+ {
+  "shot": "projections-dec"
+ },
+ {
+  "texts": "proj_rows",
+  "of": "tbody tr"
+ },
+ {
+  "click": "tr:has-text('LPP-2026-000001') >> role=link[name='Create Plan']",
+  "after": 12000
+ },
+ {
+  "shot": "mp-open"
+ },
+ {
+  "click": "role=checkbox[name='Select LINE01']"
+ },
+ {
+  "click": "role=checkbox[name='Select LINE05']"
+ },
+ {
+  "fill": "x",
+  "sel": "input[aria-label='LINE05 hours']",
+  "text": "8"
+ },
+ {
+  "click": "role=button[name='Calculate Plan']",
+  "after": 10000
+ },
+ {
+  "shot": "mp-calculated"
+ },
+ {
+  "texts": "inputs",
+  "of": "section:has-text('Line-wise Planning Input') tbody tr"
+ },
+ {
+  "click": "role=tab >> text=Daily Target Plan",
+  "after": 1000
+ },
+ {
+  "texts": "targets",
+  "of": "section:has-text('Master Plan Result') tbody tr"
+ },
+ {
+  "fill": "Remarks",
+  "text": "UI check plan",
+  "exact": true
+ },
+ {
+  "click": "role=button[name='Save as Draft']",
+  "after": 12000
+ },
+ {
+  "shot": "mp-saved"
+ },
+ {
+  "click": "role=button[name='Confirm Master Plan']",
+  "after": 2000
+ },
+ {
+  "shot": "mp-confirm-dialog"
+ },
+ {
+  "click": "role=dialog >> role=button[name='Confirm & Lock']",
+  "after": 12000
+ },
+ {
+  "shot": "mp-locked"
+ },
+ {
+  "url": "locked_url"
+ }
+]

@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { LabelSheet } from "@/components/assets/label-sheet";
 import { LabelFilters } from "@/components/assets/label-filters";
 import { getT } from "@/lib/i18n-server";
@@ -17,7 +17,7 @@ export default async function AssetLabelsPage({ searchParams }) {
   if (factoryId) query.set("factory_id", factoryId);
   if (status) query.set("status", status);
 
-  const hasCriteria = ids.length > 0 || factoryId || status;
+  const hasCriteria = ids.length > 0 || factoryId || status || params.all === "1";
 
   // /assets/form-options rather than /factories directly — the latter
   // needs settings.factory.manage, a tier above asset.asset.view_any
@@ -32,8 +32,8 @@ export default async function AssetLabelsPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("assets"), href: "/assets" }, { label: t("print_labels") }]}
+      <ScreenHeader
+        url="/assets/labels"
         title={t("print_labels")}
         description={t("print_labels_description")}
       />

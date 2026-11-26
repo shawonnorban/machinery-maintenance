@@ -1,6 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardBody } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { PlanForm } from "@/components/maintenance/plan-form";
 import { getT } from "@/lib/i18n-server";
 import { updatePlan } from "../actions";
@@ -18,21 +17,12 @@ export default async function EditMaintenancePlanPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[
-          { label: t("maintenance") },
-          { label: t("plans"), href: "/maintenance/plans" },
-          { label: plan.name, href: `/maintenance/plans/${planId}` },
-          { label: tc("edit") },
-        ]}
+      <ScreenHeader
+        parentUrl="/maintenance/plans" trail={[{ label: plan.name, href: `/maintenance/plans/${planId}` }]}
         title={plan.name}
       />
 
-      <Card>
-        <CardBody>
-          <PlanForm plan={plan} options={options} action={updatePlan.bind(null, planId)} previewAction={previewPlan} />
-        </CardBody>
-      </Card>
+      <PlanForm plan={plan} options={options} action={updatePlan.bind(null, planId)} previewAction={previewPlan} />
     </>
   );
 }

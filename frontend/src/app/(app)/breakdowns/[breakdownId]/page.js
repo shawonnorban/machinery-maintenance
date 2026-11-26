@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { BreakdownActions } from "@/components/breakdowns/breakdown-actions";
 import { BreakdownDetailTabs } from "@/components/breakdowns/breakdown-detail-tabs";
 import { getT } from "@/lib/i18n-server";
+import { refOf } from "@/lib/ref-path";
 import {
   acknowledge, arrive, startRepair, completeRepair, resumeProduction, resume, verify, submitForApproval, assign,
   hold, close, reject, rejectVerification, cancel, raiseWorkOrder, startWorkOrder,
@@ -62,8 +63,8 @@ export default async function BreakdownDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("breakdowns"), href: "/breakdowns" }, { label: breakdown.breakdown_number }]}
+      <ScreenHeader
+        parentUrl="/breakdowns"
         title={breakdown.breakdown_number}
         description={`${breakdown.asset?.asset_code} — ${breakdown.asset?.name}`}
         actions={
@@ -109,7 +110,7 @@ export default async function BreakdownDetailPage({ params }) {
         </SummaryItem>
         {breakdown.work_order ? (
           <SummaryItem label={t("repair_work_order")}>
-            <Link href={`/work-orders/${breakdown.work_order.id}`} className="text-sm text-brand hover:underline">
+            <Link href={`/work-orders/${refOf(breakdown.work_order, "work_order_number")}`} className="text-sm text-brand hover:underline">
               {breakdown.work_order.work_order_number}
             </Link>
           </SummaryItem>

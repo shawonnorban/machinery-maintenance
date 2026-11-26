@@ -1,0 +1,15 @@
+[
+ {"goto": "/m/knitting/collar-cuff-production"},
+ {"click": "main [role=tab] >> nth=2", "wait": 2500},
+ {"dump": "cpr", "root": "main"},
+ {"goto": "/m/knitting/collar-cuff-program-sc-out-house"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"dump": "pgf", "root": "main"},
+ {"goto": "/m/knitting/collar-cuff-trans-recv-store-bulk"},
+ {"click": "main button:has-text('Add New')", "wait": 2500},
+ {"click": "main button:has-text('Add Part')", "wait": 1500},
+ {"dump": "cbf", "root": "main"},
+ {"goto": "/m/knitting/yarn-req-collar-cuff-solid"},
+ {"click": "main [role=tab] >> nth=1", "wait": 2500},
+ {"dump": "ysf", "root": "main"}
+]

@@ -1,0 +1,5 @@
+[
+ {"goto": "/knit-production/grey-fabric-receive-challan-sc-out-house"},
+ {"wait": 4000},
+ {"printpdf": "main button[aria-label^='Print OGR']", "as": "scg-rcv-print2"}
+]

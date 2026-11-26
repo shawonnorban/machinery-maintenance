@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Popover } from "@base-ui/react/popover";
 import Link from "next/link";
 import { Bell } from "lucide-react";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { RelativeTime } from "@/components/ui/relative-time";
 import { toAppPath } from "@/lib/notification-path";
 import { useT } from "@/lib/i18n";
+import { recentNotifications } from "@/app/(app)/notifications/actions";
 
 const SEVERITY_DOT = { CRITICAL: "bg-danger", WARNING: "bg-warning", INFO: "bg-info" };
 
@@ -18,35 +19,55 @@ function truncate(text, length) {
 
 /**
  * Mirrors `components/layout/notification-bell.blade.php` — the bell itself
- * only opens a preview of the 5 most recent notifications (CoreUI's
- * dropdown there, a Base UI popover here); it never navigates on its own.
- * "View all notifications" at the bottom is the one link that does.
+ * only opens a preview of the 20 most recent notifications (CoreUI's
+ * dropdown there, a Base UI popover here, scrolling); it never navigates on
+ * its own. "View all notifications" at the bottom is the one link that does.
+ * Each opening reads them again (user, 2026-11-21: the layout's copy is only
+ * made on a full page load, so new ones never showed while moving between
+ * screens).
  */
 function NotificationBell({ unreadCount = 0, recent = [] }) {
   const [open, setOpen] = useState(false);
+  // What the last opening read; until then the layout's copy.
+  const [fetched, setFetched] = useState(null);
+  const [loading, startLoading] = useTransition();
   const t = useT("notification");
 
+  const onOpenChange = (next) => {
+    setOpen(next);
+    if (!next) return;
+    startLoading(async () => {
+      const res = await recentNotifications();
+      if (res?.status === "success") setFetched({ recent: res.recent ?? [], unread: res.unread ?? 0 });
+    });
+  };
+  const items = fetched?.recent ?? recent;
+  const unread = fetched?.unread ?? unreadCount;
+
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open} onOpenChange={onOpenChange}>
       <Popover.Trigger
         className="relative rounded-sm p-2 text-foreground-muted outline-none hover:bg-surface-muted hover:text-foreground"
-        aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
+        aria-label={unread > 0 ? `Notifications, ${unread} unread` : "Notifications"}
       >
         <Bell className="size-[18px]" />
-        {unreadCount > 0 ? (
+        {unread > 0 ? (
           <span className="absolute top-1 right-1 flex size-2 rounded-full bg-danger" aria-hidden />
         ) : null}
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner align="end" sideOffset={4} className="z-50 outline-none">
           <Popover.Popup className="w-80 rounded-sm border border-border bg-surface shadow-md">
-            <div className="border-b border-border px-4 py-2.5 text-sm font-semibold text-foreground">{t("notifications")}</div>
+            <div className="flex items-center justify-between border-b border-border px-4 py-2.5 text-sm font-semibold text-foreground">
+              <span>{t("notifications")}</span>
+              {unread > 0 ? <span className="rounded-full bg-danger px-2 py-0.5 text-[11px] font-semibold text-white tabular-nums">{unread}</span> : null}
+            </div>
 
-            {recent.length === 0 ? (
-              <p className="px-4 py-6 text-center text-sm text-foreground-muted">{t("no_notifications")}</p>
+            {items.length === 0 ? (
+              <p className="px-4 py-6 text-center text-sm text-foreground-muted">{loading ? "…" : t("no_notifications")}</p>
             ) : (
               <ul className="max-h-96 overflow-y-auto divide-y divide-border">
-                {recent.map((notification) => {
+                {items.map((notification) => {
                   const href = toAppPath(notification.action_url) ?? "/notifications";
                   return (
                     <li key={notification.id}>

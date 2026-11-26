@@ -1,0 +1,131 @@
+[
+ {
+  "goto": "/m/ie/excess-yarn-target"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "ey_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Excess Yarn Target')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "ey-target"
+ },
+ {
+  "dump": "ey_target",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New excess yarn')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "ey-new"
+ },
+ {
+  "dump": "ey_new",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/style-feeding-sco"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "sco_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Style Changeover Dashboard')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "sco-dash"
+ },
+ {
+  "dump": "sco_dash",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New style change-over')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "sco-new"
+ },
+ {
+  "dump": "sco_new",
+  "root": "main"
+ },
+ {
+  "goto": "/m/ie/gmt-target-setting"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "dump": "gt_records",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Sewing Target Setting')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "gt-sts"
+ },
+ {
+  "dump": "gt_sts",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Entry')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "gt-pe"
+ },
+ {
+  "dump": "gt_pe",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('Production Plans')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "gt-pp"
+ },
+ {
+  "dump": "gt_pp",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('NPT Entry')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "gt-npt"
+ },
+ {
+  "dump": "gt_npt",
+  "root": "main"
+ },
+ {
+  "click": "main button[role=tab]:has-text('New sewing target')",
+  "wait": 2500
+ },
+ {
+  "fullshot": "gt-new"
+ },
+ {
+  "dump": "gt_new",
+  "root": "main"
+ }
+]

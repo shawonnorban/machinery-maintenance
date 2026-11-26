@@ -1,0 +1,16 @@
+[
+ { "goto": "/m/inventory/material-return" }, { "wait": 6000 },
+ { "type": "main input >> visible=true >> nth=0", "text": "MO-2026-00003" },
+ { "peek": "main label:has-text('Remarks')", "wait": 4000 },
+ { "texts": "mr_fetched", "of": "main p, main span, main label, main td, main th, main div.text-xs, main dd, main dt" },
+ { "html": "mr_inputs", "of": "main input" },
+ { "fullshot": "st11-mr" },
+ { "goto": "/m/inventory/stock-adjustment" }, { "wait": 6000 },
+ { "choose": "main select >> nth=0", "index": 1 }, { "wait": 2000 },
+ { "html": "sa_inputs", "of": "main input" },
+ { "texts": "sa_after", "of": "main p, main span, main label, main td" },
+ { "fullshot": "st11-sa" },
+ { "goto": "/m/inventory/store-reports" }, { "wait": 6000 },
+ { "html": "rp_nav", "of": "main nav *, main aside *, main [role=tablist] *" },
+ { "hrefs": "rp_links", "of": "main a" }
+]

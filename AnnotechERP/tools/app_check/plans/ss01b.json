@@ -1,0 +1,11 @@
+[
+ {"goto": "/sales-shipment/sd-settings"},
+ {"wait": 15000},
+ {"click": "main [role=tab]:has-text('Edit settings')", "after": 1000},
+ {"click": "main label:has-text('Ship only what has been delivered') [role=checkbox]", "after": 500},
+ {"fill": "Due alert window", "exact": true, "text": "7"},
+ {"shot": "edit-ticked"},
+ {"click": "main button:has-text('Update settings')", "after": 15000},
+ {"texts": "row_after", "of": "main tbody tr"},
+ {"shot": "current-final"}
+]

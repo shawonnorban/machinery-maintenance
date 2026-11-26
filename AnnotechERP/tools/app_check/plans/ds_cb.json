@@ -1,0 +1,1 @@
+[{"goto": "/dev-sample-status/list?f[serial_no][]=1"}, {"wait": 6000}, {"as": "html", "eval": "document.querySelector('tbody tr[data-row] td').innerHTML.slice(0,400)"}]

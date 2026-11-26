@@ -85,7 +85,10 @@ class MasterDataApiController extends ApiController
         );
 
         $paginator = $query->paginate($this->perPage($request))->withQueryString();
-        $rows = collect($paginator->items())->map(fn (Model $row): array => $this->summary($masterType, $row))->values();
+        $computed = $masterType->computedValues($paginator->items());
+        $rows = collect($paginator->items())
+            ->map(fn (Model $row): array => $this->summary($masterType, $row) + ($computed[(string) $row->getKey()] ?? []))
+            ->values();
 
         return ApiResponse::ok($rows->all(), [
             'current_page' => $paginator->currentPage(),
@@ -113,9 +116,15 @@ class MasterDataApiController extends ApiController
                 'label' => $field->label(),
                 'required' => $field->isRequired(),
                 'options' => $field->options,
+                'option_labels' => $field->optionLabels(),
                 'reference' => $field->reference,
                 'in_list' => $field->inList,
+                'default' => $field->default,
+                'auto' => $field->auto,
             ])->all(),
+            'computed' => collect($type->computedColumns())
+                ->map(fn (string $label, string $name): array => ['name' => $name, 'label' => $label])
+                ->values()->all(),
         ];
     }
 
@@ -156,6 +165,10 @@ class MasterDataApiController extends ApiController
 
                 if ($model === Factory::class) {
                     $query->whereIn('id', $this->context->accessibleFactoryIds());
+                }
+                // A shared list (units: the platform's plus this company's) offers only what the company may use.
+                if (method_exists($model, 'scopeAvailableTo')) {
+                    $query->availableTo($this->context->companyId());
                 }
 
                 $options[$field->name] = $this->asOptions($query->get(), 'name');

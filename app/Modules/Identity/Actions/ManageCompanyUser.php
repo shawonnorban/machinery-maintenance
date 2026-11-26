@@ -6,6 +6,7 @@ namespace App\Modules\Identity\Actions;
 
 use App\Modules\Billing\Services\EntitlementGuard;
 use App\Modules\Identity\Models\CompanyUser;
+use App\Modules\Identity\Models\PasswordChange;
 use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserRole;
@@ -13,6 +14,7 @@ use App\Modules\Identity\Services\PermissionResolver;
 use App\Shared\Scopes\TenantScope;
 use App\Shared\Tenancy\TenantContext;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -55,7 +57,10 @@ class ManageCompanyUser
         // handled by setMembershipStatus, and blocking that would leave a
         // customer at their limit unable to bring back a person they had just
         // suspended by mistake.
-        $this->entitlements->assertCanAdd('ACTIVE_USERS');
+        // A portal-only account (a supplier's login) takes no seat.
+        if (! Role::onlyPortal($roleIds)) {
+            $this->entitlements->assertCanAdd('ACTIVE_USERS');
+        }
 
         return DB::transaction(function () use ($data, $roleIds, $factoryId, $companyId): array {
             $existing = User::where('email', $data['email'])->first();
@@ -63,9 +68,13 @@ class ManageCompanyUser
             // An account that already exists is joined rather than duplicated:
             // the same person moving between two companies in a group keeps one
             // set of credentials.
-            $password = $existing === null ? $this->generatePassword() : null;
+            // An administrator may choose the password (Brickland's User
+            // Account Registration); otherwise one is issued and shown once.
+            $chosen = $existing === null && filled($data['password'] ?? null);
+            $password = $existing === null ? ($chosen ? (string) $data['password'] : $this->generatePassword()) : null;
 
-            $user = $existing ?? User::create([
+            // array_merge so the chosen account status replaces the default.
+            $user = $existing ?? User::create(array_merge([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'] ?? null,
@@ -76,7 +85,11 @@ class ManageCompanyUser
                 // without a technician row of its own (`BreakdownScopeGuard`).
                 'department_id' => $data['department_id'] ?? null,
                 'production_line_id' => $data['production_line_id'] ?? null,
-            ]);
+            ], $this->account($data)));
+
+            if ($existing === null) {
+                PasswordChange::record($user, 'CREATED', $data['changed_by'] ?? null, (bool) ($data['must_change_password'] ?? false));
+            }
 
             $membership = CompanyUser::withoutGlobalScope(TenantScope::class)
                 ->where('company_id', $companyId)
@@ -99,7 +112,8 @@ class ManageCompanyUser
 
             $this->syncRoles($user, $roleIds, $factoryId);
 
-            return ['user' => $user->fresh(), 'password' => $password];
+            // A password the administrator typed is not echoed back.
+            return ['user' => $user->fresh(), 'password' => $chosen ? null : $password];
         });
     }
 
@@ -118,7 +132,7 @@ class ManageCompanyUser
                 'locale' => $data['locale'] ?? $user->locale,
                 'department_id' => $data['department_id'] ?? null,
                 'production_line_id' => $data['production_line_id'] ?? null,
-            ]);
+            ] + $this->account($data, $user));
 
             $this->syncRoles($user, $roleIds, $factoryId);
 
@@ -174,7 +188,7 @@ class ManageCompanyUser
      */
     public function addRole(User $user, string $roleId, ?string $factoryId): UserRole
     {
-        $role = Role::whereIn('scope', ['COMPANY', 'FACTORY'])->find($roleId);
+        $role = Role::availableTo($this->context->companyId())->whereIn('scope', ['COMPANY', 'FACTORY'])->find($roleId);
 
         if ($role === null) {
             throw ValidationException::withMessages(['role_id' => __('user.roles_required')]);
@@ -236,13 +250,78 @@ class ManageCompanyUser
      * link is not a path everybody can take. The administrator is given the
      * password to hand over, and it is readable exactly once.
      */
-    public function resetPassword(User $user): string
+    public function resetPassword(User $user, ?string $memorableWord = null, ?string $by = null): string
     {
+        $this->assertMemorableWord($user, $memorableWord);
+
         $password = $this->generatePassword();
 
-        $user->forceFill(['password' => $password])->save();
+        // An issued password is a temporary one: the owner replaces it at
+        // their next sign-in.
+        $user->forceFill(['password' => $password, 'must_change_password' => true])->save();
+        PasswordChange::record($user, 'ADMIN_RESET', $by, true);
 
         return $password;
+    }
+
+    /**
+     * Access Control → Password Change for somebody else (AnnotechERP 02/01):
+     * the administrator types the new password, and may require the owner to
+     * change it again at their next sign-in.
+     */
+    public function setPassword(User $user, string $password, bool $forceChange, ?string $memorableWord = null, ?string $by = null): void
+    {
+        $this->assertMemorableWord($user, $memorableWord);
+
+        $user->forceFill(['password' => $password, 'must_change_password' => $forceChange])->save();
+        PasswordChange::record($user, 'ADMIN_SET', $by, $forceChange);
+    }
+
+    /**
+     * When the account has a memorable word, a reset needs it: the
+     * administrator asks the person, so whoever phones in claiming to be
+     * them cannot have the password changed on their say-so.
+     */
+    private function assertMemorableWord(User $user, ?string $memorableWord): void
+    {
+        if ($user->memorable_word === null) {
+            return;
+        }
+
+        if ($memorableWord === null || ! Hash::check($memorableWord, $user->memorable_word)) {
+            throw ValidationException::withMessages(['memorable_word' => __('user.memorable_word_mismatch')]);
+        }
+    }
+
+    /**
+     * Brickland's account columns (AnnotechERP 02/01). On update a key the
+     * caller did not send keeps its value; the memorable word is only ever
+     * replaced, never read back.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function account(array $data, ?User $user = null): array
+    {
+        $out = [];
+        foreach (['username', 'user_type', 'employee_code', 'account_expires_at', 'must_change_password', 'cannot_change_password',
+            'password_never_expires', 'two_factor_method', 'justification'] as $key) {
+            if (array_key_exists($key, $data)) {
+                $out[$key] = $data[$key];
+            }
+        }
+        // Sign-in lower-cases what is typed, so the User ID is kept that way too.
+        if (isset($out['username'])) {
+            $out['username'] = strtolower((string) $out['username']);
+        }
+        if (array_key_exists('account_status', $data) && $data['account_status'] !== null) {
+            $out['status'] = $data['account_status'];
+        }
+        if (filled($data['memorable_word'] ?? null)) {
+            $out['memorable_word'] = $data['memorable_word'];
+        }
+
+        return $out;
     }
 
     /**
@@ -253,6 +332,7 @@ class ManageCompanyUser
         $companyId = $this->context->companyId();
 
         $roles = Role::query()
+            ->availableTo($companyId) // this company's own roles (or a template it has no copy of)
             ->whereIn('id', $roleIds)
             // A tenant may only hand out company and factory roles. Platform
             // roles are the operator's, and a company that could assign one

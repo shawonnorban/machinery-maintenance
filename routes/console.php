@@ -3,16 +3,25 @@
 declare(strict_types=1);
 
 use App\Modules\Analytics\Console\SnapshotKpis;
+use App\Modules\Approval\Console\EscalateOverdueRequests;
+use App\Modules\Billing\Console\AdvanceSubscriptions;
+use App\Modules\ColourLab\Console\RemindExpiringCertificates;
+use App\Modules\Erp\Console\NotifyPendingWorkCommand;
+use App\Modules\Chat\Console\SyncDepartmentGroups;
+use App\Modules\HrPayroll\Console\ApplyMovements;
+use App\Modules\HrPayroll\Console\ProcessAttendance;
 use App\Modules\ItemMaster\Console\AlertExpiringLots;
 use App\Modules\ItemMaster\Console\ChaseOpenStockCounts;
-use App\Modules\Billing\Console\AdvanceSubscriptions;
 use App\Modules\Maintenance\Console\GenerateMaintenanceSchedules;
 use App\Modules\Notification\Console\EscalateNotifications;
+use App\Modules\OrderSummary\Console\SendEditDigest;
 use App\Modules\Platform\Console\CheckTicketSla;
 use App\Modules\Procurement\Console\ScoreSuppliers;
 use App\Modules\Procurement\Console\TrackImportShipments;
 use App\Modules\Reporting\Console\PruneReportFiles;
 use App\Modules\Requisition\Console\RemindOutstandingRequisitions;
+use App\Modules\Settings\Console\PruneJobRuns;
+use App\Modules\Settings\Console\PurgeRetention;
 use App\Modules\Vendor\Console\AlertExpiringCoverage;
 use App\Modules\Webhook\Console\PruneWebhookPayloads;
 use App\Modules\Webhook\Console\RetryWebhookDeliveries;
@@ -51,6 +60,26 @@ Schedule::command(EscalateNotifications::class)
  * fraction of itself, without polling every ticket every minute for a
  * clock that mostly hasn't moved.
  */
+/*
+ * Daily attendance (AnnotechERP 24/04): today and yesterday worked out again
+ * from the terminals' punches every ten minutes, so Daily Attendance is never
+ * far behind the gate. A terminal posting punches also updates the employees
+ * it heard about at once.
+ */
+Schedule::command(ProcessAttendance::class)
+    ->everyTenMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Employee Movement (AnnotechERP 24/07): approved promotions and increments
+ * dated ahead take effect on their day, just after midnight in Dhaka.
+ */
+Schedule::command(ApplyMovements::class)
+    ->dailyAt('00:05')
+    ->timezone('Asia/Dhaka')
+    ->withoutOverlapping();
+
 Schedule::command(CheckTicketSla::class)
     ->everyFifteenMinutes()
     ->withoutOverlapping()
@@ -82,6 +111,16 @@ Schedule::command(PruneReportFiles::class)
  */
 Schedule::command(AlertExpiringCoverage::class)
     ->dailyAt('06:30')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Lab certificates nearing their Valid Date (AnnotechERP 16/01). Daily: the
+ * notice period is counted in days, and each certificate is mailed once for
+ * its Valid Date, so a later run never repeats one.
+ */
+Schedule::command(RemindExpiringCertificates::class)
+    ->dailyAt('06:35')
     ->withoutOverlapping()
     ->runInBackground();
 
@@ -169,3 +208,57 @@ Schedule::command(PruneWebhookPayloads::class)
  * something takes a snapshot on a schedule — this is that schedule.
  */
 Schedule::command('horizon:snapshot')->everyFiveMinutes();
+
+/*
+ * Settings → Data Retention & Purge (AnnotechERP 03/04): each company's data
+ * past the period it chose. Daily, after the night's other sweeps.
+ */
+Schedule::command(PurgeRetention::class)
+    ->dailyAt('03:00')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Settings → Scheduled Jobs: the run log itself is kept for ninety days.
+ */
+Schedule::command(PruneJobRuns::class)
+    ->dailyAt('03:10')
+    ->withoutOverlapping();
+
+/*
+ * Approval Center (AnnotechERP 04/03): a request left waiting past its due
+ * date and the type's grace hours goes to the escalation contact. Every
+ * fifteen minutes: thresholds are in hours.
+ */
+Schedule::command(EscalateOverdueRequests::class)
+    ->everyFifteenMinutes()
+    ->withoutOverlapping();
+
+/*
+ * Order Summary's edit mail (AnnotechERP 32): each company sends at the times
+ * of day its admin set; checking every minute keeps a 10:00 mail at 10:00.
+ */
+Schedule::command(SendEditDigest::class)
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Order Summary, Dev Sample Status and Pre-Budget's pending work (user,
+ * 2026-11-21): each team hears at the start of the office day what is due —
+ * orders near or past RFI/SD, bookings pending, sample deadlines, budget
+ * costing, stock yarn use and accessories still to do.
+ */
+Schedule::command(NotifyPendingWorkCommand::class)
+    ->dailyAt('09:00')
+    ->timezone('Asia/Dhaka')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+/*
+ * Chat's department groups (user, 2026-11-23): one group per HR department,
+ * its people following HR & Payroll's moves.
+ */
+Schedule::command(SyncDepartmentGroups::class)
+    ->hourly()
+    ->withoutOverlapping();

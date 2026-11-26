@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n";
+import { SlidersHorizontal } from "lucide-react";
 
 function SubmitButton() {
   const t = useT("inventory");
@@ -55,7 +56,7 @@ function AdjustStockModal({ bins, action }) {
   return (
     <>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        {t("adjust")}
+        <SlidersHorizontal /> {t("adjust")}
       </Button>
 
       <Modal open={open} onOpenChange={setOpen} title={t("adjust_stock")} description={t("adjust_stock_hint")}>

@@ -1,0 +1,114 @@
+[
+ {
+  "goto": "/production-tracking/daily-plan"
+ },
+ {
+  "wait": 2000
+ },
+ {
+  "click": "tr:has-text('DPP-20261115-002') >> role=button[name='Approve']",
+  "after": 1500
+ },
+ {
+  "fill": "x",
+  "sel": "[role=dialog] textarea",
+  "text": "Approved after the changeover plan."
+ },
+ {
+  "click": "[role=dialog] >> role=button[name='Approve']",
+  "after": 20000
+ },
+ {
+  "shot": "plans-approved"
+ },
+ {
+  "goto": "/production-tracking/all-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "all-dashboard"
+ },
+ {
+  "goto": "/production-tracking/sewing-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "sewing-dashboard"
+ },
+ {
+  "goto": "/production-tracking/finishing-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "finishing-dashboard"
+ },
+ {
+  "goto": "/production-tracking/cutting-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "cutting-dashboard"
+ },
+ {
+  "goto": "/production-tracking/buyer-wise"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "buyer-wise"
+ },
+ {
+  "goto": "/production-tracking/reports"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "reports"
+ },
+ {
+  "goto": "/production-tracking/production-data"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "production-data"
+ },
+ {
+  "goto": "/production-tracking/tv-dashboard"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "tv-dashboard"
+ },
+ {
+  "goto": "/production-tracking/settings"
+ },
+ {
+  "wait": 2500
+ },
+ {
+  "shot": "settings"
+ },
+ {
+  "goto": "/tv/Eal7qjgxF3akRyUBOWQHM9qoNIuc4VpBqP0BFHlw"
+ },
+ {
+  "wait": 3000
+ },
+ {
+  "shot": "tv-display"
+ }
+]

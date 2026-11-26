@@ -1,0 +1,23 @@
+[
+ {"goto": "/m/knitting/comparative-statement"},
+ {"click": "main button:has-text('Add New')", "wait": 2500},
+ {"click": "main button:has-text('Add Item')", "wait": 1200},
+ {"click": "main button:has-text('Add Offer')", "wait": 1200},
+ {"fullshot": "cs-grids"},
+ {"html": "cs_heads", "of": "main table thead"},
+ {"html": "cs_rows", "of": "main table tbody tr"},
+ {"goto": "/m/knitting/yarn-purchase-order"},
+ {"click": "main button:has-text('Add New')", "wait": 2500},
+ {"fullshot": "po-new"},
+ {"dump": "po_new", "root": "main"},
+ {"texts": "po_new_p", "of": "main p"},
+ {"click": "main button:has-text('Add Item'), main button:has-text('Add Yarn'), main button:has-text('Add Line')", "wait": 1500},
+ {"html": "po_heads", "of": "main table thead"},
+ {"html": "po_rows", "of": "main table tbody tr"},
+ {"goto": "/m/knitting/yarn-purchase-order"},
+ {"html": "po_list_head", "of": "main table thead"},
+ {"goto": "/m/knitting/yarn-purchase-requisition"},
+ {"html": "yr_list_head", "of": "main table thead"},
+ {"goto": "/m/knitting/comparative-statement"},
+ {"html": "cs_list_head", "of": "main table thead"}
+]

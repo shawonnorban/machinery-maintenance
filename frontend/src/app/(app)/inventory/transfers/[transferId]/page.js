@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api-server";
-import { PageHeader } from "@/components/layout/page-header";
+import { ScreenHeader } from "@/components/layout/screen-header";
 import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TransferActions } from "@/components/inventory/transfer-actions";
@@ -21,8 +21,8 @@ export default async function TransferDetailPage({ params }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumb={[{ label: t("transfers"), href: "/inventory/transfers" }, { label: transfer.transfer_number }]}
+      <ScreenHeader
+        parentUrl="/inventory/transfers"
         title={transfer.transfer_number}
         description={`${transfer.from_factory?.name ?? "—"} → ${transfer.to_factory?.name ?? "—"}`}
         actions={<StatusBadge status={transfer.status} label={t(`transfer_status_${transfer.status?.toLowerCase()}`)} />}

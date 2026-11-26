@@ -1,0 +1,74 @@
+[
+{
+"goto": "/m/knitting/roll-production-manual"
+},
+{
+"click": "main button:has-text('Go')",
+"wait": 3000
+},
+{
+"html": "row_html",
+"of": "main table tbody tr >> nth=1"
+},
+{
+"popclick": "main table tbody tr >> nth=1 >> :text('Print Label')",
+"as": "label",
+"wait": 8000
+},
+{
+"goto": "/m/knitting/grey-fab-roll-inspection"
+},
+{
+"click": "main [role=tab]:has-text('Roll Inspection')",
+"wait": 2500
+},
+{
+"choose": "main select[name=rollId]",
+"index": 1
+},
+{
+"wait": 1500
+},
+{
+"type": "main input[name=inspectedOn]",
+"text": "2026-10-29"
+},
+{
+"peek": "main button:has-text('-- Select Defect --')",
+"wait": 1200
+},
+{
+"click": "[role=option]:has-text('Hole')",
+"wait": 1000
+},
+{
+"type": "main input[type=number]:not([name]) >> nth=0",
+"text": "3"
+},
+{
+"click": "main button:has-text('Add Defect')",
+"wait": 1500
+},
+{
+"netclick": "main button:has-text('Save inspection sheet')",
+"as": "gi_net",
+"wait": 5000
+},
+{
+"click": "main [role=tab]:has-text('Inspection List')",
+"wait": 2500
+},
+{
+"click": "main button:has-text('Search')",
+"wait": 2500
+},
+{
+"texts": "gi_list_rows",
+"of": "main table tbody tr"
+},
+{
+"popclick": "main table tbody tr >> nth=0 >> :text('Print')",
+"as": "qc_print",
+"wait": 8000
+}
+]

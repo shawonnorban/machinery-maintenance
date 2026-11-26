@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Vendor;
 
 use App\Modules\Api\Actions\IssueApiToken;
-use App\Modules\Finance\Models\Bank;
+use App\Modules\TradeExport\Models\TxBank;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Company;
 use App\Modules\Vendor\Models\Vendor;
@@ -87,7 +87,7 @@ class VendorApiTest extends TestCase
     {
         $token = $this->tokenFor($this->storeManager);
 
-        $bank = Bank::create(['company_id' => $this->delta->id, 'code' => 'DBBL', 'name' => 'Dutch-Bangla Bank', 'active' => true]);
+        $bank = TxBank::create(['company_id' => $this->delta->id, 'code' => 'DBBL', 'name' => 'Dutch-Bangla Bank', 'is_local' => true, 'active' => true]);
         $paymentTypes = $this->withToken($token)->getJson('/api/v1/vendors/form-options')
             ->assertOk()
             ->assertJsonFragment(['id' => $bank->id, 'name' => 'Dutch-Bangla Bank'])

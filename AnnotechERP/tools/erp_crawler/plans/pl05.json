@@ -1,0 +1,6 @@
+[
+ { "goto": "/m/planning/projections" }, { "wait": 4000 },
+ { "click": "main button:has-text('November')", "wait": 4000 },
+ { "texts": "nov", "of": "main tbody tr" },
+ { "hrefs": "nov_links", "of": "main tbody a" }
+]

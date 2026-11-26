@@ -1,0 +1,332 @@
+{
+    "save_changes": "Save changes",
+    "delete": "Delete",
+    "folder": {
+        "intake": "INTAKE"
+    },
+    "screens": {
+        "omni-file-intelligence": "Universal File Intake",
+        "recognition-engine": "Document Recognition Engine",
+        "field-extraction": "Field Extraction Rules",
+        "validation-engine": "Data Validation Engine",
+        "approval-workflow": "Import Approval Workflow"
+    },
+    "descriptions": {
+        "omni-file-intelligence": "Any file dropped in — sheet, PDF, mail or image — read and routed on its own.",
+        "recognition-engine": "What kind of document this is, which buyer sent it and which template fits.",
+        "field-extraction": "The fields pulled out of a recognised file, with a confidence on each.",
+        "validation-engine": "Extracted values checked against the masters and the rules before they land.",
+        "approval-workflow": "What a person must sign off before an import is allowed to write to the ERP."
+    },
+    "family": {
+        "PURCHASE_ORDER": "Purchase order",
+        "TECH_PACK": "Tech pack",
+        "INQUIRY": "Inquiry",
+        "BOM": "Bill of materials",
+        "COST_SHEET": "Cost sheet",
+        "COMMERCIAL": "Commercial document",
+        "ARTWORK": "Artwork",
+        "PRODUCTION_REPORT": "Production report",
+        "UNRECOGNISED": "Unrecognised",
+        "EVERY": "Every family"
+    },
+    "arrive": {
+        "EMAIL": "Email attachment",
+        "PORTAL": "Portal upload",
+        "WATCHED_FOLDER": "Watched folder",
+        "SFTP": "SFTP drop",
+        "MANUAL": "Manual upload"
+    },
+    "stage": {
+        "QUEUED": "Queued",
+        "RECOGNISING": "Recognising",
+        "EXTRACTING": "Extracting",
+        "VALIDATING": "Validating",
+        "AWAITING_APPROVAL": "Awaiting approval",
+        "POSTED": "Posted",
+        "FAILED": "Failed"
+    },
+    "marker": {
+        "HEADER_TEXT": "Header text",
+        "LOGO_REGION": "Logo region",
+        "SHEET_NAME": "Sheet name",
+        "COLUMN_RUN": "Column run",
+        "FILE_NAMING": "File naming",
+        "SENDER_ADDRESS": "Sender address"
+    },
+    "found": {
+        "LABELLED": "Labelled value",
+        "TABLE_COLUMN": "Table column",
+        "FIXED_REGION": "Fixed region",
+        "REGEX": "Regular expression",
+        "MODEL": "Model inference"
+    },
+    "dtype": {
+        "TEXT": "Text",
+        "NUMBER": "Number",
+        "DATE": "Date",
+        "CURRENCY": "Currency",
+        "CODE": "Code"
+    },
+    "kind": {
+        "MASTER_LOOKUP": "Master lookup",
+        "RANGE": "Range",
+        "FORMAT": "Format",
+        "CROSS_FIELD": "Cross-field",
+        "DUPLICATE": "Duplicate"
+    },
+    "failure": {
+        "BLOCK": "Block the post",
+        "WARN": "Warn and continue",
+        "REVIEW": "Route to review"
+    },
+    "approver": {
+        "MERCHANDISER": "Merchandiser",
+        "PLANNING": "Planning",
+        "COMMERCIAL": "Commercial",
+        "COSTING": "Costing",
+        "QUALITY": "Quality",
+        "DIVISION_HEAD": "Division head"
+    },
+    "i": {
+        "title": "Universal intake",
+        "subtitle": "Any file dropped in — sheet, PDF, mail or image — read and routed on its own.",
+        "search": "Search intake…",
+        "pick_label": "Filter by stage",
+        "pick_all": "All stages",
+        "new": "Drop a file",
+        "edit_title": "Edit intake",
+        "dialog_sub": "The engine decides the family and the route; both can be overridden here.",
+        "create": "Add to intake",
+        "empty_title": "Nothing in the intake",
+        "empty_text": "Drop a file in with Drop a file.",
+        "delete_title": "Remove from intake",
+        "delete_text": ":name will be removed from the intake.",
+        "new_title": "Drop a file",
+        "delete_aria": "Delete",
+        "c": {
+            "file": "File",
+            "family": "Recognised as",
+            "buyer": "Buyer",
+            "size": "Size",
+            "confidence": "Confidence",
+            "stage": "Stage"
+        },
+        "f": {
+            "file": "File",
+            "attach": "Upload file",
+            "file_hint": "PDF, image, Excel or CSV, Word, e-mail (.eml/.msg) — up to 20 MB — or just the file name",
+            "arrived": "Arrived by",
+            "family": "Recognised as",
+            "buyer": "Buyer",
+            "received": "Received",
+            "size": "Size",
+            "size_hint": "An uploaded file sets its own size",
+            "confidence": "Confidence",
+            "stage": "Stage",
+            "file_hint_auto": "PDF, image, Excel or CSV, Word, e-mail (.eml/.msg), up to 20 MB — an uploaded file is read by the AI as soon as it is saved",
+            "read_by": "Read by",
+            "read_note": "Note",
+            "summary": "What the AI read",
+            "values": "Values found"
+        },
+        "not_identified": "Not identified",
+        "t": {
+            "files": "Files in intake",
+            "posted": "Posted",
+            "failed": "Failed",
+            "confidence": "Average confidence"
+        },
+        "read": "Read with AI"
+    },
+    "g": {
+        "title": "Recognition signatures",
+        "subtitle": "What kind of document this is, which buyer sent it and which template fits.",
+        "search": "Search signatures…",
+        "pick_label": "Filter by family",
+        "pick_all": "All families",
+        "new": "New signature",
+        "edit_title": "Edit signature",
+        "dialog_sub": "A signature is the set of marks that make a file recognisable at a glance.",
+        "create": "Add signature",
+        "empty_title": "No signature yet",
+        "empty_text": "Teach the engine a document with New signature.",
+        "delete_title": "Delete signature",
+        "delete_text": ":name will no longer be used to recognise files.",
+        "new_title": "New signature",
+        "delete_aria": "Delete",
+        "c": {
+            "name": "Signature",
+            "family": "Family",
+            "buyer": "Buyer",
+            "hit_rate": "Hit rate",
+            "matched": "Matched",
+            "enabled": "Enabled"
+        },
+        "f": {
+            "name": "Signature",
+            "family": "Family",
+            "buyer": "Buyer",
+            "marker": "Marker",
+            "hit_rate": "Hit rate",
+            "matched": "Times matched",
+            "last_matched": "Last matched"
+        },
+        "any": "Any",
+        "t": {
+            "signatures": "Signatures",
+            "enabled": "Enabled",
+            "hit_rate": "Average hit rate",
+            "families": "Families covered"
+        }
+    },
+    "x": {
+        "title": "Extraction rules",
+        "subtitle": "The fields pulled out of a recognised file, with a confidence on each.",
+        "search": "Search fields…",
+        "pick_label": "Filter by family",
+        "pick_all": "All families",
+        "new": "New rule",
+        "edit_title": "Edit extraction rule",
+        "dialog_sub": "A rule pulls one field out of one family and lands it in one ERP column.",
+        "create": "Add rule",
+        "empty_title": "No extraction rule yet",
+        "empty_text": "Say which field goes where with New rule.",
+        "delete_title": "Delete extraction rule",
+        "delete_text": ":name will no longer be pulled out.",
+        "new_title": "New rule",
+        "delete_aria": "Delete",
+        "c": {
+            "field": "Field",
+            "family": "Family",
+            "found_by": "Found by",
+            "type": "Type",
+            "accuracy": "Accuracy",
+            "mandatory": "Mandatory"
+        },
+        "f": {
+            "field": "Field",
+            "family": "Family",
+            "found_by": "Found by",
+            "erp_column": "ERP column",
+            "erp_column_hint": "table.column, lower case",
+            "type": "Type",
+            "accuracy": "Accuracy"
+        },
+        "t": {
+            "rules": "Rules",
+            "mandatory": "Mandatory",
+            "accuracy": "Average accuracy",
+            "families": "Families covered"
+        }
+    },
+    "k": {
+        "title": "Validation rules",
+        "subtitle": "Extracted values checked against the masters and the rules before they land.",
+        "search": "Search validations…",
+        "pick_label": "Filter by kind",
+        "pick_all": "All kinds",
+        "new": "New validation",
+        "edit_title": "Edit validation",
+        "dialog_sub": "A validation either blocks the post or warns; nothing else is a useful outcome.",
+        "create": "Add validation",
+        "empty_title": "No validation yet",
+        "empty_text": "Check extracted values with New validation.",
+        "delete_title": "Delete validation",
+        "delete_text": ":name will no longer be checked.",
+        "new_title": "New validation",
+        "delete_aria": "Delete",
+        "c": {
+            "name": "Validation",
+            "kind": "Kind",
+            "on_failure": "On failure",
+            "triggered": "Triggered",
+            "pass_rate": "Pass rate",
+            "enabled": "Enabled"
+        },
+        "f": {
+            "name": "Validation",
+            "kind": "Kind",
+            "applies_to": "Applies to",
+            "on_failure": "On failure",
+            "triggered": "Times triggered",
+            "pass_rate": "Pass rate"
+        },
+        "t": {
+            "validations": "Validations",
+            "blocking": "Blocking",
+            "enabled": "Enabled",
+            "pass_rate": "Average pass rate"
+        }
+    },
+    "w": {
+        "title": "Approval workflow",
+        "subtitle": "What a person must sign off before an import is allowed to write to the ERP.",
+        "search": "Search steps…",
+        "pick_label": "Filter by family",
+        "pick_all": "All families",
+        "new": "New step",
+        "edit_title": "Edit approval step",
+        "dialog_sub": "A step is skipped automatically when confidence clears its threshold.",
+        "create": "Add step",
+        "empty_title": "No approval step yet",
+        "empty_text": "Say who signs off an import with New step.",
+        "delete_title": "Delete approval step",
+        "delete_text": ":name will no longer be asked for.",
+        "new_title": "New step",
+        "delete_aria": "Delete",
+        "c": {
+            "sequence": "#",
+            "name": "Step",
+            "approver": "Approver",
+            "auto_skip": "Auto-skip",
+            "sla": "SLA",
+            "pending": "Pending",
+            "enabled": "Enabled"
+        },
+        "f": {
+            "name": "Step",
+            "applies_to": "Applies to",
+            "approver": "Approver",
+            "sequence": "Sequence",
+            "sequence_hint": "Left blank, last in its family",
+            "auto_skip": "Auto-skip above",
+            "auto_skip_hint": "Skipped when the import's confidence is above this",
+            "sla": "Service level",
+            "pending": "Pending now"
+        },
+        "t": {
+            "steps": "Steps",
+            "enabled": "Enabled",
+            "waiting": "Waiting on a person",
+            "families": "Families covered"
+        }
+    },
+    "v": {
+        "file": "Give the file, or its name.",
+        "file_upload": "That file was not uploaded to the intake.",
+        "file_size": "A file is at most 20 MB.",
+        "unrecognised": "A file is read only once it is recognised — say what it is first.",
+        "future": "That day has not come yet.",
+        "signature": "Name the signature.",
+        "signature_taken": "A signature by that name already exists.",
+        "field": "Name the field.",
+        "erp_column": "Write the ERP column as table.column.",
+        "column_taken": "Another rule of this family already fills that column.",
+        "validation": "Name the validation.",
+        "step": "Name the step.",
+        "sequence_taken": "Step :n is already taken in this family."
+    },
+    "read": {
+        "upload_only": "Only an uploaded file can be read — attach the file first.",
+        "no_service": "No AI service is set up for file reading — set one in Settings → AI Services.",
+        "settled": "This file is already approved or waiting for approval.",
+        "started": "Reading has started — the row updates when the AI is done.",
+        "unrecognised": "The AI could not tell what this document is.",
+        "no_buyer": "The buyer was not identified.",
+        "missing": "Missing: :fields.",
+        "posted": "Read, checked and posted — no approval was needed.",
+        "awaiting": "Read and checked — waiting for approval in the Approval Center."
+    },
+    "approval_title": ":file — :family (:confidence% sure)"
+}

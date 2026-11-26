@@ -1,0 +1,15 @@
+[
+ {"goto": "/m/knitting/yarn-purchase-requisition"},
+ {"fullshot": "yr-list"},
+ {"dump": "yr_list", "root": "main"},
+ {"texts": "yr_list_p", "of": "main p"},
+ {"click": "main button[role=tab]:has-text('Yarn Purchase Requisition')", "wait": 2500},
+ {"fullshot": "yr-form"},
+ {"dump": "yr_form", "root": "main"},
+ {"texts": "yr_form_p", "of": "main p"},
+ {"click": "main button:has-text('Add Yarn')", "wait": 2000},
+ {"fullshot": "yr-addyarn"},
+ {"dump": "yr_add", "root": "main"},
+ {"html": "yr_add_row", "of": "main table tbody tr"},
+ {"html": "yr_add_head", "of": "main table thead"}
+]

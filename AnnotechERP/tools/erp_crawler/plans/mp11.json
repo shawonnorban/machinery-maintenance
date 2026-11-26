@@ -1,0 +1,20 @@
+[
+ { "goto": "/m/material-procurement/supplier-portal-access" },
+ { "wait": 4000 },
+ { "texts": "page", "of": "main h1, main h2, main h3, main p, main th, main td, main button, main span, main a" },
+ { "fullshot": "mp11-list" },
+ { "click": "main button:has-text('New supplier login')", "wait": 2000 },
+ { "texts": "new_dialog", "of": "[role=dialog] h1, [role=dialog] h2, [role=dialog] h3, [role=dialog] p, [role=dialog] label, [role=dialog] button, [role=dialog] input, [role=dialog] span" },
+ { "dump": "new_dump", "root": "[role=dialog]" },
+ { "fullshot": "mp11-new" },
+ { "peek": "[role=dialog] button:has-text('Select') >> nth=0", "wait": 1500 },
+ { "popup": "supplier_opts" },
+ { "escape": true },
+ { "click": "[role=dialog] button:has-text('Create'), [role=dialog] button[type=submit]", "wait": 2000 },
+ { "texts": "empty_create", "of": "[role=dialog] p, [role=dialog] span, [role=alert]" },
+ { "escape": true },
+ { "goto": "/m/material-procurement/supplier-portal-access" },
+ { "wait": 4000 },
+ { "html": "row_actions", "of": "main table tbody tr:first-child td:last-child" },
+ { "texts": "row_buttons", "of": "main table tbody tr:first-child button, main table tbody tr:first-child a, main table tbody tr:first-child [role=switch]" }
+]

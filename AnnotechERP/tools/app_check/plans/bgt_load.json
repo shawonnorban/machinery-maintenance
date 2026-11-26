@@ -1,0 +1,10 @@
+[
+ {"goto": "/merchandise-desk/budget-sheet?order=LPP-2026-000001"},
+ {"wait": 5000},
+ {"shot": "bgt-before"},
+ {"dialog": "accept", "text": ""},
+ {"click": "role=button[name='Load from BOM / Booking']", "after": 15000},
+ {"shot": "bgt-loaded"},
+ {"click": "role=button[name='Save']", "after": 20000},
+ {"shot": "bgt-saved"}
+]
