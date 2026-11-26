@@ -2,23 +2,12 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Mail, Lock, Ticket } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useT } from "@/lib/i18n";
-
-// One demo login per role a reviewer most needs to compare: the person who
-// can see everything, the floor supervisor who only reports what they spot,
-// and the technician who repairs it — not all twelve seeded roles, which
-// would turn a quick demo click into another list to read.
-const DEMO_ACCOUNTS = [
-  { roleKey: "role_company_owner", email: "owner@delta.test" },
-  { roleKey: "role_line_chief", email: "linechief@delta.test" },
-  { roleKey: "role_technician", email: "technician@delta.test" },
-];
-const DEMO_PASSWORD = "password123";
 
 function LoginForm() {
   const router = useRouter();
@@ -73,14 +62,8 @@ function LoginForm() {
     }
   }
 
-  function fillDemoAccount(demoEmail) {
-    setEmail(demoEmail);
-    setPassword(DEMO_PASSWORD);
-  }
-
   return (
-    <div className="flex flex-col gap-4">
-      <form onSubmit={handleSubmit} method="post" className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} method="post" className="flex flex-col gap-4">
         {error ? <Alert variant="danger">{error}</Alert> : null}
 
         <FormField label={t("email_or_user_id")} required>
@@ -129,39 +112,6 @@ function LoginForm() {
           {t("log_in_button")}
         </Button>
       </form>
-
-      {/* Same shared demo password as `DemoTenantSeeder`/`DemoCustomerSeeder`
-          (see DEPLOYMENT-GUIDE.md §4 on why that's fine for a walkthrough
-          and not something to leave running beside real customer accounts).
-          Three roles, not all twelve seeded ones: the reviewer decides what
-          a given screen looks like from the top, the floor, and the repair
-          bench, and a longer list would read as noise, not choice. */}
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-        <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-amber-800 uppercase">
-          <Ticket className="size-4" />
-          {t("login_demo_heading")}
-        </div>
-
-        <div className="mt-3 flex flex-col gap-2">
-          {DEMO_ACCOUNTS.map((account) => (
-            <button
-              key={account.email}
-              type="button"
-              onClick={() => fillDemoAccount(account.email)}
-              className="flex items-center justify-between gap-3 rounded-lg border border-amber-100 bg-white px-3.5 py-2.5 text-left transition-colors hover:border-amber-300"
-            >
-              <span className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">{t(account.roleKey)}</span>
-                <span className="font-mono text-xs text-amber-700">{account.email}</span>
-              </span>
-              <span className="shrink-0 text-xs font-semibold text-amber-600">{t("login_demo_click_to_use")}</span>
-            </button>
-          ))}
-        </div>
-
-        <p className="mt-3 text-xs text-amber-700">{t("login_demo_password_note", { password: DEMO_PASSWORD })}</p>
-      </div>
-    </div>
   );
 }
 
