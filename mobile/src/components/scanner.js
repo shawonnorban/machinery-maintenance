@@ -25,7 +25,8 @@ const m = (key, params) => t("mobile", `tally.${key}`, params);
 const TYPES = ["qr", "code128", "code39", "ean13"];
 const systemScanner = Platform.OS === "android" && CameraView.isModernBarcodeScannerAvailable;
 
-export function Scanner({ onScan, busy = false, autoLaunch = true }) {
+/** `words`: the button and the typing field for what is scanned (a bundle card by default, a machine's label). */
+export function Scanner({ onScan, busy = false, autoLaunch = true, words = {} }) {
   const colors = useColors();
   const [permission, requestPermission] = useCameraPermissions();
   const [inPage, setInPage] = useState(!systemScanner);
@@ -96,8 +97,8 @@ export function Scanner({ onScan, busy = false, autoLaunch = true }) {
   return (
     <View style={{ gap: space[3] }}>
       {!inPage ? (
-        <Button icon={ScanLine} onPress={launch} loading={busy} disabled={busy} style={{ minHeight: 64 }}>
-          {m("scan")}
+        <Button icon={ScanLine} onPress={launch} loading={busy} disabled={busy}>
+          {words.scan ?? m("scan")}
         </Button>
       ) : permission === null ? (
         <ActivityIndicator color={colors.brand} />
@@ -158,9 +159,9 @@ export function Scanner({ onScan, busy = false, autoLaunch = true }) {
         </Text>
       ) : null}
 
-      <View style={{ flexDirection: "row", gap: space[2], alignItems: "flex-end" }}>
-        <Input icon={Keyboard} value={typed} onChangeText={setTyped} placeholder={m("type")} autoCapitalize="characters" autoCorrect={false} returnKeyType="search" onSubmitEditing={submitTyped} style={{ flex: 1 }} />
-        <Button onPress={submitTyped} disabled={typed.trim() === "" || busy}>
+      <View style={{ flexDirection: "row", gap: space[2], alignItems: "center" }}>
+        <Input icon={Keyboard} value={typed} onChangeText={setTyped} placeholder={words.type ?? m("type")} autoCapitalize="characters" autoCorrect={false} returnKeyType="search" onSubmitEditing={submitTyped} style={{ flex: 1 }} />
+        <Button onPress={submitTyped} disabled={typed.trim() === "" || busy} style={{ minHeight: 46 }}>
           {m("find")}
         </Button>
       </View>

@@ -27,6 +27,7 @@ use App\Modules\PreBudget\Models\PbBomLine;
 use App\Shared\Formula\Formula;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiResponse;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,9 @@ use Illuminate\Validation\ValidationException;
  */
 class BudgetApiController extends ApiController
 {
+    /** A budget's states, in the order the Budget List shows them. */
+    private const STATES = [PbBudget::DRAFT, PbBudget::PENDING, PbBudget::APPROVED, PbBudget::RETURNED, PbBudget::REVISED, PbBudget::CANCELLED];
+
     use FindsBudgets;
 
     /** The values a requisition picker filters on and lists. */
@@ -397,6 +401,150 @@ class BudgetApiController extends ApiController
         })->all());
     }
 
+    /**
+     * The phone's Budget List (user, 2026-11-27; the enterprise list the same
+     * day): every budget this person reaches — drafts too for whoever makes
+     * budgets, only the sent ones for an approver — a page at a time. Each
+     * row: number, buyer, brands, how many styles and items, when and by whom
+     * it was made, its state and the date of it, where it waits, its order
+     * quantity and its own figures — Net FOB, Total Cost (+CM) and the
+     * margin between them, as the budget sheet works them out — and what
+     * this person may do with it here (finalize, withdraw, revise, delete —
+     * the same rules as the budget's own actions, which check them again).
+     *
+     * Narrowed together: `status` (a state, or MINE = waiting at this
+     * person's step), `q` (budget no, buyer, contract no, a requisition's
+     * brand, style or job no), `factory`, `fy` ("2026-27", July–June by the
+     * day it was made, in Dhaka), `dept`, `buyer`, `brand`. The counts per
+     * state follow every filter but the state; the dropdowns' options are all
+     * this person reaches.
+     */
+    public function cards(Request $request): JsonResponse
+    {
+        $this->allowEither('prebudget.view', 'prebudget.update', 'approval.ticket.create');
+        $f = $request->validate([
+            'status' => ['nullable', Rule::in(['MINE', ...self::STATES])],
+            'q' => ['nullable', 'string', 'max:120'], 'factory' => ['nullable', 'string', 'max:60'], 'fy' => ['nullable', 'regex:/^\d{4}-\d{2}$/'],
+            'dept' => ['nullable', 'string', 'max:120'], 'buyer' => ['nullable', 'string', 'max:120'], 'brand' => ['nullable', 'string', 'max:120'],
+            'page' => ['nullable', 'integer', 'min:1'], 'per_page' => ['nullable', Rule::in(['10', '20', '50'])],
+        ]);
+        $caller = $this->caller();
+        $base = $this->scoped();
+        if (! $caller->can('prebudget.view') && ! $caller->can('prebudget.update')) {
+            $base->whereNotNull('submitted_at');
+        }
+        $value = fn (string $key) => "\"values\"->>'{$key}'";
+        $byValue = fn (Builder $q, string $key, string $v) => $q->whereHas('requisitions', fn ($r) => $r->whereRaw($value($key).' = ?', [$v]));
+
+        // Every filter but the state.
+        $filtered = clone $base;
+        foreach (['factory' => 'factory', 'dept' => 'dept', 'brand' => 'brand'] as $param => $key) {
+            if (! empty($f[$param])) {
+                $byValue($filtered, $key, $f[$param]);
+            }
+        }
+        if (! empty($f['buyer'])) {
+            $filtered->where('buyer_name', $f['buyer']);
+        }
+        if (! empty($f['fy'])) {
+            $start = (int) substr($f['fy'], 0, 4);
+            $from = CarbonImmutable::create($start, 7, 1, 0, 0, 0, 'Asia/Dhaka')->utc();
+            $filtered->where('created_at', '>=', $from)->where('created_at', '<', $from->addYear());
+        }
+        $needle = trim((string) ($f['q'] ?? ''));
+        if ($needle !== '') {
+            $like = '%'.mb_strtolower(addcslashes(preg_replace('/-R\d+$/i', '', $needle), '\\%_')).'%';
+            $filtered->where(fn ($q) => $q->whereRaw('LOWER(budget_no) LIKE ?', [$like])->orWhereRaw('LOWER(buyer_name) LIKE ?', [$like])->orWhereRaw('LOWER(COALESCE(contract_no, \'\')) LIKE ?', [$like])
+                ->orWhereHas('requisitions', fn ($r) => $r->where(fn ($w) => $w->whereRaw('LOWER('.$value('brand').') LIKE ?', [$like])
+                    ->orWhereRaw('LOWER('.$value('style').') LIKE ?', [$like])->orWhereRaw('LOWER('.$value('job_no').') LIKE ?', [$like]))));
+        }
+
+        $user = $caller->user;
+        $decisions = app(DecideApproval::class);
+        // Waiting at this person's step: the pending budgets whose current step they may sign.
+        $pending = (clone $filtered)->where('status', PbBudget::PENDING)->whereNotNull('approval_request_id')->pluck('approval_request_id', 'id');
+        $requests = ApprovalRequest::query()->whereIn('id', $pending->values())->get()->keyBy('id');
+        $mine = $user === null ? [] : $pending->filter(fn ($r) => isset($requests[$r]) && $decisions->canAct($requests[$r], $user))->keys()->all();
+
+        $byState = (clone $filtered)->toBase()->select('status', DB::raw('count(*) as n'))->groupBy('status')->pluck('n', 'status');
+        $counts = ['ALL' => (int) $byState->sum(), 'MINE' => count($mine)];
+        foreach (self::STATES as $state) {
+            $counts[$state] = (int) ($byState[$state] ?? 0);
+        }
+
+        $status = $f['status'] ?? null;
+        $rows = clone $filtered;
+        if ($status === 'MINE') {
+            $rows->whereIn('id', $mine ?: ['-']);
+        } elseif ($status) {
+            $rows->where('status', $status);
+        }
+        $page = $rows->with('requisitions:id,entry_type,values')->latest('updated_at')->orderByDesc('id')
+            ->paginate((int) ($f['per_page'] ?? 20), ['*'], 'page', (int) ($f['page'] ?? 1));
+        $makers = DB::table('users')->whereIn('id', collect($page->items())->pluck('created_by')->filter()->unique())->pluck('name', 'id');
+        $sheet = new BudgetSheet;
+        $approval = new BudgetApproval;
+        $update = $caller->can('prebudget.update');
+        $text = fn ($v) => Formula::text($v);
+
+        $list = collect($page->items())->map(function (PbBudget $b) use ($makers, $sheet, $approval, $user, $update, $mine, $text) {
+            $reqs = $b->requisitions;
+            $distinct = fn (string $k) => $reqs->map(fn ($r) => $text($r->values[$k] ?? ''))->filter()->unique()->values();
+            $editable = $b->editable() && $update;
+            // The budget's own figures (the card's foot, as the reference screen) — for this page's rows only.
+            $view = $sheet->view($b);
+            $check = $editable ? $view['check'] : null;
+            $cost = round($view['costs']['total'] + $view['costs']['cm'], 2);
+            $a = $b->status === PbBudget::PENDING ? $approval->info($b, $user) : null;
+            [$event, $at] = match ($b->status) {
+                PbBudget::PENDING => ['submitted', $b->submitted_at],
+                PbBudget::APPROVED => ['approved', $b->approved_at],
+                PbBudget::REVISED => ['revised', $b->revised_at],
+                PbBudget::CANCELLED => ['cancelled', $b->cancelled_at],
+                PbBudget::RETURNED => ['returned', $b->updated_at],
+                default => ['created', $b->created_at],
+            };
+
+            return [
+                'budget_no' => $b->label(), 'status' => $b->status, 'buyer' => $b->buyer_name, 'contract_no' => $b->contract_no,
+                'brands' => $distinct('brand')->all(), 'styles' => $distinct('style')->count(), 'items' => $distinct('item')->count(),
+                'item_names' => $distinct('item')->all(), 'kinds' => $reqs->pluck('entry_type')->filter()->unique()->sort()->values()->all(),
+                'factories' => $distinct('factory')->all(),
+                'created_at' => $b->created_at?->toIso8601String(), 'created_by' => $makers[$b->created_by] ?? null, 'updated_at' => $b->updated_at?->toIso8601String(),
+                'event' => $event, 'event_at' => $at?->toIso8601String(),
+                'order_qty' => $view['fob']['order_qty'], 'net_fob' => $view['fob']['net'], 'total_cost' => $cost, 'margin' => round($view['fob']['net'] - $cost, 2),
+                'waiting_at' => $a ? ['step' => $a['step'], 'steps' => $a['steps'], 'current' => $a['current']] : null,
+                'can_act' => in_array($b->id, $mine, true),
+                'check' => $check === null ? null : ['costing' => $check['costing'], 'stock' => $check['stock'], 'bom' => $check['bom']],
+                'actions' => [
+                    'finalize' => $editable, 'withdraw' => $b->status === PbBudget::PENDING && $this->mayWithdraw($b),
+                    'revise' => $b->status === PbBudget::APPROVED && $update, 'delete' => $b->status === PbBudget::DRAFT && $this->caller()->can('prebudget.delete'),
+                ],
+            ];
+        });
+
+        // The dropdowns: every factory, department, brand (from the requisitions) and buyer and year this person reaches.
+        $ids = (clone $base)->select('pb_budgets.id');
+        $values = DB::table('pb_budget_requisitions as br')->join('pb_requisitions as r', 'r.id', '=', 'br.requisition_id')->whereIn('br.budget_id', $ids)
+            ->selectRaw("DISTINCT r.\"values\"->>'factory' as factory, r.\"values\"->>'dept' as dept, r.\"values\"->>'brand' as brand")->get();
+        $sorted = fn ($c) => $c->filter()->unique()->sort(SORT_NATURAL | SORT_FLAG_CASE)->values()->all();
+        $options = [
+            'factories' => $sorted($values->pluck('factory')), 'departments' => $sorted($values->pluck('dept')), 'brands' => $sorted($values->pluck('brand')),
+            'buyers' => $sorted((clone $base)->toBase()->distinct()->pluck('buyer_name')),
+            'fys' => (clone $base)->toBase()->pluck('created_at')->map(function ($at) {
+                $d = CarbonImmutable::parse($at, 'UTC')->setTimezone('Asia/Dhaka');
+                $start = $d->month >= 7 ? $d->year : $d->year - 1;
+
+                return sprintf('%d-%02d', $start, ($start + 1) % 100);
+            })->unique()->sortDesc()->values()->all(),
+        ];
+
+        return ApiResponse::ok([
+            'counts' => $counts, 'options' => $options, 'rows' => $list->all(),
+            'page' => ['current' => $page->currentPage(), 'last' => $page->lastPage(), 'per_page' => $page->perPage(), 'total' => $page->total()],
+        ]);
+    }
+
     private function mayWithdraw(PbBudget $b): bool
     {
         return $this->caller()->can('prebudget.update') && ($b->submitted_by === $this->caller()->auditUserId() || $this->caller()->can('prebudget.view_all'));
@@ -481,7 +629,7 @@ class BudgetApiController extends ApiController
             }
             $b->forceFill(['costing_done_at' => null, 'costing_done_by' => null, 'costing_basis' => null, 'version' => $b->version + 1, 'updated_by' => $by])->save();
             if (! empty($data['complete'])) {
-                $costing = (new BudgetSheet)->costing($b->fresh(), $b->requisitions()->get());
+                $costing = (new BudgetSheet)->costingFor($b->fresh());
                 $missing = [];
                 if (! $b->dollar_rate) {
                     $missing[] = __('prebudget.costing.dollar_rate');
@@ -633,6 +781,9 @@ class BudgetApiController extends ApiController
             'requisitions' => $reqs->map(fn (PbRequisition $r) => [
                 'id' => $r->id, 'serial_no' => $r->serial_no, 'entry_type' => $r->entry_type, 'style' => $r->values['style'] ?? null, 'item' => $r->values['item'] ?? null,
                 'order_qty' => $r->values['order_qty'] ?? null, 'total_req' => $r->values['total_req'] ?? null,
+                // The phone's order summary shows each style's FOB per piece (its FOB value over its pieces).
+                'fob_value' => Formula::num($r->values['fob_value'] ?? null),
+                'brand' => Formula::text($r->values['brand'] ?? '') ?: null, 'dept' => Formula::text($r->values['dept'] ?? '') ?: null,
             ])->all(),
             'supplier_options' => DB::table('mp_suppliers')->where('company_id', $b->company_id)->where('active', true)->orderBy('name')->pluck('name')->all(),
         ] + (new BudgetSheet)->view($b);

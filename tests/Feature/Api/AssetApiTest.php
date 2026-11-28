@@ -8,6 +8,7 @@ use App\Modules\Api\Actions\IssueApiToken;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetLocation;
+use App\Modules\Asset\Models\AssetStatusHistory;
 use App\Modules\Asset\Models\AssetType;
 use App\Modules\CustomField\Actions\SaveCustomFieldDefinition;
 use App\Modules\Identity\Models\User;
@@ -274,6 +275,33 @@ class AssetApiTest extends TestCase
     }
 
     // -- Status -------------------------------------------------------------
+
+    public function test_the_phones_machines_count_running_idle_and_down_and_list_each_since_its_last_change(): void
+    {
+        $running = WorkOrderFixture::runningAsset($this->delta, $this->factory, 'SEW-DHK-00501');
+        $idle = WorkOrderFixture::runningAsset($this->delta, $this->factory, 'SEW-DHK-00502');
+        $down = WorkOrderFixture::runningAsset($this->delta, $this->factory, 'SEW-DHK-00503');
+        $idle->forceFill(['status' => 'IDLE'])->save();
+        $down->forceFill(['status' => 'UNDER_REPAIR'])->save();
+        $at = now()->subHours(3)->startOfSecond();
+        // Its own story only: the fixture's steps to RUNNING are left out.
+        AssetStatusHistory::query()->where('asset_id', $down->id)->delete();
+        AssetStatusHistory::query()->create(['company_id' => $this->delta->id, 'asset_id' => $down->id, 'from_status' => 'RUNNING', 'to_status' => 'BREAKDOWN', 'changed_at' => $at->copy()->subHour()]);
+        AssetStatusHistory::query()->create(['company_id' => $this->delta->id, 'asset_id' => $down->id, 'from_status' => 'BREAKDOWN', 'to_status' => 'UNDER_REPAIR', 'changed_at' => $at]);
+
+        $counts = $this->asEngineer()->getJson('/api/v1/assets/counts')->assertOk()->json('data');
+        $this->assertSame([3, 1, 1, 1], [$counts['total'], $counts['running'], $counts['idle'], $counts['down']]);
+        // The factory chosen on the phone narrows them; one the caller cannot reach is ignored.
+        $this->assertSame(3, $this->asEngineer()->getJson('/api/v1/assets/counts?current_factory_id='.$this->factory->id)->json('data.total'));
+
+        // Down = every not-producing status; each machine since its last status change.
+        $list = $this->asEngineer()->getJson('/api/v1/assets?state=DOWN')->assertOk()->json('data');
+        $this->assertSame([$down->asset_code], array_column($list, 'asset_code'));
+        $this->assertSame($at->toIso8601String(), $list[0]['status_since']);
+        // A machine brought to RUNNING through its steps: since that last step.
+        $last = AssetStatusHistory::query()->where('asset_id', $running->id)->max('changed_at');
+        $this->assertSame(\Illuminate\Support\Carbon::parse($last, 'UTC')->toIso8601String(), collect($this->asEngineer()->getJson('/api/v1/assets')->json('data'))->firstWhere('asset_code', $running->asset_code)['status_since']);
+    }
 
     public function test_status_changes_through_valid_transitions(): void
     {

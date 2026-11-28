@@ -6,6 +6,8 @@ namespace Tests\Feature\PreBudget;
 
 use App\Modules\Api\Actions\IssueApiToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Tests\Support\TenantFixture;
 use Tests\TestCase;
 
@@ -31,6 +33,48 @@ class BudgetWorkTest extends TestCase
         ]])->assertCreated()->json('data.rows'))->pluck('id')->all();
 
         return [$this->as()->postJson('/api/v1/pre-budget/budgets', ['requisition_ids' => $ids])->assertCreated()->json('data.budget_no'), $ids];
+    }
+
+    public function test_a_completed_costing_counts_whatever_order_the_database_returns_the_requisitions_in(): void
+    {
+        // A second GSM on the list, so the two requisitions are two fabrics.
+        DB::table('pb_list_values')->insert(['id' => strtolower((string) Str::ulid()), 'company_id' => $this->delta->id, 'list' => 'GSM', 'name' => '200 GSM', 'sort_order' => 20, 'active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        $ids = collect($this->as()->postJson('/api/v1/pre-budget/requisitions', ['rows' => [
+            ['values' => $this->knit()], ['values' => ['gsm' => '200 GSM'] + $this->knit()],
+        ]])->assertCreated()->json('data.rows'))->pluck('id')->all();
+        $no = $this->as()->postJson('/api/v1/pre-budget/budgets', ['requisition_ids' => $ids])->assertCreated()->json('data.budget_no');
+        // As on a real database (found on the dev data, 2026-11-27): the join read from the tables as they lie,
+        // the earlier requisition's link lying after the later one's — unordered, it comes back last.
+        DB::statement('SET enable_nestloop = off');
+        DB::statement('SET enable_indexscan = off');
+        DB::statement('SET enable_bitmapscan = off');
+        $link = (array) DB::table('pb_budget_requisitions')->where('requisition_id', $ids[0])->first();
+        DB::table('pb_budget_requisitions')->where('requisition_id', $ids[0])->delete();
+        DB::table('pb_budget_requisitions')->insert($link);
+        $this->assertSame([$ids[1], $ids[0]], DB::table('pb_budget_requisitions')->pluck('requisition_id')->all());
+        $fabrics = array_column($this->as()->getJson("/api/v1/pre-budget/budgets/{$no}/costing")->json('data.costing.fabrics'), 'fabrication');
+
+        $done = $this->as()->putJson("/api/v1/pre-budget/budgets/{$no}/costing", [
+            'dollar_rate' => 122, 'complete' => true,
+            'fabrics' => array_map(fn ($f) => ['fabrication' => $f, 'knit_rate' => 25, 'dye_rate' => 150], $fabrics),
+            'styles' => [['style' => '2261582', 'cm_per_dz' => 7]],
+        ])->assertOk()->json('data');
+
+        // The checklist (which reads them in serial order) sees it done, and stays so when read again.
+        $this->assertTrue($done['check']['costing']);
+        $this->assertTrue($this->as()->getJson("/api/v1/pre-budget/budgets/{$no}")->json('data.check.costing'));
+    }
+
+    public function test_the_delivery_summary_takes_the_rfi_sd_date_when_no_delivery_date_is_typed(): void
+    {
+        $ids = collect($this->as()->postJson('/api/v1/pre-budget/requisitions', ['rows' => [
+            ['values' => ['po_wise_rfi_sd_date' => '2026-12-15'] + $this->knit()], ['values' => ['delivery_date' => '2026-12-20', 'po_wise_rfi_sd_date' => '2026-12-15', 'style' => '2261513'] + $this->knit()],
+        ]])->assertCreated()->json('data.rows'))->pluck('id')->all();
+        $no = $this->as()->postJson('/api/v1/pre-budget/budgets', ['requisition_ids' => $ids])->assertCreated()->json('data.budget_no');
+
+        // A typed delivery date wins; without one, the order's RFI/SD date (user 2026-11-27: the budget must show its delivery dates).
+        $rows = $this->as()->getJson("/api/v1/pre-budget/budgets/{$no}")->assertOk()->json('data.delivery_summary.rows');
+        $this->assertEqualsCanonicalizing(['2026-12-15', '2026-12-20'], array_column($rows, 'delivery_date'));
     }
 
     public function test_knit_dying_costing_with_badge_cost_goes_into_the_budget(): void

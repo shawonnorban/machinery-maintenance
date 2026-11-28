@@ -8,6 +8,7 @@ use App\Modules\Asset\Actions\CreateAsset;
 use App\Modules\Asset\Actions\DeleteAsset;
 use App\Modules\Asset\Actions\UpdateAsset;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\AssetStatusHistory;
 use App\Modules\Asset\Models\AssetCategory;
 use App\Modules\Asset\Models\AssetLocation;
 use App\Modules\Asset\Models\AssetType;
@@ -44,6 +45,9 @@ class AssetApiController extends ApiController
 
     private const SORTS = ['asset_code', 'name', 'criticality', 'status', 'created_at'];
 
+    /** Not producing: broken down, being repaired, or in maintenance. */
+    private const DOWN = ['BREAKDOWN', 'UNDER_REPAIR', 'UNDER_MAINTENANCE'];
+
     public function __construct(private readonly TenantContext $context) {}
 
     public function index(Request $request): JsonResponse
@@ -63,8 +67,15 @@ class AssetApiController extends ApiController
                 ->orWhere('serial_number', 'like', $term));
         }
 
+        // `state=DOWN` (the phone): every not-producing status at once.
+        if ($request->query('state') === 'DOWN') {
+            $query->whereIn('status', self::DOWN);
+        }
         $query = $this->applyFilters($query, $request, self::FILTERS);
         $query = $this->applySort($query, $request, self::SORTS, 'asset_code', 'asc');
+        // Since when each machine is in its status: its last status change.
+        $query->addSelect(['status_since' => AssetStatusHistory::query()->select('changed_at')
+            ->whereColumn('asset_status_histories.asset_id', 'assets.id')->latest('changed_at')->limit(1)]);
 
         return ApiResponse::paginated(
             $query->paginate($this->perPage($request))->withQueryString(),
@@ -77,16 +88,25 @@ class AssetApiController extends ApiController
      * criticality filter or page the list happens to be on, the same
      * reasoning as `WorkOrderApiController::counts()`.
      */
-    public function counts(): JsonResponse
+    public function counts(Request $request): JsonResponse
     {
         $this->allow('asset.asset.view_any');
 
         $factoryIds = $this->context->accessibleFactoryIds();
+        // The phone's factory choice narrows the tiles too (one the caller reaches, else ignored).
+        $one = $request->query('current_factory_id');
+        if (is_string($one) && in_array($one, $factoryIds, true)) {
+            $factoryIds = [$one];
+        }
         $base = fn () => Asset::query()->whereIn('current_factory_id', $factoryIds);
 
         return ApiResponse::ok([
             'total' => $base()->count(),
             'running' => $base()->where('status', 'RUNNING')->count(),
+            // The phone's Machines (2026-11-27): running, idle, down — down
+            // being any machine not producing for a fault or its repair.
+            'idle' => $base()->where('status', 'IDLE')->count(),
+            'down' => $base()->whereIn('status', self::DOWN)->count(),
             // A machine mid-repair and one merely flagged down both mean the
             // same thing to whoever is scanning this tile: not producing.
             'needs_attention' => $base()->whereIn('status', ['BREAKDOWN', 'UNDER_REPAIR'])->count(),
@@ -341,6 +361,7 @@ class AssetApiController extends ApiController
             'asset_code' => $asset->asset_code,
             'name' => $asset->name,
             'status' => $asset->status,
+            'status_since' => $asset->getAttribute('status_since') === null ? null : \Illuminate\Support\Carbon::parse($asset->getAttribute('status_since'), 'UTC')->toIso8601String(),
             // Echoed on every response so a client always has the value its
             // next PATCH needs (ADR-025) without a separate round trip.
             'version' => $asset->version,

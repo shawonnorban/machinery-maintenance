@@ -3,6 +3,7 @@
 #
 #   bash scripts/build.sh debug      the emulator (x86_64) -> app-debug.apk
 #   bash scripts/build.sh release    phones (ARM), signed -> app-release.apk
+#   bash scripts/build.sh aab        the same, and the Play Store bundle -> app-release.aab
 #
 # Built from a COPY in a short folder (D:/m/a, its C++ in D:/b), never in place: the C++ libraries
 # make paths longer than Windows' 260 characters from where the repository is,
@@ -33,6 +34,7 @@ mirror() { # source, target, robocopy's own options
 mirror "$REPO/mobile" "$WORK/a" /XD node_modules android .expo dist
 mirror "$REPO/frontend/messages" "$WORK/frontend/messages"
 mirror "$REPO/frontend/src/lib" "$WORK/frontend/src/lib"
+mirror "$REPO/frontend/src/app/fonts" "$WORK/frontend/src/app/fonts"
 
 cd "$WORK/a"
 LOCK="$(sha256sum package-lock.json | cut -d' ' -f1)"
@@ -46,9 +48,14 @@ echo "sdk.dir=$ANDROID_HOME" > android/local.properties
 
 cd android
 OPTS=(--max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=768m" --console=plain)
-if [ "$KIND" = "release" ]; then
-  ./gradlew :app:createBundleReleaseJsAndAssets --rerun assembleRelease "-PreactNativeArchitectures=${ARCH:-arm64-v8a,armeabi-v7a}" "${OPTS[@]}"
+if [ "$KIND" = "release" ] || [ "$KIND" = "aab" ]; then
+  # aab: the Play Store's bundle as well as the APK (phase 6), in one run.
+  TASKS=(assembleRelease)
+  [ "$KIND" = "aab" ] && TASKS+=(bundleRelease)
+  ./gradlew :app:createBundleReleaseJsAndAssets --rerun "${TASKS[@]}" "-PreactNativeArchitectures=${ARCH:-arm64-v8a,armeabi-v7a}" "${OPTS[@]}"
   ls -la app/build/outputs/apk/release/*.apk
+  # An if, not `&&`: as the last line, a false test would end a good release build with code 1.
+  if [ "$KIND" = "aab" ]; then ls -la app/build/outputs/bundle/release/*.aab; fi
 else
   ./gradlew assembleDebug "-PreactNativeArchitectures=${ARCH:-x86_64}" "${OPTS[@]}"
   ls -la app/build/outputs/apk/debug/*.apk

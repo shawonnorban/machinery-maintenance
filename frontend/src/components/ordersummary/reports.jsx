@@ -222,8 +222,9 @@ function BuyerRows({ b, row }) {
   );
 }
 
-function AuditLog({ data, query }) {
-  const t = useT("ordersummary");
+/** The change log, cell by cell; `ns` names the words (Order Summary's, or Dev Sample's: AnnotechERP 37). */
+function AuditLog({ data, query, ns = "ordersummary" }) {
+  const t = useT(ns);
   const go = useGo();
   return (
     <div className="flex flex-col gap-3 text-[12px]">
@@ -246,7 +247,7 @@ function AuditLog({ data, query }) {
               <div className="flex flex-wrap items-center gap-2">
                 <span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", e.kind === "DELETE" ? "bg-danger-subtle text-danger" : e.kind === "CREATE" ? "bg-success-subtle text-success" : e.kind === "RECALC" ? "bg-info-subtle text-info" : "bg-warning-subtle text-warning")}>{t(`audit.kind.${e.kind}`)}</span>
                 <b>#{e.serial_no}</b>
-                <span>{[e.buyer, e.order].filter(Boolean).join(" · ")}</span>
+                <span>{[e.buyer, e.order ?? e.sample].filter(Boolean).join(" · ")}</span>
                 <span className="ml-auto text-foreground-muted">{e.by ?? "—"} · {e.at ? new Date(e.at).toLocaleString("en-GB", { timeZone: "Asia/Dhaka", dateStyle: "medium", timeStyle: "short", hourCycle: "h12" }).replace(/\b[ap]m\b/, (x) => x.toUpperCase()) : ""}</span>
               </div>
               {e.cells.length ? (

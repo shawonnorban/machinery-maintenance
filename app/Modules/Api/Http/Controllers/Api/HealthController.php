@@ -27,7 +27,15 @@ class HealthController extends Controller
 {
     public function alive(): JsonResponse
     {
-        return ApiResponse::ok(['status' => 'ok']);
+        return ApiResponse::ok([
+            'status' => 'ok',
+            // The Android app's floor (AnnotechERP 37, phase 6): below it the app asks to be updated.
+            'mobile' => [
+                'min_version' => config('mobile.min_version'), 'latest_version' => config('mobile.latest_version'), 'download_url' => config('mobile.download_url'),
+                // Chat's live socket (public key only); null when this server runs no Reverb.
+                'reverb' => config('mobile.reverb.key') ? ['key' => config('mobile.reverb.key'), 'host' => config('mobile.reverb.host'), 'port' => (int) config('mobile.reverb.port'), 'tls' => config('mobile.reverb.scheme') === 'https'] : null,
+            ],
+        ]);
     }
 
     public function ready(): JsonResponse

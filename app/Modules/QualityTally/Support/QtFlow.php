@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\DB;
  * the manager's LINE TARGET puts a job on a line; what their QC may check is
  * what the section before has passed and they have not checked yet.
  * Pass is annotech-rmg's: RFT + rectify, never above checked (RFT + defect).
+ *
+ * The stages (user, 2026-11-28): sewing may be given a job's target only once
+ * cutting has finished it — every bundle's every part checked to the last
+ * piece with no defect left open — and quality only once sewing has; until
+ * then the later sections see where the job is and that it is coming.
  */
 final class QtFlow
 {
@@ -67,13 +72,19 @@ final class QtFlow
         }
         $taps = DB::table('qt_entries')->where('company_id', $companyId)->whereIn('job_id', $jobIds)
             ->select('job_id', 'section', 'action', DB::raw('count(*) as n'))->groupBy('job_id', 'section', 'action')->get()->groupBy(fn ($r) => $r->job_id.'|'.$r->section);
-        $bundles = DB::table('qt_cut_bundles')->where('company_id', $companyId)->whereIn('job_id', $jobIds)->get(['job_id', 'garment_type', 'size', 'qty'])->groupBy('job_id');
+        $bundles = DB::table('qt_cut_bundles')->where('company_id', $companyId)->whereIn('job_id', $jobIds)->get(['id', 'job_id', 'garment_type', 'panel_id', 'size', 'qty'])->groupBy('job_id');
         $panels = DB::table('qt_panels')->where('company_id', $companyId)->where('active', true)->get(['id', 'garment_type', 'per_piece'])->groupBy('garment_type');
         $openings = DB::table('qt_jobs')->where('company_id', $companyId)->whereIn('id', $jobIds)->get(['id', 'opening_cut', 'opening_sewing', 'opening_quality'])->keyBy('id');
         $cut = $bundles->isEmpty() ? collect() : DB::table('qt_entries as e')->join('qt_cut_bundles as b', 'b.id', '=', 'e.cut_bundle_id')
             ->where('e.company_id', $companyId)->whereIn('b.job_id', $jobIds)->where('e.section', 'CUTTING')
             ->select('b.job_id', 'b.size', 'e.panel_id', 'e.action', DB::raw('count(*) as n'))->groupBy('b.job_id', 'b.size', 'e.panel_id', 'e.action')->get()
             ->groupBy(fn ($r) => $r->job_id.'|'.$r->size.'|'.$r->panel_id)->map(fn ($g) => self::count($g)['pass']);
+
+        // Each bundle's parts as cutting's QCs left them: checked, and defects not yet settled (rectified or rejected).
+        $byBundle = $bundles->isEmpty() ? collect() : DB::table('qt_entries')->where('company_id', $companyId)->where('section', 'CUTTING')
+            ->whereIn('cut_bundle_id', $bundles->flatten()->pluck('id'))
+            ->select('cut_bundle_id', 'panel_id', 'action', DB::raw('count(*) as n'))->groupBy('cut_bundle_id', 'panel_id', 'action')->get()
+            ->groupBy(fn ($r) => $r->cut_bundle_id.'|'.$r->panel_id)->map(fn ($g) => self::count($g));
 
         $out = [];
         foreach ($jobIds as $id) {
@@ -86,7 +97,8 @@ final class QtFlow
             $o = $openings->get($id);
             $opening = ['CUTTING' => (int) $o?->opening_cut, 'SEWING' => (int) $o?->opening_sewing, 'QUALITY' => (int) $o?->opening_quality];
             // 'panels' = panels to check for one piece (a pair counts two).
-            $row = ['opening' => $opening, 'pieces' => array_sum($bySize) + $opening['CUTTING'], 'pieces_by_size' => $bySize, 'bundles' => $mine->count(), 'bundle_qty' => (int) $mine->sum('qty'), 'panels' => (int) $parts->sum('per_piece')];
+            $done = $mine->filter(fn ($b) => self::bundleDone($b, $panels->get($b->garment_type, collect()), $byBundle))->count();
+            $row = ['opening' => $opening, 'pieces' => array_sum($bySize) + $opening['CUTTING'], 'pieces_by_size' => $bySize, 'bundles' => $mine->count(), 'bundles_done' => $done, 'bundle_qty' => (int) $mine->sum('qty'), 'panels' => (int) $parts->sum('per_piece')];
             foreach (QtBook::SECTIONS as $s) {
                 $row[$s] = self::count($taps->get($id.'|'.$s, collect()));
             }
@@ -112,6 +124,70 @@ final class QtFlow
         };
     }
 
+    /**
+     * Where a job is (user, 2026-11-28): CUTTING until every bundle's every part
+     * is checked with no defect open (or its opening pieces already cover the
+     * order), then SEWING until sewing has checked all that came and settled
+     * its defects, then QUALITY the same, then DONE.
+     *
+     * @param  array<string, mixed>  $p
+     * @return array{stage: string, cutting_done: bool, sewing_done: bool, quality_done: bool, bundles: int, bundles_done: int}
+     */
+    public static function stage(array $p, int $orderQty): array
+    {
+        $open = fn (string $s) => $p[$s]['defect'] - $p[$s]['rectify'] - $p[$s]['reject'];
+        $covers = fn (string $s) => $p['opening'][$s] > 0 && $p['opening'][$s] >= $orderQty;
+        $cut = ($p['bundles'] > 0 && $p['bundles_done'] === $p['bundles']) || $covers('CUTTING');
+        $sew = $covers('SEWING') || ($cut && self::passed($p, 'SEWING') > 0 && self::waiting($p, 'SEWING') === 0 && $open('SEWING') <= 0);
+        $qual = $covers('QUALITY') || ($sew && self::passed($p, 'QUALITY') > 0 && self::waiting($p, 'QUALITY') === 0 && $open('QUALITY') <= 0);
+
+        return [
+            'stage' => ! $cut ? 'CUTTING' : (! $sew ? 'SEWING' : (! $qual ? 'QUALITY' : 'DONE')),
+            'cutting_done' => $cut, 'sewing_done' => $sew, 'quality_done' => $qual,
+            'bundles' => $p['bundles'], 'bundles_done' => $p['bundles_done'],
+        ];
+    }
+
+    /** Whether a section may be given this job's target: cutting always; sewing once cutting is done; quality once sewing is. */
+    public static function opensFor(array $stage, string $section): bool
+    {
+        return match ($section) {
+            'SEWING' => $stage['cutting_done'],
+            'QUALITY' => $stage['sewing_done'],
+            default => true,
+        };
+    }
+
+    /** Why a section cannot have the job yet, in the caller's language (null when it can). */
+    public static function blockedReason(array $stage, string $section): ?string
+    {
+        if (self::opensFor($stage, $section)) {
+            return null;
+        }
+
+        return $section === 'SEWING'
+            ? __('qtally.v.stage_cutting', ['done' => $stage['bundles_done'], 'total' => $stage['bundles']])
+            : __('qtally.v.stage_sewing');
+    }
+
+    /** @param  Collection<int, object>  $parts  the garment's panels */
+    private static function bundleDone(object $bundle, Collection $parts, Collection $byBundle): bool
+    {
+        $mine = $bundle->panel_id ? $parts->where('id', $bundle->panel_id) : $parts;
+        if ($mine->isEmpty()) {
+            return false;
+        }
+        foreach ($mine as $part) {
+            $m = $byBundle->get($bundle->id.'|'.$part->id);
+            $holds = (int) $bundle->qty * max(1, (int) $part->per_piece);
+            if ($m === null || $m['checked'] < $holds || $m['defect'] - $m['rectify'] - $m['reject'] > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static function ready(string $companyId, string $jobId, string $section): ?int
     {
         return $section === 'CUTTING' ? null : self::waiting(self::progress($companyId, [$jobId])[$jobId], $section);
@@ -135,6 +211,7 @@ final class QtFlow
             'sewing' => ['checked' => $p['SEWING']['checked'], 'pass' => self::passed($p, 'SEWING'), 'reject' => $p['SEWING']['reject'], 'waiting' => self::waiting($p, 'SEWING')],
             'quality' => ['checked' => $p['QUALITY']['checked'], 'pass' => self::passed($p, 'QUALITY'), 'reject' => $p['QUALITY']['reject'], 'waiting' => self::waiting($p, 'QUALITY')],
             'done_pct' => $job->order_qty ? round(self::passed($p, 'QUALITY') / $job->order_qty * 100, 2) : null,
+            'stage' => self::stage($p, (int) $job->order_qty),
         ];
     }
 

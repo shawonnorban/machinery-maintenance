@@ -19,6 +19,8 @@ Route::middleware(['api.auth', 'throttle:api'])->prefix('order-summary')->name('
     Route::get('/meta', [OrderApiController::class, 'meta'])->name('meta');
     Route::get('/orders', [OrderApiController::class, 'index'])->name('orders.index');
     Route::get('/orders/distinct', [OrderApiController::class, 'distinct'])->name('orders.distinct');
+    // The orders a notification is about (the phone).
+    Route::get('/orders/attention', [OrderApiController::class, 'attention'])->name('orders.attention');
     Route::get('/orders/export', [OrderApiController::class, 'export'])->name('orders.export');
     Route::get('/job-numbers', [OrderApiController::class, 'jobNumbers'])->name('job-numbers');
     Route::post('/orders', [OrderApiController::class, 'store'])->name('orders.store');

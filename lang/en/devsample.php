@@ -12,6 +12,7 @@ return [
         'edit' => 'Edit Dev Sample',
         'report' => 'Pivot Report',
         'columns' => 'Column Setup',
+        'audit' => 'Audit Log',
     ],
     'descriptions' => [
         'dashboard' => 'The samples at a glance: Norban\'s summary cards, samples to submit by days left to the deadline, samples by status, buyers and requested months, and the latest saves.',
@@ -20,6 +21,7 @@ return [
         'columns' => 'The sample sheet\'s groups and columns: add or change columns, formulas, colour rules, widths, freeze panes and who sees each column.',
         'edit' => 'Change a development sample.',
         'report' => 'Running development sample summary: buyers by order confirmation, and by sample status in as much detail as you choose.',
+        'audit' => 'Every save, cell by cell: who changed what and when — only the samples you see on the sheet.',
     ],
 
     'sections' => [
@@ -159,5 +161,11 @@ return [
     ],
     'cs' => [
         'source' => ['buyers' => 'Buyers', 'items' => 'Items (garment)', 'colours' => 'Colours', 'fabric_types' => 'Fabric types', 'compositions' => 'Compositions', 'suppliers' => 'Supplier Master', 'ds' => 'Dev Sample list: :name'],
+    ],
+    // The Audit Log's filter bar (the shared AuditLog / Filters reads these).
+    'sheet' => ['all' => 'All', 'filter' => 'Filter', 'clear' => 'Clear'],
+    'audit' => [
+        'from' => 'From', 'to' => 'To', 'action' => 'Action', 'user' => 'User', 'search' => 'Style, job, buyer…', 'empty' => 'No changes found.',
+        'kind' => ['CREATE' => 'Created', 'EDIT' => 'Updated', 'DELETE' => 'Deleted', 'RECALC' => 'Recalculated', 'RESTORE' => 'Restored'],
     ],
 ];

@@ -393,6 +393,47 @@ class DevSampleApiController extends ApiController
     }
 
     /** The samples this caller may read: everyone's with view_all, else their own. */
+    /**
+     * The samples a notification is about (the phone, 2026-11-27): with
+     * `serials` (a DS_SAMPLES_CHANGED notice's "#3, #4") those samples; else
+     * the ones the morning's DS_DEADLINE_DUE counts — still to submit, the
+     * Submission Deadline gone by or within 2 days. Soonest first.
+     */
+    public function attention(Request $request): JsonResponse
+    {
+        $this->allow('devsample.view');
+        $data = $request->validate(['serials' => ['nullable', 'string', 'max:2000']]);
+        $serials = array_values(array_filter(array_map('intval', preg_split('/[^0-9]+/', (string) ($data['serials'] ?? '')) ?: [])));
+        $pending = DevSampleOptions::label('sample_status', 'SUBMISSION_PENDING');
+        $today = Carbon::parse(DsSheet::today());
+        $query = $this->visible();
+        $serials !== [] ? $query->whereIn('serial_no', $serials) : $query->whereRaw('"values"->>\'sample_status\' = ?', [$pending]);
+        $rows = [];
+        $counts = ['overdue' => 0, 'soon' => 0];
+        foreach ($query->limit(500)->get(['id', 'serial_no', 'values']) as $sample) {
+            $v = $sample->values ?? [];
+            $d = is_string($v['submission_deadline'] ?? null) && preg_match('/^\d{4}-\d{2}-\d{2}/', $v['submission_deadline']) ? substr($v['submission_deadline'], 0, 10) : null;
+            $days = $d === null ? null : (int) $today->diffInDays(Carbon::parse($d), false);
+            $open = ($v['sample_status'] ?? null) === $pending;
+            $flag = $open && $days !== null ? ($days < 0 ? 'overdue' : ($days <= 2 ? 'soon' : null)) : null;
+            if ($serials === [] && $flag === null) {
+                continue;
+            }
+            if ($flag) {
+                $counts[$flag]++;
+            }
+            $text = fn (string $k) => \App\Shared\Formula\Formula::text($v[$k] ?? '') ?: null;
+            $rows[] = [
+                'serial_no' => $sample->serial_no, 'styling' => $text('styling'), 'buyer' => $text('buyer'), 'customer' => $text('customer_name'),
+                'job_no' => $text('job_no'), 'season' => $text('season'), 'department' => $text('department'), 'status' => $text('sample_status'),
+                'qty' => \App\Shared\Formula\Formula::num($v['possible_qty'] ?? null), 'deadline' => $d, 'days_left' => $days, 'flag' => $flag,
+            ];
+        }
+        usort($rows, fn ($a, $b) => [$a['days_left'] ?? PHP_INT_MAX, $a['serial_no']] <=> [$b['days_left'] ?? PHP_INT_MAX, $b['serial_no']]);
+
+        return ApiResponse::ok(['counts' => $counts, 'rows' => $rows]);
+    }
+
     private function visible(): Builder
     {
         $query = DevSample::query();

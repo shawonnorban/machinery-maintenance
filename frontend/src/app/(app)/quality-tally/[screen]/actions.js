@@ -44,6 +44,7 @@ const CALLS = {
   unblockPhone: (id) => [`/quality-tally/phones/${id}/unblock`, json("POST", {})],
   deletePhone: (id) => [`/quality-tally/phones/${id}`, json("DELETE")],
   deleteInspector: (id) => [`/quality-tally/inspectors/${id}`, json("DELETE")],
+  reviewSeen: (body) => ["/quality-tally/review/seen", json("POST", body)],
 };
 
 const READS = new Set(["inspectorOptions", "shortfall", "runReport", "panelLot"]);

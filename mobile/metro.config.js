@@ -9,7 +9,8 @@ const { getDefaultConfig } = require("expo/metro-config");
 const config = getDefaultConfig(__dirname);
 const web = path.resolve(__dirname, "..", "frontend");
 
-config.watchFolders = [path.join(web, "messages"), path.join(web, "src", "lib")];
+// The web's own fonts too (Segoe UI, Anek Bangla): the app is set in them (user, 2026-11-27).
+config.watchFolders = [path.join(web, "messages"), path.join(web, "src", "lib"), path.join(web, "src", "app", "fonts")];
 // A shared file's own imports (Babel helpers) come from this app's packages.
 config.resolver.nodeModulesPaths = [path.join(__dirname, "node_modules")];
 

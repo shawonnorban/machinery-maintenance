@@ -81,6 +81,17 @@ is signed with the debug key and warns; it is for testing only.
 | Path | What |
 |---|---|
 | `src/app/` | Screens: every file is one (Expo Router) |
+| `src/app/(tabs)/` | The bottom bar: Home, Production, Tally, Machines, More — each shown only to whom it serves |
+| `src/components/server-dialog.js` | The server popup on the sign-in screen (⚙): IP, port, test, save |
+| `src/components/machinery.js` | Machinery's pieces: status badges, camera, photos, pickers, the checklist, paged lists |
+| `src/components/steps.js` | A record's next steps as buttons; a step with fields opens a sheet |
+| `src/lib/features.js` | Home's tiles, each with the permission its screen's API checks |
+| `src/lib/machines.js` | Who may do what in Machinery; reading a machine label |
+| `src/lib/reports.js` | Breakdown reports made offline: kept, sent later with their own Idempotency-Key |
+| `src/components/appbar.js` | The bar over every tab (gradient, date, language switch, initials) and the gradient `Band` |
+| `src/components/budget.js` | Pre-Budget's words, colours and figures |
+| `src/app/welcome.js` | The first screen on a new phone: slides and the language |
+| `src/lib/server.js` (again) | An IP over HTTP (192.168.0.10 · 8010) or a domain over HTTPS (norbanit.com) |
 | `src/components/ui.js` | The component kit; build screens from it only |
 | `src/theme/tokens.js` | Colours, sizes, type: the only place they are written |
 | `src/lib/api.js` | Requests, each with a deadline; status 0 = no answer, never a refusal |
@@ -92,9 +103,10 @@ is signed with the debug key and warns; it is for testing only.
 | `src/lib/phone.js` | This phone's id and secret |
 | `src/lib/i18n.js` | Words, read from `frontend/messages`; add a namespace there |
 | `plugins/with-native-build.js` | Short native paths, the release key |
-| `scripts/make-icons.mjs` | `npm run icons`: the icons from one mark |
+| `scripts/make-icons.mjs` | `npm run icons`: the icons from `assets/brand-a.png` (the logo's A) |
 
-Words come from `lang/{en,bn}/*.php` through `php scripts/extract-i18n.php`
+The faces are the web's own files in `frontend/src/app/fonts` (Segoe UI,
+Anek Bangla), read in place like the words. Words come from `lang/{en,bn}/*.php` through `php scripts/extract-i18n.php`
 (the app's own are `lang/*/mobile.php`); times are shown with
 `frontend/src/lib/clock.js`. Never copy either.
 

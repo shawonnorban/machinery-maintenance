@@ -462,6 +462,42 @@ class QtPhoneTest extends TestCase
         $this->assertSame(429, end($statuses));
     }
 
+    public function test_the_manager_reviews_refused_and_kept_taps_and_marks_them_seen(): void
+    {
+        $this->approve();
+        $uuid = $this->signIn('EMP-001', '000000')->assertCreated()->json('data.session.uuid');
+        $this->travel(20)->minutes();
+        $late = ['action' => 'RFT', 'occurred_at' => now()->subMinutes(10)->toIso8601String()] + $this->tap($uuid);
+        $now = ['action' => 'RFT'] + $this->tap($uuid);
+        $this->asPhone()->postJson('/api/v1/quality-tally/phone/taps', ['entries' => [$late, $now]])->assertOk()->assertJsonPath('data.recorded', 1);
+
+        $list = fn (string $status = 'open') => $this->as($this->owner)->getJson('/api/v1/quality-tally/review?section=SEWING&status='.$status)->assertOk();
+        $open = $list();
+        $this->assertSame([1, 1], [$open->json('data.open.refused'), $open->json('data.open.kept')]);
+        $rows = collect($open->json('data.rows'));
+        $this->assertEqualsCanonicalizing(['REFUSED', 'KEPT'], $rows->pluck('kind')->all());
+        $this->assertSame(['LINE01', 'J-100', 'Qc', 'Phone 01'], [$rows->first()['line'], $rows->first()['job_no'], $rows->first()['qc'], $rows->first()['phone']]);
+        // Another section's list is not this one's.
+        $this->assertSame([], $this->as($this->owner)->getJson('/api/v1/quality-tally/review?section=CUTTING')->assertOk()->json('data.rows'));
+
+        $items = $rows->map(fn ($r) => ['kind' => $r['kind'], 'id' => $r['id']])->all();
+        // Marking another section's taps seen marks nothing.
+        $this->as($this->owner)->postJson('/api/v1/quality-tally/review/seen', ['section' => 'CUTTING', 'items' => $items])->assertOk()->assertJsonPath('data.seen', 0);
+        $this->as($this->owner)->postJson('/api/v1/quality-tally/review/seen', ['section' => 'SEWING', 'items' => $items])->assertOk()->assertJsonPath('data.seen', 2);
+        $this->assertSame([], $list()->json('data.rows'));
+        $all = $list('all')->json('data.rows');
+        $this->assertCount(2, $all);
+        $this->assertSame(['Owner', 'Owner'], array_column($all, 'seen_by'));
+    }
+
+    public function test_the_dashboard_opens_on_a_day_with_targets_and_no_taps_yet(): void
+    {
+        // A morning before the first tap: the line's target shows, nothing fails.
+        $this->target($this->line);
+        $rows = $this->as($this->owner)->getJson('/api/v1/quality-tally/dashboard?section=SEWING&date='.\App\Modules\QualityTally\Support\QtTally::currentDate($this->delta->id, $this->qc->id))->assertOk()->json('data.rows');
+        $this->assertSame([[100, 0]], array_map(fn ($r) => [$r['target'], $r['checked']], $rows));
+    }
+
     /* ── helpers ────────────────────────────────────────────────────── */
 
     private function signIn(string $employee, string $pin, array $extra = [], ?array $phone = null): TestResponse

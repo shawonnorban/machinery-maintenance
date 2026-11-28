@@ -310,6 +310,16 @@ class OrderSummaryTest extends TestCase
         $this->assertSame([1, 0, 1], [$work[0]->data_json['overdue'], $work[0]->data_json['week'], $work[0]->data_json['booking']]);
         $this->assertSame('WARNING', $work[0]->severity);
         $this->assertCount(0, $notes($this->merchB, 'OS_PENDING_WORK'));
+
+        // The phone opens the notice on those very orders: the same counts, the order and why.
+        $seen = $this->api($this->merchA)->getJson('/api/v1/order-summary/orders/attention')->assertOk();
+        $this->assertSame(['overdue' => 1, 'week' => 0, 'booking' => 1], $seen->json('data.counts'));
+        $this->assertSame([$rows[0]['serial_no']], array_column($seen->json('data.rows'), 'serial_no'));
+        $this->assertSame(['overdue', 'booking'], $seen->json('data.rows.0.flags'));
+        $this->assertSame([], $this->api($this->merchB)->getJson('/api/v1/order-summary/orders/attention')->json('data.rows'));
+        // A changed-orders notice names its orders: those, within the person's buyers only.
+        $serials = implode(',', array_column($rows, 'serial_no'));
+        $this->assertSame(['Next'], array_column($this->api($this->merchB)->getJson("/api/v1/order-summary/orders/attention?serials={$serials}")->json('data.rows'), 'buyer'));
     }
 
     public function test_bulk_update_copy_delete_and_the_header_filter(): void

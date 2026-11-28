@@ -29,6 +29,8 @@ import { PrintLinks } from "./print/print-links";
  *    fabric used from stock, with Print.
  */
 
+/** A figure as it is, to three places at most (the real Total Req behind a rounded one). */
+const exact = (v) => (v === null || v === undefined || Number.isNaN(Number(v)) ? "" : Number(v).toLocaleString("en-US", { maximumFractionDigits: 3 }));
 const n = (v, d = 0) => (v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? "" : Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }));
 const money = (v, d = 2) => (v === null || v === undefined || v === "" ? "" : `${Number(v) < 0 ? "-" : ""}$${n(Math.abs(Number(v)), d)}`);
 const num = (v) => (v === null || v === undefined || String(v).trim() === "" || Number.isNaN(Number(v)) ? null : Number(v));
@@ -384,6 +386,15 @@ function StockForm({ data, act }) {
   const [state, setState] = useState(() => Object.fromEntries(lines.map((l) => [l.id, { no_stock: l.no_stock, lots: l.lots.length ? l.lots.map((lot) => Object.fromEntries(LOT_FIELDS.map((f) => [f, str(lot[f])]))) : [blankLot()] }])));
   const [dirty, setDirty] = useState(false);
   const change = (id, fn) => { setState((all) => ({ ...all, [id]: fn(all[id]) })); setDirty(true); };
+  // One click puts what the line still needs into a lot (user, 2026-11-28): the exact Total Req less the
+  // other lots — the shown Total Req is rounded, so typing it could pass the real (fractional) one.
+  const fill = (l, at) =>
+    change(l.id, (x) => {
+      const i = at ?? Math.max(0, x.lots.findIndex((lot) => (num(lot.qty) ?? 0) === 0));
+      const others = x.lots.reduce((a, lot, j) => (j === i ? a : a + (num(lot.qty) ?? 0)), 0);
+      const left = Math.max(0, Math.round((Number(l.total_req ?? 0) - others) * 1000) / 1000);
+      return { ...x, no_stock: false, lots: x.lots.map((y, j) => (j === i ? { ...y, qty: String(left) } : y)) };
+    });
 
   const save = (complete) =>
     start(async () => {
@@ -436,9 +447,16 @@ function StockForm({ data, act }) {
                         </td>
                         {/* Total Req and Allocated over the Qty column (user, 2026-11-24): the lots' Qty below add up against them. */}
                         <td className={cn(cell, "whitespace-nowrap text-right leading-tight")}>
-                          <div className="font-semibold text-success">{t("stock.total_req")}: {n(l.total_req)} {unit}</div>
-                          <div className={cn("font-semibold", over && "text-danger")}>{t("stock.allocated")}: {n(allocated, 3)} {unit}</div>
-                          {over ? <div className="text-[11px] font-semibold text-danger">{t("stock.over")}</div> : null}
+                          {editable && !st.no_stock ? (
+                            <button type="button" title={t("stock.fill_hint")} onClick={() => fill(l)} className="font-semibold text-success underline decoration-dotted underline-offset-2 hover:text-success/80">
+                              {t("stock.total_req")}: {n(l.total_req)} {unit}
+                            </button>
+                          ) : (
+                            <div className="font-semibold text-success">{t("stock.total_req")}: {n(l.total_req)} {unit}</div>
+                          )}
+                          {/* Allocated rounded, no ".000" (user, 2026-11-28). */}
+                          <div className={cn("font-semibold", over && "text-danger")}>{t("stock.allocated")}: {n(allocated)} {unit}</div>
+                          {over ? <div className="text-[11px] font-semibold text-danger">{t("stock.over", { req: exact(l.total_req) })}</div> : null}
                         </td>
                         <td className={cell} colSpan={LOT_FIELDS.length - QTY_AT} />
                         <td className={cn(cell, "whitespace-nowrap")}>
@@ -469,8 +487,17 @@ function StockForm({ data, act }) {
                                     <option value="LOCAL">{t("stock.local")}</option>
                                     <option value="IMPORT">{t("stock.import")}</option>
                                   </select>
+                                ) : f === "qty" ? (
+                                  <div className="flex items-center gap-1">
+                                    <input className={cn(input, "min-w-20 text-right")} disabled={!editable || st.no_stock} value={lot.qty} onChange={(e) => set("qty", e.target.value)} aria-label={`${t("stock.f.qty", { unit })} ${i + 1}`} />
+                                    {editable && !st.no_stock ? (
+                                      <button type="button" title={t("stock.fill_hint")} onClick={() => fill(l, i)} className="shrink-0 rounded border border-success/40 bg-success-subtle px-1.5 py-1 text-[11px] font-semibold text-success hover:bg-success/15">
+                                        {t("stock.fill")}
+                                      </button>
+                                    ) : null}
+                                  </div>
                                 ) : (
-                                  <input className={cn(input, ["qty", "price"].includes(f) ? "text-right" : "min-w-24 text-left")} disabled={!editable || st.no_stock} value={lot[f]} onChange={(e) => set(f, e.target.value)} aria-label={`${t(`stock.f.${f}`, { unit })} ${i + 1}`} />
+                                  <input className={cn(input, f === "price" ? "text-right" : "min-w-24 text-left")} disabled={!editable || st.no_stock} value={lot[f]} onChange={(e) => set(f, e.target.value)} aria-label={`${t(`stock.f.${f}`, { unit })} ${i + 1}`} />
                                 )}
                               </td>
                             ))}

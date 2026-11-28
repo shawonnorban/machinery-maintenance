@@ -3,15 +3,16 @@
  * hits without aiming, the running figures, a sheet that rises from the
  * bottom for defects and jobs, and the line that says what is still to send.
  */
-import { Modal, Pressable, ScrollView, View } from "react-native";
+import { useEffect } from "react";
+import { Pressable, View } from "react-native";
 import { router } from "expo-router";
-import { CheckCircle2, CloudOff, CloudUpload, ShieldAlert, TriangleAlert, Wrench, X, XCircle } from "lucide-react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text } from "./ui";
+import { Check, CheckCircle2, CloudOff, CloudUpload, ShieldAlert, TriangleAlert, Wrench, XCircle } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Popup, Text } from "./ui";
 import { t } from "../lib/i18n";
 import { syncTaps, useTaps } from "../lib/taps";
 import { timeOf } from "../lib/clock";
-import { radius, space, touch } from "../theme/tokens";
+import { fonts, radius, space } from "../theme/tokens";
 import { shadow, useColors } from "../theme/theme";
 
 const m = (key, params) => t("mobile", `tally.${key}`, params);
@@ -86,6 +87,15 @@ export function Stat({ label, value, tone = "foreground", sub }) {
 export function Toast({ notice, onClose }) {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+
+  // Gone by itself after a few seconds.
+  useEffect(() => {
+    if (!notice) return undefined;
+    const timer = setTimeout(onClose, 4000);
+
+    return () => clearTimeout(timer);
+  }, [notice]);
+
   if (!notice) return null;
   const [bg, fg] = { danger: [colors.danger, "#ffffff"], warning: [colors.warning, "#ffffff"], success: [colors.success, "#ffffff"] }[notice.tone] ?? [colors.foreground, colors.background];
 
@@ -100,33 +110,16 @@ export function Toast({ notice, onClose }) {
   );
 }
 
-/** A sheet from the bottom: defects, jobs. */
-export function Sheet({ open, onClose, title, hint, children, footer }) {
-  const colors = useColors();
-
+/**
+ * A popup in the middle of the screen (user, 2026-11-27: every dropdown and
+ * every detail as a modal, designed): defects, jobs, a factory, a day, a
+ * notification — the app's one Popup, with `icon` for its header.
+ */
+export function Sheet({ open, onClose, title, hint, children, footer, icon, tone }) {
   return (
-    <Modal visible={open} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
-      <View style={{ flex: 1, backgroundColor: colors.overlay, justifyContent: "flex-end" }}>
-        <Pressable accessibilityLabel={m("close")} style={{ flex: 1 }} onPress={onClose} />
-        <SafeAreaView edges={["bottom"]} style={{ maxHeight: "88%", backgroundColor: colors.surface, borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg }}>
-          <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: space[4], paddingTop: space[4], gap: space[2] }}>
-            <View style={{ flex: 1 }}>
-              <Text variant="sectionTitle">{title}</Text>
-              {hint ? (
-                <Text variant="small" tone="foregroundMuted">
-                  {hint}
-                </Text>
-              ) : null}
-            </View>
-            <Pressable accessibilityRole="button" accessibilityLabel={m("close")} onPress={onClose} style={{ width: touch, height: touch, alignItems: "center", justifyContent: "center" }}>
-              <X size={24} color={colors.foregroundMuted} />
-            </Pressable>
-          </View>
-          <ScrollView contentContainerStyle={{ padding: space[4], gap: space[2] }}>{children}</ScrollView>
-          {footer ? <View style={{ flexDirection: "row", gap: space[3], padding: space[4], borderTopWidth: 1, borderTopColor: colors.border }}>{footer}</View> : null}
-        </SafeAreaView>
-      </View>
-    </Modal>
+    <Popup open={open} onClose={onClose} title={title} hint={hint} footer={footer} icon={icon} tone={tone} closeLabel={m("close")}>
+      {children}
+    </Popup>
   );
 }
 
@@ -139,16 +132,25 @@ export function Option({ title, sub, on = false, onPress, tone = "brand", style 
       accessibilityRole="button"
       accessibilityState={{ selected: on }}
       onPress={onPress}
-      style={[{ minHeight: 56, borderRadius: radius.md, borderWidth: 2, borderColor: on ? colors[tone] : colors.border, backgroundColor: on ? colors[`${tone}Subtle`] : colors.surface, paddingHorizontal: space[3], paddingVertical: space[2], justifyContent: "center" }, style]}
+      style={[{ minHeight: 30, borderRadius: 10, borderWidth: on ? 1.5 : 1, borderColor: on ? colors[tone] : colors.border, backgroundColor: on ? colors[`${tone}Subtle`] : colors.surface, paddingHorizontal: space[2], paddingVertical: 4, justifyContent: "center" }, style]}
     >
-      <Text variant="label" numberOfLines={2}>
-        {title}
-      </Text>
-      {sub ? (
-        <Text variant="small" tone="foregroundMuted" numberOfLines={2}>
-          {sub}
-        </Text>
-      ) : null}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: space[2] }}>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text variant="label" numberOfLines={2} style={on ? { color: colors[tone], fontFamily: fonts.semibold } : undefined}>
+            {title}
+          </Text>
+          {sub ? (
+            <Text variant="small" tone="foregroundMuted" numberOfLines={2}>
+              {sub}
+            </Text>
+          ) : null}
+        </View>
+        {on ? (
+          <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: colors[tone], alignItems: "center", justifyContent: "center" }}>
+            <Check size={12} color="#ffffff" strokeWidth={3} />
+          </View>
+        ) : null}
+      </View>
     </Pressable>
   );
 }

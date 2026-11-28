@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 use App\Modules\DevSample\Http\Controllers\Api\ColumnApiController;
 use App\Modules\DevSample\Http\Controllers\Api\DevSampleApiController;
+use App\Modules\DevSample\Http\Controllers\Api\DsAuditApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
  * Dev Sample Status (AnnotechERP 31, from Norban; Column Setup 2026-11-21):
  * the sheet's make-up, the samples (list with summary cards, header-filter
  * values, new / changed rows, Copy, Delete), the sample image, the Pivot
- * Report, and Column Setup.
+ * Report, Column Setup, and the Audit Log (every save, cell by cell; AnnotechERP 37).
  */
 
 Route::middleware(['api.auth', 'throttle:api'])->prefix('dev-sample')->name('dev-sample.')->group(function (): void {
@@ -19,8 +20,11 @@ Route::middleware(['api.auth', 'throttle:api'])->prefix('dev-sample')->name('dev
     Route::get('/job-numbers', [DevSampleApiController::class, 'jobNumbers'])->name('job-numbers');
     Route::get('/report', [DevSampleApiController::class, 'report'])->name('report');
     Route::get('/dashboard', [DevSampleApiController::class, 'dashboard'])->name('dashboard');
+    Route::get('/audit-log', [DsAuditApiController::class, 'index'])->name('audit');
     Route::post('/samples/image', [DevSampleApiController::class, 'image'])->name('samples.image');
     Route::get('/samples/distinct', [DevSampleApiController::class, 'distinct'])->name('samples.distinct');
+    // The samples a notification is about (the phone).
+    Route::get('/samples/attention', [DevSampleApiController::class, 'attention'])->name('samples.attention');
     Route::post('/samples/copy', [DevSampleApiController::class, 'copy'])->name('samples.copy');
     Route::get('/samples', [DevSampleApiController::class, 'index'])->name('samples.index');
     Route::post('/samples', [DevSampleApiController::class, 'store'])->name('samples.store');

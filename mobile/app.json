@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "Annotech ERP",
+    "name": "Norban Group",
     "slug": "annotech-erp",
-    "version": "0.3.0",
+    "version": "0.9.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "annotecherp",
     "userInterfaceStyle": "automatic",
     "android": {
       "package": "com.annotech.erp",
-      "versionCode": 3,
+      "versionCode": 12,
       "adaptiveIcon": {
-        "backgroundColor": "#4f46e5",
+        "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
@@ -38,6 +38,15 @@
           "recordAudioAndroid": false
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Pick photos to send in chat.",
+          "cameraPermission": "Take a photo to send in chat.",
+          "microphonePermission": false
+        }
+      ],
+      "expo-document-picker",
       "./plugins/with-native-build",
       [
         "expo-splash-screen",

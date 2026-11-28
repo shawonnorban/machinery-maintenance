@@ -23,6 +23,17 @@ export const serverNow = () => new Date(Date.now() + offset);
 
 const DHAKA = 6 * 60 * 60 * 1000;
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** 27 Nov 08:05 AM, factory time; the year only when it is not this one. */
+export function dateTimeOf(iso) {
+  if (!iso) return "—";
+  const at = new Date(Date.parse(iso) + DHAKA).toISOString();
+  const year = at.slice(0, 4) === new Date(serverNow().getTime() + DHAKA).toISOString().slice(0, 4) ? "" : ` ${at.slice(0, 4)}`;
+
+  return `${at.slice(8, 10)} ${MONTHS[Number(at.slice(5, 7)) - 1]}${year} ${clock12(at.slice(11, 16))}`;
+}
+
 /** 08:05 AM, factory time, whatever zone the phone is set to. */
 export function timeOf(iso) {
   return clock12(new Date(Date.parse(iso) + DHAKA).toISOString().slice(11, 16));

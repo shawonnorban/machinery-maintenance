@@ -55,7 +55,8 @@ class QtSetupApiController extends ApiController
             // The sections whose targets and input this caller manages (each section has its own manager).
             'managed' => QtFlow::managedSections($this->caller()),
             'lines' => $lines,
-            'jobs' => QtJob::query()->where('status', 'OPEN')->orderBy('job_no')->get()->map(fn (QtJob $j) => ['value' => $j->id, 'label' => $this->jobLabel($j), 'job_no' => $j->job_no, 'smv' => $j->smv === null ? null : (float) $j->smv])->all(),
+            // Each open job with its stage (user, 2026-11-28): a section's target picker shows what it may not take yet, and why.
+            'jobs' => $this->openJobs($c),
             'all_jobs' => QtJob::query()->orderBy('job_no')->get()->map(fn (QtJob $j) => ['value' => $j->id, 'label' => $this->jobLabel($j)])->all(),
         ]);
     }
@@ -282,6 +283,9 @@ class QtSetupApiController extends ApiController
                 'checked' => $p[$section]['checked'], 'reject' => $p[$section]['reject'],
                 'planned' => $planned, 'planned_lines' => $mine->map(fn (QtLineTarget $t) => QtBook::label($lines->get($t->line_id)) ?? '—')->values()->all(),
                 'suggest' => $want === 0 ? null : ($ready !== null && $ready > 0 ? min($want, $ready) : $want),
+                // Where the job is and whether this section may have it yet (user, 2026-11-28).
+                'stage' => $stage = QtFlow::stage($p, (int) $j->order_qty),
+                'blocked' => QtFlow::blockedReason($stage, $section),
             ];
         }
 
@@ -314,6 +318,9 @@ class QtSetupApiController extends ApiController
         if ($job === null || ($job->status !== 'OPEN' && $job->id !== $row?->job_id)) {
             throw ValidationException::withMessages(['job_id' => __('qtally.v.job_open')]);
         }
+        if ($row === null || $row->job_id !== $d['job_id'] || $row->section !== $d['section']) {
+            $this->assertStage($c, $job, $d['section'], 'job_id');
+        }
         $dupe = QtLineTarget::query()->whereDate('target_date', $d['target_date'])->where('section', $d['section'])->where('line_id', $d['line_id'])->where('job_id', $d['job_id'])
             ->when($row, fn ($q) => $q->whereKeyNot($row->getKey()))->exists();
         if ($dupe) {
@@ -343,9 +350,17 @@ class QtSetupApiController extends ApiController
         $open = QtJob::query()->where('status', 'OPEN')->pluck('id')->all();
         $me = $this->caller()->auditUserId();
         $copied = 0;
-        DB::transaction(function () use ($d, $open, $me, &$copied) {
+        $c = $this->caller()->companyId;
+        DB::transaction(function () use ($d, $open, $me, $c, &$copied) {
             $rows = QtLineTarget::query()->whereDate('target_date', $d['from'])->when($d['section'] ?? null, fn ($w, $s) => $w->where('section', $s))->whereIn('job_id', $open)->get();
+            $jobs = QtJob::query()->whereIn('id', $rows->pluck('job_id')->unique())->get()->keyBy('id');
+            $progress = QtFlow::progress($c, $jobs->keys()->all());
             foreach ($rows as $t) {
+                // A job the section may not have yet is not copied onto it (user, 2026-11-28).
+                $job = $jobs->get($t->job_id);
+                if ($job && ! QtFlow::opensFor(QtFlow::stage($progress[$job->id], (int) $job->order_qty), $t->section)) {
+                    continue;
+                }
                 $exists = QtLineTarget::query()->whereDate('target_date', $d['to'])->where('section', $t->section)->where('line_id', $t->line_id)->where('job_id', $t->job_id)->exists();
                 if (! $exists) {
                     QtLineTarget::query()->create(['target_date' => $d['to'], 'section' => $t->section, 'line_id' => $t->line_id, 'job_id' => $t->job_id, 'working_hours' => $t->working_hours,
@@ -512,6 +527,9 @@ class QtSetupApiController extends ApiController
             if (! $open->has($r['job_id']) && ! $already) {
                 throw ValidationException::withMessages(["rows.{$i}.job_id" => __('qtally.v.job_open')]);
             }
+            if (! $already && ! empty($r['target_qty'])) {
+                $this->assertStage($c, QtJob::query()->findOrFail($r['job_id']), $d['section'], "rows.{$i}.job_id");
+            }
         }
         $me = $this->caller()->auditUserId();
         $saved = 0;
@@ -664,6 +682,32 @@ class QtSetupApiController extends ApiController
             ->groupBy(fn ($r) => $r->section.'|'.$r->line_id.'|'.$r->job_id);
 
         return $rows->map(fn ($g) => QtBook::metrics($g->pluck('n', 'action')->map(fn ($n) => (int) $n)->all(), 0)['pass'])->all();
+    }
+
+    /** Refuses a target the job's stage does not allow yet: sewing before cutting is done, quality before sewing is. */
+    private function assertStage(string $companyId, QtJob $job, string $section, string $field): void
+    {
+        $stage = QtFlow::stage(QtFlow::progress($companyId, [$job->id])[$job->id], (int) $job->order_qty);
+        $why = QtFlow::blockedReason($stage, $section);
+        if ($why !== null) {
+            throw ValidationException::withMessages([$field => $why]);
+        }
+    }
+
+    /** @return list<array<string, mixed>> the open jobs for a picker, each with its stage */
+    private function openJobs(string $companyId): array
+    {
+        $jobs = QtJob::query()->where('status', 'OPEN')->orderBy('job_no')->get();
+        $progress = QtFlow::progress($companyId, $jobs->pluck('id')->all());
+
+        return $jobs->map(function (QtJob $j) use ($progress) {
+            $stage = QtFlow::stage($progress[$j->id], (int) $j->order_qty);
+
+            return [
+                'value' => $j->id, 'label' => $this->jobLabel($j), 'job_no' => $j->job_no, 'smv' => $j->smv === null ? null : (float) $j->smv,
+                'stage' => $stage, 'blocked' => ['SEWING' => QtFlow::blockedReason($stage, 'SEWING'), 'QUALITY' => QtFlow::blockedReason($stage, 'QUALITY')],
+            ];
+        })->all();
     }
 
     private function jobLabel(QtJob $j): string

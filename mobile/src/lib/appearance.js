@@ -4,11 +4,12 @@ import { Appearance } from "react-native";
 import Storage from "expo-sqlite/kv-store";
 
 const KEY = "appearance";
-export const MODES = ["system", "light", "dark"];
+export const MODES = ["light", "dark", "system"];
 
 const listeners = new Set();
-let mode = MODES.includes(Storage.getItemSync(KEY)) ? Storage.getItemSync(KEY) : "system";
+let mode = MODES.includes(Storage.getItemSync(KEY)) ? Storage.getItemSync(KEY) : "light";
 
+// Light, dark or the device's own — chosen in Account (user, 2026-11-27); light until someone chooses.
 const apply = () => Appearance.setColorScheme(mode === "system" ? "auto" : mode);
 
 /** Once, at start-up. */

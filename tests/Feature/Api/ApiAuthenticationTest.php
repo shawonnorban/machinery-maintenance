@@ -7,6 +7,7 @@ namespace Tests\Feature\Api;
 use App\Modules\Api\Models\ApiClient;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Identity\Models\CompanyUser;
+use App\Modules\Identity\Models\Role;
 use App\Modules\Identity\Models\User;
 use App\Modules\Tenancy\Models\Company;
 use App\Shared\Scopes\TenantScope;
@@ -115,7 +116,13 @@ class ApiAuthenticationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.kind', 'USER')
             ->assertJsonPath('data.user.email', 'manager@delta.test')
-            ->assertJsonPath('data.company_id', $this->delta->id);
+            ->assertJsonPath('data.company_id', $this->delta->id)
+            // The app's header (AnnotechERP 37): no HR record, so the role's own label; the company's factory, not the rival's.
+            ->assertJsonPath('data.user.designation', Role::query()->whereNull('company_id')->where('name', 'MAINTENANCE_MANAGER')->value('description'))
+            ->assertJsonPath('data.factories.0.code', 'DHK')
+            ->assertJsonCount(1, 'data.factories')
+            // The Account page's HR details: none without an HR record.
+            ->assertJsonPath('data.user.employee', null);
     }
 
     /** Mirrors the web's `PreferenceController::locale` — one of "the two global scope controls in the header" that had no API of its own before this. */
@@ -552,6 +559,15 @@ class ApiAuthenticationTest extends TestCase
     public function test_health_answers_without_a_token(): void
     {
         $this->getJson('/api/v1/health')->assertOk()->assertJsonPath('data.status', 'ok');
+        // The Android app's floor, as the server is set (AnnotechERP 37, phase 6).
+        config(['mobile.min_version' => '0.6.0', 'mobile.download_url' => 'https://example.test/app.apk']);
+        $this->getJson('/api/v1/health')->assertJsonPath('data.mobile.min_version', '0.6.0')->assertJsonPath('data.mobile.download_url', 'https://example.test/app.apk');
+        // Chat's live socket for the app: the public key only, never the secret; none without a key.
+        config(['mobile.reverb' => ['key' => 'pub-key', 'host' => null, 'port' => '8090', 'scheme' => 'https'], 'reverb.apps.apps.0.secret' => 'top-secret']);
+        $health = $this->getJson('/api/v1/health')->assertJsonPath('data.mobile.reverb', ['key' => 'pub-key', 'host' => null, 'port' => 8090, 'tls' => true]);
+        $this->assertStringNotContainsString('top-secret', $health->getContent());
+        config(['mobile.reverb.key' => null]);
+        $this->getJson('/api/v1/health')->assertJsonPath('data.mobile.reverb', null);
 
         $this->getJson('/api/v1/health/ready')
             ->assertOk()

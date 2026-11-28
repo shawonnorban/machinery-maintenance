@@ -74,18 +74,11 @@ final class OrderNotices
         $sheet = new Sheet(app(TenantContext::class)->companyId());
         $today = Formula::day(Sheet::today());
         $open = OsOrder::query()->get()->map(fn (OsOrder $o) => ['buyer_id' => $o->buyer_id, 'created_by' => $o->created_by, 'v' => $sheet->read($o)])
-            ->reject(fn ($r) => OrderPending::shipped($r['v']) || preg_match('/drop|cancel/i', Formula::text($r['v']['order_type'] ?? '')));
+            ->filter(fn ($r) => self::open($r['v']));
         $rows = [];
         foreach ($open as $r) {
             $v = $r['v'];
-            $days = Formula::num($v['days_left_in_hand'] ?? null);
-            $ldd = Formula::day($v['po_wise_ldd_etd'] ?? null);
-            $flags = [
-                'overdue' => $days !== null && $days < 0 && $days >= -30,
-                'week' => $days !== null && $days >= 0 && $days <= 7,
-                'booking' => $ldd !== null && $ldd - $today <= 14 && $ldd >= $today
-                    && (OrderPending::rows(collect([$v]), 'fabric_booking_pending')->isNotEmpty() || OrderPending::rows(collect([$v]), 'trims_booking_pending')->isNotEmpty()),
-            ];
+            $flags = self::flags($v, $today);
             if (! in_array(true, $flags, true)) {
                 continue;
             }
@@ -103,6 +96,33 @@ final class OrderNotices
         return SheetNotices::send(array_keys($rows), 'OS_PENDING_WORK', fn (string $locale, string $u) => [
             'overdue' => $rows[$u]['overdue'], 'week' => $rows[$u]['week'], 'booking' => $rows[$u]['booking'], 'buyers' => SheetNotices::list($rows[$u]['buyers']) ?: '—',
         ], '/order-summary/dashboard', 'WARNING');
+    }
+
+    /** An order still to make: not shipped, not dropped or cancelled. @param  array<string, mixed>  $v  the order's read values */
+    public static function open(array $v): bool
+    {
+        return ! OrderPending::shipped($v) && ! preg_match('/drop|cancel/i', Formula::text($v['order_type'] ?? ''));
+    }
+
+    /**
+     * Why an open order needs attention this morning: RFI/SD gone by in the
+     * last 30 days, RFI/SD in the coming 7 days, booking pending with LDD/ETD
+     * within 14 days.
+     *
+     * @param  array<string, mixed>  $v  the order's read values
+     * @return array{overdue: bool, week: bool, booking: bool}
+     */
+    public static function flags(array $v, int $today): array
+    {
+        $days = Formula::num($v['days_left_in_hand'] ?? null);
+        $ldd = Formula::day($v['po_wise_ldd_etd'] ?? null);
+
+        return [
+            'overdue' => $days !== null && $days < 0 && $days >= -30,
+            'week' => $days !== null && $days >= 0 && $days <= 7,
+            'booking' => $ldd !== null && $ldd - $today <= 14 && $ldd >= $today
+                && (OrderPending::rows(collect([$v]), 'fabric_booking_pending')->isNotEmpty() || OrderPending::rows(collect([$v]), 'trims_booking_pending')->isNotEmpty()),
+        ];
     }
 
     /** View All, filtered to the one buyer a save touched. @param  Collection<int, OsOrder>|null  $orders */

@@ -318,6 +318,41 @@ class DevSampleTest extends TestCase
         $this->assertCount(1, $due);
         $this->assertSame([1, 1, '#1, #2'], [$due[0]->data_json['overdue'], $due[0]->data_json['soon'], $due[0]->data_json['samples']]);
         $this->assertSame('CRITICAL', $due[0]->severity);
+
+        // The phone opens the notice on those samples, the late one first; a changed notice's samples by number.
+        $seen = $this->api($this->merchant)->getJson('/api/v1/dev-sample/samples/attention')->assertOk();
+        $this->assertSame(['overdue' => 1, 'soon' => 1], $seen->json('data.counts'));
+        $this->assertSame([['LATE-1', 'overdue'], ['SOON-1', 'soon']], array_map(fn ($r) => [$r['styling'], $r['flag']], $seen->json('data.rows')));
+        $this->assertSame(['LATER-1'], array_column($this->api($this->merchant)->getJson('/api/v1/dev-sample/samples/attention?serials=3')->json('data.rows'), 'styling'));
+    }
+
+    public function test_the_audit_log_lists_each_save_cell_by_cell_and_only_samples_the_reader_sees(): void
+    {
+        $owners = $this->api($this->owner)->postJson('/api/v1/dev-sample/samples', ['rows' => [['values' => $this->sample(['styling' => 'OWNER-1'])]]])->json('data.rows.0');
+        $this->api($this->owner)->patchJson('/api/v1/dev-sample/samples', ['rows' => [['id' => $owners['id'], 'version' => 1, 'values' => ['sample_status' => 'SUBMITTED']]]])->assertOk();
+        $this->api($this->merchant)->postJson('/api/v1/dev-sample/samples', ['rows' => [['values' => $this->sample(['styling' => 'MERCH-1', 'buyer' => 'Next'])]]])->assertCreated();
+
+        // Newest save first: the owner's edit, its cells old → new, the sample named by style and job.
+        $log = $this->api($this->owner)->getJson('/api/v1/dev-sample/audit-log')->assertOk()->json('data');
+        $this->assertSame(3, $log['page']['total']);
+        $edit = collect($log['entries'])->firstWhere('kind', 'EDIT');
+        $this->assertSame('OWNER-1 / NCL-SMN-26-00390', $edit['sample']);
+        $this->assertSame('H&M', $edit['buyer']);
+        $status = collect($edit['cells'])->firstWhere('new', 'SUBMITTED');
+        $this->assertSame('SUBMISSION PENDING', $status['old']);
+        $this->assertNotSame('sample_status', $status['column']);
+
+        // Filters: the action, a word of the sample, the person.
+        $this->assertSame(['EDIT'], array_column($this->api($this->owner)->getJson('/api/v1/dev-sample/audit-log?kind=EDIT')->json('data.entries'), 'kind'));
+        $this->assertSame(['MERCH-1'], array_map(fn ($e) => explode(' / ', $e['sample'])[0], $this->api($this->owner)->getJson('/api/v1/dev-sample/audit-log?q=merch-1')->json('data.entries')));
+        $this->assertCount(1, $this->api($this->owner)->getJson('/api/v1/dev-sample/audit-log?user='.$this->merchant->id)->json('data.entries'));
+
+        // Without view_all the merchandiser reads only their own sample's log.
+        $theirs = $this->api($this->merchant)->getJson('/api/v1/dev-sample/audit-log')->assertOk()->json('data.entries');
+        $this->assertSame(['MERCH-1'], array_map(fn ($e) => explode(' / ', $e['sample'])[0], $theirs));
+        // A deleted sample's saves stay in the log.
+        $this->api($this->owner)->deleteJson('/api/v1/dev-sample/samples', ['ids' => [$owners['id']]])->assertOk();
+        $this->assertSame('DELETE', $this->api($this->owner)->getJson('/api/v1/dev-sample/audit-log')->json('data.entries.0.kind'));
     }
 
     private function sample(array $over = []): array

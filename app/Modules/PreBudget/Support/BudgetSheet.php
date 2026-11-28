@@ -111,11 +111,11 @@ final class BudgetSheet
             'item_summary' => self::groupSum($counted, fn ($r) => [$r->values['order_type'] ?? '', $r->values['dept'] ?? '', $r->values['item'] ?? ''], ['order_type', 'dept', 'item'], ['no_of_style', 'order_qty']),
             'fabric_type_summary' => self::groupSum($knit, fn ($r) => [$r->values['fabric_type'] ?? ''], ['fabric_type'], ['order_qty', 'total_req']),
             'fabrication_summary' => self::groupSum($knit, fn ($r) => [$r->values['fabrication'] ?? ''], ['fabrication'], ['order_qty', 'total_req']),
-            'delivery_summary' => self::groupSum($knit, fn ($r) => [$r->values['delivery_date'] ?? ''], ['delivery_date'], ['no_of_style', 'order_qty', 'fob_value', 'total_req']),
+            'delivery_summary' => self::groupSum($knit, fn ($r) => [self::deliveryOf($r)], ['delivery_date'], ['no_of_style', 'order_qty', 'fob_value', 'total_req']),
             // Woven's own, beside the knit ones (user 2026-11-22): fabric yards by fabric type / fabrication and by delivery date.
             'woven_fabric_type_summary' => self::groupSum($counted->where('entry_type', 'WOVEN'), fn ($r) => [$r->values['fabric_type'] ?? ''], ['fabric_type'], ['order_qty', 'total_req']),
             'woven_fabrication_summary' => self::groupSum($counted->where('entry_type', 'WOVEN'), fn ($r) => [$r->values['fabrication'] ?? ''], ['fabrication'], ['order_qty', 'total_req']),
-            'woven_delivery_summary' => self::groupSum($counted->where('entry_type', 'WOVEN'), fn ($r) => [$r->values['delivery_date'] ?? ''], ['delivery_date'], ['no_of_style', 'order_qty', 'fob_value', 'total_req']),
+            'woven_delivery_summary' => self::groupSum($counted->where('entry_type', 'WOVEN'), fn ($r) => [self::deliveryOf($r)], ['delivery_date'], ['no_of_style', 'order_qty', 'fob_value', 'total_req']),
             'fob' => [
                 'gross' => $gross, 'discount_percent' => $b->discount_percent, 'discount' => $discount, 'net' => $net,
                 'order_qty' => $orderQty, 'avg' => $orderQty > 0 ? round($gross / $orderQty, 4) : null,
@@ -140,6 +140,34 @@ final class BudgetSheet
      * @param  Collection<int, PbRequisition>  $reqs
      * @return array<string, mixed>
      */
+    /**
+     * A requisition's delivery date: its own, else its PO-wise RFI/SD date — the
+     * date the order ships, which most requisitions carry when the delivery date
+     * is left blank (found 2026-11-27: the summaries showed no date at all).
+     */
+    public static function deliveryOf(PbRequisition $r): string
+    {
+        $own = trim((string) ($r->values['delivery_date'] ?? ''));
+        if ($own !== '') {
+            return $own;
+        }
+        $rfi = $r->values['po_wise_rfi_sd_date'] ?? null;
+
+        return is_string($rfi) && $rfi !== '' ? substr($rfi, 0, 10) : '';
+    }
+
+    /**
+     * The costing as the budget's checklist reads it (view()): its requisitions
+     * in serial order, each order counted once. Saving "complete" stores this
+     * basis — built from the requisitions as the database happened to return
+     * them, it could differ in order from the checklist's and the costing never
+     * counted as done (found 2026-11-27).
+     */
+    public function costingFor(PbBudget $b): array
+    {
+        return $this->costing($b, OrderLink::countOnce($b->requisitions()->orderBy('serial_no')->get()));
+    }
+
     public function costing(PbBudget $b, Collection $reqs): array
     {
         $rates = $b->costs()->get()->keyBy(fn (PbBudgetCost $c) => $c->kind.'|'.$c->cost_key);

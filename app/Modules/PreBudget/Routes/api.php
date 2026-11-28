@@ -42,6 +42,8 @@ Route::middleware(['api.auth', 'throttle:api'])->prefix('pre-budget')->name('pre
     Route::get('/budgets/candidates', [BudgetApiController::class, 'candidates'])->name('budgets.candidates');
     Route::get('/budgets/work', [BudgetApiController::class, 'work'])->name('budgets.work');
     Route::get('/budgets/finalized', [BudgetApiController::class, 'finalized'])->name('budgets.finalized');
+    // The phone's Budget List: every budget reached, as cards.
+    Route::get('/budgets/cards', [BudgetApiController::class, 'cards'])->name('budgets.cards');
     Route::post('/budgets/{no}/finalize', [BudgetApiController::class, 'finalize'])->name('budgets.finalize');
     Route::post('/budgets/{no}/withdraw', [BudgetApiController::class, 'withdraw'])->name('budgets.withdraw');
     Route::post('/budgets/{no}/decision', [BudgetApiController::class, 'decide'])->name('budgets.decision');

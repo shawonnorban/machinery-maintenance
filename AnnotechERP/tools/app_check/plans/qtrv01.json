@@ -1,0 +1,9 @@
+[
+ {"goto": "/quality-tally/sewing-review"},
+ {"wait": 9000},
+ {"shot": "qtrv01-open"},
+ {"click": "main table button:has-text('Seen')", "after": 20000},
+ {"goto": "/quality-tally/sewing-review?status=all"},
+ {"wait": 8000},
+ {"shot": "qtrv01-all"}
+]

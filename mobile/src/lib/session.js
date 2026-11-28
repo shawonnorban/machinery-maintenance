@@ -36,17 +36,30 @@ const readJson = (key, fallback) => {
 /** The QC this phone taps for: a PIN session's, or the QC signed in by email. */
 export const qcOf = (session) => (session?.kind === "PIN" ? session.profile : (session?.qc ?? null));
 
+/** The token kept on the phone, read once at start. */
+const tokenRead = SecureStore.getItemAsync(TOKEN).catch(() => null);
+
 export function SessionProvider({ children }) {
   const [session, setSession] = useState(() => readJson(SESSION, null));
   const [locked, setLocked] = useState(() => readJson(SESSION, null)?.kind === "PIN");
   const [ended, setEnded] = useState(null);
   const [online, setOnline] = useState(true);
   const token = useRef(null);
+  // Whether the token saved on the phone has been taken in (once, at start; a sign-in or out settles it too).
+  const loaded = useRef(false);
+  const takeSaved = useCallback(async () => {
+    if (loaded.current) return;
+    const saved = await tokenRead;
+    if (loaded.current) return;
+    loaded.current = true;
+    if (token.current === null) token.current = saved;
+  }, []);
   const touched = useRef(Date.now());
   const current = useRef(session);
   current.current = session;
 
   const keep = useCallback(async (next, bearer) => {
+    loaded.current = true;
     token.current = bearer;
     if (bearer) await SecureStore.setItemAsync(TOKEN, bearer);
     else await SecureStore.deleteItemAsync(TOKEN).catch(() => {});
@@ -78,6 +91,8 @@ export function SessionProvider({ children }) {
   /** Every request of a signed-in screen: a 401 is the end of the session, no answer is not. */
   const call = useCallback(
     async (path, options = {}) => {
+      // A screen opened at start asks before the saved token is read: it waits for it.
+      await takeSaved();
       const bearer = token.current;
       try {
         const data = await request(path, { ...options, token: bearer });
@@ -91,7 +106,7 @@ export function SessionProvider({ children }) {
         throw error;
       }
     },
-    [close],
+    [close, takeSaved],
   );
 
   const refresh = useCallback(async () => {
@@ -119,13 +134,9 @@ export function SessionProvider({ children }) {
   // The token, once; then the server, at start, on coming back, and every half minute.
   useEffect(() => {
     let live = true;
-    SecureStore.getItemAsync(TOKEN)
-      .catch(() => null)
-      .then((saved) => {
-        if (!live) return;
-        token.current = saved;
-        refresh().catch(() => {});
-      });
+    takeSaved().then(() => {
+      if (live) refresh().catch(() => {});
+    });
     const timer = setInterval(() => AppState.currentState === "active" && refresh().catch(() => {}), 30000);
 
     return () => {
@@ -228,7 +239,7 @@ export function SessionProvider({ children }) {
     async (companyCode, email, password) => {
       const data = await request("/auth/login", {
         method: "POST",
-        body: { company_code: companyCode.trim(), email: email.trim(), password, device_name: "Annotech ERP (phone)", phone: await thisPhone() },
+        body: { company_code: companyCode.trim(), email: email.trim(), password, device_name: "Norban Group (phone)", phone: await thisPhone() },
       });
       const [me, perms] = await Promise.all([request("/auth/me", { token: data.access_token }), request("/auth/permissions", { token: data.access_token })]);
       Storage.setItemSync(COMPANY, companyCode.trim().toUpperCase());
@@ -269,7 +280,8 @@ export function SessionProvider({ children }) {
   }, []);
 
   const value = useMemo(
-    () => ({ session, locked, ended, online, setOnline, signInPin, signInEmail, unlock, lock: () => setLocked(true), changePin, signOut: () => close(), sessionEnded, attachQc, refresh, call, touch }),
+    // `bearer`: for what cannot go through `call` — a photo the Image component fetches itself.
+    () => ({ session, locked, ended, online, setOnline, signInPin, signInEmail, unlock, lock: () => setLocked(true), changePin, signOut: () => close(), sessionEnded, attachQc, refresh, call, touch, bearer: () => token.current }),
     [session, locked, ended, online, signInPin, signInEmail, unlock, changePin, close, sessionEnded, attachQc, refresh, call, touch],
   );
 

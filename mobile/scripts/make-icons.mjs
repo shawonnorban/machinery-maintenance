@@ -1,5 +1,7 @@
-// The app's icons, drawn from one mark (an A whose bar is a check mark) so a
-// change is made once: `npm run icons`. Uses the web app's sharp.
+// The app's icons, made from one picture so a change is made once:
+// `npm run icons`. The picture is assets/brand-a.png — the blue A of the
+// Annotech RMG logo, cut out on a clear background (user, 2026-11-27).
+// Uses the web app's sharp. `ICONS_OUT=<dir>` writes somewhere else to compare.
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,29 +10,43 @@ import fs from "node:fs";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(path.join(here, "..", "..", "frontend", "package.json"));
 const sharp = require("sharp");
-const out = path.join(here, "..", "assets");
+const assets = path.join(here, "..", "assets");
+const out = process.env.ICONS_OUT ?? assets;
+const source = path.join(assets, "brand-a.png");
 fs.mkdirSync(out, { recursive: true });
 
-const BRAND = "#4f46e5";
-/** The mark in a 100 × 100 box. */
-const mark = (colour) => `
-  <path d="M18 84 L50 16 L82 84" fill="none" stroke="${colour}" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M38 62 L49 72 L67 51" fill="none" stroke="${colour}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>`;
-const svg = ({ size = 1024, scale, background, colour, round = 0 }) => `
-  <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    ${background ? `<rect width="${size}" height="${size}" rx="${round}" fill="${background}"/>` : ""}
-    <g transform="translate(${(size * (1 - scale)) / 2} ${(size * (1 - scale)) / 2}) scale(${(size * scale) / 100})">${mark(colour)}</g>
-  </svg>`;
+const SIZE = 1024;
+const CLEAR = { r: 0, g: 0, b: 0, alpha: 0 };
+const WHITE = { r: 255, g: 255, b: 255, alpha: 1 };
+
+/** The A, its longer side `scale` of the square, a little below the middle (the swoosh weighs the top). */
+async function placed({ scale, background = CLEAR, silhouette = false }) {
+  const long = Math.round(SIZE * scale);
+  let a = await sharp(source).resize({ width: long, height: long, fit: "inside" }).png().toBuffer();
+  const { width, height } = await sharp(a).metadata();
+  if (silhouette) {
+    // Themed icons: the A's shape in white.
+    a = await sharp({ create: { width, height, channels: 4, background: WHITE } })
+      .composite([{ input: a, blend: "dest-in" }])
+      .png()
+      .toBuffer();
+  }
+
+  return sharp({ create: { width: SIZE, height: SIZE, channels: 4, background } })
+    .composite([{ input: a, left: Math.round((SIZE - width) / 2), top: Math.round((SIZE - height) / 2 + SIZE * 0.01) }])
+    .png();
+}
 
 const files = {
-  "icon.png": { scale: 0.62, background: BRAND, colour: "#ffffff" },
-  // Android crops the adaptive icon to the middle two thirds.
-  "android-icon-foreground.png": { scale: 0.42, colour: "#ffffff" },
-  "android-icon-monochrome.png": { scale: 0.42, colour: "#ffffff" },
-  "splash-icon.png": { scale: 0.62, background: BRAND, colour: "#ffffff", round: 220 },
+  // Android crops the adaptive icon to the middle two thirds; its background is white (app.json).
+  "android-icon-foreground.png": { scale: 0.56 },
+  "android-icon-monochrome.png": { scale: 0.56, silhouette: true },
+  // The sign-in screen, iOS and older Android: on white.
+  "icon.png": { scale: 0.72, background: WHITE },
+  "splash-icon.png": { scale: 0.9 },
 };
 
 for (const [name, spec] of Object.entries(files)) {
-  await sharp(Buffer.from(svg(spec))).png().toFile(path.join(out, name));
+  await (await placed(spec)).toFile(path.join(out, name));
   console.log(name);
 }

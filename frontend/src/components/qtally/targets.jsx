@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarRange, ClipboardList, Copy, Pencil, Target, Trash2 } from "lucide-react";
+import { CalendarRange, ClipboardList, Copy, Lock, Pencil, Target, Trash2, Truck } from "lucide-react";
 import { PlanDay } from "./plan-day";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,6 +77,25 @@ function LineTargets({ data, pendingOrders, lookups, query, section, canManage, 
       label: p("col.due_date"),
       render: (o) => (o.due_date ? (<>{day(o.due_date)}<div className={o.days_left < 0 ? "text-xs text-danger" : o.days_left <= 3 ? "text-xs text-warning" : "text-xs text-foreground-muted"}>{p(o.days_left < 0 ? "pend.late" : "pend.days_left", { n: Math.abs(o.days_left) })}</div></>) : "—"),
     },
+    // Where the job is (user, 2026-11-28): a later section sees it coming, and why it cannot have it yet.
+    {
+      key: "stage",
+      label: p("stage.title"),
+      render: (o) =>
+        o.stage ? (
+          <>
+            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${STAGE_TONE[o.stage.stage] ?? ""}`}>
+              {p(`stage.${o.stage.stage}`)}
+              {o.stage.stage === "CUTTING" ? ` ${o.stage.bundles_done}/${o.stage.bundles}` : ""}
+            </span>
+            {o.blocked ? (
+              <div className="mt-1 flex max-w-64 items-start gap-1 text-xs text-warning">
+                <Truck className="mt-0.5 size-3.5 shrink-0" /> {o.blocked}
+              </div>
+            ) : null}
+          </>
+        ) : "—",
+    },
     { key: "order_qty", label: p("col.order_qty"), align: "right", render: (o) => num(o.order_qty) },
     ...(cutting ? [{ key: "given", label: p("pend.given"), align: "right", render: (o) => num(o.given) }] : []),
     { key: "done", label: p(cutting ? "flow.pieces" : "pend.done"), align: "right", render: (o) => num(o.done) },
@@ -89,8 +108,8 @@ function LineTargets({ data, pendingOrders, lookups, query, section, canManage, 
             key: "act",
             label: "",
             render: (o) => (
-              <Button size="sm" onClick={() => setEditing({ target_date: data.date, job_id: o.id, target_qty: o.suggest ?? "", order: o })}>
-                <Target /> {p("pend.give")}
+              <Button size="sm" disabled={Boolean(o.blocked)} title={o.blocked ?? undefined} onClick={() => setEditing({ target_date: data.date, job_id: o.id, target_qty: o.suggest ?? "", order: o })}>
+                {o.blocked ? <Lock /> : <Target />} {o.blocked ? p("stage.waiting") : p("pend.give")}
               </Button>
             ),
           },
@@ -160,6 +179,8 @@ function LineTargets({ data, pendingOrders, lookups, query, section, canManage, 
   );
 }
 
+const STAGE_TONE = { CUTTING: "bg-info-subtle text-info", SEWING: "bg-brand-subtle text-brand", QUALITY: "bg-warning-subtle text-warning", DONE: "bg-success-subtle text-success" };
+
 function TargetForm({ row, seed, section, lookups, act, onClose }) {
   const p = useQt();
   const { run, pending } = useRun();
@@ -170,7 +191,9 @@ function TargetForm({ row, seed, section, lookups, act, onClose }) {
   }));
   const set = (k) => (val) => setV((all) => ({ ...all, [k]: val }));
   const err = (k) => errors[k]?.[0];
-  const jobs = row && !lookups.jobs.some((j) => j.value === row.job_id) ? [...lookups.jobs, { value: row.job_id, label: row.job, smv: row.smv }] : lookups.jobs;
+  // Only the jobs this section may have now (user, 2026-11-28): sewing's once cutting is done, quality's once sewing is.
+  const open = lookups.jobs.filter((j) => !j.blocked?.[section] || j.value === row?.job_id);
+  const jobs = row && !open.some((j) => j.value === row.job_id) ? [...open, { value: row.job_id, label: row.job, smv: row.smv }] : open;
   const job = jobs.find((j) => j.value === v.job_id);
   const hours = Number(v.working_hours) || 0;
   const hourly = hours > 0 && Number(v.target_qty) > 0 ? Math.round(Number(v.target_qty) / hours) : null;

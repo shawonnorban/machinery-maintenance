@@ -3,6 +3,7 @@ import { QtDashboard } from "@/components/qtally/dashboard";
 import { TallyEntry } from "@/components/qtally/tally";
 import { TallySheet } from "@/components/qtally/sheet";
 import { TallyHistory } from "@/components/qtally/history";
+import { TallyReview } from "@/components/qtally/review";
 import { QtJobs } from "@/components/qtally/jobs";
 import { LineTargets } from "@/components/qtally/targets";
 import { QcAssignment } from "@/components/qtally/inspectors";
@@ -103,6 +104,11 @@ const SECTION_SCREENS = {
     const lookups = await apiFetch("/quality-tally/lookups");
     const sheet = q.line_id ? await apiFetch(`/quality-tally/sheet?${qs({ ...q, section })}`) : null;
     return <TallySheet key={section} sheet={sheet} lookups={lookups} query={q} section={section} />;
+  },
+  review: async ({ query, section, can }) => {
+    const q = keep(query, ["from", "to", "status"]);
+    const data = await apiFetch(`/quality-tally/review?${qs({ ...q, section })}`);
+    return <TallyReview key={section} data={data} query={q} canManage={can("qtally.target.manage") || can(`qtally.${section.toLowerCase()}.manage`)} act={qtAction} />;
   },
   history: async ({ query, section }) => {
     const q = keep(query, ["from", "to", "line_id", "job_id", "action", "user_id", "page"]);

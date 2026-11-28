@@ -9,6 +9,7 @@ use App\Modules\QualityTally\Http\Controllers\Api\QtPanelApiController;
 use App\Modules\QualityTally\Http\Controllers\Api\QtPhoneApiController;
 use App\Modules\QualityTally\Http\Controllers\Api\QtPhoneTallyApiController;
 use App\Modules\QualityTally\Http\Controllers\Api\QtReportApiController;
+use App\Modules\QualityTally\Http\Controllers\Api\QtReviewApiController;
 use App\Modules\QualityTally\Http\Controllers\Api\QtSetupApiController;
 use App\Modules\QualityTally\Http\Controllers\Api\QtTallyApiController;
 use App\Modules\QualityTally\Http\Middleware\AuthenticatePhone;
@@ -84,6 +85,9 @@ Route::middleware(['api.auth', 'throttle:api'])->prefix('quality-tally')->name('
     Route::get('/dashboard', [QtReportApiController::class, 'dashboard'])->name('dashboard');
     Route::get('/sheet', [QtReportApiController::class, 'sheet'])->name('sheet');
     Route::get('/history', [QtReportApiController::class, 'history'])->name('history');
+    // Review: refused taps and taps kept with a Check mark (AnnotechERP 37, phase 3).
+    Route::get('/review', [QtReviewApiController::class, 'index'])->name('review.index');
+    Route::post('/review/seen', [QtReviewApiController::class, 'seen'])->name('review.seen');
     Route::get('/analytics', [QtReportApiController::class, 'analytics'])->name('analytics');
 
     Route::get('/tally/context', [QtTallyApiController::class, 'context'])->name('tally.context');

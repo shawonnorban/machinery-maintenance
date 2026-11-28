@@ -6,6 +6,7 @@ namespace App\Modules\OrderSummary\Http\Controllers\Api;
 
 use App\Modules\OrderSummary\Models\OsColumn;
 use App\Modules\OrderSummary\Models\OsOrder;
+use App\Modules\OrderSummary\Support\OrderNotices;
 use App\Modules\OrderSummary\Support\OrderScope;
 use App\Modules\OrderSummary\Support\OrderStatus;
 use App\Modules\OrderSummary\Support\Sheet;
@@ -378,6 +379,49 @@ class OrderApiController extends ApiController
         $file = $files->handle($request->file('file'), 'os_artwork', $this->caller()->companyId, $this->caller()->auditUserId());
 
         return ApiResponse::created(['id' => $file->id, 'url' => "/api/files/{$file->id}/download"]);
+    }
+
+    /**
+     * The orders a notification is about (the phone, 2026-11-27): with
+     * `serials` (an OS_ORDERS_CHANGED notice's "#12, #13") those orders;
+     * else this person's open orders the morning's OS_PENDING_WORK counts —
+     * RFI/SD past (30 days), due within 7 days, booking pending. Soonest first.
+     */
+    public function attention(Request $request): JsonResponse
+    {
+        $this->allow('ordersummary.view');
+        $data = $request->validate(['serials' => ['nullable', 'string', 'max:2000']]);
+        $sheet = $this->sheet();
+        $today = Formula::day(Sheet::today());
+        $serials = array_values(array_filter(array_map('intval', preg_split('/[^0-9]+/', (string) ($data['serials'] ?? '')) ?: [])));
+        $query = $this->scoped();
+        if ($serials !== []) {
+            $query->whereIn('serial_no', $serials);
+        }
+        $rows = [];
+        $counts = ['overdue' => 0, 'week' => 0, 'booking' => 0];
+        foreach ($query->limit($serials !== [] ? 500 : 5000)->get() as $o) {
+            $v = $sheet->read($o);
+            $flags = OrderNotices::open($v) ? OrderNotices::flags($v, $today) : ['overdue' => false, 'week' => false, 'booking' => false];
+            if ($serials === [] && ! in_array(true, $flags, true)) {
+                continue;
+            }
+            foreach ($flags as $k => $on) {
+                $counts[$k] += $on ? 1 : 0;
+            }
+            $rows[] = [
+                'serial_no' => $o->serial_no, 'buyer' => Formula::text($v['buyer'] ?? '') ?: null, 'style' => Formula::text($v['style_number_name'] ?? '') ?: null,
+                'job_no' => Formula::text($v['job_no'] ?? '') ?: null, 'item' => Formula::text($v['item'] ?? '') ?: null, 'department' => Formula::text($v['department'] ?? '') ?: null,
+                'qty' => Formula::num($v['quantity_pcs'] ?? null), 'fob_value' => Formula::num($v['fob_value'] ?? null),
+                'rfi_sd' => is_string($v['po_wise_rfi_sd'] ?? null) ? substr($v['po_wise_rfi_sd'], 0, 10) : null,
+                'ldd_etd' => is_string($v['po_wise_ldd_etd'] ?? null) ? substr($v['po_wise_ldd_etd'], 0, 10) : null,
+                'days_left' => Formula::num($v['days_left_in_hand'] ?? null), 'order_type' => Formula::text($v['order_type'] ?? '') ?: null,
+                'flags' => array_keys(array_filter($flags)),
+            ];
+        }
+        usort($rows, fn ($a, $b) => [$a['days_left'] ?? PHP_INT_MAX, $a['serial_no']] <=> [$b['days_left'] ?? PHP_INT_MAX, $b['serial_no']]);
+
+        return ApiResponse::ok(['counts' => $counts, 'rows' => $rows]);
     }
 
     /* ── Helpers ────────────────────────────────────────────────────── */

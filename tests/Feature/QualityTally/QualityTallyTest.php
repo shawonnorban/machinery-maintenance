@@ -400,6 +400,52 @@ class QualityTallyTest extends TestCase
         $this->assertStringContainsString('target', $tap('SEWING', $this->sewing, 'RFT')->assertUnprocessable()->json('errors.job_id.0'));
     }
 
+    public function test_sewing_takes_a_job_only_once_cutting_has_finished_it_and_quality_only_once_sewing_has(): void
+    {
+        $this->enable();
+        $this->setUpFloor();
+        $quality = (string) Str::ulid();
+        DB::table('production_lines')->insert(['id' => $quality, 'company_id' => $this->delta->id, 'name' => 'Final QC 1', 'code' => 'Q1', 'department_id' => DB::table('departments')->value('id'), 'line_type' => 'QUALITY', 'status' => 'ACTIVE', 'created_at' => now(), 'updated_at' => now()]);
+        $job = $this->api($this->owner)->postJson('/api/v1/quality-tally/jobs', ['job_no' => 'J-200', 'buyer_name' => 'Zara', 'style' => 'Polo', 'po_no' => 'PO-2', 'color' => 'Red', 'order_qty' => 2])->assertCreated()->json('data.id');
+        $target = fn (string $section, string $line) => $this->api($this->owner)->postJson('/api/v1/quality-tally/targets', ['target_date' => QtBook::today(), 'section' => $section, 'line_id' => $line, 'job_id' => $job, 'working_hours' => 8, 'target_qty' => 2]);
+        $tap = fn (string $section, string $line, string $action, array $extra = []) => $this->api($this->qc)->postJson('/api/v1/quality-tally/tally', ['section' => $section, 'line_id' => $line, 'job_id' => $job, 'action' => $action] + $extra);
+        $stage = fn () => collect($this->api($this->owner)->getJson('/api/v1/quality-tally/lookups')->assertOk()->json('data.jobs'))->firstWhere('value', $job);
+        $pending = fn (string $section) => collect($this->api($this->owner)->getJson('/api/v1/quality-tally/targets/pending?section='.$section)->assertOk()->json('data.rows'))->firstWhere('id', $job);
+
+        // Nothing cut yet: sewing cannot have it, and sees it is still at cutting.
+        $this->assertStringContainsString('0 of 0', $target('SEWING', $this->sewing2)->assertUnprocessable()->json('errors.job_id.0'));
+        $this->assertSame('CUTTING', $stage()['stage']['stage']);
+        $this->assertNotNull($pending('SEWING')['blocked']);
+        $target('CUTTING', $this->cutting)->assertCreated();
+
+        // One bundle of two: every part checked, but a defect still open.
+        $bundle = $this->giveBundle($job, 'B-200', ['qty' => 2])->assertCreated()->json('data.id');
+        $panels = DB::table('qt_panels')->where('garment_type', 'T-Shirt')->where('active', true)->pluck('per_piece', 'id');
+        $first = true;
+        foreach ($panels as $panel => $per) {
+            foreach (range(1, 2 * $per) as $n) {
+                $tap('CUTTING', $this->cutting, $first ? 'DEFECT' : 'RFT', ['cut_bundle_id' => $bundle, 'panel_id' => $panel, 'defects' => $first ? [DB::table('qt_defect_types')->where('section', 'CUTTING')->value('id')] : []])->assertCreated();
+                $first = false;
+            }
+        }
+        $this->assertSame([1, 0], [$stage()['stage']['bundles'], $stage()['stage']['bundles_done']]);
+        $this->assertStringContainsString('0 of 1', $target('SEWING', $this->sewing2)->assertUnprocessable()->json('errors.job_id.0'));
+
+        // The defect rectified: cutting is done, sewing may have it; quality not yet.
+        $tap('CUTTING', $this->cutting, 'RECTIFY', ['cut_bundle_id' => $bundle, 'panel_id' => $panels->keys()->first()])->assertCreated();
+        $this->assertSame(['SEWING', 1], [$stage()['stage']['stage'], $stage()['stage']['bundles_done']]);
+        $this->assertNull($pending('SEWING')['blocked']);
+        $target('SEWING', $this->sewing)->assertCreated();
+        $this->assertStringContainsString('Sewing has not finished', $target('QUALITY', $quality)->assertUnprocessable()->json('errors.job_id.0'));
+        $this->assertNotNull($stage()['blocked']['QUALITY']);
+
+        // Sewing checks both pieces: quality may have it.
+        $tap('SEWING', $this->sewing, 'RFT')->assertCreated();
+        $tap('SEWING', $this->sewing, 'RFT')->assertCreated();
+        $this->assertSame('QUALITY', $stage()['stage']['stage']);
+        $target('QUALITY', $quality)->assertCreated();
+    }
+
     public function test_each_section_has_its_own_manager_and_qc_who_see_their_own_menu_only(): void
     {
         $this->enable();
@@ -411,15 +457,19 @@ class QualityTallyTest extends TestCase
         $menus = fn (User $u) => collect($this->api($u)->getJson('/api/v1/access/navigation')->assertOk()->json('data'))->where('code', 'QUALITY_TALLY')
             ->flatMap(fn ($m) => collect($m['entries'])->flatMap(fn ($e) => $e['type'] === 'folder' ? collect($e['items'])->pluck('code') : [$e['code']]))->values()->all();
 
-        $this->assertSame(['QUALITY_TALLY.CUTTING_DASHBOARD', 'QUALITY_TALLY.CUTTING_INPUT', 'QUALITY_TALLY.CUTTING_TARGET', 'QUALITY_TALLY.CUTTING_ATTENDANCE', 'QUALITY_TALLY.CUT_PANEL', 'QUALITY_TALLY.CUTTING_SHEET', 'QUALITY_TALLY.CUTTING_HISTORY', 'QUALITY_TALLY.JOBS'], $menus($manager));
-        $this->assertSame(['QUALITY_TALLY.SEWING_DASHBOARD', 'QUALITY_TALLY.SEWING_TALLY', 'QUALITY_TALLY.SEWING_SHEET', 'QUALITY_TALLY.SEWING_HISTORY'], $menus($qc));
+        $this->assertSame(['QUALITY_TALLY.CUTTING_DASHBOARD', 'QUALITY_TALLY.CUTTING_INPUT', 'QUALITY_TALLY.CUTTING_TARGET', 'QUALITY_TALLY.CUTTING_ATTENDANCE', 'QUALITY_TALLY.CUT_PANEL', 'QUALITY_TALLY.CUTTING_SHEET', 'QUALITY_TALLY.CUTTING_HISTORY', 'QUALITY_TALLY.CUTTING_REVIEW', 'QUALITY_TALLY.JOBS'], $menus($manager));
+        $this->assertSame(['QUALITY_TALLY.SEWING_DASHBOARD', 'QUALITY_TALLY.SEWING_TALLY', 'QUALITY_TALLY.SEWING_SHEET', 'QUALITY_TALLY.SEWING_HISTORY', 'QUALITY_TALLY.SEWING_REVIEW'], $menus($qc));
 
         // Reading: their own section, never another's, never all at once.
-        foreach (['dashboard', 'targets', 'history', 'attendance', 'targets/pending'] as $path) {
+        foreach (['dashboard', 'targets', 'history', 'attendance', 'targets/pending', 'review'] as $path) {
             $this->api($manager)->getJson("/api/v1/quality-tally/{$path}?section=CUTTING")->assertOk();
             $this->api($manager)->getJson("/api/v1/quality-tally/{$path}?section=SEWING")->assertForbidden();
         }
         $this->api($manager)->getJson('/api/v1/quality-tally/dashboard')->assertForbidden();
+        // Review: read by who sees the section, marked seen only by who manages it.
+        $this->api($manager)->postJson('/api/v1/quality-tally/review/seen', ['section' => 'CUTTING', 'items' => [['kind' => 'KEPT', 'id' => (string) Str::ulid()]]])->assertOk();
+        $this->api($qc)->getJson('/api/v1/quality-tally/review?section=SEWING')->assertOk();
+        $this->api($qc)->postJson('/api/v1/quality-tally/review/seen', ['section' => 'SEWING', 'items' => [['kind' => 'KEPT', 'id' => (string) Str::ulid()]]])->assertForbidden();
         $this->api($manager)->getJson('/api/v1/quality-tally/flow')->assertForbidden();
         $this->api($qc)->getJson('/api/v1/quality-tally/cut-bundles')->assertForbidden();
         $lookups = $this->api($manager)->getJson('/api/v1/quality-tally/lookups')->assertOk()->json('data');
@@ -591,12 +641,6 @@ class QualityTallyTest extends TestCase
         $this->api($this->owner)->postJson('/api/v1/quality-tally/jobs', ['job_no' => 'J-100', 'buyer_name' => 'H&M', 'style' => 'Basic Tee', 'po_no' => '', 'color' => 'Navy', 'order_qty' => 5])
             ->assertUnprocessable()->assertJsonValidationErrors('job_no');
 
-        $this->api($this->owner)->postJson('/api/v1/quality-tally/targets', ['target_date' => QtBook::today(), 'section' => 'SEWING', 'line_id' => $this->sewing, 'job_id' => $job, 'working_hours' => 8, 'manpower' => 20, 'target_qty' => 100])
-            ->assertCreated();
-        // A sewing line is not a cutting line.
-        $this->api($this->owner)->postJson('/api/v1/quality-tally/targets', ['target_date' => QtBook::today(), 'section' => 'CUTTING', 'line_id' => $this->sewing, 'job_id' => $job, 'working_hours' => 8, 'target_qty' => 100])
-            ->assertUnprocessable()->assertJsonValidationErrors('line_id');
-
         $this->api($this->owner)->postJson('/api/v1/quality-tally/inspectors', ['user_id' => $this->qc->id, 'hr_employee_id' => null, 'lines' => [
             ['section' => 'SEWING', 'line_id' => $this->sewing], ['section' => 'CUTTING', 'line_id' => $this->cutting],
         ]])->assertCreated();
@@ -612,6 +656,13 @@ class QualityTallyTest extends TestCase
                     'occurred_at' => $old, 'production_date' => $old->toDateString(), 'hour' => 10, 'created_at' => now(), 'updated_at' => now()]);
             }
         }
+
+        // Cutting has finished the bundle, so sewing may have the job (user, 2026-11-28).
+        $this->api($this->owner)->postJson('/api/v1/quality-tally/targets', ['target_date' => QtBook::today(), 'section' => 'SEWING', 'line_id' => $this->sewing, 'job_id' => $job, 'working_hours' => 8, 'manpower' => 20, 'target_qty' => 100])
+            ->assertCreated();
+        // A sewing line is not a cutting line.
+        $this->api($this->owner)->postJson('/api/v1/quality-tally/targets', ['target_date' => QtBook::today(), 'section' => 'CUTTING', 'line_id' => $this->sewing, 'job_id' => $job, 'working_hours' => 8, 'target_qty' => 100])
+            ->assertUnprocessable()->assertJsonValidationErrors('line_id');
 
         return [$job, ['SEWING' => $sewing, 'CUTTING' => $cutting]];
     }

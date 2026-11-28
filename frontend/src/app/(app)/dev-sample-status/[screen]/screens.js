@@ -4,13 +4,15 @@ import { SampleSheet } from "@/components/devsample/sample-sheet";
 import { PivotReport } from "@/components/devsample/pivot-report";
 import { DsDashboard } from "@/components/devsample/dashboard";
 import { ColumnSetup } from "@/components/ordersummary/column-setup";
+import { AuditLog } from "@/components/ordersummary/reports";
 import { dsAction } from "./actions";
 
 /*
  * Dev Sample Status's screens (AnnotechERP 31, Norban's menu; Column Setup
  * 2026-11-21): View All (the sheet — its filters and page in the address,
  * f[key][]=…, so a filtered view can be bookmarked or sent), Add Dev Sample
- * (the sheet, Create New), the Pivot Report and Column Setup.
+ * (the sheet, Create New), the Pivot Report, Column Setup and the Audit Log
+ * (AnnotechERP 37: Order Summary's log, on the samples).
  */
 
 /** The address's query as a query string, arrays kept (f[buyer][]=H&M&f[buyer][]=Next). */
@@ -46,6 +48,9 @@ const SCREENS = {
     levels.forEach((l) => params.append("levels[]", l));
     const [data, lookups] = await Promise.all([apiFetch(`/dev-sample/report?${params}`), apiFetch("/dev-sample/lookups")]);
     return <PivotReport data={data} lookups={lookups} query={{ ...keep(query, ["season", "buyer"]), levels }} />;
+  },
+  audit: async function render({ query }) {
+    return <AuditLog ns="devsample" data={await apiFetch(`/dev-sample/audit-log?${qs(query, ["from", "to", "kind", "user", "q", "page"])}`)} query={query} />;
   },
   columns: async function render({ can }) {
     if (!can("devsample.columns.manage")) forbidden();

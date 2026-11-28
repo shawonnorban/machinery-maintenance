@@ -116,6 +116,55 @@ class BudgetApprovalTest extends TestCase
         $this->as()->patchJson('/api/v1/pre-budget/requisitions', ['rows' => [['id' => $req, 'version' => 1, 'values' => ['order_color' => 'Red']]]])->assertOk();
     }
 
+    public function test_the_phones_budget_list_shows_every_budget_as_a_card_with_its_counts_and_filters(): void
+    {
+        $id = $this->as()->postJson('/api/v1/pre-budget/requisitions', ['rows' => [['values' => $this->knit()]]])->json('data.rows.0.id');
+        $draft = $this->as()->postJson('/api/v1/pre-budget/budgets', ['requisition_ids' => [$id]])->json('data.budget_no');
+        [$no] = $this->readyBudget();
+        $this->assignSigners();
+        $this->as()->postJson("/api/v1/pre-budget/budgets/{$no}/finalize")->assertOk();
+
+        $cards = $this->as()->getJson('/api/v1/pre-budget/budgets/cards')->assertOk()->json('data');
+        // Every state counted, from the database — none made up.
+        $this->assertSame(['ALL' => 2, 'MINE' => 0, 'DRAFT' => 1, 'PENDING' => 1, 'APPROVED' => 0, 'RETURNED' => 0, 'REVISED' => 0, 'CANCELLED' => 0], $cards['counts']);
+        $this->assertSame(['factories' => ['NCL'], 'departments' => ['Mens'], 'brands' => ['Clockhouse'], 'buyers' => ['C&A']], array_intersect_key($cards['options'], array_flip(['factories', 'departments', 'brands', 'buyers'])));
+        $this->assertSame(['current' => 1, 'last' => 1, 'per_page' => 20, 'total' => 2], $cards['page']);
+        $sent = collect($cards['rows'])->firstWhere('budget_no', $no);
+        $this->assertSame(['C&A', ['Clockhouse'], 1, 1, $this->owner->name, 'Merchandising Head'], [$sent['buyer'], $sent['brands'], $sent['styles'], $sent['items'], $sent['created_by'], $sent['waiting_at']['current']]);
+        // The budget's own figures (the card's foot): the order, Net FOB, cost and the margin between them; the date of its state.
+        $this->assertSame(2000, (int) $sent['order_qty']);
+        $this->assertEqualsWithDelta($sent['net_fob'] - $sent['total_cost'], $sent['margin'], 0.01);
+        $this->assertSame('submitted', $sent['event']);
+        // What may be done here follows the budget's own rules: a sent one withdrawn, not finalized; a draft finalized once its checklist is done, or deleted.
+        $this->assertSame(['finalize' => false, 'withdraw' => true, 'revise' => false, 'delete' => false], $sent['actions']);
+        $this->assertNull($sent['check']);
+        $open = collect($cards['rows'])->firstWhere('budget_no', $draft);
+        $this->assertSame([true, ['costing' => false, 'stock' => false, 'bom' => false]], [$open['actions']['finalize'], $open['check']]);
+
+        // A state, a search (brand, style, job no …), a fiscal year (July–June), a factory, department, buyer and brand — all together; the counts follow every filter but the state.
+        $nos = fn (string $query) => array_column($this->as()->getJson("/api/v1/pre-budget/budgets/cards?{$query}")->json('data.rows'), 'budget_no');
+        $this->assertSame([$draft], $nos('status=DRAFT'));
+        $this->assertSame([$no], $nos('status=PENDING&q='.urlencode('clockhouse')));
+        $this->assertCount(2, $nos('q=2261582'));
+        $this->assertSame([$no], $nos('q='.urlencode($no)));
+        $start = now('Asia/Dhaka')->month >= 7 ? now('Asia/Dhaka')->year : now('Asia/Dhaka')->year - 1;
+        $this->assertCount(2, $nos('fy='.sprintf('%d-%02d', $start, ($start + 1) % 100).'&dept=Mens&factory=NCL&buyer='.urlencode('C&A').'&brand=Clockhouse'));
+        $this->assertSame([], $nos('dept=Ladies'));
+        $this->assertSame([], $nos('fy='.sprintf('%d-%02d', $start - 1, $start % 100)));
+        $this->assertSame(0, $this->as()->getJson('/api/v1/pre-budget/budgets/cards?brand=Nobody')->json('data.counts.ALL'));
+        $this->as()->getJson('/api/v1/pre-budget/budgets/cards?fy=2026')->assertUnprocessable();
+        // A page at a time, the size one of 10, 20, 50.
+        $this->assertSame(['current' => 1, 'last' => 1, 'per_page' => 10, 'total' => 2], $this->as()->getJson('/api/v1/pre-budget/budgets/cards?per_page=10')->json('data.page'));
+        $this->assertSame([], $this->as()->getJson('/api/v1/pre-budget/budgets/cards?per_page=10&page=2')->json('data.rows'));
+        $this->as()->getJson('/api/v1/pre-budget/budgets/cards?per_page=500')->assertUnprocessable();
+
+        // The first signer sees it waiting at their step (MINE), and only the sent one; the detail carries each requisition's brand.
+        $signer = $this->asUser($this->signers['Merchandising Head'])->getJson('/api/v1/pre-budget/budgets/cards?status=MINE')->json('data');
+        $this->assertSame([$no], array_column($signer['rows'], 'budget_no'));
+        $this->assertTrue($signer['rows'][0]['can_act']);
+        $this->assertSame('Clockhouse', $this->as()->getJson("/api/v1/pre-budget/budgets/{$no}")->json('data.requisitions.0.brand'));
+    }
+
     public function test_a_rejection_sends_the_budget_back_and_withdrawing_makes_it_a_draft(): void
     {
         [$no] = $this->readyBudget();

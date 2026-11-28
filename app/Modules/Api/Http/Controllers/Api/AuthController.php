@@ -186,7 +186,15 @@ class AuthController extends ApiController
                 'portal_only' => $caller->companyId !== null && Role::onlyPortal(
                     UserRole::query()->withoutGlobalScopes()->where('company_id', $caller->companyId)->where('user_id', $caller->user->id)->pluck('role_id')->all(),
                 ),
+                // The app's header (AnnotechERP 37): the person's designation — their HR
+                // record's, else their first role's name.
+                'designation' => $caller->companyId === null ? null : $this->designation($caller->user, $caller->companyId),
+                // The app's Account page (2026-11-27): the person's HR record, when their employee code has one — work details only, never pay or ID numbers.
+                'employee' => $caller->companyId === null ? null : $this->employee($caller->user, $caller->companyId),
             ],
+            // The factories this caller's work reaches — the app's factory selector (AnnotechERP 37).
+            'factories' => $caller->companyId === null ? [] : DB::table('factories')->whereIn('id', app(\App\Shared\Tenancy\TenantContext::class)->accessibleFactoryIds())
+                ->orderBy('name')->get(['id', 'name', 'code'])->map(fn ($f) => ['id' => $f->id, 'name' => $f->name, 'code' => $f->code])->all(),
             'client' => $caller->client === null ? null : [
                 'id' => $caller->client->id,
                 'client_id' => $caller->client->client_id,
@@ -586,5 +594,46 @@ class AuthController extends ApiController
             ->orderByDesc('is_default')
             ->orderBy('created_at')
             ->value('company_id');
+    }
+
+    /**
+     * The person's HR record by their employee code (the app's Account page):
+     * code, card, department, section, line, factory, joining date, mobile,
+     * blood group. Null when they have none.
+     *
+     * @return array<string, string|null>|null
+     */
+    private function employee(User $user, string $companyId): ?array
+    {
+        if (! $user->employee_code) {
+            return null;
+        }
+        $e = DB::table('hr_employees as e')
+            ->leftJoin('departments as d', 'd.id', '=', 'e.department_id')->leftJoin('sections as s', 's.id', '=', 'e.section_id')
+            ->leftJoin('production_lines as l', 'l.id', '=', 'e.line_id')->leftJoin('factories as f', 'f.id', '=', 'e.factory_id')
+            ->leftJoin('designations as g', 'g.id', '=', 'e.designation_id')
+            ->where('e.company_id', $companyId)->where('e.employee_code', $user->employee_code)
+            ->first(['e.employee_code', 'e.card_no', 'e.joining_date', 'e.mobile', 'e.blood_group', 'd.name as department', 's.name as section', 'l.name as line', 'f.name as factory', 'g.name as designation']);
+
+        return $e === null ? null : [
+            'code' => $e->employee_code, 'card_no' => $e->card_no, 'designation' => $e->designation, 'department' => $e->department, 'section' => $e->section,
+            'line' => $e->line, 'factory' => $e->factory, 'joining_date' => $e->joining_date ? substr((string) $e->joining_date, 0, 10) : null,
+            'mobile' => $e->mobile, 'blood_group' => $e->blood_group,
+        ];
+    }
+
+    /** "Merchandiser": the HR record's designation (by employee code), else the first role's label. */
+    private function designation(User $user, string $companyId): ?string
+    {
+        if ($user->employee_code) {
+            $name = DB::table('hr_employees')->join('designations', 'designations.id', '=', 'hr_employees.designation_id')
+                ->where('hr_employees.company_id', $companyId)->where('hr_employees.employee_code', $user->employee_code)->value('designations.name');
+            if ($name) {
+                return $name;
+            }
+        }
+        $role = UserRole::query()->withoutGlobalScopes()->where('company_id', $companyId)->where('user_id', $user->id)->orderBy('created_at')->value('role_id');
+
+        return $role === null ? null : (Role::query()->whereKey($role)->value('description') ?: Str::headline(strtolower((string) Role::query()->whereKey($role)->value('name'))));
     }
 }

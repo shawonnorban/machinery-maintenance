@@ -1,0 +1,5 @@
+[
+ {"goto": "/dev-sample-status/audit"},
+ {"wait": 12000},
+ {"shot": "dsaudit01-open"}
+]

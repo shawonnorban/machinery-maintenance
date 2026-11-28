@@ -20,7 +20,9 @@ function PlanDay({ date, section, rows, lookups, act, onClose }) {
   const { run, pending } = useRun();
   const [shortfall, setShortfall] = useState(null);
   const lines = useMemo(() => lookups.lines[section] ?? [], [lookups.lines, section]);
-  const jobs = lookups.jobs;
+  // A job this section may not have yet is not offered (user, 2026-11-28); one already planned stays.
+  const planned = new Set(rows.filter((r) => r.section === section).map((r) => r.job_id));
+  const jobs = lookups.jobs.filter((j) => !j.blocked?.[section] || planned.has(j.value));
 
   const initial = useMemo(() => {
     const mine = rows.filter((r) => r.section === section);

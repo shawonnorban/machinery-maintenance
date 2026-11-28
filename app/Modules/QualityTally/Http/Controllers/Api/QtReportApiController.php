@@ -46,7 +46,8 @@ class QtReportApiController extends ApiController
         $targets = QtLineTarget::query()->whereDate('target_date', $date)->when($section, fn ($w, $s) => $w->where('section', $s))->get()
             ->keyBy(fn ($t) => $t->section.'|'.$t->line_id.'|'.$t->job_id);
 
-        $keys = $counts->map(fn ($r) => $r->section.'|'.$r->line_id.'|'.$r->job_id)->merge($targets->keys())->unique()->values();
+        // toBase(): with no taps yet the empty Eloquent collection would try to merge the target keys as models.
+        $keys = $counts->toBase()->map(fn ($r) => $r->section.'|'.$r->line_id.'|'.$r->job_id)->merge($targets->keys())->unique()->values();
         $grouped = $counts->groupBy(fn ($r) => $r->section.'|'.$r->line_id.'|'.$r->job_id);
         $jobs = QtJob::query()->whereIn('id', $keys->map(fn ($k) => explode('|', $k)[2])->unique())->get()->keyBy('id');
 
