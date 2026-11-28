@@ -41,6 +41,7 @@ final class QtPhones
     /**
      * The phone a sign-in comes from, noted (model, version, last seen). One that
      * names an id without its secret is somebody else's; a blocked one gets no further.
+     * With phone approval switched off, an unapproved one is approved here.
      *
      * @param  array{install_id: string, secret: string, model?: ?string, os?: ?string, app_version?: ?string}  $d
      */
@@ -54,7 +55,12 @@ final class QtPhones
             throw self::refuse('PHONE_BLOCKED', __('qtally.phone.blocked'));
         }
         $phone ??= new QtPhone(['company_id' => $companyId, 'install_id' => $d['install_id'], 'secret_hash' => hash('sha256', $d['secret']), 'first_user_id' => $userId]);
-        $phone->fill(['model' => $d['model'] ?? $phone->model, 'os' => $d['os'] ?? $phone->os, 'app_version' => $d['app_version'] ?? $phone->app_version, 'last_ip' => $ip, 'last_seen_at' => now()])->save();
+        $phone->fill(['model' => $d['model'] ?? $phone->model, 'os' => $d['os'] ?? $phone->os, 'app_version' => $d['app_version'] ?? $phone->app_version, 'last_ip' => $ip, 'last_seen_at' => now()]);
+        // Approval switched off (user, 2026-11-28): the phone is let in as it arrives; blocking still stops it.
+        if ($phone->approved_at === null && ! QtSettings::phoneApproval($companyId)) {
+            $phone->fill(['approved_at' => now(), 'approved_by' => null]);
+        }
+        $phone->save();
 
         return $phone;
     }

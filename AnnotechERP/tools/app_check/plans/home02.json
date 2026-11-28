@@ -1,0 +1,52 @@
+[
+ {
+  "goto": "/quality-tally/phones"
+ },
+ {
+  "wait": 15000
+ },
+ {
+  "shot": "home02-phones"
+ },
+ {
+  "click": "main [role=switch]",
+  "after": 2000
+ },
+ {
+  "shot": "home02-off-ask"
+ },
+ {
+  "click": "button:visible:has-text('Turn off')",
+  "after": 20000
+ },
+ {
+  "goto": "/quality-tally/phones"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "shot": "home02-off"
+ },
+ {
+  "click": "main [role=switch]",
+  "after": 2000
+ },
+ {
+  "click": "button:visible:has-text('Turn on')",
+  "after": 20000
+ },
+ {
+  "goto": "/quality-tally/phones"
+ },
+ {
+  "wait": 8000
+ },
+ {
+  "click": "main button[aria-label='Delete']",
+  "after": 2000
+ },
+ {
+  "shot": "home02-delete-ask"
+ }
+]

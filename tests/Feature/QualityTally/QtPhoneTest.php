@@ -237,15 +237,43 @@ class QtPhoneTest extends TestCase
         $this->as($theirs, $omega)->postJson('/api/v1/quality-tally/inspectors/'.$this->inspector.'/reset-pin')->assertNotFound();
         TenantFixture::actingAsTenant($this->delta);
 
-        // A waiting phone nobody used can be removed; a used one cannot.
+        // Any phone can be deleted (user, 2026-11-28): a used one signs its QC out, and comes back as a new phone.
         $this->as($this->owner)->deleteJson("/api/v1/quality-tally/phones/{$id}")->assertOk();
         $id = $this->approve();
-        $this->signIn('EMP-001', '000000')->assertCreated();
-        $this->as($this->owner)->deleteJson("/api/v1/quality-tally/phones/{$id}")->assertUnprocessable();
+        $used = $this->signIn('EMP-001', '000000')->assertCreated();
+        $this->as($this->owner)->deleteJson("/api/v1/quality-tally/phones/{$id}")->assertOk();
+        $this->bearer($used)->getJson('/api/v1/quality-tally/mobile/session')->assertUnauthorized();
+        $this->flushHeaders();
+        $this->approve(); // back as a new phone, waiting again
+        $this->assertSame(1, DB::table('qt_phones')->count());
         // Names do not repeat.
         $other = $this->newPhone();
         $this->signIn('EMP-001', '000000', [], $other);
         $this->as($this->owner)->patchJson('/api/v1/quality-tally/phones/'.DB::table('qt_phones')->where('install_id', $other['install_id'])->value('id'), ['name' => 'Phone 01', 'approve' => true])->assertUnprocessable()->assertJsonValidationErrors('name');
+    }
+
+    public function test_with_phone_approval_off_a_new_phone_is_let_in_at_once(): void
+    {
+        // A phone waiting when approval is switched off is let in with it.
+        $this->signIn('EMP-001', '000000')->assertForbidden()->assertJsonPath('meta.reason', 'PHONE_PENDING');
+        $this->as($this->owner)->getJson('/api/v1/quality-tally/phones')->assertOk()->assertJsonPath('meta.approval', true);
+        $chief = TenantFixture::user($this->delta, 'LINE_CHIEF', 'chief2@delta.test');
+        $this->as($chief)->putJson('/api/v1/quality-tally/phones/approval', ['on' => false])->assertForbidden();
+        $this->as($this->owner)->putJson('/api/v1/quality-tally/phones/approval', ['on' => false])->assertOk()->assertJsonPath('data.approval', false);
+        $this->as($this->owner)->getJson('/api/v1/quality-tally/phones')->assertJsonPath('meta.approval', false)->assertJsonPath('data.0.status', 'APPROVED');
+        $this->signIn('EMP-001', '000000')->assertCreated();
+
+        // A new phone signs in the first time; a blocked one still cannot.
+        $other = $this->newPhone();
+        $this->signIn('EMP-002', '000000', [], $other)->assertCreated();
+        $id = DB::table('qt_phones')->where('install_id', $other['install_id'])->value('id');
+        $this->as($this->owner)->postJson("/api/v1/quality-tally/phones/{$id}/block")->assertOk();
+        $this->signIn('EMP-002', '000000', [], $other)->assertForbidden()->assertJsonPath('meta.reason', 'PHONE_BLOCKED');
+
+        // Back on: phones let in keep working, the next new one waits.
+        $this->as($this->owner)->putJson('/api/v1/quality-tally/phones/approval', ['on' => true])->assertOk();
+        $this->signIn('EMP-001', '000000')->assertCreated();
+        $this->signIn('EMP-001', '000000', [], $this->newPhone())->assertForbidden()->assertJsonPath('meta.reason', 'PHONE_PENDING');
     }
 
     public function test_a_phone_tied_to_a_line_takes_that_lines_qcs(): void

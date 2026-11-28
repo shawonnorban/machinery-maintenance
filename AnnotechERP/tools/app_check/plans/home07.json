@@ -1,0 +1,8 @@
+[
+ {"goto": "/"},
+ {"wait": 20000},
+ {"shot": "home07-top"},
+ {"goto": "/machinery-dashboard"},
+ {"wait": 20000},
+ {"shot": "home07-machinery"}
+]

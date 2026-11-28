@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { moduleTone } from "@/lib/module-tones";
 import { useT } from "@/lib/i18n";
@@ -47,6 +47,7 @@ function activePath(modules, pathname) {
 function ErpSidebar({ modules, collapsed = false, moduleCount = 0 }) {
   const t = useT("nav");
   const pathname = usePathname();
+  const tHome = useT("dashboard");
   const active = activePath(modules, pathname);
   const [open, setOpen] = useState(() => new Set([active?.moduleCode, ...(active?.folders ?? [])].filter(Boolean)));
   const [seenPath, setSeenPath] = useState(pathname);
@@ -70,6 +71,21 @@ function ErpSidebar({ modules, collapsed = false, moduleCount = 0 }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <nav className="flex-1 overflow-y-auto px-3 pt-2 pb-4">
+        {/* The home dashboard (user, 2026-11-28): Order Summary and Pre-Budget, first after signing in. */}
+        <Link
+          href="/"
+          title={collapsed ? tHome("dashboard") : undefined}
+          className={cn(
+            "mb-1 flex items-center gap-3 rounded-md px-2 py-2 text-sm font-medium transition-colors",
+            collapsed && "justify-center px-0",
+            pathname === "/" ? "bg-brand-subtle text-brand" : "text-foreground hover:bg-surface-muted",
+          )}
+        >
+          <span className="size-[18px] shrink-0 text-brand [&_svg]:size-[18px]">
+            <LayoutDashboard />
+          </span>
+          {!collapsed ? <span className="min-w-0 flex-1 truncate">{tHome("dashboard")}</span> : null}
+        </Link>
         {modules.map((mod, index) => {
           const heading = index === 0 || modules[index - 1].section !== mod.section ? mod.sectionLabel : null;
           const tone = moduleTone(mod.code);

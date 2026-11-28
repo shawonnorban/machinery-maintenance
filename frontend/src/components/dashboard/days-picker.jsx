@@ -14,7 +14,7 @@ function DaysPicker({ periods, value }) {
       <Select
         options={periods.map((p) => ({ value: String(p), label: t("last_days", { days: p }) }))}
         value={String(value)}
-        onValueChange={(next) => router.push(`/?days=${next}`)}
+        onValueChange={(next) => router.push(`/machinery-dashboard?days=${next}`)}
       />
     </div>
   );

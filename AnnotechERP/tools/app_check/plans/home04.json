@@ -1,0 +1,7 @@
+[
+ {"goto": "/order-summary/dashboard"},
+ {"wait": 15000},
+ {"goto": "/"},
+ {"wait": 15000},
+ {"shot": "home04-top"}
+]

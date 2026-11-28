@@ -43,6 +43,7 @@ const CALLS = {
   blockPhone: (id) => [`/quality-tally/phones/${id}/block`, json("POST", {})],
   unblockPhone: (id) => [`/quality-tally/phones/${id}/unblock`, json("POST", {})],
   deletePhone: (id) => [`/quality-tally/phones/${id}`, json("DELETE")],
+  phoneApproval: (on) => ["/quality-tally/phones/approval", json("PUT", { on })],
   deleteInspector: (id) => [`/quality-tally/inspectors/${id}`, json("DELETE")],
   reviewSeen: (body) => ["/quality-tally/review/seen", json("POST", body)],
 };

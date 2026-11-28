@@ -1204,7 +1204,7 @@ final class MenuRegistry
             ['PROTOTYPE.SAMPLE_HANDOVER_SCREEN', 'PROTOTYPE', 'PROTOTYPE.SAMPLE_HANDOVER', 'prototype.screens.sample-handover', '/prototype-desk/sample-handover', 'Truck', ['prototype.handover.view', 'prototype.handover.manage'], [], true],
 
             // The old project's dashboard and reports are Machinery's own; the ERP's come with Brickland's Command Center / Insight Studio.
-            ['MACHINERY.DASHBOARD', 'MACHINERY', null, 'nav.dashboard', '/', 'LayoutDashboard', ['dashboard.maintenance.view', 'dashboard.management.view', 'dashboard.store.view'], ['dashboard'], true],
+            ['MACHINERY.DASHBOARD', 'MACHINERY', null, 'nav.dashboard', '/machinery-dashboard', 'LayoutDashboard', ['dashboard.maintenance.view', 'dashboard.management.view', 'dashboard.store.view'], ['dashboard'], true],
             ['MACHINERY.ASSETS.LIST', 'MACHINERY', 'MACHINERY.ASSETS', 'nav.assets', '/assets', 'Cog', 'asset.asset.view_any', ['asset.asset', 'asset.status', 'asset.document', 'asset.qr', 'asset.financial', 'cost'], true],
             ['MACHINERY.ASSETS.TRANSFERS', 'MACHINERY', 'MACHINERY.ASSETS', 'nav.asset_transfers', '/assets/transfers', 'ArrowLeftRight', 'asset.asset.view_any', ['asset.transfer'], true],
             ['MACHINERY.ASSETS.LABELS', 'MACHINERY', 'MACHINERY.ASSETS', 'nav.print_labels', '/assets/labels', 'QrCode', 'asset.asset.view_any', [], true],

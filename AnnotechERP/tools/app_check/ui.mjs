@@ -39,7 +39,7 @@ const browser = await chromium.launch();
 const page = await (await browser.newContext({ viewport: { width: 1600, height: 1000 } })).newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message.split('\n')[0]));
-page.on('console', (m) => m.type() === 'error' && errors.push(m.text().split('\n')[0]));
+page.on('console', (m) => m.type() === 'error' && errors.push(process.env.FULL_ERRORS ? m.text().slice(0, 4000) : m.text().split('\n')[0]));
 const settle = async (ms = 1200) => { await page.waitForLoadState('networkidle', { timeout: 90000 }).catch(() => {}); await page.waitForTimeout(ms); };
 
 await page.goto(`${base}/login`, { timeout: 120000 });

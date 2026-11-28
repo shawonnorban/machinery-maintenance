@@ -8,6 +8,7 @@ use App\Modules\QualityTally\Models\QtPhone;
 use App\Modules\QualityTally\Models\QtSession;
 use App\Modules\QualityTally\Support\QtBook;
 use App\Modules\QualityTally\Support\QtPhones;
+use App\Modules\QualityTally\Support\QtSettings;
 use App\Shared\Http\Api\ApiController;
 use App\Shared\Http\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 /**
  * Quality Tally → Phones (AnnotechERP 37): the phones the app runs on. A new
- * one waits here until it is approved; it can be named, tied to a line and blocked.
+ * one waits here until it is approved — unless approval is switched off
+ * (user, 2026-11-28); it can be named, tied to a line, blocked and deleted.
  */
 class QtPhoneApiController extends ApiController
 {
@@ -45,9 +47,30 @@ class QtPhoneApiController extends ApiController
                 'last_seen_at' => $p->last_seen_at?->toIso8601String(), 'requested_at' => $p->requested_at?->toIso8601String(),
                 'first_user' => $names[$p->first_user_id] ?? null, 'approved_by' => $names[$p->approved_by] ?? null,
                 'signed_in' => $s ? ['name' => $names[$s->user_id] ?? null, 'since' => $s->started_at->toIso8601String()] : null,
-                'removable' => ! $used->has($p->id),
+                'used' => $used->has($p->id),
             ];
-        })->sortBy(fn ($r) => $order[$r['status']].'|'.mb_strtolower((string) $r['name']).'|'.$r['code'])->values()->all());
+        })->sortBy(fn ($r) => $order[$r['status']].'|'.mb_strtolower((string) $r['name']).'|'.$r['code'])->values()->all(),
+            ['approval' => QtSettings::phoneApproval($this->caller()->companyId)]);
+    }
+
+    /**
+     * Phone approval on or off (user, 2026-11-28). Off, every phone waiting now
+     * is let in too, as the next one will be on its first sign-in.
+     */
+    public function approval(Request $request): JsonResponse
+    {
+        $this->allow(self::MANAGE);
+        $on = (bool) $request->validate(['on' => ['required', 'boolean']])['on'];
+        $company = $this->caller()->companyId;
+        $by = $this->caller()->auditUserId();
+        DB::transaction(function () use ($company, $on, $by): void {
+            QtSettings::setPhoneApproval($company, $on, $by);
+            if (! $on) {
+                QtPhone::query()->whereNull('approved_at')->whereNull('blocked_at')->whereNotNull('requested_at')->update(['approved_at' => now(), 'approved_by' => $by]);
+            }
+        });
+
+        return ApiResponse::ok(['approval' => $on]);
     }
 
     /** Names a phone and ties it to a line; with `approve`, lets QCs sign in on it. */
@@ -100,15 +123,17 @@ class QtPhoneApiController extends ApiController
         return ApiResponse::ok(['id' => $id, 'status' => $phone->status()]);
     }
 
-    /** A phone no QC ever signed in on (a stranger's, waiting) can be taken off the list. */
+    /**
+     * Takes a phone off the list (user, 2026-11-28: any phone): whoever is on it
+     * is signed out and every token on it ends. Its taps stay; if it is opened
+     * again it comes back as a new phone.
+     */
     public function destroy(string $id): JsonResponse
     {
         $this->allow(self::MANAGE);
         $phone = QtPhone::query()->findOrFail($id);
-        if (QtSession::query()->where('phone_id', $phone->id)->exists()) {
-            throw ValidationException::withMessages(['phone' => __('qtally.phone.used')]);
-        }
         DB::transaction(function () use ($phone): void {
+            QtPhones::endOn($phone, 'REMOVED');
             PersonalAccessToken::query()->where('qt_phone_id', $phone->id)->delete();
             $phone->delete();
         });

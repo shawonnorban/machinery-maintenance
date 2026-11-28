@@ -71,8 +71,8 @@ const SCREENS = {
     return <QcAssignment rows={rows} lookups={lookups} canManage={can("qtally.inspector.manage")} act={qtAction} />;
   },
   phones: async function render() {
-    const [rows, lookups] = await Promise.all([apiFetch("/quality-tally/phones"), apiFetch("/quality-tally/lookups")]);
-    return <QtPhones rows={rows} lookups={lookups} act={qtAction} />;
+    const [{ data: rows, meta }, lookups] = await Promise.all([apiFetch("/quality-tally/phones", { includeMeta: true }), apiFetch("/quality-tally/lookups")]);
+    return <QtPhones rows={rows} approval={meta?.approval !== false} lookups={lookups} act={qtAction} />;
   },
   "defect-types": async function render({ can }) {
     const rows = await apiFetch("/quality-tally/defect-types");

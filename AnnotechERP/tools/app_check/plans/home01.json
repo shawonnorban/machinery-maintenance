@@ -1,0 +1,8 @@
+[
+ {"goto": "/"},
+ {"wait": 20000},
+ {"shot": "home01-top"},
+ {"goto": "/quality-tally/phones"},
+ {"wait": 12000},
+ {"shot": "home01-phones"}
+]

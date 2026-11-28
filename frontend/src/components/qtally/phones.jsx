@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Ban, Check, Pencil, RotateCcw, Smartphone, Trash2 } from "lucide-react";
+import { Ban, Check, Pencil, RotateCcw, ShieldCheck, ShieldOff, Smartphone, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Switch } from "@/components/ui/switch";
 import { SECTIONS, useQt, useRun, num, stamp, Panel, Table, Field, Select, Pill, SectionPill, Notice } from "./common";
 
 /*
  * Quality Tally → Planning → Phones (AnnotechERP 37): the phones the app runs
  * on. A QC's first sign-in on a new phone puts it here to approve; its code is
- * on the phone's own screen.
+ * on the phone's own screen. Approval can be switched off (user, 2026-11-28):
+ * then a phone is let in on its first sign-in. Any phone can be deleted.
  */
 
 const TONE = { PENDING: "bg-warning-subtle text-warning", APPROVED: "bg-success-subtle text-success", PERSONAL: "bg-info-subtle text-info", BLOCKED: "bg-danger-subtle text-danger" };
 const called = (r) => r.name ?? r.model ?? r.code;
 
-function QtPhones({ rows, lookups, act }) {
+function QtPhones({ rows, approval, lookups, act }) {
   const p = useQt();
   const [editing, setEditing] = useState(null);
   const [asking, setAsking] = useState(null);
@@ -113,20 +115,36 @@ function QtPhones({ rows, lookups, act }) {
               <Ban /> {p("btn.block")}
             </Button>
           )}
-          {r.removable ? (
-            <Button size="sm" variant="outline" aria-label={p("btn.delete")} onClick={() => setAsking({ kind: "remove", row: r })}>
-              <Trash2 />
-            </Button>
-          ) : null}
+          <Button size="sm" variant="outline" className="text-danger" aria-label={p("btn.delete")} title={p("btn.delete")} onClick={() => setAsking({ kind: "remove", row: r })}>
+            <Trash2 />
+          </Button>
         </div>
       ),
     },
   ];
 
-  const ask = asking?.kind === "block" ? ["blockPhone", "toast.phone_blocked", "btn.block"] : ["deletePhone", "toast.deleted", "btn.delete"];
+  const ask = {
+    block: ["blockPhone", "toast.phone_blocked", "btn.block"],
+    remove: ["deletePhone", "toast.deleted", "btn.delete"],
+    approval: ["phoneApproval", approval ? "toast.approval_off" : "toast.approval_on", approval ? "phone.turn_off" : "phone.turn_on"],
+  }[asking?.kind] ?? [];
+  const body = (a) => (a.kind === "remove" && a.row.used ? p("phone.remove_used_body", { name: called(a.row) }) : a.kind === "approval" ? p(approval ? "phone.off_body" : "phone.on_body") : p(`phone.${a.kind}_body`, { name: called(a.row) }));
 
   return (
     <>
+      {/* Approval on or off (user, 2026-11-28). */}
+      <section className={`mb-4 flex flex-wrap items-center gap-4 rounded-lg border px-5 py-4 ${approval ? "border-success/30 bg-success-subtle/40" : "border-warning/40 bg-warning-subtle/40"}`}>
+        <span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${approval ? "bg-success-subtle text-success" : "bg-warning-subtle text-warning"}`}>
+          {approval ? <ShieldCheck className="size-5" /> : <ShieldOff className="size-5" />}
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-[15px] font-semibold text-foreground">
+            {p("phone.approval")} · <span className={approval ? "text-success" : "text-warning"}>{p(approval ? "phone.on" : "phone.off")}</span>
+          </h2>
+          <p className="mt-0.5 text-[13px] text-foreground-muted">{p(approval ? "phone.approval_on_hint" : "phone.approval_off_hint")}</p>
+        </div>
+        <Switch checked={approval} aria-label={p("phone.approval")} onCheckedChange={() => setAsking({ kind: "approval" })} />
+      </section>
       <Panel title={p("phone.title")} subtitle={[p("phone.count", { n: rows.length }), waiting ? p("phone.waiting", { n: waiting }) : null].filter(Boolean).join(" · ")} icon={Smartphone}>
         <Table columns={cols} rows={rows} empty={p("empty.phones")} />
       </Panel>
@@ -134,12 +152,12 @@ function QtPhones({ rows, lookups, act }) {
       <ConfirmDialog
         open={asking !== null}
         onOpenChange={(o) => !o && setAsking(null)}
-        title={asking ? p(`phone.${asking.kind}_title`) : ""}
-        description={asking ? p(`phone.${asking.kind}_body`, { name: called(asking.row) }) : ""}
-        confirmLabel={p(ask[2])}
+        title={asking ? (asking.kind === "approval" ? p(approval ? "phone.off_title" : "phone.on_title") : p(`phone.${asking.kind}_title`)) : ""}
+        description={asking ? body(asking) : ""}
+        confirmLabel={ask[2] ? p(ask[2]) : ""}
         cancelLabel={p("btn.close")}
         loading={pending}
-        onConfirm={() => run(() => act(ask[0], asking.row.id), p(ask[1]), () => setAsking(null))}
+        onConfirm={() => run(() => act(ask[0], asking.kind === "approval" ? !approval : asking.row.id), p(ask[1]), () => setAsking(null))}
       />
     </>
   );

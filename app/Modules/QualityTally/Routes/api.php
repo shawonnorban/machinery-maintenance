@@ -59,6 +59,7 @@ Route::middleware(['api.auth', 'throttle:api'])->prefix('quality-tally')->name('
 
     // The phones the app runs on (AnnotechERP 37).
     Route::get('/phones', [QtPhoneApiController::class, 'index'])->name('phones.index');
+    Route::put('/phones/approval', [QtPhoneApiController::class, 'approval'])->name('phones.approval');
     Route::patch('/phones/{id}', [QtPhoneApiController::class, 'update'])->name('phones.update');
     Route::post('/phones/{id}/block', [QtPhoneApiController::class, 'block'])->name('phones.block');
     Route::post('/phones/{id}/unblock', [QtPhoneApiController::class, 'unblock'])->name('phones.unblock');
